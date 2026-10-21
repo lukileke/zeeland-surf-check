@@ -98,7 +98,11 @@ try{
  const grade=best.score>=8?"EXCELLENT":best.score>=6.5?"GOOD":best.score>=5?"FAIR":"POOR";
  label(best.name+" · "+best.spotName,13,"#ffffff",true);
  widget.addSpacer(3);
- label(grade+"  /  "+E.waveCharacter(best.x).name,12,"#cccccc",true);
+ const gradeColor=grade==="EXCELLENT"?"#55D6A0":grade==="GOOD"?"#79D77C":grade==="FAIR"?"#C9D95A":"#F18B72";
+ const conditionRow=widget.addStack();conditionRow.centerAlignContent();
+ const gradeText=conditionRow.addText(grade);gradeText.font=Font.boldSystemFont(12);gradeText.textColor=new Color(gradeColor);
+ const divider=conditionRow.addText("  /  ");divider.font=Font.mediumSystemFont(12);divider.textColor=new Color("#888888");
+ const characterText=conditionRow.addText(E.waveCharacter(best.x).name);characterText.font=Font.mediumSystemFont(12);characterText.textColor=new Color("#cccccc");
  widget.addSpacer(5);
  label(best.x.h.toFixed(1)+" m  ·  "+best.x.period.toFixed(1)+" s  ·  "+Math.round(best.x.wind)+" km/h",11);
  widget.addSpacer();
