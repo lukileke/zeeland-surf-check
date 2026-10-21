@@ -1,4 +1,4 @@
-// Zeeland Surf Check - Scriptable medium widget
+// Zeeland Surf Check - Scriptable home screen + lock screen widget
 // Widget Parameter: BEST (default), Domburg, Westkapelle, Oostkapelle, Cadzand, Brouwersdam
 const SITE="https://lukileke.github.io/zeeland-surf-check/";
 const BEACHES=[
@@ -77,6 +77,36 @@ function sessions(d,E,ai){
  }
  return out.sort((a,b)=>b.score-a.score);
 }
+try{
+ const E=await engine();
+ const outcomes=await Promise.allSettled(targets.map(async ai=>sessions(await forecast(ai),E,ai)));
+ const available=outcomes.filter(x=>x.status==="fulfilled").flatMap(x=>x.value);
+ const s=available.sort((a,b)=>b.score-a.score);
+ if(!s.length)throw Error("No available daylight forecasts");
+ const best=s[0];
+ const grade=best.score>=8?"EXCELLENT":best.score>=6.5?"GOOD":best.score>=5?"FAIR":"POOR";
+ const gradeColor=grade==="EXCELLENT"?"#55D6A0":grade==="GOOD"?"#79D77C":grade==="FAIR"?"#C9D95A":"#F18B72";
+ if(config.widgetFamily==="accessoryRectangular"||config.widgetFamily==="accessoryInline"){
+  widget.backgroundColor=new Color("#000000",0);
+  widget.setPadding(0,0,0,0);
+  const compact=widget.addStack();
+  compact.centerAlignContent();
+  compact.spacing=5;
+  const symbol=SFSymbol.named("water.waves");
+  if(symbol){
+   symbol.applyFont(Font.mediumSystemFont(13));
+   const icon=compact.addImage(symbol.image);
+   icon.imageSize=new Size(16,14);
+   icon.tintColor=Color.white();
+  }
+  const score=compact.addText(best.score.toFixed(1));
+  score.font=Font.boldSystemFont(18);
+  score.textColor=Color.white();
+  const gradeText=compact.addText(grade);
+  gradeText.font=Font.semiboldSystemFont(11);
+  gradeText.textColor=Color.white();
+  // Lock Screen widgets are tinted by iOS, so use native monochrome.
+ }else{
 const header=widget.addStack();header.centerAlignContent();header.spacing=6;
 const waveSymbol=SFSymbol.named("water.waves");
 if(waveSymbol){
@@ -88,13 +118,7 @@ if(waveSymbol){
 const headerText=header.addText("ZEELAND SURF  /  "+(fixedIndex>=0?BEACHES[fixedIndex][0].toUpperCase():"BEST IN ZEELAND"));
 headerText.font=Font.boldSystemFont(10);headerText.textColor=new Color("#aaaaaa");headerText.lineLimit=1;
 widget.addSpacer(8);
-try{
- const E=await engine();
- const outcomes=await Promise.allSettled(targets.map(async ai=>sessions(await forecast(ai),E,ai)));
- const available=outcomes.filter(x=>x.status==="fulfilled").flatMap(x=>x.value);
- const s=available.sort((a,b)=>b.score-a.score);
- if(!s.length)throw Error("No available daylight forecasts");
- const best=s[0],row=widget.addStack();row.centerAlignContent();
+ const row=widget.addStack();row.centerAlignContent();
  const left=row.addStack();left.layoutVertically();
  const scoreRow=left.addStack();scoreRow.centerAlignContent();
  const big=scoreRow.addText(best.score.toFixed(1));big.font=Font.boldSystemFont(28);big.textColor=new Color(best.score>=8?"#55D6A0":best.score>=6.5?"#79D77C":best.score>=5?"#C9D95A":"#F18B72");
@@ -106,10 +130,8 @@ try{
  const date=right.addText(dateLabel);date.font=Font.boldSystemFont(12);date.textColor=Color.white();
  const time=right.addText(pad(best.h)+":00–"+pad(best.h+2)+":00");time.font=Font.systemFont(12);time.textColor=new Color("#dddddd");
  widget.addSpacer(7);
- const grade=best.score>=8?"EXCELLENT":best.score>=6.5?"GOOD":best.score>=5?"FAIR":"POOR";
  label(best.name+" · "+best.spotName,13,"#ffffff",true);
  widget.addSpacer(3);
- const gradeColor=grade==="EXCELLENT"?"#55D6A0":grade==="GOOD"?"#79D77C":grade==="FAIR"?"#C9D95A":"#F18B72";
  const conditionRow=widget.addStack();conditionRow.centerAlignContent();
  const gradeText=conditionRow.addText(grade);gradeText.font=Font.boldSystemFont(12);gradeText.textColor=new Color(gradeColor);
  const divider=conditionRow.addText("  /  ");divider.font=Font.mediumSystemFont(12);divider.textColor=new Color("#888888");
@@ -120,6 +142,7 @@ try{
  const updated=new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Amsterdam"}).format(new Date(best.saved));
  const age=Math.max(0,Math.floor((Date.now()-best.saved)/60000));
  label((age>90?"CACHED ":"UPDATED ")+updated+"  ·  TAP TO OPEN",9,"#888888",true);
+ }
 }catch(e){
  label("Forecast unavailable",16,"#ffffff",true);
  widget.addSpacer(7);label(String(e).slice(0,45),10);
@@ -127,5 +150,8 @@ try{
 }
 widget.refreshAfterDate=new Date(Date.now()+30*60*1000);
 Script.setWidget(widget);
-if(config.runsInApp)await widget.presentMedium();
+if(config.runsInApp){
+ if(config.widgetFamily==="accessoryRectangular")await widget.presentAccessoryRectangular();
+ else await widget.presentMedium();
+}
 Script.complete();
