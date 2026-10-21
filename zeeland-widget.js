@@ -205,9 +205,12 @@ try{
  txt(wizardHead,"WAVE WIZARD",10,new Color("#D6C5A5"),true);
  wizard.addSpacer(3);
  const verdict=E.waveCharacter(best.x);
- const verdictLine=wizard.addStack();verdictLine.centerAlignContent();verdictLine.spacing=3;
+ const verdictLine=wizard.addStack();verdictLine.centerAlignContent();verdictLine.spacing=0;
  const verdictText=txt(verdictLine,verdict.name,22,ivory,true);verdictText.lineLimit=2;verdictText.minimumScaleFactor=0.62;
- const verdictEmoji=txt(verdictLine,verdict.emoji||"✦",42,ivory);verdictEmoji.minimumScaleFactor=0.9;
+ // Flexible space centres the emoji within the area between the verdict text and right inset.
+ const emojiSpace=verdictLine.addStack();emojiSpace.centerAlignContent();emojiSpace.addSpacer();
+ const verdictEmoji=txt(emojiSpace,verdict.emoji||"✦",42,ivory);verdictEmoji.minimumScaleFactor=0.9;
+ emojiSpace.addSpacer();
  wizard.addSpacer(2);
  txt(wizard,best.spotName,12,cream);
  widget.addSpacer(5);
