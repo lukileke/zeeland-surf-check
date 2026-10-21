@@ -6,6 +6,13 @@ const BEACHES=[
  ["Oostkapelle",51.585,3.547,330],["Cadzand",51.378,3.382,315],
  ["Brouwersdam",51.765,3.856,300]
 ];
+const SPOTS=[
+ [["Noordduine",325],["Central beach",325],["West sector",325]],
+ [["North beach",305],["Central area",290]],
+ [["Main beach",330],["West sector",330]],
+ [["Cadzand-Bad",315],["West sector",315]],
+ [["North beach",300],["Central beach",300],["South beach",300]]
+];
 const selected=String(args.widgetParameter||"BEST").trim().toLowerCase();
 const fixedIndex=BEACHES.findIndex(x=>x[0].toLowerCase()===selected);
 const targets=fixedIndex>=0?[fixedIndex]:BEACHES.map((_,i)=>i);
@@ -40,7 +47,7 @@ async function forecast(ai){
 }
 function localNow(){return new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Amsterdam",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()).replace(" ","T")}
 function sessions(d,E,ai){
- const [name,lat,lon,orientation]=BEACHES[ai];
+ const [name,lat,lon]=BEACHES[ai];
  const m=d.m.hourly,w=d.w.hourly,daily=d.w.daily;
  const wi=new Map(w.time.map((t,i)=>[t,i]));
  const now=localNow(),out=[];
@@ -56,17 +63,21 @@ function sessions(d,E,ai){
     const j=wi.get(t);if(j===undefined)continue;
     const x={h:m.wave_height?.[i],period:m.wave_period?.[i],wd:m.wave_direction?.[i],wind:w.wind_speed_10m?.[j],dir:w.wind_direction_10m?.[j],precip:w.precipitation?.[j],code:w.weather_code?.[j]};
     if([x.h,x.period,x.wd,x.wind,x.dir].some(v=>v==null))continue;
-    const score=E.evaluate(x,orientation,ai);samples.push({...x,...score});
+    samples.push(x);
    }
    if(!samples.length)continue;
-   const representative=samples[Math.floor(samples.length/2)];
-   const avg=Math.round(samples.reduce((a,x)=>a+x.v,0)/samples.length*10)/10;
-   out.push({date,h,score:avg,x:representative,ai,name,saved:d.saved});
+   if(samples.length!==2)continue;
+   for(const [spotName,orientation] of SPOTS[ai]){
+    const scored=samples.map(x=>({...x,...E.evaluate(x,orientation,ai)}));
+    const representative=scored[Math.floor(scored.length/2)];
+    const avg=Math.round(scored.reduce((a,x)=>a+x.v,0)/scored.length*10)/10;
+    out.push({date,h,score:avg,x:representative,ai,name,spotName,saved:d.saved});
+   }
   }
  }
  return out.sort((a,b)=>b.score-a.score);
 }
-label("◉ ZEELAND SURF  /  "+(fixedIndex>=0?BEACHES[fixedIndex][0].toUpperCase():"BEST IN ZEELAND"),10,"#aaaaaa",true);
+label("~ ZEELAND SURF  /  "+(fixedIndex>=0?BEACHES[fixedIndex][0].toUpperCase():"BEST IN ZEELAND"),10,"#aaaaaa",true);
 widget.addSpacer(8);
 try{
  const E=await engine();
@@ -80,15 +91,20 @@ try{
  const sub=left.addText("SURF QUALITY");sub.font=Font.mediumSystemFont(10);sub.textColor=new Color("#aaaaaa");
  row.addSpacer();
  const right=row.addStack();right.layoutVertically();
- const date=right.addText(best.date===localNow().slice(0,10)?"TODAY":best.date.slice(5));date.font=Font.boldSystemFont(12);date.textColor=Color.white();
+ const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00+02:00")).toUpperCase();
+ const date=right.addText(dateLabel);date.font=Font.boldSystemFont(12);date.textColor=Color.white();
  const time=right.addText(pad(best.h)+":00–"+pad(best.h+2)+":00");time.font=Font.systemFont(12);time.textColor=new Color("#dddddd");
  widget.addSpacer(7);
- label(best.name+"  ·  "+E.waveCharacter(best.x).name,14,"#ffffff",true);
+ const grade=best.score>=8?"EXCELLENT":best.score>=6.5?"GOOD":best.score>=5?"FAIR":"POOR";
+ label(best.name+" · "+best.spotName,13,"#ffffff",true);
+ widget.addSpacer(3);
+ label(grade+"  /  "+E.waveCharacter(best.x).name,12,"#cccccc",true);
  widget.addSpacer(5);
  label(best.x.h.toFixed(1)+" m  ·  "+best.x.period.toFixed(1)+" s  ·  "+Math.round(best.x.wind)+" km/h",11);
  widget.addSpacer();
+ const updated=new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Amsterdam"}).format(new Date(best.saved));
  const age=Math.max(0,Math.floor((Date.now()-best.saved)/60000));
- label((age<60?"UPDATED "+age+"M AGO":"CACHED "+Math.floor(age/60)+"H AGO")+"  ·  TAP TO OPEN",9,"#888888",true);
+ label((age>90?"CACHED ":"UPDATED ")+updated+"  ·  TAP TO OPEN",9,"#888888",true);
 }catch(e){
  label("Forecast unavailable",16,"#ffffff",true);
  widget.addSpacer(7);label(String(e).slice(0,45),10);
