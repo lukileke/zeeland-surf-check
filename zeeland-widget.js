@@ -98,9 +98,12 @@ try{
    inline.font=Font.semiboldSystemFont(12);
    inline.textColor=Color.white();
   }else{
+   // Center the complete composition vertically inside the fixed iOS slot.
+   // Previous versions were top-aligned, leaving an empty strip underneath.
+   widget.addSpacer();
    const layout=widget.addStack();
    layout.layoutVertically();
-   layout.spacing=0;
+   layout.spacing=1;
    const heading=layout.addStack();
    heading.centerAlignContent();
    heading.spacing=4;
@@ -118,12 +121,12 @@ try{
    main.centerAlignContent();
    main.spacing=7;
    const score=main.addText(best.score.toFixed(1));
-   score.font=Font.systemFont(43);
+   score.font=Font.systemFont(37);
    score.textColor=Color.white();
-   score.minimumScaleFactor=0.8;
+   score.minimumScaleFactor=0.85;
    const info=main.addStack();
    info.layoutVertically();
-   info.spacing=2;
+   info.spacing=1;
    const quality=info.addText(grade);
    quality.font=Font.semiboldSystemFont(12);
    quality.textColor=Color.white();
@@ -132,6 +135,7 @@ try{
    time.textColor=Color.white();
    time.lineLimit=1;
    time.minimumScaleFactor=0.8;
+   widget.addSpacer();
   }
   // Native iOS lock-screen tint and translucency apply automatically.
  }else{
