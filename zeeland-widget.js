@@ -87,7 +87,7 @@ try{
  if(!s.length)throw Error("No available daylight forecasts");
  const best=s[0],row=widget.addStack();row.centerAlignContent();
  const left=row.addStack();left.layoutVertically();
- const big=left.addText(best.score.toFixed(1)+" / 10");big.font=Font.boldSystemFont(28);big.textColor=Color.white();
+ const big=left.addText(best.score.toFixed(1)+" / 10");big.font=Font.boldSystemFont(28);big.textColor=new Color(best.score>=8?"#55D6A0":best.score>=6.5?"#79D77C":best.score>=5?"#C9D95A":"#F18B72");
  const sub=left.addText("SURF QUALITY");sub.font=Font.mediumSystemFont(10);sub.textColor=new Color("#aaaaaa");
  row.addSpacer();
  const right=row.addStack();right.layoutVertically();
