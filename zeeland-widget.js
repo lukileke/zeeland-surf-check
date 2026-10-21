@@ -166,12 +166,14 @@ try{
  }
  const surfWave=surfWaveImage();
  function wizardHat(){
-  // Minimal conical wizard hat with one small star; original ivory outline.
+  // Restored 12D.11 wizard hat, with brim, central star and side sparkle.
   const c=new DrawContext();c.size=new Size(48,48);c.opaque=false;c.respectScreenScale=true;
-  c.setStrokeColor(ivory);c.setLineWidth(3.2);c.setLineCap("round");
-  const p=new Path();p.move(new Point(14,33));p.addLine(new Point(25,7));p.addLine(new Point(35,33));c.addPath(p);c.strokePath();
-  const brim=new Path();brim.move(new Point(8,35));brim.addCurve(new Point(40,35),new Point(4,43),new Point(44,43));c.addPath(brim);c.strokePath();
-  const star=new Path();star.move(new Point(24,17));star.addLine(new Point(26,21));star.addLine(new Point(30,23));star.addLine(new Point(26,25));star.addLine(new Point(24,29));star.addLine(new Point(22,25));star.addLine(new Point(18,23));star.addLine(new Point(22,21));star.closeSubpath();c.addPath(star);c.strokePath();
+  c.setStrokeColor(ivory);c.setLineWidth(2.8);
+  function line(pts,close=false){const p=new Path();pts.forEach(([x,y],i)=>i?p.addLine(new Point(x,y)):p.move(new Point(x,y)));if(close)p.closeSubpath();c.addPath(p);c.strokePath()}
+  line([[13,33],[24,6],[36,33]]);line([[13,33],[20,36],[29,36],[36,33]]);line([[10,35],[5,39],[12,42],[24,43],[38,42],[43,39],[38,35]]);
+  line([[17,31],[24,34],[33,31]]);
+  line([[24,15],[26,20],[30,22],[26,24],[24,28],[22,24],[18,22],[22,20]],true);
+  line([[39,9],[39,16]]);line([[36,12.5],[42,12.5]]);
   return c.getImage();
  }
  const top=widget.addStack();top.centerAlignContent();
