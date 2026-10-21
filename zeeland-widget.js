@@ -130,41 +130,63 @@ try{
   }
   // Native iOS lock-screen tint and translucency apply automatically.
  }else{
-const header=widget.addStack();header.centerAlignContent();header.spacing=6;
-const waveSymbol=SFSymbol.named("water.waves");
-if(waveSymbol){
- waveSymbol.applyFont(Font.systemFont(13));
- const waveIcon=header.addImage(waveSymbol.image);
- waveIcon.imageSize=new Size(17,13);
- waveIcon.tintColor=Color.white();
-}
-const headerText=header.addText("ZEELAND SURF  /  "+(fixedIndex>=0?BEACHES[fixedIndex][0].toUpperCase():"BEST IN ZEELAND"));
-headerText.font=Font.boldSystemFont(10);headerText.textColor=new Color("#aaaaaa");headerText.lineLimit=1;
-widget.addSpacer(8);
- const row=widget.addStack();row.centerAlignContent();
- const left=row.addStack();left.layoutVertically();
- const scoreRow=left.addStack();scoreRow.centerAlignContent();
- const big=scoreRow.addText(best.score.toFixed(1));big.font=Font.boldSystemFont(28);big.textColor=new Color(best.score>=8?"#55D6A0":best.score>=6.5?"#79D77C":best.score>=5?"#C9D95A":"#F18B72");
- const denominator=scoreRow.addText(" / 10");denominator.font=Font.boldSystemFont(28);denominator.textColor=Color.white();
- const sub=left.addText("SURF QUALITY");sub.font=Font.mediumSystemFont(10);sub.textColor=new Color("#aaaaaa");
- row.addSpacer();
- const right=row.addStack();right.layoutVertically();
- const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00+02:00")).toUpperCase();
- const date=right.addText(dateLabel);date.font=Font.boldSystemFont(12);date.textColor=Color.white();
- const time=right.addText(pad(best.h)+":00–"+pad(best.h+2)+":00");time.font=Font.systemFont(12);time.textColor=new Color("#dddddd");
- widget.addSpacer(7);
- label(best.name+" · "+best.spotName,13,"#ffffff",true);
- widget.addSpacer(3);
- const conditionRow=widget.addStack();conditionRow.centerAlignContent();
- const gradeText=conditionRow.addText(grade);gradeText.font=Font.boldSystemFont(12);gradeText.textColor=new Color(gradeColor);
- const divider=conditionRow.addText("  /  ");divider.font=Font.mediumSystemFont(12);divider.textColor=new Color("#888888");
- const characterText=conditionRow.addText(E.waveCharacter(best.x).name);characterText.font=Font.mediumSystemFont(12);characterText.textColor=new Color("#cccccc");
- widget.addSpacer(5);
- label(best.x.h.toFixed(1)+" m  ·  "+best.x.period.toFixed(1)+" s  ·  "+Math.round(best.x.wind)+" km/h",11);
+ // Golden Hour Surf Club: medium home-screen widget only.
+ const cream=new Color("#E8D7B7"),petrol=new Color("#304A42"),muted=new Color("#665E4E"),ivory=new Color("#F5E6C8");
+ const panelColor=new Color(grade==="EXCELLENT"?"#238B77":grade==="GOOD"?"#438B58":grade==="FAIR"?"#879747":"#B86952");
+ widget.backgroundColor=cream;widget.setPadding(12,13,11,13);
+ function txt(parent,value,size,color,bold=false){const t=parent.addText(String(value));t.font=bold?Font.boldSystemFont(size):Font.systemFont(size);t.textColor=color;t.lineLimit=1;t.minimumScaleFactor=0.68;return t}
+ function drawIcon(shapes,sz,stroke=false){
+   const ctx=new DrawContext();ctx.size=new Size(sz,sz);ctx.opaque=false;ctx.respectScreenScale=true;
+   ctx.setFillColor(Color.white());ctx.setStrokeColor(Color.white());ctx.setLineWidth(2);
+   for(const coords of shapes){const p=new Path();coords.forEach(([x,y],i)=>{const q=new Point(x*sz/112,y*sz/112);if(!i)p.move(q);else p.addLine(q)});p.closeSubpath();ctx.addPath(p);ctx.fillPath()}
+   return ctx.getImage();
+ }
+ // Traced from the user's supplied surf-wave silhouette, not an SF weather symbol.
+ const surfWave=drawIcon([
+ [[23,73],[37,66],[52,66],[75,72],[92,73],[105,68],[114,57],[92,65],[69,63],[60,55],[60,49],[70,44],[81,50],[81,44],[78,39],[71,35],[55,34],[43,39],[34,47],[27,57]],
+ [[18,84],[30,79],[47,78],[70,84],[85,85],[100,80],[108,72],[96,77],[80,78],[52,71],[37,71],[26,76]]
+ ],62);
+ function wizardHat(){
+  const c=new DrawContext();c.size=new Size(48,48);c.opaque=false;c.respectScreenScale=true;
+  c.setStrokeColor(ivory);c.setLineWidth(2.8);
+  function line(pts,close=false){const p=new Path();pts.forEach(([x,y],i)=>i?p.addLine(new Point(x,y)):p.move(new Point(x,y)));if(close)p.closeSubpath();c.addPath(p);c.strokePath()}
+  line([[13,33],[24,6],[36,33]]);line([[13,33],[20,36],[29,36],[36,33]]);line([[10,35],[5,39],[12,42],[24,43],[38,42],[43,39],[38,35]]);
+  line([[17,31],[24,34],[33,31]]);
+  line([[24,15],[26,20],[30,22],[26,24],[24,28],[22,24],[18,22],[22,20]],true);
+  line([[39,9],[39,16]]);line([[36,12.5],[42,12.5]]);
+  return c.getImage();
+ }
+ const top=widget.addStack();top.centerAlignContent();
+ txt(top,"ZEELAND SURF CLUB",10,petrol,true);top.addSpacer();
+ const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
+ txt(top,dateLabel,13,petrol,true);
+ widget.addSpacer(9);
+ const cards=widget.addStack();cards.spacing=7;cards.size=new Size(0,105);
+ const scoreCard=cards.addStack();scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(10,9,9,9);scoreCard.centerAlignContent();
+ const scoreLeft=scoreCard.addStack();scoreLeft.layoutVertically();scoreLeft.spacing=1;
+ const number=scoreLeft.addStack();number.bottomAlignContent();number.spacing=2;
+ txt(number,best.score.toFixed(1),29,Color.white(),true);
+ txt(number,"/10",13,Color.white(),true);
+ txt(scoreLeft,grade,20,Color.white(),true);
+ scoreCard.addSpacer(3);
+ const waveRight=scoreCard.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=1;
+ const img=waveRight.addImage(surfWave);img.imageSize=new Size(50,50);img.centerAlignImage();
+ txt(waveRight,best.x.h.toFixed(1)+" m",16,Color.white(),true);
+ cards.addSpacer();
+ const wizard=cards.addStack();wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,9,8,9);wizard.spacing=4;
+ const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=4;
+ const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(29,29);
+ txt(wizardHead,"WAVE WIZARD",10,new Color("#D6C5A5"),true);
+ const character=E.waveCharacter(best.x).name;
+ txt(wizard,character,18,ivory,true);
+ txt(wizard,best.spotName,11,cream);
+ widget.addSpacer(9);
+ const bottom=widget.addStack();bottom.centerAlignContent();
+ const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
+ txt(bottom,timeText,14,petrol,true);bottom.addSpacer();
+ txt(bottom,best.x.period.toFixed(1)+" s · "+Math.round(best.x.wind)+" km/h",11,muted,true);
  widget.addSpacer();
- const updated=new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Amsterdam"}).format(new Date(best.saved));
- const age=Math.max(0,Math.floor((Date.now()-best.saved)/60000));
- label((age>90?"CACHED ":"UPDATED ")+updated+"  ·  TAP TO OPEN",9,"#888888",true);
+
  }
 }catch(e){
  label("Forecast unavailable",16,"#ffffff",true);
