@@ -100,7 +100,7 @@ try{
   }else{
    const layout=widget.addStack();
    layout.layoutVertically();
-   layout.spacing=3;
+   layout.spacing=1;
    const eyebrow=layout.addStack();
    eyebrow.centerAlignContent();
    eyebrow.spacing=4;
@@ -114,19 +114,20 @@ try{
    const place=eyebrow.addText("ZEELAND");
    place.font=Font.semiboldSystemFont(10);
    place.textColor=new Color("#dddddd");
-   eyebrow.addSpacer(5);
+   eyebrow.addSpacer();
    const schedule=eyebrow.addText(when+" "+pad(best.h)+":00");
    schedule.font=Font.mediumSystemFont(10);
    schedule.textColor=new Color("#dddddd");
    const main=layout.addStack();
    main.centerAlignContent();
-   main.spacing=6;
+   main.spacing=7;
    const score=main.addText(best.score.toFixed(1));
-   score.font=Font.boldSystemFont(24);
+   score.font=Font.boldSystemFont(29);
    score.textColor=Color.white();
    const quality=main.addText(grade);
-   quality.font=Font.semiboldSystemFont(11);
+   quality.font=Font.semiboldSystemFont(12);
    quality.textColor=new Color("#dddddd");
+   layout.addSpacer();
   }
   // Native iOS lock-screen tint and translucency apply automatically.
  }else{
