@@ -87,35 +87,48 @@ try{
  const grade=best.score>=8?"EXCELLENT":best.score>=6.5?"GOOD":best.score>=5?"FAIR":"POOR";
  const gradeColor=grade==="EXCELLENT"?"#55D6A0":grade==="GOOD"?"#79D77C":grade==="FAIR"?"#C9D95A":"#F18B72";
  if(config.widgetFamily==="accessoryRectangular"||config.widgetFamily==="accessoryInline"){
+  // Lock Screen: typographic hierarchy, no artificial card or redundant labels.
   widget.backgroundColor=new Color("#000000",0);
   widget.setPadding(0,0,0,0);
-  const compact=widget.addStack();
-  compact.layoutVertically();
-  compact.spacing=1;
-  const top=compact.addStack();
-  top.centerAlignContent();
-  top.spacing=5;
-  const symbol=SFSymbol.named("water.waves");
-  if(symbol){
-   symbol.applyFont(Font.mediumSystemFont(13));
-   const icon=top.addImage(symbol.image);
-   icon.imageSize=new Size(17,14);
-   icon.tintColor=Color.white();
-  }
-  const score=top.addText(best.score.toFixed(1));
-  score.font=Font.boldSystemFont(21);
-  score.textColor=Color.white();
-  const gradeText=top.addText(grade);
-  gradeText.font=Font.semiboldSystemFont(10);
-  gradeText.textColor=Color.white();
+  const isInline=config.widgetFamily==="accessoryInline";
   const nowDay=localNow().slice(0,10);
-  const when=best.date===nowDay?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
-  const detail=compact.addText(when+" "+pad(best.h)+":00  ·  "+best.name);
-  detail.font=Font.mediumSystemFont(10);
-  detail.textColor=new Color("#dddddd");
-  detail.lineLimit=1;
-  detail.minimumScaleFactor=0.75;
-  // iOS determines lock screen tint and translucency.
+  const when=best.date===nowDay?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
+  if(isInline){
+   const inline=widget.addText("≋ "+best.score.toFixed(1)+" "+grade+" · "+when+" "+pad(best.h)+":00");
+   inline.font=Font.semiboldSystemFont(12);
+   inline.textColor=Color.white();
+  }else{
+   const layout=widget.addStack();
+   layout.layoutVertically();
+   layout.spacing=3;
+   const eyebrow=layout.addStack();
+   eyebrow.centerAlignContent();
+   eyebrow.spacing=4;
+   const symbol=SFSymbol.named("water.waves");
+   if(symbol){
+    symbol.applyFont(Font.mediumSystemFont(10));
+    const icon=eyebrow.addImage(symbol.image);
+    icon.imageSize=new Size(13,10);
+    icon.tintColor=new Color("#dddddd");
+   }
+   const place=eyebrow.addText("ZEELAND");
+   place.font=Font.semiboldSystemFont(10);
+   place.textColor=new Color("#dddddd");
+   eyebrow.addSpacer(5);
+   const schedule=eyebrow.addText(when+" "+pad(best.h)+":00");
+   schedule.font=Font.mediumSystemFont(10);
+   schedule.textColor=new Color("#dddddd");
+   const main=layout.addStack();
+   main.centerAlignContent();
+   main.spacing=6;
+   const score=main.addText(best.score.toFixed(1));
+   score.font=Font.boldSystemFont(24);
+   score.textColor=Color.white();
+   const quality=main.addText(grade);
+   quality.font=Font.semiboldSystemFont(11);
+   quality.textColor=new Color("#dddddd");
+  }
+  // Native iOS lock-screen tint and translucency apply automatically.
  }else{
 const header=widget.addStack();header.centerAlignContent();header.spacing=6;
 const waveSymbol=SFSymbol.named("water.waves");
