@@ -176,39 +176,38 @@ try{
  const top=widget.addStack();top.centerAlignContent();
  txt(top,"ZEELAND SURF CLUB",10,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
- txt(top,dateLabel,13,petrol,true);
- widget.addSpacer(7);
- const cards=widget.addStack();cards.spacing=8;cards.size=new Size(0,148);
- // Equal-width cards: widget medium width is approximately screen width minus 64 pt.
+ txt(top,dateLabel,12,petrol,true);
+ widget.addSpacer(5);
+ // Leave space for BOTH the top heading and the bottom forecast row.
+ const cardHeight=111;
+ const cards=widget.addStack();cards.spacing=8;cards.size=new Size(0,cardHeight);
  const cardWidth=Math.floor((Device.screenSize().width-64-26-8)/2);
- const scoreCard=cards.addStack();scoreCard.size=new Size(cardWidth,148);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(12,10,12,10);scoreCard.centerAlignContent();
+ const scoreCard=cards.addStack();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(10,10,10,10);scoreCard.centerAlignContent();
  const scoreLeft=scoreCard.addStack();scoreLeft.layoutVertically();scoreLeft.spacing=1;
- const number=scoreLeft.addStack();number.bottomAlignContent();number.spacing=2;
- txt(number,best.score.toFixed(1),38,Color.white(),true);
- txt(number,"/10",16,Color.white(),true);
- txt(scoreLeft,grade,29,Color.white(),true);
- scoreCard.addSpacer(3);
+ const number=scoreLeft.addStack();number.bottomAlignContent();number.spacing=1;
+ txt(number,best.score.toFixed(1),36,Color.white(),true);
+ txt(number,"/10",15,Color.white(),true);
+ txt(scoreLeft,grade,27,Color.white(),true);
+ scoreCard.addSpacer(4);
  const waveRight=scoreCard.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=1;
- const img=waveRight.addImage(surfWave);img.imageSize=new Size(42,42);img.centerAlignImage();
- txt(waveRight,best.x.h.toFixed(1)+" m",20,Color.white(),true);
- const wizard=cards.addStack();wizard.size=new Size(cardWidth,148);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(11,12,10,12);wizard.spacing=5;
- const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=5;
- const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(35,35);
+ const img=waveRight.addImage(surfWave);img.imageSize=new Size(40,40);img.centerAlignImage();
+ txt(waveRight,best.x.h.toFixed(1)+" m",19,Color.white(),true);
+ const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(8,11,8,11);wizard.spacing=2;
+ const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
+ const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(27,27);
  txt(wizardHead,"WAVE WIZARD",10,new Color("#D6C5A5"),true);
+ wizard.addSpacer(3);
  const verdict=E.waveCharacter(best.x);
- const character=verdict.name;
  const verdictLine=wizard.addStack();verdictLine.centerAlignContent();verdictLine.spacing=4;
- const verdictText=txt(verdictLine,character,25,ivory,true);
- verdictText.lineLimit=2;verdictText.minimumScaleFactor=0.72;
- const verdictEmoji=txt(verdictLine,verdict.emoji||"✦",23,ivory);
- verdictEmoji.minimumScaleFactor=0.9;
- txt(wizard,best.spotName,14,cream);
- widget.addSpacer(7);
+ const verdictText=txt(verdictLine,verdict.name,22,ivory,true);verdictText.lineLimit=2;verdictText.minimumScaleFactor=0.68;
+ const verdictEmoji=txt(verdictLine,verdict.emoji||"✦",30,ivory);verdictEmoji.minimumScaleFactor=0.9;
+ wizard.addSpacer(2);
+ txt(wizard,best.spotName,12,cream);
+ widget.addSpacer(5);
  const bottom=widget.addStack();bottom.centerAlignContent();
  const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
- txt(bottom,timeText,14,petrol,true);bottom.addSpacer();
+ txt(bottom,timeText,13,petrol,true);bottom.addSpacer();
  txt(bottom,best.x.period.toFixed(1)+" s · "+Math.round(best.x.wind)+" km/h",11,muted,true);
- widget.addSpacer();
 
  }
 }catch(e){
