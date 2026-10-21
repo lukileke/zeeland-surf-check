@@ -180,10 +180,11 @@ try{
  const cardGap=8;
  const cardWidth=Math.floor((Device.screenSize().width-64-26-cardGap)/2);
  const contentWidth=cardWidth*2+cardGap;
+ const edgeTextSize=12;
  const top=widget.addStack();top.size=new Size(contentWidth,0);top.centerAlignContent();
- txt(top,"ZEELAND SURF CLUB",10,petrol,true);top.addSpacer();
+ txt(top,"ZEELAND SURF CLUB",edgeTextSize,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
- txt(top,dateLabel,12,petrol,true);
+ txt(top,dateLabel,edgeTextSize,petrol,true);
  widget.addSpacer(5);
  // Leave space for BOTH the top heading and the bottom forecast row.
  const cardHeight=111;
@@ -212,8 +213,8 @@ try{
  widget.addSpacer(5);
  const bottom=widget.addStack();bottom.size=new Size(contentWidth,0);bottom.centerAlignContent();
  const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
- txt(bottom,timeText,13,petrol,true);bottom.addSpacer();
- txt(bottom,best.x.period.toFixed(1)+" s · "+Math.round(best.x.wind)+" km/h",11,muted,true);
+ txt(bottom,timeText,edgeTextSize,petrol,true);bottom.addSpacer();
+ txt(bottom,best.x.period.toFixed(1)+" s · "+Math.round(best.x.wind)+" km/h",edgeTextSize,petrol,true);
 
  }
 }catch(e){
