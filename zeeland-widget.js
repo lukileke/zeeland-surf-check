@@ -135,17 +135,34 @@ try{
  const panelColor=new Color(grade==="EXCELLENT"?"#238B77":grade==="GOOD"?"#438B58":grade==="FAIR"?"#879747":"#B86952");
  widget.backgroundColor=cream;widget.setPadding(12,13,11,13);
  function txt(parent,value,size,color,bold=false){const t=parent.addText(String(value));t.font=bold?Font.boldSystemFont(size):Font.systemFont(size);t.textColor=color;t.lineLimit=1;t.minimumScaleFactor=0.68;return t}
- function drawIcon(shapes,sz,stroke=false){
-   const ctx=new DrawContext();ctx.size=new Size(sz,sz);ctx.opaque=false;ctx.respectScreenScale=true;
-   ctx.setFillColor(Color.white());ctx.setStrokeColor(Color.white());ctx.setLineWidth(2);
-   for(const coords of shapes){const p=new Path();coords.forEach(([x,y],i)=>{const q=new Point(x*sz/112,y*sz/112);if(!i)p.move(q);else p.addLine(q)});p.closeSubpath();ctx.addPath(p);ctx.fillPath()}
-   return ctx.getImage();
+ function surfWaveImage(){
+   // Smooth cubic Bezier paths inspired by the supplied surf-break silhouette.
+   const c=new DrawContext();c.size=new Size(62,62);c.opaque=false;c.respectScreenScale=true;
+   c.setFillColor(Color.white());
+   const k=62/112;
+   const P=(x,y)=>new Point(x*k,y*k);
+   const crest=new Path();
+   crest.move(P(18,75));
+   crest.addCurve(P(36,51),P(27,65),P(32,37));
+   crest.addCurve(P(65,28),P(43,23),P(61,28));
+   crest.addCurve(P(78,48),P(78,30),P(82,39));
+   crest.addCurve(P(65,45),P(76,52),P(68,42));
+   crest.addCurve(P(52,49),P(58,40),P(55,42));
+   crest.addCurve(P(38,66),P(48,54),P(43,63));
+   crest.addCurve(P(18,75),P(30,70),P(22,74));
+   crest.closeSubpath();c.addPath(crest);c.fillPath();
+   const flow=new Path();
+   flow.move(P(16,84));
+   flow.addCurve(P(51,73),P(28,78),P(39,72));
+   flow.addCurve(P(76,80),P(61,73),P(64,82));
+   flow.addCurve(P(109,64),P(90,79),P(101,70));
+   flow.addCurve(P(78,87),P(102,83),P(91,88));
+   flow.addCurve(P(50,82),P(66,88),P(62,80));
+   flow.addCurve(P(16,89),P(37,79),P(25,86));
+   flow.closeSubpath();c.addPath(flow);c.fillPath();
+   return c.getImage();
  }
- // Traced from the user's supplied surf-wave silhouette, not an SF weather symbol.
- const surfWave=drawIcon([
- [[23,73],[37,66],[52,66],[75,72],[92,73],[105,68],[114,57],[92,65],[69,63],[60,55],[60,49],[70,44],[81,50],[81,44],[78,39],[71,35],[55,34],[43,39],[34,47],[27,57]],
- [[18,84],[30,79],[47,78],[70,84],[85,85],[100,80],[108,72],[96,77],[80,78],[52,71],[37,71],[26,76]]
- ],62);
+ const surfWave=surfWaveImage();
  function wizardHat(){
   const c=new DrawContext();c.size=new Size(48,48);c.opaque=false;c.respectScreenScale=true;
   c.setStrokeColor(ivory);c.setLineWidth(2.8);
