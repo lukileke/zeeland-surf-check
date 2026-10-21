@@ -138,31 +138,32 @@ try{
  widget.backgroundColor=cream;widget.setPadding(10,13,10,13);
  function txt(parent,value,size,color,bold=false){const t=parent.addText(String(value));t.font=bold?Font.boldSystemFont(size):Font.systemFont(size);t.textColor=color;t.lineLimit=1;t.minimumScaleFactor=0.68;return t}
  function surfWaveImage(){
-   // Smooth cubic Bezier paths inspired by the supplied surf-break silhouette.
-   const c=new DrawContext();c.size=new Size(62,62);c.opaque=false;c.respectScreenScale=true;
-   c.setFillColor(Color.white());
-   const k=62/112;
-   const P=(x,y)=>new Point(x*k,y*k);
-   const crest=new Path();
-   crest.move(P(18,75));
-   crest.addCurve(P(36,51),P(27,65),P(32,37));
-   crest.addCurve(P(65,28),P(43,23),P(61,28));
-   crest.addCurve(P(78,48),P(78,30),P(82,39));
-   crest.addCurve(P(65,45),P(76,52),P(68,42));
-   crest.addCurve(P(52,49),P(58,40),P(55,42));
-   crest.addCurve(P(38,66),P(48,54),P(43,63));
-   crest.addCurve(P(18,75),P(30,70),P(22,74));
-   crest.closeSubpath();c.addPath(crest);c.fillPath();
-   const flow=new Path();
-   flow.move(P(16,84));
-   flow.addCurve(P(51,73),P(28,78),P(39,72));
-   flow.addCurve(P(76,80),P(61,73),P(64,82));
-   flow.addCurve(P(109,64),P(90,79),P(101,70));
-   flow.addCurve(P(78,87),P(102,83),P(91,88));
-   flow.addCurve(P(50,82),P(66,88),P(62,80));
-   flow.addCurve(P(16,89),P(37,79),P(25,86));
-   flow.closeSubpath();c.addPath(flow);c.fillPath();
-   return c.getImage();
+  // Two flowing white silhouettes, rounded to match the original surf-logo reference.
+  const c=new DrawContext();c.size=new Size(62,62);c.opaque=false;c.respectScreenScale=true;
+  c.setFillColor(Color.white());
+  const k=62/112,P=(x,y)=>new Point(x*k,y*k);
+  const crest=new Path();
+  crest.move(P(18,76));
+  crest.addCurve(P(39,45),P(27,63),P(31,52));
+  crest.addCurve(P(59,33),P(45,37),P(53,33));
+  crest.addCurve(P(79,40),P(69,30),P(79,32));
+  crest.addCurve(P(75,53),P(81,46),P(79,52));
+  crest.addCurve(P(65,50),P(71,55),P(65,54));
+  crest.addCurve(P(68,43),P(65,47),P(66,44));
+  crest.addCurve(P(53,48),P(63,38),P(57,40));
+  crest.addCurve(P(37,65),P(47,54),P(43,60));
+  crest.addCurve(P(18,76),P(30,70),P(23,74));
+  crest.closeSubpath();c.addPath(crest);c.fillPath();
+  const flow=new Path();
+  flow.move(P(16,85));
+  flow.addCurve(P(47,74),P(28,78),P(37,73));
+  flow.addCurve(P(75,79),P(60,74),P(65,80));
+  flow.addCurve(P(109,62),P(91,79),P(103,69));
+  flow.addCurve(P(79,89),P(101,82),P(91,89));
+  flow.addCurve(P(47,83),P(65,88),P(59,80));
+  flow.addCurve(P(16,89),P(34,80),P(24,86));
+  flow.closeSubpath();c.addPath(flow);c.fillPath();
+  return c.getImage();
  }
  const surfWave=surfWaveImage();
  function wizardHat(){
@@ -189,29 +190,29 @@ try{
  // Leave space for BOTH the top heading and the bottom forecast row.
  const cardHeight=111;
  const cards=widget.addStack();cards.spacing=cardGap;cards.size=new Size(contentWidth,cardHeight);
- const scoreCard=cards.addStack();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(10,10,10,10);scoreCard.centerAlignContent();
- const scoreLeft=scoreCard.addStack();scoreLeft.layoutVertically();scoreLeft.spacing=1;
+ // Shared inner margins and a matching left-content/right-symbol composition.
+ const innerPad=11;
+ const scoreCard=cards.addStack();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(9,innerPad,9,innerPad);scoreCard.centerAlignContent();
+ const scoreLeft=scoreCard.addStack();scoreLeft.layoutVertically();scoreLeft.spacing=2;
  const number=scoreLeft.addStack();number.bottomAlignContent();number.spacing=1;
  txt(number,best.score.toFixed(1),36,Color.white(),true);
  txt(number,"/10",15,Color.white(),true);
  txt(scoreLeft,grade,27,Color.white(),true);
- // Centre the wave + height together in the free space after the score.
  const waveArea=scoreCard.addStack();waveArea.centerAlignContent();waveArea.addSpacer();
- const waveRight=waveArea.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=1;
- const img=waveRight.addImage(surfWave);img.imageSize=new Size(40,40);img.centerAlignImage();
+ const waveRight=waveArea.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=2;
+ const img=waveRight.addImage(surfWave);img.imageSize=new Size(42,42);img.centerAlignImage();
  txt(waveRight,best.x.h.toFixed(1)+" m",19,Color.white(),true);
  waveArea.addSpacer();
- const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(8,11,8,11);wizard.spacing=2;
+ const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,innerPad,9,innerPad);wizard.spacing=2;
  const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
  const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(27,27);
  txt(wizardHead,"WAVE WIZARD",10,new Color("#D6C5A5"),true);
- wizard.addSpacer(3);
+ wizard.addSpacer(2);
  const verdict=E.waveCharacter(best.x);
  const verdictLine=wizard.addStack();verdictLine.centerAlignContent();verdictLine.spacing=0;
- const verdictText=txt(verdictLine,verdict.name,22,ivory,true);verdictText.lineLimit=2;verdictText.minimumScaleFactor=0.62;
- // Flexible space centres the emoji within the area between the verdict text and right inset.
+ const verdictText=txt(verdictLine,verdict.name,21,ivory,true);verdictText.lineLimit=2;verdictText.minimumScaleFactor=0.65;
  const emojiSpace=verdictLine.addStack();emojiSpace.centerAlignContent();emojiSpace.addSpacer();
- const verdictEmoji=txt(emojiSpace,verdict.emoji||"✦",42,ivory);verdictEmoji.minimumScaleFactor=0.9;
+ const verdictEmoji=txt(emojiSpace,verdict.emoji||"✦",38,ivory);verdictEmoji.minimumScaleFactor=0.85;
  emojiSpace.addSpacer();
  wizard.addSpacer(2);
  txt(wizard,best.spotName,12,cream);
