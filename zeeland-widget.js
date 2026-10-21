@@ -77,7 +77,16 @@ function sessions(d,E,ai){
  }
  return out.sort((a,b)=>b.score-a.score);
 }
-label("~ ZEELAND SURF  /  "+(fixedIndex>=0?BEACHES[fixedIndex][0].toUpperCase():"BEST IN ZEELAND"),10,"#aaaaaa",true);
+const header=widget.addStack();header.centerAlignContent();header.spacing=6;
+const waveSymbol=SFSymbol.named("water.waves");
+if(waveSymbol){
+ waveSymbol.applyFont(Font.systemFont(13));
+ const waveIcon=header.addImage(waveSymbol.image);
+ waveIcon.imageSize=new Size(17,13);
+ waveIcon.tintColor=Color.white();
+}
+const headerText=header.addText("ZEELAND SURF  /  "+(fixedIndex>=0?BEACHES[fixedIndex][0].toUpperCase():"BEST IN ZEELAND"));
+headerText.font=Font.boldSystemFont(10);headerText.textColor=new Color("#aaaaaa");headerText.lineLimit=1;
 widget.addSpacer(8);
 try{
  const E=await engine();
