@@ -98,14 +98,14 @@ try{
    inline.font=Font.semiboldSystemFont(12);
    inline.textColor=Color.white();
   }else{
-   // Use the whole rectangular slot: edge-to-edge header and split lower row.
-   // Avoid vertical spacers: they shrank the content in the previous layout.
+   // Match the adjacent World Clock: one clear heading, one large value.
+   // Keep timing in the home-screen widget, where there is room for it.
    const layout=widget.addStack();
    layout.layoutVertically();
    layout.spacing=0;
    const heading=layout.addStack();
    heading.centerAlignContent();
-   heading.spacing=4;
+   heading.spacing=5;
    const symbol=SFSymbol.named("water.waves");
    if(symbol){
     symbol.applyFont(Font.mediumSystemFont(12));
@@ -113,27 +113,20 @@ try{
     wave.imageSize=new Size(15,12);
     wave.tintColor=Color.white();
    }
-   const name=heading.addText("ZEELAND SURF");
-   name.font=Font.semiboldSystemFont(12);
+   const name=heading.addText("Zeeland Surf");
+   name.font=Font.semiboldSystemFont(14);
    name.textColor=Color.white();
    const main=layout.addStack();
    main.centerAlignContent();
+   main.spacing=8;
    const score=main.addText(best.score.toFixed(1));
-   score.font=Font.mediumSystemFont(43);
+   score.font=Font.lightSystemFont(44);
    score.textColor=Color.white();
    score.minimumScaleFactor=0.8;
-   main.addSpacer(6);
-   const info=main.addStack();
-   info.layoutVertically();
-   info.spacing=2;
-   const quality=info.addText(grade);
-   quality.font=Font.boldSystemFont(12);
+   const quality=main.addText(grade);
+   quality.font=Font.semiboldSystemFont(12);
    quality.textColor=Color.white();
-   const time=info.addText(when+" "+pad(best.h)+":00");
-   time.font=Font.mediumSystemFont(11);
-   time.textColor=Color.white();
-   time.lineLimit=1;
-   time.minimumScaleFactor=0.8;
+   quality.lineLimit=1;
   }
   // Native iOS lock-screen tint and translucency apply automatically.
  }else{
