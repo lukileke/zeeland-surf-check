@@ -134,7 +134,7 @@ try{
  const cream=new Color("#E8D7B7"),petrol=new Color("#304A42"),muted=new Color("#665E4E"),ivory=new Color("#F5E6C8");
  // Quality colour follows the actual numeric score, with a distinct band for each verdict.
  const qualityScore=best.score;
- const panelColor=new Color(qualityScore>=8?"#167C70":qualityScore>=6.5?"#398B58":qualityScore>=4.5?"#879747":qualityScore>=3?"#B78343":"#A85B52");
+ const panelColor=new Color(qualityScore>=8?"#188344":qualityScore>=6.5?"#398B58":qualityScore>=4.5?"#879747":qualityScore>=3?"#B78343":"#A85B52");
  widget.backgroundColor=cream;widget.setPadding(10,13,10,13);
  function txt(parent,value,size,color,bold=false){const t=parent.addText(String(value));t.font=bold?Font.boldSystemFont(size):Font.systemFont(size);t.textColor=color;t.lineLimit=1;t.minimumScaleFactor=0.68;return t}
  function surfWaveImage(){
@@ -176,15 +176,18 @@ try{
   line([[39,9],[39,16]]);line([[36,12.5],[42,12.5]]);
   return c.getImage();
  }
- const top=widget.addStack();top.centerAlignContent();
+ // Header, both panels and footer share the same horizontal edges.
+ const cardGap=8;
+ const cardWidth=Math.floor((Device.screenSize().width-64-26-cardGap)/2);
+ const contentWidth=cardWidth*2+cardGap;
+ const top=widget.addStack();top.size=new Size(contentWidth,0);top.centerAlignContent();
  txt(top,"ZEELAND SURF CLUB",10,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
  txt(top,dateLabel,12,petrol,true);
  widget.addSpacer(5);
  // Leave space for BOTH the top heading and the bottom forecast row.
  const cardHeight=111;
- const cards=widget.addStack();cards.spacing=8;cards.size=new Size(0,cardHeight);
- const cardWidth=Math.floor((Device.screenSize().width-64-26-8)/2);
+ const cards=widget.addStack();cards.spacing=cardGap;cards.size=new Size(contentWidth,cardHeight);
  const scoreCard=cards.addStack();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(10,10,10,10);scoreCard.centerAlignContent();
  const scoreLeft=scoreCard.addStack();scoreLeft.layoutVertically();scoreLeft.spacing=1;
  const number=scoreLeft.addStack();number.bottomAlignContent();number.spacing=1;
@@ -207,7 +210,7 @@ try{
  wizard.addSpacer(2);
  txt(wizard,best.spotName,12,cream);
  widget.addSpacer(5);
- const bottom=widget.addStack();bottom.centerAlignContent();
+ const bottom=widget.addStack();bottom.size=new Size(contentWidth,0);bottom.centerAlignContent();
  const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
  txt(bottom,timeText,13,petrol,true);bottom.addSpacer();
  txt(bottom,best.x.period.toFixed(1)+" s · "+Math.round(best.x.wind)+" km/h",11,muted,true);
