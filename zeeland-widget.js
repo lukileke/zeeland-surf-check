@@ -100,34 +100,36 @@ try{
   }else{
    const layout=widget.addStack();
    layout.layoutVertically();
-   layout.spacing=1;
-   const eyebrow=layout.addStack();
-   eyebrow.centerAlignContent();
-   eyebrow.spacing=4;
+   layout.spacing=0;
+   const heading=layout.addStack();
+   heading.centerAlignContent();
+   heading.spacing=4;
    const symbol=SFSymbol.named("water.waves");
    if(symbol){
-    symbol.applyFont(Font.mediumSystemFont(10));
-    const icon=eyebrow.addImage(symbol.image);
-    icon.imageSize=new Size(13,10);
-    icon.tintColor=new Color("#dddddd");
+    symbol.applyFont(Font.mediumSystemFont(12));
+    const wave=heading.addImage(symbol.image);
+    wave.imageSize=new Size(15,12);
+    wave.tintColor=Color.white();
    }
-   const place=eyebrow.addText("ZEELAND");
-   place.font=Font.semiboldSystemFont(10);
-   place.textColor=new Color("#dddddd");
-   eyebrow.addSpacer();
-   const schedule=eyebrow.addText(when+" "+pad(best.h)+":00");
-   schedule.font=Font.mediumSystemFont(10);
-   schedule.textColor=new Color("#dddddd");
+   const name=heading.addText("Zeeland Surf");
+   name.font=Font.semiboldSystemFont(13);
+   name.textColor=Color.white();
    const main=layout.addStack();
    main.centerAlignContent();
    main.spacing=7;
    const score=main.addText(best.score.toFixed(1));
-   score.font=Font.boldSystemFont(29);
+   score.font=Font.systemFont(32);
    score.textColor=Color.white();
-   const quality=main.addText(grade);
-   quality.font=Font.semiboldSystemFont(12);
-   quality.textColor=new Color("#dddddd");
-   layout.addSpacer();
+   const info=main.addStack();
+   info.layoutVertically();
+   info.spacing=1;
+   const quality=info.addText(grade);
+   quality.font=Font.semiboldSystemFont(11);
+   quality.textColor=Color.white();
+   const time=info.addText(when+" "+pad(best.h)+":00");
+   time.font=Font.mediumSystemFont(10);
+   time.textColor=new Color("#dddddd");
+   time.lineLimit=1;
   }
   // Native iOS lock-screen tint and translucency apply automatically.
  }else{
