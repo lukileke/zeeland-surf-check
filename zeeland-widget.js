@@ -116,20 +116,22 @@ try{
    name.textColor=Color.white();
    const main=layout.addStack();
    main.centerAlignContent();
-   main.spacing=7;
+   main.spacing=5;
    const score=main.addText(best.score.toFixed(1));
-   score.font=Font.systemFont(32);
+   score.font=Font.systemFont(35);
    score.textColor=Color.white();
    const info=main.addStack();
    info.layoutVertically();
    info.spacing=1;
    const quality=info.addText(grade);
-   quality.font=Font.semiboldSystemFont(11);
+   quality.font=Font.semiboldSystemFont(12);
    quality.textColor=Color.white();
    const time=info.addText(when+" "+pad(best.h)+":00");
-   time.font=Font.mediumSystemFont(10);
-   time.textColor=new Color("#dddddd");
+   time.font=Font.mediumSystemFont(11);
+   time.textColor=Color.white();
    time.lineLimit=1;
+   time.minimumScaleFactor=0.8;
+   layout.addSpacer();
   }
   // Native iOS lock-screen tint and translucency apply automatically.
  }else{
