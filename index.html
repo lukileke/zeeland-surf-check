@@ -58,6 +58,7 @@ function boardBestWindow(){
  options.sort((a,b)=>boardMatch(b.b.s)-boardMatch(a.b.s));slotIndex=options[0].i;
  render();renderBoardWizard();
 }
+function pad(n){return String(n).padStart(2,'0')}
 function renderBoardWizard(){
  $('ridingStyle').value=ridingStyle;$('boardType').value=boardType;
  const opts=(items,current)=>items.map((x,i)=>`<option value="${i}" ${i===current?'selected':''}>${x}</option>`).join('');
