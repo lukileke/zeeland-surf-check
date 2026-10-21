@@ -90,22 +90,32 @@ try{
   widget.backgroundColor=new Color("#000000",0);
   widget.setPadding(0,0,0,0);
   const compact=widget.addStack();
-  compact.centerAlignContent();
-  compact.spacing=5;
+  compact.layoutVertically();
+  compact.spacing=1;
+  const top=compact.addStack();
+  top.centerAlignContent();
+  top.spacing=5;
   const symbol=SFSymbol.named("water.waves");
   if(symbol){
    symbol.applyFont(Font.mediumSystemFont(13));
-   const icon=compact.addImage(symbol.image);
-   icon.imageSize=new Size(16,14);
+   const icon=top.addImage(symbol.image);
+   icon.imageSize=new Size(17,14);
    icon.tintColor=Color.white();
   }
-  const score=compact.addText(best.score.toFixed(1));
-  score.font=Font.boldSystemFont(18);
+  const score=top.addText(best.score.toFixed(1));
+  score.font=Font.boldSystemFont(21);
   score.textColor=Color.white();
-  const gradeText=compact.addText(grade);
-  gradeText.font=Font.semiboldSystemFont(11);
+  const gradeText=top.addText(grade);
+  gradeText.font=Font.semiboldSystemFont(10);
   gradeText.textColor=Color.white();
-  // Lock Screen widgets are tinted by iOS, so use native monochrome.
+  const nowDay=localNow().slice(0,10);
+  const when=best.date===nowDay?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
+  const detail=compact.addText(when+" "+pad(best.h)+":00  ·  "+best.name);
+  detail.font=Font.mediumSystemFont(10);
+  detail.textColor=new Color("#dddddd");
+  detail.lineLimit=1;
+  detail.minimumScaleFactor=0.75;
+  // iOS determines lock screen tint and translucency.
  }else{
 const header=widget.addStack();header.centerAlignContent();header.spacing=6;
 const waveSymbol=SFSymbol.named("water.waves");
