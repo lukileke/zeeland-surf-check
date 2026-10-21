@@ -98,12 +98,11 @@ try{
    inline.font=Font.semiboldSystemFont(12);
    inline.textColor=Color.white();
   }else{
-   // Center the complete composition vertically inside the fixed iOS slot.
-   // Previous versions were top-aligned, leaving an empty strip underneath.
-   widget.addSpacer();
+   // Use the whole rectangular slot: edge-to-edge header and split lower row.
+   // Avoid vertical spacers: they shrank the content in the previous layout.
    const layout=widget.addStack();
    layout.layoutVertically();
-   layout.spacing=1;
+   layout.spacing=0;
    const heading=layout.addStack();
    heading.centerAlignContent();
    heading.spacing=4;
@@ -114,28 +113,27 @@ try{
     wave.imageSize=new Size(15,12);
     wave.tintColor=Color.white();
    }
-   const name=heading.addText("Zeeland Surf");
-   name.font=Font.semiboldSystemFont(13);
+   const name=heading.addText("ZEELAND SURF");
+   name.font=Font.semiboldSystemFont(12);
    name.textColor=Color.white();
    const main=layout.addStack();
    main.centerAlignContent();
-   main.spacing=7;
    const score=main.addText(best.score.toFixed(1));
-   score.font=Font.systemFont(37);
+   score.font=Font.mediumSystemFont(43);
    score.textColor=Color.white();
-   score.minimumScaleFactor=0.85;
+   score.minimumScaleFactor=0.8;
+   main.addSpacer(6);
    const info=main.addStack();
    info.layoutVertically();
-   info.spacing=1;
+   info.spacing=2;
    const quality=info.addText(grade);
-   quality.font=Font.semiboldSystemFont(12);
+   quality.font=Font.boldSystemFont(12);
    quality.textColor=Color.white();
    const time=info.addText(when+" "+pad(best.h)+":00");
    time.font=Font.mediumSystemFont(11);
    time.textColor=Color.white();
    time.lineLimit=1;
    time.minimumScaleFactor=0.8;
-   widget.addSpacer();
   }
   // Native iOS lock-screen tint and translucency apply automatically.
  }else{
