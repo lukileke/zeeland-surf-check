@@ -195,10 +195,12 @@ try{
  txt(number,best.score.toFixed(1),36,Color.white(),true);
  txt(number,"/10",15,Color.white(),true);
  txt(scoreLeft,grade,27,Color.white(),true);
- scoreCard.addSpacer(4);
- const waveRight=scoreCard.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=1;
+ // Centre the wave + height together in the free space after the score.
+ const waveArea=scoreCard.addStack();waveArea.centerAlignContent();waveArea.addSpacer();
+ const waveRight=waveArea.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=1;
  const img=waveRight.addImage(surfWave);img.imageSize=new Size(40,40);img.centerAlignImage();
  txt(waveRight,best.x.h.toFixed(1)+" m",19,Color.white(),true);
+ waveArea.addSpacer();
  const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(8,11,8,11);wizard.spacing=2;
  const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
  const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(27,27);
