@@ -133,7 +133,7 @@ try{
  // Golden Hour Surf Club: medium home-screen widget only.
  const cream=new Color("#E8D7B7"),petrol=new Color("#304A42"),muted=new Color("#665E4E"),ivory=new Color("#F5E6C8");
  const panelColor=new Color(grade==="EXCELLENT"?"#238B77":grade==="GOOD"?"#438B58":grade==="FAIR"?"#879747":"#B86952");
- widget.backgroundColor=cream;widget.setPadding(12,13,11,13);
+ widget.backgroundColor=cream;widget.setPadding(10,13,10,13);
  function txt(parent,value,size,color,bold=false){const t=parent.addText(String(value));t.font=bold?Font.boldSystemFont(size):Font.systemFont(size);t.textColor=color;t.lineLimit=1;t.minimumScaleFactor=0.68;return t}
  function surfWaveImage(){
    // Smooth cubic Bezier paths inspired by the supplied surf-break silhouette.
@@ -177,27 +177,27 @@ try{
  txt(top,"ZEELAND SURF CLUB",10,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
  txt(top,dateLabel,13,petrol,true);
- widget.addSpacer(9);
- const cards=widget.addStack();cards.spacing=7;cards.size=new Size(0,105);
- const scoreCard=cards.addStack();scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(10,9,9,9);scoreCard.centerAlignContent();
+ widget.addSpacer(7);
+ const cards=widget.addStack();cards.spacing=7;cards.size=new Size(0,140);
+ const scoreCard=cards.addStack();scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(12,10,11,10);scoreCard.centerAlignContent();
  const scoreLeft=scoreCard.addStack();scoreLeft.layoutVertically();scoreLeft.spacing=1;
  const number=scoreLeft.addStack();number.bottomAlignContent();number.spacing=2;
- txt(number,best.score.toFixed(1),29,Color.white(),true);
- txt(number,"/10",13,Color.white(),true);
- txt(scoreLeft,grade,20,Color.white(),true);
+ txt(number,best.score.toFixed(1),34,Color.white(),true);
+ txt(number,"/10",15,Color.white(),true);
+ txt(scoreLeft,grade,24,Color.white(),true);
  scoreCard.addSpacer(3);
  const waveRight=scoreCard.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=1;
- const img=waveRight.addImage(surfWave);img.imageSize=new Size(50,50);img.centerAlignImage();
- txt(waveRight,best.x.h.toFixed(1)+" m",16,Color.white(),true);
+ const img=waveRight.addImage(surfWave);img.imageSize=new Size(56,56);img.centerAlignImage();
+ txt(waveRight,best.x.h.toFixed(1)+" m",19,Color.white(),true);
  cards.addSpacer();
- const wizard=cards.addStack();wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,9,8,9);wizard.spacing=4;
+ const wizard=cards.addStack();wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(12,10,10,10);wizard.spacing=6;
  const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=4;
- const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(29,29);
- txt(wizardHead,"WAVE WIZARD",10,new Color("#D6C5A5"),true);
+ const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(34,34);
+ txt(wizardHead,"WAVE WIZARD",11,new Color("#D6C5A5"),true);
  const character=E.waveCharacter(best.x).name;
- txt(wizard,character,18,ivory,true);
- txt(wizard,best.spotName,11,cream);
- widget.addSpacer(9);
+ txt(wizard,character,20,ivory,true);
+ txt(wizard,best.spotName,13,cream);
+ widget.addSpacer(7);
  const bottom=widget.addStack();bottom.centerAlignContent();
  const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
  txt(bottom,timeText,14,petrol,true);bottom.addSpacer();
