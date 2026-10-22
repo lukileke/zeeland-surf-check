@@ -210,7 +210,7 @@ function applyLanguage(){
  try{
   document.documentElement.lang=siteLanguage;
   const button=document.getElementById('languageToggle');
-  if(button){button.textContent=siteLanguage==='es'?'EN':'ES';button.title=siteLanguage==='es'?'Read in English':'Leer en español'}
+  if(button){const nextLabel=siteLanguage==='es'?'EN':'ES';if(button.textContent!==nextLabel)button.textContent=nextLabel;button.title=siteLanguage==='es'?'Read in English':'Leer en español'}
   const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
   let node;
   while((node=walker.nextNode())){
