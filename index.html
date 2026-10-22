@@ -200,7 +200,7 @@ const originalNodes=new WeakMap();
 function translateText(source){
  let output=source;
  for(const [english,spanish] of languagePhrases){
-  const escaped=english.replace(/[.*+?^${}()|[\]\\]/g,'\\</body></html>');
+  const escaped=english.replace(/[.*+?^\u0024{}()|[\]\\]/g,'\\const escaped=english.replace(/[.*+?^${}()|[\]\\]/g,'\\</body></html>');');
   try{output=output.replace(new RegExp('(?<![\\p{L}])'+escaped+'(?![\\p{L}])','giu'),spanish)}catch(e){output=output.split(english).join(spanish)}
  }
  return output;
