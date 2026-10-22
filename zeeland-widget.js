@@ -193,15 +193,16 @@ try{
  const white=Color.white(), glass=new Color("#D8E6E0",0.82);
  widget.backgroundColor=glass;widget.setPadding(10,10,10,10);
  const edgeTextSize=10,cardGap=8,cardHeight=118,innerPad=10;
- const cardWidth=Math.floor((Device.screenSize().width-72-cardGap)/2);
+ // Conservative medium-widget width: the screen is wider than the widget itself.
+ const cardWidth=Math.floor((Device.screenSize().width-96-cardGap)/2);
  const contentWidth=cardWidth*2+cardGap;
  const edgeInset=0;
- const top=widget.addStack();top.size=new Size(contentWidth,0);top.setPadding(0,edgeInset,0,edgeInset);top.centerAlignContent();
+ const topWrap=widget.addStack();topWrap.addSpacer();const top=topWrap.addStack();top.size=new Size(contentWidth,0);top.setPadding(0,edgeInset,0,edgeInset);top.centerAlignContent();
  txt(top,"ZEELAND SURF CLUB",edgeTextSize,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
- txt(top,dateLabel,edgeTextSize,petrol,true);
+ txt(top,dateLabel,edgeTextSize,petrol,true);topWrap.addSpacer();
  widget.addSpacer(5);
- const cards=widget.addStack();cards.size=new Size(contentWidth,cardHeight);cards.spacing=cardGap;
+ const cardsWrap=widget.addStack();cardsWrap.addSpacer();const cards=cardsWrap.addStack();cards.size=new Size(contentWidth,cardHeight);cards.spacing=cardGap;
  const scoreCard=cards.addStack();scoreCard.layoutVertically();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(innerPad,innerPad,innerPad,innerPad);
  const scoreMain=scoreCard.addStack();scoreMain.size=new Size(cardWidth-innerPad*2,66);scoreMain.centerAlignContent();
  const scoreInfo=scoreMain.addStack();scoreInfo.layoutVertically();
@@ -218,10 +219,9 @@ try{
  txt(waveBadge,"WAVE HEIGHT",9,white,true);waveBadge.addSpacer();
  txt(waveBadge,best.x.h.toFixed(1)+" M",9,white,true);
  const wizard=cards.addStack();wizard.layoutVertically();wizard.size=new Size(cardWidth,cardHeight);wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(innerPad,innerPad,innerPad,innerPad);
- const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
+ const wizardHead=wizard.addStack();wizardHead.size=new Size(cardWidth-innerPad*2,31);wizardHead.centerAlignContent();wizardHead.spacing=3;
  const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(36,31);
  txt(wizardHead,"WAVE WIZARD",10,white,true);
- wizard.addSpacer();
  const verdict=E.waveCharacter(best.x);
  const verdictRow=wizard.addStack();verdictRow.size=new Size(cardWidth-innerPad*2,39);verdictRow.centerAlignContent();verdictRow.spacing=3;
  const name=verdict.name.toUpperCase();
@@ -239,17 +239,18 @@ try{
  const nameColumn=verdictRow.addStack();nameColumn.layoutVertically();nameColumn.centerAlignContent();nameColumn.spacing=0;
  for(const line of lines){if(line){const t=txt(nameColumn,line,longName?14:20,white,true);t.minimumScaleFactor=0.7;}}
  const verdictEmoji=txt(verdictRow,verdict.emoji||"🌊",27,white);verdictEmoji.minimumScaleFactor=1;
- wizard.addSpacer();
+ wizard.addSpacer(1);
  // Both badges use the exact same geometry and internal insets.
  const spotBadge=wizard.addStack();spotBadge.size=new Size(badgeWidth,badgeHeight);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(0,badgeInset,0,badgeInset);spotBadge.centerAlignContent();spotBadge.spacing=4;
  const pin=SFSymbol.named("mappin");if(pin){pin.applyFont(Font.semiboldSystemFont(10));const pi=spotBadge.addImage(pin.image);pi.imageSize=new Size(10,11);pi.tintColor=white;}
  const spotText=txt(spotBadge,best.spotName.toUpperCase(),9,white,true);spotText.minimumScaleFactor=0.7;
  spotBadge.addSpacer();
+ cardsWrap.addSpacer();
  widget.addSpacer(5);
- const bottom=widget.addStack();bottom.size=new Size(contentWidth,0);bottom.setPadding(0,edgeInset,0,edgeInset);bottom.centerAlignContent();
+ const bottomWrap=widget.addStack();bottomWrap.addSpacer();const bottom=bottomWrap.addStack();bottom.size=new Size(contentWidth,0);bottom.setPadding(0,edgeInset,0,edgeInset);bottom.centerAlignContent();
  const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
  txt(bottom,timeText,edgeTextSize,petrol,true);bottom.addSpacer();
- txt(bottom,best.x.period.toFixed(1)+" s · "+Math.round(best.x.wind)+" km/h",edgeTextSize,petrol,true);
+ txt(bottom,best.x.period.toFixed(1)+" s · "+Math.round(best.x.wind)+" km/h",edgeTextSize,petrol,true);bottomWrap.addSpacer();
 
  }
 }catch(e){
