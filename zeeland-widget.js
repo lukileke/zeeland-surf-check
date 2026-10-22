@@ -168,14 +168,12 @@ try{
  }
  const surfWave=surfWaveImage();
  function wizardHat(){
-  // Restored 12D.11 wizard hat, with brim, central star and side sparkle.
+  // Simple outlined conical hat: no internal decoration, only an exterior sparkle.
   const c=new DrawContext();c.size=new Size(48,48);c.opaque=false;c.respectScreenScale=true;
-  c.setStrokeColor(ivory);c.setLineWidth(2.8);
-  function line(pts,close=false){const p=new Path();pts.forEach(([x,y],i)=>i?p.addLine(new Point(x,y)):p.move(new Point(x,y)));if(close)p.closeSubpath();c.addPath(p);c.strokePath()}
-  line([[13,33],[24,6],[36,33]]);line([[13,33],[20,36],[29,36],[36,33]]);line([[10,35],[5,39],[12,42],[24,43],[38,42],[43,39],[38,35]]);
-  line([[17,31],[24,34],[33,31]]);
-  line([[24,15],[26,20],[30,22],[26,24],[24,28],[22,24],[18,22],[22,20]],true);
-  line([[39,9],[39,16]]);line([[36,12.5],[42,12.5]]);
+  c.setStrokeColor(ivory);c.setLineWidth(3);
+  const cone=new Path();cone.move(new Point(13,33));cone.addCurve(new Point(25,7),new Point(18,24),new Point(22,12));cone.addCurve(new Point(35,33),new Point(28,17),new Point(32,26));c.addPath(cone);c.strokePath();
+  const brim=new Path();brim.move(new Point(9,35));brim.addCurve(new Point(39,35),new Point(16,43),new Point(33,43));c.addPath(brim);c.strokePath();
+  const sparkle=new Path();sparkle.move(new Point(40,10));sparkle.addLine(new Point(40,18));sparkle.move(new Point(36,14));sparkle.addLine(new Point(44,14));c.addPath(sparkle);c.strokePath();
   return c.getImage();
  }
  // Match the proven medium-widget geometry; no oversized fixed 360/329 pt canvas.
@@ -186,31 +184,36 @@ try{
  txt(top,"ZEELAND SURF CLUB",edgeTextSize,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
  txt(top,dateLabel,edgeTextSize,petrol,true);
- widget.addSpacer(5);
+ widget.addSpacer(10);
  const cards=widget.addStack();cards.spacing=cardGap;cards.size=new Size(contentWidth,cardHeight);
- const scoreCard=cards.addStack();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(9,innerPad,9,innerPad);scoreCard.centerAlignContent();
- // Two explicitly sized columns: the score always has room for its /10 and GOOD label.
+ const scoreCard=cards.addStack();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(innerPad,innerPad,innerPad,innerPad);
  const scoreAvailable=cardWidth-2*innerPad;
  const waveColumnWidth=53;
- const scoreLeft=scoreCard.addStack();scoreLeft.size=new Size(scoreAvailable-waveColumnWidth,0);scoreLeft.layoutVertically();scoreLeft.spacing=3;
- const number=scoreLeft.addStack();number.bottomAlignContent();number.spacing=1;
- const scoreNum=txt(number,best.score.toFixed(1),30,Color.white(),true);scoreNum.minimumScaleFactor=0.75;
- txt(number,"/10",12,Color.white(),true);
- const gradeText=txt(scoreLeft,grade,22,Color.white(),true);gradeText.minimumScaleFactor=0.75;
- const waveRight=scoreCard.addStack();waveRight.size=new Size(waveColumnWidth,0);waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=2;
- // Lower the wave icon group to share the verdict emoji visual centre.
- waveRight.addSpacer(16);
- const waveEmoji=txt(waveRight,"🌊",30,Color.white());waveEmoji.centerAlignText();
- const waveHeight=txt(waveRight,best.x.h.toFixed(1)+" m",16,Color.white(),true);waveHeight.centerAlignText();
- const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,innerPad,9,innerPad);wizard.spacing=2;
- const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
+ // Identical card structure: top line, centre line, bottom line.
+ const scoreGrid=scoreCard.addStack();scoreGrid.layoutVertically();scoreGrid.size=new Size(scoreAvailable,cardHeight-2*innerPad);
+ const scoreTop=scoreGrid.addStack();scoreTop.size=new Size(scoreAvailable,28);scoreTop.bottomAlignContent();
+ const scoreNum=txt(scoreTop,best.score.toFixed(1),30,Color.white(),true);scoreNum.minimumScaleFactor=0.75;
+ txt(scoreTop,"/10",12,Color.white(),true);
+ scoreGrid.addSpacer();
+ const scoreMid=scoreGrid.addStack();scoreMid.size=new Size(scoreAvailable,38);scoreMid.centerAlignContent();
+ const gradeText=txt(scoreMid,grade,22,Color.white(),true);gradeText.minimumScaleFactor=0.75;
+ scoreMid.addSpacer();
+ const waveMid=scoreMid.addStack();waveMid.size=new Size(waveColumnWidth,38);waveMid.centerAlignContent();
+ const waveEmoji=txt(waveMid,"🌊",30,Color.white());waveEmoji.centerAlignText();
+ scoreGrid.addSpacer();
+ const scoreBottom=scoreGrid.addStack();scoreBottom.size=new Size(scoreAvailable,20);scoreBottom.centerAlignContent();
+ scoreBottom.addSpacer();
+ const waveHeight=txt(scoreBottom,best.x.h.toFixed(1)+" m",16,Color.white(),true);waveHeight.centerAlignText();
+ const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(innerPad,innerPad,innerPad,innerPad);
+ const wizardWidth=cardWidth-2*innerPad;
+ const wizardHead=wizard.addStack();wizardHead.size=new Size(wizardWidth,28);wizardHead.centerAlignContent();wizardHead.spacing=3;
  const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(25,25);
  txt(wizardHead,"WAVE WIZARD",10,new Color("#D6C5A5"),true);
- wizard.addSpacer(0);
+ wizard.addSpacer();
  const verdict=E.waveCharacter(best.x);
- const verdictLine=wizard.addStack();verdictLine.size=new Size(cardWidth-2*innerPad,0);verdictLine.centerAlignContent();verdictLine.spacing=0;
+ const verdictLine=wizard.addStack();verdictLine.size=new Size(wizardWidth,38);verdictLine.centerAlignContent();
  const emojiWidth=44;
- const verdictColumn=verdictLine.addStack();verdictColumn.size=new Size(cardWidth-2*innerPad-emojiWidth,0);verdictColumn.layoutVertically();verdictColumn.spacing=0;
+ const verdictColumn=verdictLine.addStack();verdictColumn.size=new Size(wizardWidth-emojiWidth,0);verdictColumn.layoutVertically();verdictColumn.spacing=0;
  const words=verdict.name.split(" ");
  let first=verdict.name,second="";
  if(verdict.name.length>10){
@@ -220,12 +223,13 @@ try{
  }
  const verdictFirst=txt(verdictColumn,first,18,ivory,true);verdictFirst.minimumScaleFactor=0.72;
  if(second){const verdictSecond=txt(verdictColumn,second,18,ivory,true);verdictSecond.minimumScaleFactor=0.72;}
- const emojiColumn=verdictLine.addStack();emojiColumn.size=new Size(emojiWidth,0);emojiColumn.centerAlignContent();emojiColumn.addSpacer();
+ const emojiColumn=verdictLine.addStack();emojiColumn.size=new Size(emojiWidth,38);emojiColumn.centerAlignContent();emojiColumn.addSpacer();
  const verdictEmoji=txt(emojiColumn,verdict.emoji||"✦",34,ivory);verdictEmoji.centerAlignText();
  emojiColumn.addSpacer();
- wizard.addSpacer(3);
- txt(wizard,best.spotName,12,cream);
- widget.addSpacer(5);
+ wizard.addSpacer();
+ const wizardFoot=wizard.addStack();wizardFoot.size=new Size(wizardWidth,20);wizardFoot.centerAlignContent();
+ txt(wizardFoot,best.spotName,12,cream);
+ widget.addSpacer(10);
  const bottom=widget.addStack();bottom.size=new Size(contentWidth,0);bottom.centerAlignContent();
  const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
  txt(bottom,timeText,edgeTextSize,petrol,true);bottom.addSpacer();
