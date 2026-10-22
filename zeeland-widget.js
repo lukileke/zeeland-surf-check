@@ -250,7 +250,7 @@ try{
  // The upper slot is identical in height on both cards; badges share one baseline.
  // Both badges use the exact same geometry and internal insets.
  const spotBadge=wizard.addStack();spotBadge.size=new Size(badgeWidth,badgeHeight);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(0,badgeInset,0,badgeInset);spotBadge.centerAlignContent();spotBadge.spacing=4;
- const pin=SFSymbol.named("mappin");if(pin){pin.applyFont(Font.semiboldSystemFont(10));const pi=spotBadge.addImage(pin.image);pi.imageSize=new Size(10,11);pi.tintColor=white;}
+ const pin=SFSymbol.named("mappin.circle.fill");if(pin){pin.applyFont(Font.semiboldSystemFont(10));const pi=spotBadge.addImage(pin.image);pi.imageSize=new Size(10,11);pi.tintColor=white;}
  const spotText=txt(spotBadge,best.spotName.toUpperCase(),9,white,true);spotText.minimumScaleFactor=0.7;
  spotBadge.addSpacer();
  cardsWrap.addSpacer();
