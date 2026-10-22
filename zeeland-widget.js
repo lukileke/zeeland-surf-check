@@ -190,7 +190,7 @@ try{
   return c.getImage();
  }
  // Golden Hour 14Y: uniform outer and card insets, matched lower badges.
- const white=Color.white(), glass=new Color("#D8E6E0",0.50);
+ const white=Color.white(), glass=new Color("#E8F1EC",0.50);
  widget.backgroundColor=glass;widget.setPadding(10,10,10,10);
  const edgeTextSize=10,cardGap=8,cardHeight=118,innerPad=10;
  // Conservative medium-widget width: the screen is wider than the widget itself.
@@ -203,9 +203,9 @@ try{
  const edgeInset=innerPad;
  const textRowWidth=contentWidth-2*edgeInset;
  const topWrap=widget.addStack();topWrap.addSpacer();const top=topWrap.addStack();top.size=new Size(textRowWidth,0);top.centerAlignContent();
- txt(top,"ZEELAND SURF CLUB",edgeTextSize,petrol,true);top.addSpacer();
+ txt(top,"ZEELAND SURF CLUB",edgeTextSize,white,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
- txt(top,dateLabel,edgeTextSize,petrol,true);topWrap.addSpacer();
+ txt(top,dateLabel,edgeTextSize,white,true);topWrap.addSpacer();
  widget.addSpacer(5);
  const cardsWrap=widget.addStack();cardsWrap.addSpacer();const cards=cardsWrap.addStack();cards.size=new Size(contentWidth,cardHeight);cards.spacing=cardGap;
  const scoreCard=cards.addStack();scoreCard.layoutVertically();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(innerPad,innerPad,innerPad,innerPad);
