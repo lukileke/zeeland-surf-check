@@ -189,7 +189,7 @@ try{
   const fold=new Path();fold.move(new Point(32,64));fold.addQuadCurve(new Point(70,64),new Point(50,70));c.addPath(fold);c.strokePath();
   return c.getImage();
  }
- // Golden Hour 14T: compact verdict and adjacent emoji; preserve approved card layout.
+ // Golden Hour 14U: left-align location within full-width badge; preserve approved card layout.
  const white=Color.white(), glass=new Color("#D8E6E0",0.82);
  widget.backgroundColor=glass;widget.setPadding(10,13,10,13);
  const edgeTextSize=10,cardGap=8,cardHeight=118,innerPad=10;
@@ -228,9 +228,10 @@ try{
  const verdictText=txt(verdictRow,verdict.name,verdictFont,white,true);verdictText.minimumScaleFactor=0.72;
  const verdictEmoji=txt(verdictRow,verdict.emoji||"🌊",27,white);verdictEmoji.minimumScaleFactor=1;
  wizard.addSpacer();
- const spotBadge=wizard.addStack();spotBadge.size=new Size(cardWidth-innerPad*2,27);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(6,7,6,7);spotBadge.centerAlignContent();spotBadge.spacing=4;
+ const spotBadge=wizard.addStack();spotBadge.size=new Size(cardWidth-innerPad*2,27);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(6,7,6,7);spotBadge.centerAlignContent();spotBadge.spacing=4;spotBadge.addSpacer(0);
  const pin=SFSymbol.named("mappin");if(pin){pin.applyFont(Font.semiboldSystemFont(10));const pi=spotBadge.addImage(pin.image);pi.imageSize=new Size(10,11);pi.tintColor=white;}
  const spotText=txt(spotBadge,best.spotName.toUpperCase(),9,white,true);spotText.minimumScaleFactor=0.7;
+ spotBadge.addSpacer();
  widget.addSpacer(5);
  const bottom=widget.addStack();bottom.size=new Size(contentWidth,0);bottom.setPadding(0,edgeInset,0,edgeInset);bottom.centerAlignContent();
  const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
