@@ -196,8 +196,8 @@ try{
  // Conservative medium-widget width: the screen is wider than the widget itself.
  // Measured iPhone medium widget: 338 pt wide; 10 pt inset each side, 8 pt gap.
  // The cards are content-sized; the parent row is centred by flexible outer spacers.
- // 145 pt leaves room for the medium-widget safe area without using screen width.
- const cardWidth=145;
+ // 155 pt cards reduce the lateral gap while retaining native centring and shared vertical geometry.
+ const cardWidth=155;
  const contentWidth=cardWidth*2+cardGap;
  const edgeInset=0;
  const topWrap=widget.addStack();topWrap.addSpacer();const top=topWrap.addStack();top.size=new Size(contentWidth,0);top.setPadding(0,edgeInset,0,edgeInset);top.centerAlignContent();
