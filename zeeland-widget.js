@@ -223,11 +223,21 @@ try{
  txt(wizardHead,"WAVE WIZARD",10,white,true);
  wizard.addSpacer();
  const verdict=E.waveCharacter(best.x);
- const verdictRow=wizard.addStack();verdictRow.size=new Size(cardWidth-innerPad*2,39);verdictRow.centerAlignContent();verdictRow.spacing=2;
- // Keep a dedicated emoji slot so long names never push the icon beyond the card.
- // Compact content-sized group: the emoji follows the verdict, never a fixed-width text slot.
- const verdictFont=verdict.name.length>16?13:verdict.name.length>11?15:18;
- const verdictText=txt(verdictRow,verdict.name,verdictFont,white,true);verdictText.minimumScaleFactor=0.72;
+ const verdictRow=wizard.addStack();verdictRow.size=new Size(cardWidth-innerPad*2,39);verdictRow.centerAlignContent();verdictRow.spacing=3;
+ const name=verdict.name.toUpperCase();
+ const longName=name.length>12;
+ const words=name.split(" ");
+ let lines=[name];
+ if(longName){
+   if(name==="MELLOW & CRUISY")lines=["MELLOW &","CRUISY"];
+   else {
+     let first="",second="";
+     for(const word of words){if(!second&&(first+" "+word).trim().length<=11)first=(first+" "+word).trim();else second=(second+" "+word).trim();}
+     lines=[first||name,second];
+   }
+ }
+ const nameColumn=verdictRow.addStack();nameColumn.layoutVertically();nameColumn.centerAlignContent();nameColumn.spacing=0;
+ for(const line of lines){if(line){const t=txt(nameColumn,line,longName?14:20,white,true);t.minimumScaleFactor=0.7;}}
  const verdictEmoji=txt(verdictRow,verdict.emoji||"🌊",27,white);verdictEmoji.minimumScaleFactor=1;
  wizard.addSpacer();
  // Both badges use the exact same geometry and internal insets.
