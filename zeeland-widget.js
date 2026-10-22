@@ -199,7 +199,7 @@ try{
  // 155 pt cards reduce the lateral gap while retaining native centring and shared vertical geometry.
  const cardWidth=155;
  const contentWidth=cardWidth*2+cardGap;
- const edgeInset=0;
+ const edgeInset=innerPad;
  const topWrap=widget.addStack();topWrap.addSpacer();const top=topWrap.addStack();top.size=new Size(contentWidth,0);top.setPadding(0,edgeInset,0,edgeInset);top.centerAlignContent();
  txt(top,"ZEELAND SURF CLUB",edgeTextSize,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
