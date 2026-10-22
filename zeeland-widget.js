@@ -178,45 +178,51 @@ try{
   line([[39,9],[39,16]]);line([[36,12.5],[42,12.5]]);
   return c.getImage();
  }
- // Header, both panels and footer share the same horizontal edges.
- const cardGap=8;
- const cardWidth=Math.floor((Device.screenSize().width-64-26-cardGap)/2);
- const contentWidth=cardWidth*2+cardGap;
- const edgeTextSize=12;
+ // One common content width for header, cards and footer.
+ const edgeTextSize=12,cardGap=8,cardHeight=111,innerPad=10;
+ // Medium widget usable width: native medium width minus outer 13 pt on both sides.
+ const mediumWidth=Device.screenSize().width>400?360:329;
+ const contentWidth=mediumWidth-26;
+ const cardWidth=(contentWidth-cardGap)/2;
  const top=widget.addStack();top.size=new Size(contentWidth,0);top.centerAlignContent();
  txt(top,"ZEELAND SURF CLUB",edgeTextSize,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
  txt(top,dateLabel,edgeTextSize,petrol,true);
  widget.addSpacer(5);
- // Leave space for BOTH the top heading and the bottom forecast row.
- const cardHeight=111;
  const cards=widget.addStack();cards.spacing=cardGap;cards.size=new Size(contentWidth,cardHeight);
- // Consistent two-column visual rhythm: primary text left, symbol/value right.
- const innerPad=10;
  const scoreCard=cards.addStack();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(9,innerPad,9,innerPad);scoreCard.centerAlignContent();
- const scoreLeft=scoreCard.addStack();scoreLeft.layoutVertically();scoreLeft.spacing=2;
+ // Fixed-width columns prevent the emoji from drifting into the score.
+ const scoreTextWidth=cardWidth-2*innerPad-65;
+ const scoreLeft=scoreCard.addStack();scoreLeft.size=new Size(scoreTextWidth,0);scoreLeft.layoutVertically();scoreLeft.spacing=2;
  const number=scoreLeft.addStack();number.bottomAlignContent();number.spacing=1;
- txt(number,best.score.toFixed(1),34,Color.white(),true);
- txt(number,"/10",14,Color.white(),true);
- txt(scoreLeft,grade,26,Color.white(),true);
- // The wave emoji and height are a single vertically aligned group, centred in the free right column.
- const waveArea=scoreCard.addStack();waveArea.centerAlignContent();waveArea.addSpacer();
- const waveRight=waveArea.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=1;
- const waveEmoji=txt(waveRight,"🌊",34,Color.white());waveEmoji.centerAlignText();
+ txt(number,best.score.toFixed(1),33,Color.white(),true);
+ txt(number,"/10",13,Color.white(),true);
+ txt(scoreLeft,grade,25,Color.white(),true);
+ const waveRight=scoreCard.addStack();waveRight.size=new Size(65,0);waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=1;
+ const waveEmoji=txt(waveRight,"🌊",33,Color.white());waveEmoji.centerAlignText();
  const waveHeight=txt(waveRight,best.x.h.toFixed(1)+" m",19,Color.white(),true);waveHeight.centerAlignText();
- waveArea.addSpacer();
  const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,innerPad,9,innerPad);wizard.spacing=2;
  const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
  const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(25,25);
  txt(wizardHead,"WAVE WIZARD",10,new Color("#D6C5A5"),true);
  wizard.addSpacer(2);
  const verdict=E.waveCharacter(best.x);
- const verdictLine=wizard.addStack();verdictLine.centerAlignContent();verdictLine.spacing=0;
- // The verdict text and the emoji are separate columns, avoiding overlap and clipping.
- const verdictText=txt(verdictLine,verdict.name,21,ivory,true);verdictText.lineLimit=2;verdictText.minimumScaleFactor=0.60;
- const emojiSpace=verdictLine.addStack();emojiSpace.centerAlignContent();emojiSpace.addSpacer();
- const verdictEmoji=txt(emojiSpace,verdict.emoji||"✦",38,ivory);verdictEmoji.minimumScaleFactor=0.85;verdictEmoji.centerAlignText();
- emojiSpace.addSpacer();
+ const verdictLine=wizard.addStack();verdictLine.size=new Size(cardWidth-2*innerPad,0);verdictLine.centerAlignContent();verdictLine.spacing=0;
+ const emojiWidth=49;
+ const verdictColumn=verdictLine.addStack();verdictColumn.size=new Size(cardWidth-2*innerPad-emojiWidth,0);verdictColumn.layoutVertically();
+ // Break on the ampersand or between words when the verdict needs two lines.
+ const words=verdict.name.split(" ");
+ let first=verdict.name,second="";
+ if(verdict.name.length>12){
+  if(words.length===2){first=words[0];second=words[1];}
+  else if(words.length===3){first=words[0];second=words.slice(1).join(" ");}
+  else {first=words.slice(0,2).join(" ");second=words.slice(2).join(" ");}
+ }
+ const verdictFirst=txt(verdictColumn,first,21,ivory,true);verdictFirst.minimumScaleFactor=0.65;
+ if(second){const verdictSecond=txt(verdictColumn,second,21,ivory,true);verdictSecond.minimumScaleFactor=0.65;}
+ const emojiColumn=verdictLine.addStack();emojiColumn.size=new Size(emojiWidth,0);emojiColumn.centerAlignContent();emojiColumn.addSpacer();
+ const verdictEmoji=txt(emojiColumn,verdict.emoji||"✦",38,ivory);verdictEmoji.centerAlignText();
+ emojiColumn.addSpacer();
  wizard.addSpacer(2);
  txt(wizard,best.spotName,12,cream);
  widget.addSpacer(5);
