@@ -189,7 +189,7 @@ try{
   const fold=new Path();fold.move(new Point(32,64));fold.addQuadCurve(new Point(70,64),new Point(50,70));c.addPath(fold);c.strokePath();
   return c.getImage();
  }
- // Golden Hour 14U: left-align location within full-width badge; preserve approved card layout.
+ // Golden Hour 14W: identical geometry for wave-height and location badges.
  const white=Color.white(), glass=new Color("#D8E6E0",0.82);
  widget.backgroundColor=glass;widget.setPadding(10,13,10,13);
  const edgeTextSize=10,cardGap=8,cardHeight=118,innerPad=10;
@@ -212,7 +212,9 @@ try{
  const waveSpace=scoreMain.addStack();waveSpace.size=new Size(52,59);waveSpace.centerAlignContent();
  const bigWave=txt(waveSpace,"🌊",44,white);bigWave.minimumScaleFactor=1;
  scoreCard.addSpacer();
- const waveBadge=scoreCard.addStack();waveBadge.size=new Size(cardWidth-innerPad*2,27);waveBadge.backgroundColor=new Color("#FFFFFF",0.13);waveBadge.cornerRadius=7;waveBadge.setPadding(6,7,6,7);waveBadge.centerAlignContent();
+ // One shared geometry for both lower bands: no content-dependent widths.
+ const badgeWidth=cardWidth-innerPad*2,badgeHeight=27,badgeInset=7;
+ const waveBadge=scoreCard.addStack();waveBadge.size=new Size(badgeWidth,badgeHeight);waveBadge.backgroundColor=new Color("#FFFFFF",0.13);waveBadge.cornerRadius=7;waveBadge.setPadding(0,badgeInset,0,badgeInset);waveBadge.centerAlignContent();
  txt(waveBadge,"WAVE HEIGHT",9,white,true);waveBadge.addSpacer();
  txt(waveBadge,best.x.h.toFixed(1)+" M",9,white,true);
  const wizard=cards.addStack();wizard.layoutVertically();wizard.size=new Size(cardWidth,cardHeight);wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,innerPad,9,innerPad);
@@ -228,7 +230,8 @@ try{
  const verdictText=txt(verdictRow,verdict.name,verdictFont,white,true);verdictText.minimumScaleFactor=0.72;
  const verdictEmoji=txt(verdictRow,verdict.emoji||"🌊",27,white);verdictEmoji.minimumScaleFactor=1;
  wizard.addSpacer();
- const spotBadge=wizard.addStack();spotBadge.size=new Size(cardWidth-innerPad*2,27);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(6,7,6,7);spotBadge.centerAlignContent();spotBadge.spacing=4;spotBadge.addSpacer(0);
+ // Both badges use the exact same geometry and internal insets.
+ const spotBadge=wizard.addStack();spotBadge.size=new Size(badgeWidth,badgeHeight);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(0,badgeInset,0,badgeInset);spotBadge.centerAlignContent();spotBadge.spacing=4;
  const pin=SFSymbol.named("mappin");if(pin){pin.applyFont(Font.semiboldSystemFont(10));const pi=spotBadge.addImage(pin.image);pi.imageSize=new Size(10,11);pi.tintColor=white;}
  const spotText=txt(spotBadge,best.spotName.toUpperCase(),9,white,true);spotText.minimumScaleFactor=0.7;
  spotBadge.addSpacer();
