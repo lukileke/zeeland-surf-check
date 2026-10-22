@@ -198,13 +198,15 @@ try{
  txt(number,"/10",12,Color.white(),true);
  const gradeText=txt(scoreLeft,grade,22,Color.white(),true);gradeText.minimumScaleFactor=0.75;
  const waveRight=scoreCard.addStack();waveRight.size=new Size(waveColumnWidth,0);waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=2;
+ // Lower the wave icon group to share the verdict emoji visual centre.
+ waveRight.addSpacer(16);
  const waveEmoji=txt(waveRight,"🌊",30,Color.white());waveEmoji.centerAlignText();
  const waveHeight=txt(waveRight,best.x.h.toFixed(1)+" m",16,Color.white(),true);waveHeight.centerAlignText();
  const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,innerPad,9,innerPad);wizard.spacing=2;
  const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
  const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(25,25);
  txt(wizardHead,"WAVE WIZARD",10,new Color("#D6C5A5"),true);
- wizard.addSpacer(3);
+ wizard.addSpacer(0);
  const verdict=E.waveCharacter(best.x);
  const verdictLine=wizard.addStack();verdictLine.size=new Size(cardWidth-2*innerPad,0);verdictLine.centerAlignContent();verdictLine.spacing=0;
  const emojiWidth=44;
