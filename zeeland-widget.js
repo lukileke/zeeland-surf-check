@@ -195,8 +195,9 @@ try{
  const edgeTextSize=10,cardGap=8,cardHeight=118,innerPad=10;
  // Conservative medium-widget width: the screen is wider than the widget itself.
  // Measured iPhone medium widget: 338 pt wide; 10 pt inset each side, 8 pt gap.
- const mediumWidth=338,outerInset=10;
- const cardWidth=Math.floor((mediumWidth-outerInset*2-cardGap)/2);
+ // The cards are content-sized; the parent row is centred by flexible outer spacers.
+ // 145 pt leaves room for the medium-widget safe area without using screen width.
+ const cardWidth=145;
  const contentWidth=cardWidth*2+cardGap;
  const edgeInset=0;
  const topWrap=widget.addStack();topWrap.addSpacer();const top=topWrap.addStack();top.size=new Size(contentWidth,0);top.setPadding(0,edgeInset,0,edgeInset);top.centerAlignContent();
@@ -206,7 +207,8 @@ try{
  widget.addSpacer(5);
  const cardsWrap=widget.addStack();cardsWrap.addSpacer();const cards=cardsWrap.addStack();cards.size=new Size(contentWidth,cardHeight);cards.spacing=cardGap;
  const scoreCard=cards.addStack();scoreCard.layoutVertically();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(innerPad,innerPad,innerPad,innerPad);
- const scoreMain=scoreCard.addStack();scoreMain.size=new Size(cardWidth-innerPad*2,66);scoreMain.centerAlignContent();
+ const scoreUpper=scoreCard.addStack();scoreUpper.layoutVertically();scoreUpper.size=new Size(cardWidth-innerPad*2,71);
+ const scoreMain=scoreUpper.addStack();scoreMain.size=new Size(cardWidth-innerPad*2,66);scoreMain.centerAlignContent();
  const scoreInfo=scoreMain.addStack();scoreInfo.layoutVertically();
  const number=scoreInfo.addStack();number.bottomAlignContent();number.spacing=2;
  txt(number,best.score.toFixed(1),29,white,true);txt(number,"/10",12,white,true);
@@ -214,18 +216,20 @@ try{
  scoreMain.addSpacer();
  const waveSpace=scoreMain.addStack();waveSpace.size=new Size(52,59);waveSpace.centerAlignContent();
  const bigWave=txt(waveSpace,"🌊",44,white);bigWave.minimumScaleFactor=1;
- scoreCard.addSpacer(5);
+ scoreUpper.addSpacer();
  // One shared geometry for both lower bands: no content-dependent widths.
  const badgeWidth=cardWidth-innerPad*2,badgeHeight=27,badgeInset=7;
  const waveBadge=scoreCard.addStack();waveBadge.size=new Size(badgeWidth,badgeHeight);waveBadge.backgroundColor=new Color("#FFFFFF",0.13);waveBadge.cornerRadius=7;waveBadge.setPadding(0,badgeInset,0,badgeInset);waveBadge.centerAlignContent();
  txt(waveBadge,"WAVE HEIGHT",9,white,true);waveBadge.addSpacer();
  txt(waveBadge,best.x.h.toFixed(1)+" M",9,white,true);
  const wizard=cards.addStack();wizard.layoutVertically();wizard.size=new Size(cardWidth,cardHeight);wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(innerPad,innerPad,innerPad,innerPad);
- const wizardHead=wizard.addStack();wizardHead.size=new Size(cardWidth-innerPad*2,28);wizardHead.centerAlignContent();wizardHead.spacing=3;
+ const wizardUpper=wizard.addStack();wizardUpper.layoutVertically();wizardUpper.size=new Size(cardWidth-innerPad*2,71);
+ const wizardHead=wizardUpper.addStack();wizardHead.size=new Size(cardWidth-innerPad*2,31);wizardHead.centerAlignContent();wizardHead.spacing=3;
  const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(36,31);
  txt(wizardHead,"WAVE WIZARD",10,white,true);
  const verdict=E.waveCharacter(best.x);
- const verdictRow=wizard.addStack();verdictRow.size=new Size(cardWidth-innerPad*2,38);verdictRow.centerAlignContent();verdictRow.spacing=3;
+ wizardUpper.addSpacer(2);
+ const verdictRow=wizardUpper.addStack();verdictRow.size=new Size(cardWidth-innerPad*2,38);verdictRow.centerAlignContent();verdictRow.spacing=3;
  const name=verdict.name.toUpperCase();
  const longName=name.length>12;
  const words=name.split(" ");
@@ -241,7 +245,7 @@ try{
  const nameColumn=verdictRow.addStack();nameColumn.layoutVertically();nameColumn.centerAlignContent();nameColumn.spacing=0;
  for(const line of lines){if(line){const t=txt(nameColumn,line,longName?14:20,white,true);t.minimumScaleFactor=0.7;}}
  const verdictEmoji=txt(verdictRow,verdict.emoji||"🌊",27,white);verdictEmoji.minimumScaleFactor=1;
- wizard.addSpacer(5);
+ // The upper slot is identical in height on both cards; badges share one baseline.
  // Both badges use the exact same geometry and internal insets.
  const spotBadge=wizard.addStack();spotBadge.size=new Size(badgeWidth,badgeHeight);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(0,badgeInset,0,badgeInset);spotBadge.centerAlignContent();spotBadge.spacing=4;
  const pin=SFSymbol.named("mappin");if(pin){pin.applyFont(Font.semiboldSystemFont(10));const pi=spotBadge.addImage(pin.image);pi.imageSize=new Size(10,11);pi.tintColor=white;}
