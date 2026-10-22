@@ -189,7 +189,7 @@ try{
   const fold=new Path();fold.move(new Point(32,64));fold.addQuadCurve(new Point(70,64),new Point(50,70));c.addPath(fold);c.strokePath();
   return c.getImage();
  }
- // Golden Hour 14S: fixed content zones and reserved emoji space for long verdicts.
+ // Golden Hour 14T: compact verdict and adjacent emoji; preserve approved card layout.
  const white=Color.white(), glass=new Color("#D8E6E0",0.82);
  widget.backgroundColor=glass;widget.setPadding(10,13,10,13);
  const edgeTextSize=10,cardGap=8,cardHeight=118,innerPad=10;
@@ -223,12 +223,10 @@ try{
  const verdict=E.waveCharacter(best.x);
  const verdictRow=wizard.addStack();verdictRow.size=new Size(cardWidth-innerPad*2,39);verdictRow.centerAlignContent();verdictRow.spacing=2;
  // Keep a dedicated emoji slot so long names never push the icon beyond the card.
- const emojiSlotWidth=30;
- const verdictNameSlot=verdictRow.addStack();verdictNameSlot.size=new Size(cardWidth-innerPad*2-emojiSlotWidth-2,39);verdictNameSlot.centerAlignContent();
- const verdictFont=verdict.name.length>16?14:verdict.name.length>11?16:18;
- const verdictText=txt(verdictNameSlot,verdict.name,verdictFont,white,true);verdictText.minimumScaleFactor=0.65;
- const verdictEmojiSlot=verdictRow.addStack();verdictEmojiSlot.size=new Size(emojiSlotWidth,39);verdictEmojiSlot.centerAlignContent();
- const verdictEmoji=txt(verdictEmojiSlot,verdict.emoji||"🌊",27,white);verdictEmoji.minimumScaleFactor=1;
+ // Compact content-sized group: the emoji follows the verdict, never a fixed-width text slot.
+ const verdictFont=verdict.name.length>16?13:verdict.name.length>11?15:18;
+ const verdictText=txt(verdictRow,verdict.name,verdictFont,white,true);verdictText.minimumScaleFactor=0.72;
+ const verdictEmoji=txt(verdictRow,verdict.emoji||"🌊",27,white);verdictEmoji.minimumScaleFactor=1;
  wizard.addSpacer();
  const spotBadge=wizard.addStack();spotBadge.size=new Size(cardWidth-innerPad*2,27);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(6,7,6,7);spotBadge.centerAlignContent();spotBadge.spacing=4;
  const pin=SFSymbol.named("mappin");if(pin){pin.applyFont(Font.semiboldSystemFont(10));const pi=spotBadge.addImage(pin.image);pi.imageSize=new Size(10,11);pi.tintColor=white;}
