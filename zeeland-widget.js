@@ -190,7 +190,7 @@ try{
   return c.getImage();
  }
  // Golden Hour 14Y: uniform outer and card insets, matched lower badges.
- const white=Color.white(), glass=new Color("#D8E6E0",0.82);
+ const white=Color.white(), glass=new Color("#D8E6E0",0.50);
  widget.backgroundColor=glass;widget.setPadding(10,10,10,10);
  const edgeTextSize=10,cardGap=8,cardHeight=118,innerPad=10;
  // Conservative medium-widget width: the screen is wider than the widget itself.
