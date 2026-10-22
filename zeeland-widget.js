@@ -199,10 +199,11 @@ try{
  txt(number,best.score.toFixed(1),34,Color.white(),true);
  txt(number,"/10",14,Color.white(),true);
  txt(scoreLeft,grade,26,Color.white(),true);
+ // The wave emoji and height are a single vertically aligned group, centred in the free right column.
  const waveArea=scoreCard.addStack();waveArea.centerAlignContent();waveArea.addSpacer();
- const waveRight=waveArea.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=3;
- const img=waveRight.addImage(surfWave);img.imageSize=new Size(46,31);img.centerAlignImage();
- txt(waveRight,best.x.h.toFixed(1)+" m",19,Color.white(),true);
+ const waveRight=waveArea.addStack();waveRight.layoutVertically();waveRight.centerAlignContent();waveRight.spacing=1;
+ const waveEmoji=txt(waveRight,"🌊",34,Color.white());waveEmoji.centerAlignText();
+ const waveHeight=txt(waveRight,best.x.h.toFixed(1)+" m",19,Color.white(),true);waveHeight.centerAlignText();
  waveArea.addSpacer();
  const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,innerPad,9,innerPad);wizard.spacing=2;
  const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
@@ -214,7 +215,7 @@ try{
  // The verdict text and the emoji are separate columns, avoiding overlap and clipping.
  const verdictText=txt(verdictLine,verdict.name,21,ivory,true);verdictText.lineLimit=2;verdictText.minimumScaleFactor=0.60;
  const emojiSpace=verdictLine.addStack();emojiSpace.centerAlignContent();emojiSpace.addSpacer();
- const verdictEmoji=txt(emojiSpace,verdict.emoji||"✦",38,ivory);verdictEmoji.minimumScaleFactor=0.85;
+ const verdictEmoji=txt(emojiSpace,verdict.emoji||"✦",38,ivory);verdictEmoji.minimumScaleFactor=0.85;verdictEmoji.centerAlignText();
  emojiSpace.addSpacer();
  wizard.addSpacer(2);
  txt(wizard,best.spotName,12,cream);
