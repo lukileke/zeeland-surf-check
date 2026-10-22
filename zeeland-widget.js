@@ -189,7 +189,7 @@ try{
   const fold=new Path();fold.move(new Point(32,64));fold.addQuadCurve(new Point(70,64),new Point(50,70));c.addPath(fold);c.strokePath();
   return c.getImage();
  }
- // Golden Hour 14Q: medium-sized, balanced two-card layout.
+ // Golden Hour 14R: matched full-width badges and tighter emoji placement.
  const white=Color.white(), glass=new Color("#D8E6E0",0.82);
  widget.backgroundColor=glass;widget.setPadding(10,13,10,13);
  const edgeTextSize=10,cardGap=8,cardHeight=118,innerPad=10;
@@ -203,16 +203,16 @@ try{
  widget.addSpacer(5);
  const cards=widget.addStack();cards.size=new Size(contentWidth,cardHeight);cards.spacing=cardGap;
  const scoreCard=cards.addStack();scoreCard.layoutVertically();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(9,innerPad,9,innerPad);
- const scoreMain=scoreCard.addStack();scoreMain.centerAlignContent();
+ const scoreMain=scoreCard.addStack();scoreMain.size=new Size(cardWidth-innerPad*2,66);scoreMain.centerAlignContent();
  const scoreInfo=scoreMain.addStack();scoreInfo.layoutVertically();
  const number=scoreInfo.addStack();number.bottomAlignContent();number.spacing=2;
  txt(number,best.score.toFixed(1),29,white,true);txt(number,"/10",12,white,true);
  txt(scoreInfo,grade,20,white,true);
  scoreMain.addSpacer();
- const waveSpace=scoreMain.addStack();waveSpace.size=new Size(59,66);waveSpace.centerAlignContent();
- const bigWave=txt(waveSpace,"🌊",52,white);bigWave.minimumScaleFactor=1;
+ const waveSpace=scoreMain.addStack();waveSpace.size=new Size(52,59);waveSpace.centerAlignContent();
+ const bigWave=txt(waveSpace,"🌊",44,white);bigWave.minimumScaleFactor=1;
  scoreCard.addSpacer();
- const waveBadge=scoreCard.addStack();waveBadge.backgroundColor=new Color("#FFFFFF",0.13);waveBadge.cornerRadius=7;waveBadge.setPadding(6,7,6,7);waveBadge.centerAlignContent();
+ const waveBadge=scoreCard.addStack();waveBadge.size=new Size(cardWidth-innerPad*2,27);waveBadge.backgroundColor=new Color("#FFFFFF",0.13);waveBadge.cornerRadius=7;waveBadge.setPadding(6,7,6,7);waveBadge.centerAlignContent();
  txt(waveBadge,"WAVE HEIGHT",9,white,true);waveBadge.addSpacer();
  txt(waveBadge,best.x.h.toFixed(1)+" M",9,white,true);
  const wizard=cards.addStack();wizard.layoutVertically();wizard.size=new Size(cardWidth,cardHeight);wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,innerPad,9,innerPad);
@@ -221,11 +221,11 @@ try{
  txt(wizardHead,"WAVE WIZARD",10,white,true);
  wizard.addSpacer();
  const verdict=E.waveCharacter(best.x);
- const verdictRow=wizard.addStack();verdictRow.centerAlignContent();verdictRow.spacing=3;
+ const verdictRow=wizard.addStack();verdictRow.size=new Size(cardWidth-innerPad*2,39);verdictRow.centerAlignContent();verdictRow.spacing=1;
  const verdictText=txt(verdictRow,verdict.name,18,white,true);verdictText.minimumScaleFactor=0.6;
- const verdictEmoji=txt(verdictRow,verdict.emoji||"🌊",32,white);verdictEmoji.minimumScaleFactor=1;
+ const verdictEmoji=txt(verdictRow,verdict.emoji||"🌊",29,white);verdictEmoji.minimumScaleFactor=1;
  wizard.addSpacer();
- const spotBadge=wizard.addStack();spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(6,7,6,7);spotBadge.centerAlignContent();spotBadge.spacing=4;
+ const spotBadge=wizard.addStack();spotBadge.size=new Size(cardWidth-innerPad*2,27);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(6,7,6,7);spotBadge.centerAlignContent();spotBadge.spacing=4;
  const pin=SFSymbol.named("mappin");if(pin){pin.applyFont(Font.semiboldSystemFont(10));const pi=spotBadge.addImage(pin.image);pi.imageSize=new Size(10,11);pi.tintColor=white;}
  const spotText=txt(spotBadge,best.spotName.toUpperCase(),9,white,true);spotText.minimumScaleFactor=0.7;
  widget.addSpacer(5);
