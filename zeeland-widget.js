@@ -189,20 +189,20 @@ try{
   const fold=new Path();fold.move(new Point(32,64));fold.addQuadCurve(new Point(70,64),new Point(50,70));c.addPath(fold);c.strokePath();
   return c.getImage();
  }
- // Golden Hour 14W: identical geometry for wave-height and location badges.
+ // Golden Hour 14Y: uniform outer and card insets, matched lower badges.
  const white=Color.white(), glass=new Color("#D8E6E0",0.82);
- widget.backgroundColor=glass;widget.setPadding(10,13,10,13);
+ widget.backgroundColor=glass;widget.setPadding(10,10,10,10);
  const edgeTextSize=10,cardGap=8,cardHeight=118,innerPad=10;
  const cardWidth=Math.floor((Device.screenSize().width-72-cardGap)/2);
  const contentWidth=cardWidth*2+cardGap;
- const edgeInset=innerPad;
+ const edgeInset=0;
  const top=widget.addStack();top.size=new Size(contentWidth,0);top.setPadding(0,edgeInset,0,edgeInset);top.centerAlignContent();
  txt(top,"ZEELAND SURF CLUB",edgeTextSize,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
  txt(top,dateLabel,edgeTextSize,petrol,true);
  widget.addSpacer(5);
  const cards=widget.addStack();cards.size=new Size(contentWidth,cardHeight);cards.spacing=cardGap;
- const scoreCard=cards.addStack();scoreCard.layoutVertically();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(9,innerPad,9,innerPad);
+ const scoreCard=cards.addStack();scoreCard.layoutVertically();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(innerPad,innerPad,innerPad,innerPad);
  const scoreMain=scoreCard.addStack();scoreMain.size=new Size(cardWidth-innerPad*2,66);scoreMain.centerAlignContent();
  const scoreInfo=scoreMain.addStack();scoreInfo.layoutVertically();
  const number=scoreInfo.addStack();number.bottomAlignContent();number.spacing=2;
@@ -217,7 +217,7 @@ try{
  const waveBadge=scoreCard.addStack();waveBadge.size=new Size(badgeWidth,badgeHeight);waveBadge.backgroundColor=new Color("#FFFFFF",0.13);waveBadge.cornerRadius=7;waveBadge.setPadding(0,badgeInset,0,badgeInset);waveBadge.centerAlignContent();
  txt(waveBadge,"WAVE HEIGHT",9,white,true);waveBadge.addSpacer();
  txt(waveBadge,best.x.h.toFixed(1)+" M",9,white,true);
- const wizard=cards.addStack();wizard.layoutVertically();wizard.size=new Size(cardWidth,cardHeight);wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,innerPad,9,innerPad);
+ const wizard=cards.addStack();wizard.layoutVertically();wizard.size=new Size(cardWidth,cardHeight);wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(innerPad,innerPad,innerPad,innerPad);
  const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
  const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(36,31);
  txt(wizardHead,"WAVE WIZARD",10,white,true);
