@@ -199,8 +199,10 @@ try{
  // 155 pt cards reduce the lateral gap while retaining native centring and shared vertical geometry.
  const cardWidth=155;
  const contentWidth=cardWidth*2+cardGap;
+ // Inset the *actual row width* instead of padding a fixed-width row.
  const edgeInset=innerPad;
- const topWrap=widget.addStack();topWrap.addSpacer();const top=topWrap.addStack();top.size=new Size(contentWidth,0);top.setPadding(0,edgeInset,0,edgeInset);top.centerAlignContent();
+ const textRowWidth=contentWidth-2*edgeInset;
+ const topWrap=widget.addStack();topWrap.addSpacer();const top=topWrap.addStack();top.size=new Size(textRowWidth,0);top.centerAlignContent();
  txt(top,"ZEELAND SURF CLUB",edgeTextSize,petrol,true);top.addSpacer();
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
  txt(top,dateLabel,edgeTextSize,petrol,true);topWrap.addSpacer();
@@ -253,7 +255,7 @@ try{
  spotBadge.addSpacer();
  cardsWrap.addSpacer();
  widget.addSpacer(5);
- const bottomWrap=widget.addStack();bottomWrap.addSpacer();const bottom=bottomWrap.addStack();bottom.size=new Size(contentWidth,0);bottom.setPadding(0,edgeInset,0,edgeInset);bottom.centerAlignContent();
+ const bottomWrap=widget.addStack();bottomWrap.addSpacer();const bottom=bottomWrap.addStack();bottom.size=new Size(textRowWidth,0);bottom.centerAlignContent();
  const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
  txt(bottom,timeText,edgeTextSize,petrol,true);bottom.addSpacer();
  txt(bottom,best.x.period.toFixed(1)+" s · "+Math.round(best.x.wind)+" km/h",edgeTextSize,petrol,true);bottomWrap.addSpacer();
