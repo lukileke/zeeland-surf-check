@@ -210,14 +210,19 @@ try{
  const cardsWrap=widget.addStack();cardsWrap.addSpacer();const cards=cardsWrap.addStack();cards.size=new Size(contentWidth,cardHeight);cards.spacing=cardGap;
  const scoreCard=cards.addStack();scoreCard.layoutVertically();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(innerPad,innerPad,innerPad,innerPad);
  const scoreUpper=scoreCard.addStack();scoreUpper.layoutVertically();scoreUpper.size=new Size(cardWidth-innerPad*2,71);
- const scoreMain=scoreUpper.addStack();scoreMain.size=new Size(cardWidth-innerPad*2,66);scoreMain.centerAlignContent();
+ const scoreMain=scoreUpper.addStack();scoreMain.size=new Size(cardWidth-innerPad*2,52);scoreMain.centerAlignContent();
  const scoreInfo=scoreMain.addStack();scoreInfo.layoutVertically();
  const number=scoreInfo.addStack();number.bottomAlignContent();number.spacing=2;
  txt(number,best.score.toFixed(1),29,white,true);txt(number,"/10",12,white,true);
  txt(scoreInfo,grade,20,white,true);
  scoreMain.addSpacer();
- const waveSpace=scoreMain.addStack();waveSpace.size=new Size(52,59);waveSpace.centerAlignContent();
- const bigWave=txt(waveSpace,"🌊",44,white);bigWave.minimumScaleFactor=1;
+ const waveSpace=scoreMain.addStack();waveSpace.size=new Size(54,52);waveSpace.centerAlignContent();
+ const bigWave=txt(waveSpace,"🌊",48,white);bigWave.minimumScaleFactor=1;
+ const conditions=scoreUpper.addStack();conditions.size=new Size(cardWidth-innerPad*2,14);conditions.centerAlignContent();
+ const conditionTime=pad(best.h)+"–"+pad(best.h+2)+"h";
+ txt(conditions,conditionTime,8,white,true);conditions.addSpacer();
+ txt(conditions,best.x.period.toFixed(1)+"s",8,white,true);conditions.addSpacer();
+ txt(conditions,Math.round(best.x.wind)+"km/h",8,white,true);
  scoreUpper.addSpacer();
  // One shared geometry for both lower bands: no content-dependent widths.
  const badgeWidth=cardWidth-innerPad*2,badgeHeight=27,badgeInset=7;
@@ -244,9 +249,10 @@ try{
      lines=[first||name,second];
    }
  }
- const nameColumn=verdictRow.addStack();nameColumn.layoutVertically();nameColumn.centerAlignContent();nameColumn.spacing=0;
+ const nameColumn=verdictRow.addStack();nameColumn.size=new Size(82,38);nameColumn.layoutVertically();nameColumn.centerAlignContent();nameColumn.spacing=0;
  for(const line of lines){if(line){const t=txt(nameColumn,line,longName?14:20,white,true);t.minimumScaleFactor=0.7;}}
- const verdictEmoji=txt(verdictRow,verdict.emoji||"🌊",27,white);verdictEmoji.minimumScaleFactor=1;
+ const emojiSlot=verdictRow.addStack();emojiSlot.size=new Size(50,38);emojiSlot.centerAlignContent();
+ const verdictEmoji=txt(emojiSlot,verdict.emoji||"🌊",31,white);verdictEmoji.minimumScaleFactor=1;
  // The upper slot is identical in height on both cards; badges share one baseline.
  // Both badges use the exact same geometry and internal insets.
  const spotBadge=wizard.addStack();spotBadge.size=new Size(badgeWidth,badgeHeight);spotBadge.backgroundColor=new Color("#FFFFFF",0.08);spotBadge.cornerRadius=7;spotBadge.setPadding(0,badgeInset,0,badgeInset);spotBadge.centerAlignContent();spotBadge.spacing=4;
@@ -254,11 +260,7 @@ try{
  const spotText=txt(spotBadge,best.spotName.toUpperCase(),9,white,true);spotText.minimumScaleFactor=0.7;
  spotBadge.addSpacer();
  cardsWrap.addSpacer();
- widget.addSpacer(5);
- const bottomWrap=widget.addStack();bottomWrap.addSpacer();const bottom=bottomWrap.addStack();bottom.size=new Size(textRowWidth,0);bottom.centerAlignContent();
- const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
- txt(bottom,timeText,edgeTextSize,petrol,true);bottom.addSpacer();
- txt(bottom,best.x.period.toFixed(1)+" s · "+Math.round(best.x.wind)+" km/h",edgeTextSize,petrol,true);bottomWrap.addSpacer();
+
 
  }
 }catch(e){
