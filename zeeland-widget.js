@@ -168,16 +168,16 @@ try{
  }
  const surfWave=surfWaveImage();
  function wizardHat(){
-  // Simple outlined conical hat: no internal decoration, only an exterior sparkle.
+  // A simple bent wizard hat, with a single broad brim and one external sparkle.
   const c=new DrawContext();c.size=new Size(48,48);c.opaque=false;c.respectScreenScale=true;
-  c.setStrokeColor(ivory);c.setLineWidth(3);
-  const cone=new Path();cone.move(new Point(13,33));cone.addCurve(new Point(25,7),new Point(18,24),new Point(22,12));cone.addCurve(new Point(35,33),new Point(28,17),new Point(32,26));c.addPath(cone);c.strokePath();
-  const brim=new Path();brim.move(new Point(9,35));brim.addCurve(new Point(39,35),new Point(16,43),new Point(33,43));c.addPath(brim);c.strokePath();
-  const sparkle=new Path();sparkle.move(new Point(40,10));sparkle.addLine(new Point(40,18));sparkle.move(new Point(36,14));sparkle.addLine(new Point(44,14));c.addPath(sparkle);c.strokePath();
+  c.setStrokeColor(ivory);c.setLineWidth(2.8);
+  const p=new Path();p.move(new Point(11,34));p.addCurve(new Point(24,8),new Point(18,27),new Point(20,15));p.addCurve(new Point(32,31),new Point(26,14),new Point(29,26));c.addPath(p);c.strokePath();
+  const brim=new Path();brim.move(new Point(8,35));brim.addCurve(new Point(39,35),new Point(17,43),new Point(32,43));c.addPath(brim);c.strokePath();
+  const star=new Path();star.move(new Point(38,10));star.addLine(new Point(38,17));star.move(new Point(34.5,13.5));star.addLine(new Point(41.5,13.5));c.addPath(star);c.strokePath();
   return c.getImage();
  }
- // Compact symmetrical cards; natural centring instead of forced 3-row grids.
- const edgeTextSize=11,cardGap=8,cardHeight=111,innerPad=10;
+ // Golden Hour 13: identical top/middle/bottom rhythm in both cards.
+ const edgeTextSize=11,cardGap=8,cardHeight=111,innerPad=11;
  const cardWidth=Math.floor((Device.screenSize().width-64-26-cardGap)/2);
  const contentWidth=cardWidth*2+cardGap;
  const top=widget.addStack();top.size=new Size(contentWidth,0);top.centerAlignContent();
@@ -185,40 +185,29 @@ try{
  const dateLabel=best.date===localNow().slice(0,10)?"TODAY":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Amsterdam"}).format(new Date(best.date+"T12:00:00Z")).toUpperCase();
  txt(top,dateLabel,edgeTextSize,petrol,true);
  widget.addSpacer(5);
- const cards=widget.addStack();cards.spacing=cardGap;cards.size=new Size(contentWidth,cardHeight);
- const scoreCard=cards.addStack();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(innerPad,innerPad,innerPad,innerPad);scoreCard.centerAlignContent();
- const scoreLeft=scoreCard.addStack();scoreLeft.layoutVertically();scoreLeft.spacing=2;
- const number=scoreLeft.addStack();number.bottomAlignContent();number.spacing=1;
+ const cards=widget.addStack();cards.size=new Size(contentWidth,cardHeight);cards.spacing=cardGap;
+ const scoreCard=cards.addStack();scoreCard.layoutVertically();scoreCard.size=new Size(cardWidth,cardHeight);scoreCard.backgroundColor=panelColor;scoreCard.cornerRadius=12;scoreCard.setPadding(9,innerPad,9,innerPad);
+ const number=scoreCard.addStack();number.bottomAlignContent();number.spacing=2;
  txt(number,best.score.toFixed(1),30,Color.white(),true);
  txt(number,"/10",12,Color.white(),true);
- txt(scoreLeft,grade,22,Color.white(),true);
- const waveSpace=scoreCard.addStack();waveSpace.centerAlignContent();waveSpace.addSpacer();
- const waveBlock=waveSpace.addStack();waveBlock.layoutVertically();waveBlock.centerAlignContent();waveBlock.spacing=1;
- const waveEmoji=txt(waveBlock,"🌊",30,Color.white());waveEmoji.centerAlignText();
- const waveHeight=txt(waveBlock,best.x.h.toFixed(1)+" m",17,Color.white(),true);waveHeight.centerAlignText();
- waveSpace.addSpacer();
- const wizard=cards.addStack();wizard.size=new Size(cardWidth,cardHeight);wizard.layoutVertically();wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(innerPad,innerPad,innerPad,innerPad);wizard.spacing=2;
- const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=3;
- const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(25,25);
+ scoreCard.addSpacer(2);
+ txt(scoreCard,grade,22,Color.white(),true);
+ scoreCard.addSpacer();
+ const waveRow=scoreCard.addStack();waveRow.centerAlignContent();waveRow.spacing=5;
+ const waveEmoji=txt(waveRow,"🌊",24,Color.white());waveEmoji.minimumScaleFactor=1;
+ txt(waveRow,best.x.h.toFixed(1)+" m",17,Color.white(),true);
+ const wizard=cards.addStack();wizard.layoutVertically();wizard.size=new Size(cardWidth,cardHeight);wizard.backgroundColor=petrol;wizard.cornerRadius=12;wizard.setPadding(9,innerPad,9,innerPad);
+ const wizardHead=wizard.addStack();wizardHead.centerAlignContent();wizardHead.spacing=4;
+ const hat=wizardHead.addImage(wizardHat());hat.imageSize=new Size(22,22);
  txt(wizardHead,"WAVE WIZARD",10,new Color("#D6C5A5"),true);
- wizard.addSpacer();
+ wizard.addSpacer(5);
  const verdict=E.waveCharacter(best.x);
- const verdictLine=wizard.addStack();verdictLine.centerAlignContent();verdictLine.spacing=0;
- const verdictColumn=verdictLine.addStack();verdictColumn.layoutVertically();verdictColumn.spacing=0;
- const words=verdict.name.split(" ");
- let first=verdict.name,second="";
- if(verdict.name.length>12){
-  if(words.length===2){first=words[0];second=words[1];}
-  else if(words.length===3){first=words[0];second=words.slice(1).join(" ");}
-  else {first=words.slice(0,2).join(" ");second=words.slice(2).join(" ");}
- }
- const verdictFirst=txt(verdictColumn,first,18,ivory,true);verdictFirst.minimumScaleFactor=0.72;
- if(second){const verdictSecond=txt(verdictColumn,second,18,ivory,true);verdictSecond.minimumScaleFactor=0.72;}
- const emojiArea=verdictLine.addStack();emojiArea.centerAlignContent();emojiArea.addSpacer();
- const verdictEmoji=txt(emojiArea,verdict.emoji||"✦",34,ivory);verdictEmoji.centerAlignText();
- emojiArea.addSpacer();
+ const verdictText=txt(wizard,verdict.name,19,ivory,true);verdictText.minimumScaleFactor=0.68;
  wizard.addSpacer();
- txt(wizard,best.spotName,12,cream);
+ const wizardBottom=wizard.addStack();wizardBottom.centerAlignContent();wizardBottom.spacing=4;
+ const spotText=txt(wizardBottom,best.spotName,12,cream);spotText.minimumScaleFactor=0.8;
+ wizardBottom.addSpacer();
+ const verdictEmoji=txt(wizardBottom,verdict.emoji||"✦",24,ivory);verdictEmoji.minimumScaleFactor=1;
  widget.addSpacer(5);
  const bottom=widget.addStack();bottom.size=new Size(contentWidth,0);bottom.centerAlignContent();
  const timeText=pad(best.h)+":00–"+pad(best.h+2)+":00";
