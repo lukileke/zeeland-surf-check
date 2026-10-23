@@ -1467,3 +1467,82 @@ html[data-theme="light"] #bestPage .hero-rank .hero-score.tone-fair .hero-score-
  #dayview #fieldNotesForm{grid-template-columns:1fr}
  #dayview #fieldNotesForm>label:nth-of-type(5){grid-column:auto}
 }
+
+
+/* FARO COASTAL / V15 semantic grade consistency
+   Category controls both numerical ink and subtle quality pill.
+   Selection (teal) is independent of quality; sea height stays blue. */
+html[data-theme="light"] .tone-great{--quality-ink:#086c4e;--quality-wash:#dff4e8;--quality-border:#a8d8bb}
+html[data-theme="light"] .tone-good{--quality-ink:#176449;--quality-wash:#e4f4e9;--quality-border:#afdbc5}
+html[data-theme="light"] .tone-fair{--quality-ink:#65561e;--quality-wash:#f7edcc;--quality-border:#e5ce83}
+html[data-theme="light"] .tone-poor{--quality-ink:#943f2f;--quality-wash:#f8e9e2;--quality-border:#e7c1b4}
+html[data-theme="light"] .tone-low{--quality-ink:#873147;--quality-wash:#f8e7eb;--quality-border:#e6b9c8}
+html:not([data-theme="light"]) .tone-great{--quality-ink:#75d9ad;--quality-wash:#213c35;--quality-border:#386a55}
+html:not([data-theme="light"]) .tone-good{--quality-ink:#83d6a8;--quality-wash:#233c33;--quality-border:#386450}
+html:not([data-theme="light"]) .tone-fair{--quality-ink:#ead17a;--quality-wash:#36372b;--quality-border:#70603b}
+html:not([data-theme="light"]) .tone-poor{--quality-ink:#f4a08a;--quality-wash:#432e2b;--quality-border:#875446}
+html:not([data-theme="light"]) .tone-low{--quality-ink:#ef9eb2;--quality-wash:#452d39;--quality-border:#7f4b64}
+#forecastPage .day-chip[class*="tone-"] strong,
+#bestPage .hero-score[class*="tone-"] .hero-score-value,
+#dayview .session-glance .hero-score[class*="tone-"] .hero-score-value,
+#dayview .hourly-section .slots button[class*="tone-"] b,
+#bestPage .rank-list .score-tint[class*="tone-"],
+#boardPage .faro-result-scores .score-tint[class*="tone-"]{
+ color:var(--quality-ink)!important;
+}
+#forecastPage .day-chip[class*="tone-"] .day-chip-grade,
+#dayview .hero-score[class*="tone-"] .quality-pill,
+#bestPage .hero-score[class*="tone-"] .quality-pill{
+ color:var(--quality-ink)!important;
+ background:var(--quality-wash)!important;
+ border:1px solid var(--quality-border)!important;
+ padding:3px 8px!important;border-radius:7px!important;
+ width:fit-content!important;
+ font:800 11px/1.4 var(--faro-text)!important;
+ text-wrap:balance;max-width:100%;
+}
+#dayview .hero-score-caption,
+#bestPage .hero-score-caption{
+ display:flex!important;flex-wrap:wrap!important;
+ align-items:center!important;gap:5px 8px!important;
+ color:var(--faro-quiet)!important;
+}
+#dayview .model-origin,#bestPage .model-origin{
+ color:var(--faro-quiet)!important;font:600 11px/1.35 var(--faro-text)!important;
+}
+#forecastPage .day-chip.selected,
+#forecastPage .day-chip.score-tint.selected{
+ border:2px solid var(--faro-selection)!important;
+ background:color-mix(in srgb,var(--faro-selection) 6%,var(--tile))!important;
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--faro-selection) 19%,transparent)!important;
+}
+#dayview .hourly-section .slots button[class*="tone-"]{
+ border-top-color:var(--quality-border)!important;
+}
+#dayview .hourly-section .slots button.active[class*="tone-"]{
+ outline:2px solid var(--faro-selection)!important;
+ outline-offset:-2px!important;
+ background:color-mix(in srgb,var(--faro-selection) 6%,var(--tile))!important;
+}
+#dayview .spot-dna-context{
+ margin:10px 0 15px;padding:13px 14px;border:1px solid var(--faro-line);
+ background:color-mix(in srgb,var(--faro-ocean) 5%,var(--tile));
+ border-radius:11px;overflow-wrap:anywhere;
+}
+#dayview .spot-dna-context>strong{
+ display:block;font:800 10px/1.5 var(--faro-text);
+ letter-spacing:.10em;color:var(--faro-quiet);margin-bottom:9px;
+}
+#dayview .spot-dna-context>p{
+ margin:7px 0;font:600 12px/1.5 var(--faro-text);color:var(--fg);
+}
+#dayview .spot-dna-context>p b{font-weight:800}
+#dayview .spot-dna-context>small{
+ display:block;color:var(--faro-quiet);font:600 11px/1.55 var(--faro-text);
+ padding-top:8px;
+}
+#dayview .spot-dna-sources{display:flex;flex-wrap:wrap;gap:6px 11px;margin-top:9px}
+#dayview .spot-dna-sources a{
+ color:var(--fg);font:700 11px/1.55 var(--faro-text);
+ text-decoration:underline;text-underline-offset:3px;
+}
