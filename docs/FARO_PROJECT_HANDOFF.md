@@ -166,3 +166,21 @@ Importante: aunque el código se ha editado, **no se ha validado exhaustivamente
 ---
 
 **Regla de continuidad:** este archivo describe el estado conocido en la fecha de escritura. **El estado real más reciente del repositorio GitHub prevalece** ante cualquier discrepancia de commits, versiones o estructura HTML.
+
+---
+
+## Continuation update — Coastal Editorial implementation (23 Oct 2026)
+
+After this handoff was written, additional GitHub commits introduced a cross-tab interface refinement. **Check the live main branch before working again.**
+
+- Forecast now avoids elapsed/too-late daylight windows using the `Europe/Amsterdam` clock and a minimum of 40 min usable remaining light. With no upcoming session it shows an explicit empty state and next-day action; the landing selection can advance beyond today.
+- Two-hour cards are more concise, with inaccessible windows disabled instead of presenting past periods as current recommendations.
+- Best of Week now uses genuine date text rather than an emoji with a fictitious printed calendar date, and its wave character regained the same tinted badge treatment as Forecast.
+- Primary Wizard has tighter hierarchy; the older advanced Wizard is still present, optional and collapsible.
+- A consolidated design pass in `faro-ui.css` increases editorial contrast, reduces layout noise and spacing, while preserving brand, score, wavemeter and scientifically honest wording.
+- `index.html` references `faro-ui.css?v=9`; translations now include missing editorial headlines.
+- Regression checks: `node tests/faro-smoke.cjs`; GitHub workflow `.github/workflows/faro-checks.yml`.
+
+Still outstanding: visual Safari testing on real devices in dark/light and EN/ES; run-time API slow/error cases and Wizard completion in browser; accessibility audit; careful consolidation of historical CSS, as !important remains heavily used. These are **not verified** by syntactic smoke tests.
+
+Do not revert to Barlow Condensed or remove old Wizard modules without an explicit design/product decision.
