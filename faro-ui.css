@@ -8,6 +8,8 @@
   --faro-ocean:#77c3c4;
   --faro-wave:#66b7d5;
   --faro-easing:cubic-bezier(.2,.7,.25,1);
+  --faro-display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
+  --faro-text:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
 html:not([data-theme="light"]) {
   --bg:#101517; --fg:#f2f6f5; --muted:#b5c3c7;
@@ -32,7 +34,7 @@ html[data-theme="light"] {
 body {
   background:var(--bg)!important;
   color:var(--fg)!important;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  font-family:var(--faro-text)!important;
   -webkit-font-smoothing:antialiased;
 }
 main {
@@ -49,8 +51,10 @@ button:focus-visible,summary:focus-visible,a:focus-visible {
 .top {align-items:center!important;gap:12px!important;margin:0 0 10px!important}
 .top small {display:block;font-size:10px!important;line-height:1.3!important;
   font-weight:700;letter-spacing:.12em;color:var(--faro-quiet)!important}
-.top h1 {font-size:clamp(29px,6vw,38px)!important;line-height:1.05!important;
-  letter-spacing:-.055em!important;margin:7px 0 0!important;font-weight:800}
+.top h1 {font-family:var(--faro-display)!important;
+  font-size:clamp(43px,10vw,55px)!important;line-height:.95!important;
+  letter-spacing:.005em!important;margin:7px 0 0!important;font-weight:800!important;
+  text-transform:uppercase!important;white-space:nowrap!important}
 .top-actions{gap:6px!important;align-items:center!important}
 .top-actions .theme-toggle,.top-actions .language-toggle {
   min-height:44px!important;
@@ -123,8 +127,10 @@ html:not([data-theme="light"]) main>.app-nav button.active{
   gap:10px!important;margin:0 0 10px!important;
 }
 #forecastPage .day-strip-title strong{
-  color:var(--fg)!important;font-size:18px!important;
-  letter-spacing:-.03em!important;font-weight:800!important;
+  color:var(--fg)!important;font-family:var(--faro-display)!important;
+  font-size:clamp(25px,5.7vw,31px)!important;
+  letter-spacing:.005em!important;font-weight:700!important;
+  line-height:1.1!important;
 }
 #forecastPage .day-strip-title>span{
   font-size:11px!important;color:var(--faro-quiet)!important;
@@ -174,9 +180,10 @@ html:not([data-theme="light"]) main>.app-nav button.active{
 }
 #forecastPage .forecast-overview .day-identity{gap:0!important}
 #forecastPage .forecast-overview #datehead{
-  font-size:clamp(20px,5.1vw,25px)!important;font-weight:800!important;
-  color:var(--fg)!important;letter-spacing:-.045em!important;
-  line-height:1.15!important;margin:0 0 6px!important;
+  font-family:var(--faro-display)!important;
+  font-size:clamp(27px,6.2vw,36px)!important;font-weight:700!important;
+  color:var(--fg)!important;letter-spacing:.002em!important;
+  line-height:1.0!important;margin:0 0 6px!important;
 }
 #forecastPage .forecast-overview #spotname{
   font-size:12px!important;color:var(--faro-quiet)!important;
@@ -253,19 +260,34 @@ html:not([data-theme="light"]) main>.app-nav button.active{
 }
 #dayview .session-glance .glance-heading{
   display:flex!important;align-items:center!important;justify-content:space-between!important;
-  flex-wrap:wrap!important;gap:4px 10px!important;margin:0 0 10px!important;
+  flex-wrap:wrap!important;gap:9px 12px!important;margin:0 0 15px!important;
 }
 #dayview .session-glance .glance-eyebrow{
   font-size:11px!important;color:var(--faro-quiet)!important;
   font-weight:780!important;letter-spacing:.065em!important;line-height:1.5!important;
 }
 #dayview .session-glance .wizard-pick{
-  font-size:12px!important;font-weight:720!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 1 auto!important;
+  width:auto!important;max-width:100%!important;
+  min-height:44px!important;
+  box-sizing:border-box!important;
+  padding:8px 12px!important;
+  margin:0!important;
+  border:1px solid var(--wave-border,var(--faro-line))!important;
+  border-radius:11px!important;
+  background:var(--wave-bg,rgba(80,153,145,.12))!important;
   color:var(--wave-text,var(--faro-ocean))!important;
-  border:0!important;border-radius:8px!important;
-  background:transparent!important;padding:5px 2px!important;
-  margin:0!important;min-height:44px!important;
-  text-align:left!important;
+  font-family:var(--faro-text)!important;
+  font-size:13px!important;
+  font-weight:760!important;
+  line-height:1.2!important;
+  letter-spacing:-.01em!important;
+  text-align:center!important;
+  white-space:normal!important;
+  box-shadow:none!important;
 }
 #dayview .session-glance .hero-stats{
   display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,.95fr)!important;
@@ -332,8 +354,9 @@ html:not([data-theme="light"]) main>.app-nav button.active{
 /* The hourly row is the next action; everything after it is a quieter layer */
 #dayview .hourly-section{margin:19px 0 19px!important}
 #dayview .forecast-section-heading h3{
-  color:var(--fg)!important;font-size:18px!important;font-weight:790!important;
-  letter-spacing:-.03em!important;
+  color:var(--fg)!important;font-family:var(--faro-display)!important;
+  font-size:clamp(26px,5.6vw,33px)!important;font-weight:700!important;
+  letter-spacing:.005em!important;line-height:1.08!important;
 }
 #dayview .forecast-section-heading p{color:var(--muted)!important;font-size:12px!important}
 #dayview .slots{gap:8px!important}
@@ -408,14 +431,21 @@ html[data-theme="light"] #dayview .session-glance .hero-wave-caption{color:#4f66
   #dayview .essential-tag{min-width:120px!important}
   #dayview .hourly-section .slots{grid-template-columns:repeat(8,minmax(0,1fr))!important}
 }
+/* Strong type without squeezing the session on narrow screens. */
+@media(max-width:520px){
+  #forecastPage .forecast-overview #datehead{font-size:clamp(26px,6.4vw,31px)!important}
+  #dayview .forecast-section-heading h3{font-size:clamp(26px,6.5vw,31px)!important}
+  #dayview .session-glance .glance-heading{align-items:flex-start!important}
+  #dayview .session-glance .wizard-pick{font-size:12.5px!important;padding:8px 11px!important}
+}
 @media(max-width:390px){
   main{padding-left:13px!important;padding-right:13px!important}
-  .top h1{font-size:28px!important}
+  .top h1{font-size:43px!important}
   .top-actions .theme-toggle,.top-actions .language-toggle{padding:7px!important}
   #forecastPage .picker-grid{gap:7px!important}
   #forecastPage .picker summary{padding:10px!important}
   #forecastPage .picker summary b{font-size:16px!important}
-  #forecastPage .forecast-overview #datehead{font-size:19px!important}
+  #forecastPage .forecast-overview #datehead{font-size:26px!important}
   #forecastPage .forecast-overview .best-session-brief .best-time{font-size:14px!important}
   #dayview .session-glance{padding:14px 13px!important}
   #dayview .session-glance .hero-wave{padding-left:10px!important}
@@ -460,14 +490,22 @@ html:not([data-theme="light"]) .wave-size.size-large{--wave-color:#c9adf0}
 html:not([data-theme="light"]) .wave-size.size-xl{--wave-color:#e5a3cd}
 /* A memorable wordmark without a heavy advertising header. */
 .top h1{
-  font-weight:850!important;
-  letter-spacing:-.064em!important;
+  font-weight:800!important;
+  letter-spacing:.005em!important;
 }
 .top>div:first-child>small{letter-spacing:.155em!important}
+.faro-logo{display:inline-flex;align-items:baseline;gap:7px}
+.faro-logo .faro-brand-tide{
+  display:inline-block;color:var(--faro-ocean);
+  font-family:var(--faro-display)!important;
+  font-size:.82em;font-weight:600;line-height:1;
+  transform:translateY(-.04em) rotate(-4deg);
+}
+@media(max-width:390px){.top h1{font-size:43px!important}}
 #forecastPage .picker-grid{margin-bottom:24px!important}
 #forecastPage .picker summary{transition:border-color .18s ease,transform .18s ease!important}
 #forecastPage .picker summary:hover{border-color:var(--faro-ocean)!important}
-#forecastPage .day-strip-title strong{font-size:19px!important}
+#forecastPage .day-strip-title strong{font-size:clamp(25px,5.7vw,31px)!important}
 /* A labelled 1-10 score helps beyond red/amber/green. */
 #forecastPage .day-chip{
   min-height:121px!important;
@@ -584,8 +622,9 @@ html[data-theme="light"] #dayview .glance-safety .safety-inline.danger .safety-i
 }
 html[data-theme="light"] #bestPage .best-intro>small{color:#256d70!important}
 #bestPage .best-intro h2{
-  color:var(--fg)!important;font-size:clamp(27px,6.2vw,39px)!important;
-  letter-spacing:-.05em!important;line-height:1.1!important;
+  color:var(--fg)!important;font-family:var(--faro-display)!important;
+  font-size:clamp(39px,9vw,57px)!important;font-weight:700!important;
+  letter-spacing:.005em!important;line-height:1!important;
   margin:5px 0 10px!important;
 }
 #bestPage .best-intro p{
@@ -601,7 +640,10 @@ html[data-theme="light"] #bestPage .best-intro>small{color:#256d70!important}
   margin:19px 0 6px!important;
 }
 #bestPage>.panel>.row h2{
-  font-size:15px!important;letter-spacing:-.02em!important;color:var(--fg)!important;
+  font-family:var(--faro-display)!important;
+  font-size:clamp(25px,5.8vw,31px)!important;
+  letter-spacing:.008em!important;font-weight:700!important;
+  color:var(--fg)!important;
 }
 #bestPage #rankingstatus{color:var(--faro-quiet)!important;font-size:11px!important}
 #bestPage .best-context{
@@ -636,8 +678,9 @@ html[data-theme="light"] #bestPage .best-intro>small{color:#256d70!important}
   font-weight:760!important;letter-spacing:.1em!important;line-height:1.5!important;
 }
 #bestPage .hero-location{
-  font-size:clamp(20px,5.6vw,27px)!important;
-  letter-spacing:-.035em!important;line-height:1.2!important;
+  font-family:var(--faro-display)!important;
+  font-size:clamp(29px,6.7vw,41px)!important;font-weight:700!important;
+  letter-spacing:.005em!important;line-height:1.05!important;
   margin:13px 0 13px!important;
 }
 #bestPage .hero-when{margin-bottom:10px!important}
@@ -699,9 +742,10 @@ html[data-theme="light"] #bestPage .best-intro>small{color:#256d70!important}
 }
 html[data-theme="light"] #boardPage>.faro-guide>small{color:#256d70!important}
 #boardPage>.faro-guide h2{
-  font-size:clamp(24px,5.8vw,34px)!important;
-  line-height:1.15!important;letter-spacing:-.04em!important;
-  margin:9px 0 9px!important;
+  font-family:var(--faro-display)!important;
+  font-size:clamp(34px,7.6vw,48px)!important;font-weight:700!important;
+  line-height:1!important;letter-spacing:.005em!important;
+  margin:9px 0 11px!important;
 }
 #boardPage>.faro-guide>p.muted{font-size:13px!important;line-height:1.5!important}
 #boardPage .faro-progress{
@@ -718,8 +762,10 @@ html[data-theme="light"] #boardPage>.faro-guide>small{color:#256d70!important}
 }
 #boardPage .faro-step{margin:17px 0!important}
 #boardPage .faro-step h3{
-  font-size:19px!important;line-height:1.25!important;
-  letter-spacing:-.025em!important;margin:0 0 15px!important;
+  font-family:var(--faro-display)!important;
+  font-size:clamp(27px,5.8vw,34px)!important;font-weight:700!important;
+  line-height:1.1!important;letter-spacing:.008em!important;
+  margin:0 0 15px!important;
 }
 #boardPage .faro-step label{
   font-size:13px!important;font-weight:710!important;
@@ -767,7 +813,7 @@ html[data-theme="light"] #boardPage>.faro-guide>small{color:#256d70!important}
   background:var(--faro-raised)!important;color:var(--fg)!important;
 }
 #boardPage #faroFeedback{font-size:12px!important;color:var(--muted)!important}
-#boardPage #faroFeedback>h3{color:var(--fg)!important;font-size:19px!important;margin:21px 0 9px!important}
+#boardPage #faroFeedback>h3{font-family:var(--faro-display)!important;color:var(--fg)!important;font-size:clamp(27px,5.8vw,34px)!important;line-height:1.1!important;margin:21px 0 9px!important}
 #boardPage .faro-results{
   grid-template-columns:minmax(0,1fr)!important;gap:12px!important;
 }
@@ -776,7 +822,7 @@ html[data-theme="light"] #boardPage>.faro-guide>small{color:#256d70!important}
   border:1px solid var(--faro-line)!important;
   border-radius:15px!important;padding:15px!important;
 }
-#boardPage .faro-result-card h3{font-size:18px!important;margin:12px 0!important;line-height:1.3!important}
+#boardPage .faro-result-card h3{font-family:var(--faro-display)!important;font-size:26px!important;font-weight:700!important;letter-spacing:.006em!important;margin:12px 0!important;line-height:1.1!important}
 #boardPage .faro-result-card small{font-size:11px!important}
 #boardPage .faro-result-scores{gap:7px!important}
 #boardPage .faro-result-scores>div{
@@ -801,7 +847,7 @@ html[data-theme="light"] #boardPage>.faro-guide>small{color:#256d70!important}
 @media(max-width:390px){
   #forecastPage .day-chip{min-height:121px!important}
   #bestPage .highlight.hero-rank{padding:15px!important}
-  #bestPage .hero-location{font-size:20px!important}
+  #bestPage .hero-location{font-size:29px!important}
   #boardPage>.faro-guide{padding:15px!important}
 }
 @media(prefers-reduced-motion:reduce){
