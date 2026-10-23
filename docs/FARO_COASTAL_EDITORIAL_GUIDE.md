@@ -75,6 +75,19 @@ References:
 - https://github.com/google/fonts/blob/main/ofl/barlowcondensed/OFL.txt
 - https://fontsource.org/fonts/manrope/about
 
+## Typography decision — Coastline / “Born on Waves” direction (2026-10-23)
+
+User-selected visual direction: **the bold, wide, poster-like letterforms** associated with the Coastline / “Born on Waves” reference, while retaining a restrained, serious surf-forecast interface.
+
+- Display / brand / major section headlines: **Archivo Black** (open-source, SIL OFL). A visual approximation of the reference's bold grotesque style; **not an assertion that it is the original designer's exact font**.
+- Functional UI / weather values / score units / warnings: **Manrope**, preserving legibility and stable alignment.
+- Compared with the previous condensed Barlow display, wide Archivo requires **smaller type sizes** and fewer competing display headlines, particularly at iPhone widths.
+- Never use the poster style for safety instructions, technical descriptions, small labels or numeric readings.
+- Typography is loaded via the Google Fonts stylesheet and has system-font fallbacks. No font binaries are committed.
+- Keep the textured, expressive surf-brand tone in **typographic proportions**, not background artwork that would obscure model values.
+
+Reference: [ArloCreative Coastline](https://arlocreative.co.uk/coastline/). The project's public page discusses clean surf-inspired typography but does not identify its exact font. Reference typeface: [Archivo Black](https://fonts.adobe.com/fonts/archivo-black).
+
 ## Visual tokens and intended use
 
 - **Dark background:** deep charcoal / wet basalt, not pure black.
