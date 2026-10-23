@@ -13,12 +13,14 @@ const css=fs.readFileSync(path.join(root,'faro-ui.css'),'utf8');
 const engine=fs.readFileSync(path.join(root,'surf-engine.js'),'utf8');
 const dnaSource=fs.readFileSync(path.join(root,'faro-spot-dna.js'),'utf8');
 const evidenceSource=fs.readFileSync(path.join(root,'faro-spot-evidence.js'),'utf8');
+const dnaLabSource=fs.readFileSync(path.join(root,'faro-dna-validation.js'),'utf8');
 const scripts=Array.from(html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi),m=>m[1]);
 assert.ok(scripts.length>=2,'HTML includes application and translation scripts');
 scripts.forEach((s,i)=>assert.doesNotThrow(()=>new vm.Script(s), 'Script '+i+' syntax'));
 assert.doesNotThrow(()=>new vm.Script(engine),'Shared surf engine syntax');
 assert.doesNotThrow(()=>new vm.Script(dnaSource),'Spot DNA module syntax');
 assert.doesNotThrow(()=>new vm.Script(evidenceSource),'Spot evidence module syntax');
+assert.doesNotThrow(()=>new vm.Script(dnaLabSource),'Spot validation syntax');
 const ids=Array.from(html.matchAll(/\bid=["']([^"']+)["']/g),m=>m[1]);
 assert.equal(ids.length,new Set(ids).size,'No duplicate static DOM identifiers');
 assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces balanced');
@@ -148,6 +150,35 @@ assert.equal(sourceSignals.status,'shadow-evidence-only','Not a score');
 assert.equal(evid.signal({},'Domburg::Noordduine').swellEnergyProxyShare,null,'Missing swell height not fabricated');
 assert.ok(!Object.prototype.hasOwnProperty.call(sourceSignals,'score'),'Shadow feature has no surf score');
 
+
+/* Time-separated observations versus pre-observation model snapshots. */
+const labContext={};
+new Function('globalThis',dnaLabSource)(labContext);
+const lab=labContext.FaroDNAValidation;
+assert.equal(lab.localTime('2026-10-12T10:00:00Z'),'2026-10-12T12:00','Netherlands CEST');
+const sample=(date,value,rating)=>({
+ id:'f'+date,spotId:'Domburg::Noordduine',
+ observedLocal:'2026-10-'+date+'T12:30',quality:rating,
+ forecastSnapshot:{fetchedAt:'2026-10-'+date+'T10:00:00Z',
+ modelHour:'2026-10-'+date+'T12:00',quality:value}
+});
+assert.ok(lab.pair(sample('10',3,1)),'Pre-session model snapshot is acceptable');
+const afterSample={...sample('10',3,1),
+ forecastSnapshot:{fetchedAt:'2026-10-10T11:00:00Z',
+ modelHour:'2026-10-10T12:00',quality:3}};
+assert.equal(lab.pair(afterSample),null,'Forecast issued after observation is excluded');
+assert.equal(lab.pair({
+ observedLocal:'2026-10-25T02:30',quality:3,
+ forecastSnapshot:{fetchedAt:'2026-10-24T23:00:00Z',
+ modelHour:'2026-10-25T02:00',quality:5}
+}),null,'Ambiguous October clock-change hour excluded');
+const labRecords=['10','11','12','13','14','15'].map((day,i)=>sample(day,2+i,Math.min(5,i+1)));
+const diagnostic=lab.evaluate(labRecords,'Domburg::Noordduine');
+assert.equal(diagnostic.paired,6);
+assert.equal(diagnostic.independentDays,6);
+assert.equal(diagnostic.directionalAgreement,1,'Synthetic concordant ranking');
+assert.equal(lab.evaluate([]).directionalAgreement,null,'Insufficient data not rated');
+
 /* Mock a 340 CSS-pixel mobile carousel. This exercises scroll preservation
  * without claiming a real Safari layout/gesture test. */
 const railStart=html.indexOf('let lastDayStripSelection=-1;');
@@ -203,4 +234,4 @@ railFunctions.scrollForecastDays(-1);
 railFunctions.updateDayStripControls();
 assert.ok(rail.scrollLeft<500,'Previous arrow moves the rail left');
 
-console.log('FARO smoke checks passed: JavaScript, markup, themes, timing, translations, the mobile rail and Spot DNA.');
+console.log('FARO smoke checks passed: JavaScript, markup, themes, timing, translations, the mobile rail, Spot DNA and observational validation.');
