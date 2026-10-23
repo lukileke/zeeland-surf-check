@@ -88,7 +88,7 @@ main{width:100%;max-width:820px;padding:24px clamp(16px,4vw,32px) 76px}
  #boardPage>.panel{margin:0}
  #boardPage>.muted,#boardPage>button{grid-column:1/-1}
 }
-.faro-results{display:grid;gap:12px;margin:14px 0}.faro-result-card{border:1px solid var(--border);border-radius:14px;background:var(--tile);padding:15px}.faro-result-card h3{margin:12px 0}.faro-result-card p{font-size:13px}.faro-result-card button{width:100%}.faro-result-scores{display:grid;grid-template-columns:1fr 1fr;gap:10px}.faro-result-scores>div{background:var(--panel);padding:12px;border-radius:10px}.faro-result-scores small{display:block;font-size:10px}.faro-result-scores strong{display:block;font-size:28px;margin-top:5px}.faro-result-scores strong span{font-size:13px;color:var(--muted)}@media(min-width:900px){#boardPage>.faro-guide{max-width:100%}.faro-results{grid-template-columns:repeat(3,minmax(0,1fr))}}</style></head><body><main><div class="top"><div><small>ZEELAND SURF CHECK · FORECAST · WEB APP</small><h1>🌊 Surf Forecast</h1></div><div class="top-actions"><button class="language-toggle" id="languageToggle" onclick="toggleLanguage()" aria-label="Change language">ES</button><button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Switch colour theme">☀ Light</button><span id="status" class="pill">Starting…</span></div></div><nav class="app-nav"><button id="navForecast" class="active" onclick="switchTab('forecast')">🌊 Surf Forecast</button><button id="navBoard" onclick="switchTab('board')">🏄‍♂️ Board Wizard</button></nav><div id="forecastPage"><p class="muted" id="updated">Connecting to Open-Meteo…</p><div class="wrap"><button id="daily" class="active" onclick="mode='daily';render()">Today / day</button><button id="weekly" onclick="mode='weekly';render()">7 days</button><button onclick="load();loadRankings()">↻ Refresh</button></div><section class="panel" aria-label="Best of the week"><div class="row"><h2 style="margin:0;font-size:19px">🏆 Best of the week</h2><small id="rankingstatus">Calculating…</small></div><p class="muted" style="font-size:12px">Comparing 5 beaches and 12 spots, with at least 40 minutes of daylight per window.</p><div class="highlights" id="highlights"><div class="muted">Fetching forecasts…</div></div></section><div class="picker-grid"><div id="areas"></div><div id="spots"></div></div><div class="panel"><div class="row"><div><small id="spotname"></small><h2 id="datehead" style="margin:6px 0"></h2></div><div><small>Best daylight score</small><div id="best" class="score">—</div></div></div><div class="week-back-row"><button id="backToWeek" class="back-to-week hide" onclick="returnToWeek()">← Back to 7 days</button></div><div class="metric"><div>🌅 Sunrise<b id="rise">—</b></div><div>🌇 Sunset<b id="set">—</b></div><div>🏄 Leave before<b id="cutoff">—</b></div></div><p id="summary"></p></div><div id="dayview"><div id="waveinsight" class="insight-panel"><h3>🌊 Wave Wizard</h3><p class="muted">Select a time window to see an estimate.</p></div><h3>Score by 2-hour windows</h3><div id="slots" class="slots"></div><div class="panel" id="detail"></div><div id="spotinsight" class="insight-panel"><h3>📍 Spot insights</h3><p class="muted">Choose a beach to see local considerations.</p></div><div class="panel" id="wetsuit"><h3>🧥 What to wear</h3><p class="muted">Select a time window.</p></div></div><div id="weekview" class="hide"><h3>Next 7 days</h3><div id="weekrows"></div></div></div><section id="boardPage" class="hide"><div class="panel faro-guide" id="faroGuide">
+.faro-results{display:grid;gap:12px;margin:14px 0}.faro-result-card{border:1px solid var(--border);border-radius:14px;background:var(--tile);padding:15px}.faro-result-card h3{margin:12px 0}.faro-result-card p{font-size:13px}.faro-result-card button{width:100%}.faro-result-scores{display:grid;grid-template-columns:1fr 1fr;gap:10px}.faro-result-scores>div{background:var(--panel);padding:12px;border-radius:10px}.faro-result-scores small{display:block;font-size:10px}.faro-result-scores strong{display:block;font-size:28px;margin-top:5px}.faro-result-scores strong span{font-size:13px;color:var(--muted)}@media(min-width:900px){#boardPage>.faro-guide{max-width:100%}.faro-results{grid-template-columns:repeat(3,minmax(0,1fr))}}</style></head><body><main><div class="top"><div><small>ZEELAND SURF CHECK · FORECAST · WEB APP</small><h1>🌊 Surf Forecast</h1></div><div class="top-actions"><button class="language-toggle" id="languageToggle" onclick="toggleLanguage()" aria-label="Change language">ES</button><button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Switch colour theme">☀ Light</button><span id="status" class="pill">Starting…</span></div></div><nav class="app-nav"><button id="navForecast" class="active" onclick="switchTab('forecast')">🌊 Surf Forecast</button><button id="navBoard" onclick="switchTab('board')">🏄‍♂️ Board Wizard</button></nav><div id="forecastPage"><p class="muted" id="updated">Connecting to Open-Meteo…</p><div class="wrap"><button id="daily" class="active" onclick="mode='daily';render()">Today / day</button><button id="weekly" onclick="mode='weekly';render()">7 days</button><button onclick="load();loadRankings()">↻ Refresh</button></div><section class="panel" aria-label="Best of the week"><div class="row"><h2 style="margin:0;font-size:19px">🏆 Best of the week</h2><small id="rankingstatus">Calculating…</small></div><p class="muted" style="font-size:12px">Comparing 5 beaches and 12 spots individually, with at least 40 minutes of daylight per window.</p><div class="highlights" id="highlights"><div class="muted">Fetching forecasts…</div></div></section><div class="picker-grid"><div id="areas"></div><div id="spots"></div></div><div class="panel"><div class="row"><div><small id="spotname"></small><h2 id="datehead" style="margin:6px 0"></h2></div><div><small>Best daylight score</small><div id="best" class="score">—</div></div></div><div class="week-back-row"><button id="backToWeek" class="back-to-week hide" onclick="returnToWeek()">← Back to 7 days</button></div><div class="metric"><div>🌅 Sunrise<b id="rise">—</b></div><div>🌇 Sunset<b id="set">—</b></div><div>🏄 Leave before<b id="cutoff">—</b></div></div><p id="summary"></p></div><div id="dayview"><div id="waveinsight" class="insight-panel"><h3>🌊 Wave Wizard</h3><p class="muted">Select a time window to see an estimate.</p></div><h3>Score by 2-hour windows</h3><div id="slots" class="slots"></div><div class="panel" id="detail"></div><div id="spotinsight" class="insight-panel"><h3>📍 Spot insights</h3><p class="muted">Choose a beach to see local considerations.</p></div><div class="panel" id="wetsuit"><h3>🧥 What to wear</h3><p class="muted">Select a time window.</p></div></div><div id="weekview" class="hide"><h3>Next 7 days</h3><div id="weekrows"></div></div></div><section id="boardPage" class="hide"><div class="panel faro-guide" id="faroGuide">
  <small>🌊 FARO WIZARD BETA · GUIDED SEARCH</small><h2>Find your next surf session</h2>
  <p class="muted">Start with what you know. We'll guide you through the rest.</p>
  <div class="faro-progress" aria-label="Wizard progress"><span id="faroBar1"></span><span id="faroBar2"></span><span id="faroBar3"></span></div>
@@ -272,34 +272,46 @@ function rankScore(m,w,orientation,i,ai){
 }
 async function loadRankings(){
  $('rankingstatus').textContent='Fetching…';
- const results=await Promise.allSettled(areas.map(async(a,ai)=>{
-  const [name,lat,lon]=a.spots[0];
-  const mq=new URL('https://marine-api.open-meteo.com/v1/marine');
-  mq.search=new URLSearchParams({latitude:lat,longitude:lon,hourly:'wave_height,wave_direction,wave_period,sea_surface_temperature',timezone:'Europe/Amsterdam',forecast_days:'7'});
-  const wq=new URL('https://api.open-meteo.com/v1/forecast');
-  wq.search=new URLSearchParams({latitude:lat,longitude:lon,hourly:'wind_speed_10m,wind_direction_10m,precipitation,cloud_cover,weather_code,temperature_2m,apparent_temperature',daily:'sunrise,sunset',timezone:'Europe/Amsterdam',forecast_days:'7'});
-  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);let rr;try{rr=await Promise.all([fetch(mq,{signal:controller.signal}),fetch(wq,{signal:controller.signal})]);}finally{clearTimeout(timeout)}
-  if(rr.some(r=>!r.ok))throw Error('API');
-  const [m,w]=await Promise.all(rr.map(r=>r.json()));
-  const out=[];
-  for(let si=0;si<a.spots.length;si++){
-   for(let di=0;di<Math.min(7,w.daily.time.length);di++){
-    const d=w.daily.time[di],start=mins(w.daily.sunrise[di])+15,end=mins(w.daily.sunset[di])-30;
-    for(let h=6;h<22;h+=2){
-     const available=Math.max(0,Math.min((h+2)*60,end)-Math.max(h*60,start));if(available<40)continue;
-     const ids=m.hourly.time.map((t,i)=>t.startsWith(d)&&Number(t.slice(11,13))>=h&&Number(t.slice(11,13))<h+2?i:-1).filter(i=>i>=0);
-     if(ids.length!==2)continue;
-     const scores=ids.map(i=>rankScore(m,w,a.spots[si][3],i,ai));
-     if(scores.some(x=>x===null))continue;
-     out.push({ai,si,di,h,score:Math.round(scores.reduce((x,y)=>x+y,0)/scores.length*10)/10,day:d,spot:a.spots[si][0],area:a.name,wave:ids.reduce((sum,i)=>sum+m.hourly.wave_height[i],0)/ids.length,period:ids.reduce((sum,i)=>sum+m.hourly.wave_period[i],0)/ids.length,wind:ids.reduce((sum,i)=>sum+w.hourly.wind_speed_10m[w.hourly.time.indexOf(m.hourly.time[i])],0)/ids.length});
+ const jobs=areas.flatMap((a,ai)=>a.spots.map((sp,si)=>({a,ai,sp,si})));
+ const results=[];let cursor=0;
+ async function worker(){
+  while(cursor<jobs.length){
+   const {a,ai,sp,si}=jobs[cursor++];
+   try{
+    const [,lat,lon,orientation]=sp;
+    const mq=new URL('https://marine-api.open-meteo.com/v1/marine');
+    mq.search=new URLSearchParams({latitude:lat,longitude:lon,hourly:'wave_height,wave_direction,wave_period,sea_surface_temperature',timezone:'Europe/Amsterdam',forecast_days:'7'});
+    const wq=new URL('https://api.open-meteo.com/v1/forecast');
+    wq.search=new URLSearchParams({latitude:lat,longitude:lon,hourly:'wind_speed_10m,wind_direction_10m,precipitation,cloud_cover,weather_code,temperature_2m,apparent_temperature',daily:'sunrise,sunset',timezone:'Europe/Amsterdam',forecast_days:'7'});
+    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),16000);
+    let rr;
+    try{rr=await Promise.all([fetch(mq,{signal:controller.signal}),fetch(wq,{signal:controller.signal})]);}
+    finally{clearTimeout(timeout)}
+    if(rr.some(r=>!r.ok))throw Error('API');
+    const [m,w]=await Promise.all(rr.map(r=>r.json()));
+    const windTimes=new Map(w.hourly.time.map((t,i)=>[t,i]));
+    for(let di=0;di<Math.min(7,w.daily.time.length);di++){
+     const d=w.daily.time[di],start=mins(w.daily.sunrise[di])+15,end=mins(w.daily.sunset[di])-30;
+     for(let h=6;h<22;h+=2){
+      const available=Math.max(0,Math.min((h+2)*60,end)-Math.max(h*60,start));
+      if(available<40)continue;
+      const ids=m.hourly.time.map((t,i)=>t.startsWith(d)&&Number(t.slice(11,13))>=h&&Number(t.slice(11,13))<h+2?i:-1).filter(i=>i>=0);
+      if(ids.length!==2||ids.some(i=>!windTimes.has(m.hourly.time[i])))continue;
+      const scores=ids.map(i=>rankScore(m,w,orientation,i,ai));
+      if(scores.some(v=>v===null))continue;
+      const avg=fn=>ids.reduce((sum,i)=>sum+fn(i),0)/ids.length;
+      results.push({ai,si,di,h,score:Math.round((scores[0]+scores[1])*5)/10,day:d,spot:sp[0],area:a.name,
+       wave:avg(i=>m.hourly.wave_height[i]),period:avg(i=>m.hourly.wave_period[i]),
+       wind:avg(i=>w.hourly.wind_speed_10m[windTimes.get(m.hourly.time[i])])});
+     }
     }
-   }
+   }catch(err){console.warn('Faro spot forecast unavailable',a.name,sp[0],err)}
   }
-  return out;
- }));
- rankings=results.filter(r=>r.status==='fulfilled').flatMap(r=>r.value).sort((a,b)=>b.score-a.score);
- const n=results.filter(r=>r.status==='fulfilled').length;
- $('rankingstatus').textContent=n===5?'5/5 beaches':n+'/5 beaches';
+ }
+ await Promise.all(Array.from({length:3},()=>worker()));
+ rankings=results.sort((a,b)=>b.score-a.score);
+ const n=new Set(results.map(r=>r.ai+':'+r.si)).size;
+ $('rankingstatus').textContent=n+'/'+jobs.length+' spots';
  renderHighlights();render();
 }
 function goRank(i){
