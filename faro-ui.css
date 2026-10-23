@@ -732,8 +732,16 @@ html[data-theme="light"] #bestPage .best-intro>small{color:#256d70!important}
   margin:13px 0 0!important;gap:8px!important;
 }
 #bestPage .hero-footer .wizard-pick{
-  border:0!important;background:transparent!important;
-  padding:0!important;font-size:12px!important;
+  display:inline-flex!important;align-items:center!important;gap:5px!important;
+  width:fit-content!important;max-width:100%!important;
+  min-height:34px!important;padding:6px 10px!important;
+  border:1px solid var(--wave-border,var(--faro-line))!important;
+  background:var(--wave-bg,var(--tile))!important;
+  color:var(--wave-text,var(--fg))!important;
+  border-radius:10px!important;
+  font-family:var(--faro-text)!important;font-size:12px!important;
+  line-height:1.25!important;font-weight:750!important;
+  white-space:normal!important;
 }
 #bestPage .hero-footer .rank-meta{color:var(--muted)!important;font-size:12px!important}
 #bestPage .rank-list{gap:0!important;margin:12px 0!important}
@@ -859,7 +867,12 @@ html[data-theme="light"] #boardPage>.faro-guide>small{color:#256d70!important}
   background:transparent!important;border:1px solid var(--faro-line)!important;
   padding:12px 15px!important;border-radius:13px!important;
 }
-#boardPage #legacyBoard>summary{min-height:44px!important;display:flex!important;align-items:center!important}
+#boardPage #legacyBoard>summary{
+  min-height:48px!important;display:flex!important;align-items:center!important;
+  justify-content:space-between!important;gap:10px!important;
+  padding:6px 0!important;font-size:13px!important;
+  font-weight:750!important;color:var(--fg)!important;
+}
 #boardPage #wizardLocationPanel{background:var(--panel)!important;border:1px solid var(--faro-line)!important}
 @media(min-width:700px){
   #boardPage .faro-results{grid-template-columns:repeat(3,minmax(0,1fr))!important}
@@ -987,4 +1000,206 @@ main>.app-nav button{font-family:var(--faro-text)!important;font-weight:750!impo
   #forecastPage .forecast-overview #datehead{font-size:21px!important}
   #dayview .session-glance .glance-title{font-size:18px!important}
   #bestPage .hero-location{font-size:23px!important}
+}
+
+
+/* FARO / Coastal Editorial refinement, 23 October 2026
+   Display type is reserved for editorial focal points. Weather and controls
+   remain in Manrope. These overrides only correct specific legacy collisions. */
+:root {
+ --faro-radius:16px;
+ --faro-row-space:12px;
+}
+#forecastPage .picker-grid{margin-bottom:16px!important}
+#forecastPage .day-chip{
+ min-height:112px!important;
+ padding-block:10px!important;
+}
+#forecastPage .day-chip.selected{padding-top:9px!important;padding-bottom:9px!important}
+#forecastPage .day-strip-title{margin-bottom:7px!important}
+#forecastPage .day-outlook-section{margin-bottom:9px!important}
+#forecastPage .daylight-disclosure{margin-bottom:7px!important}
+#dayview .session-glance{
+ border-radius:var(--faro-radius)!important;
+ padding:16px!important;
+}
+#dayview .session-glance .glance-heading{
+ margin-bottom:12px!important;gap:9px!important;
+}
+#dayview .session-glance .glance-footer{
+ margin-top:7px!important;padding-top:9px!important;
+ border-top:1px solid var(--faro-line)!important;
+}
+#dayview .session-glance .hero-stats{margin-top:7px!important}
+#dayview .session-essentials{margin-top:11px!important;margin-bottom:13px!important}
+#dayview .session-essentials>small{font-size:11px!important}
+#dayview .hourly-section{margin-top:19px!important;margin-bottom:13px!important}
+#dayview .hourly-section .slots button{
+ min-height:95px!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:5px!important;min-width:0!important;
+ border-radius:12px!important;padding:10px 4px!important;
+}
+#dayview .hourly-section .slots button .slot-time{
+ white-space:nowrap;font-variant-numeric:tabular-nums;
+ font-size:clamp(12px,3.2vw,16px);font-weight:650;
+}
+#dayview .hourly-section .slots button b{
+ font-size:clamp(20px,5.8vw,26px)!important;line-height:1.05!important;
+}
+#dayview .hourly-section .slots button small{margin:0!important;line-height:1!important}
+#dayview .hourly-section .slot-wizard{
+ font-size:10px!important;line-height:1.15!important;
+ font-weight:650!important;white-space:nowrap!important;
+ overflow:hidden;text-overflow:ellipsis;max-width:100%;
+}
+#dayview .hourly-section .slots button.expired{
+ opacity:.46!important;filter:saturate(.62);
+ cursor:not-allowed!important;
+}
+#dayview .hourly-section .slots button:disabled{cursor:not-allowed!important}
+#dayview .forecast-expand,
+#dayview #detail>.forecast-method-note,
+#dayview #detail>.forecast-metrics-details{
+ border-color:var(--faro-line)!important;
+}
+#dayview .forecast-expand>summary{
+ min-height:52px!important;padding:12px 2px!important;
+ background:transparent!important;
+}
+#dayview .forecast-expand>summary span{font-size:11px!important}
+#dayview .forecast-section-heading h3{
+ font-size:clamp(22px,5.4vw,29px)!important;
+ line-height:1.15!important;
+}
+#dayview .detail-section{margin-top:14px!important}
+#dayview .forecast-empty-session{
+ padding:13px 3px 15px;max-width:38rem;
+}
+#dayview .forecast-empty-kicker{
+ font-size:11px;font-weight:800;letter-spacing:.11em;
+ color:var(--faro-quiet);
+}
+#dayview .forecast-empty-session h3{
+ font-family:var(--faro-display);font-weight:400;
+ line-height:1.13;letter-spacing:-.035em;
+ font-size:clamp(22px,5.5vw,30px);margin:12px 0 9px;
+}
+#dayview .forecast-empty-session p{
+ color:var(--muted);font-size:13px;line-height:1.55;
+ margin:0 0 14px;
+}
+#dayview .forecast-empty-session button{
+ min-height:44px;padding:9px 13px;
+ background:var(--faro-ocean);border:0;border-radius:10px;
+ color:#133036;font-weight:800;font-size:13px;
+}
+#bestPage .best-intro{margin:12px 0 11px!important}
+#bestPage .best-intro h2{
+ font-size:clamp(31px,7.8vw,47px)!important;
+ letter-spacing:-.045em!important;line-height:1.08!important;
+ margin:7px 0 9px!important;
+}
+#bestPage .best-intro p{font-size:13px!important;line-height:1.5!important}
+#bestPage>.panel>.row{margin:15px 0 4px!important}
+#bestPage>.panel>.row h2{
+ font-family:var(--faro-text)!important;font-weight:800!important;
+ font-size:clamp(18px,4.5vw,22px)!important;
+ letter-spacing:-.03em!important;
+}
+#bestPage .best-context{margin-bottom:12px!important}
+#bestPage .highlight.hero-rank{
+ padding:17px!important;border-radius:var(--faro-radius)!important;
+}
+#bestPage .hero-rank>small{
+ font-size:10px!important;line-height:1.45!important;
+ letter-spacing:.07em!important;
+}
+#bestPage .hero-location{
+ font-size:clamp(24px,5.9vw,33px)!important;
+ overflow-wrap:normal;word-break:normal;
+ line-height:1.12!important;margin:12px 0!important;
+}
+#bestPage .hero-when{gap:8px!important}
+#bestPage .hero-when span{
+ background:transparent!important;border:1px solid var(--faro-line)!important;
+ color:var(--fg)!important;border-radius:8px!important;
+ padding:7px 10px!important;min-height:36px!important;
+ display:inline-flex!important;align-items:center!important;
+ font-size:12px!important;font-weight:750!important;
+ font-variant-numeric:tabular-nums;
+}
+#bestPage .hero-rank .hero-stats{padding:10px 0!important}
+#bestPage .hero-footer{align-items:center!important;margin-top:11px!important}
+#bestPage .rank-list button{padding:10px 0!important;min-height:65px!important}
+#bestPage .rank-list .rank-meta{font-size:12px!important;line-height:1.45!important}
+#bestPage .highlight.wide:not(.hero-rank){
+ border-radius:var(--faro-radius)!important;
+}
+#boardPage>.faro-guide{
+ padding:18px!important;border-radius:var(--faro-radius)!important;
+ margin-top:11px!important;margin-bottom:12px!important;
+}
+#boardPage>.faro-guide>small{
+ font-size:10px!important;letter-spacing:.09em!important;
+}
+#boardPage>.faro-guide h2{
+ font-size:clamp(28px,6.3vw,39px)!important;
+ line-height:1.12!important;
+ margin:8px 0 8px!important;
+}
+#boardPage>.faro-guide>p.muted{
+ font-size:13px!important;line-height:1.45!important;
+}
+#boardPage .faro-progress{margin:16px 0 9px!important}
+#boardPage .faro-step{margin:13px 0!important}
+#boardPage .faro-step h3{
+ font-size:clamp(21px,5vw,28px)!important;
+ margin-bottom:12px!important;
+}
+#boardPage .faro-step label{margin:10px 0!important}
+#boardPage .faro-controls{margin-top:15px!important}
+#boardPage #legacyBoard{
+ padding:8px 14px!important;
+ background:transparent!important;
+ border-color:var(--faro-line)!important;
+}
+#boardPage #legacyBoard .legacy-summary-hint{
+ margin-left:auto;text-align:right;
+ color:var(--faro-quiet);font-size:11px;
+ font-weight:600;line-height:1.25;
+}
+#boardPage #legacyBoard[open]{padding-bottom:14px!important}
+#boardPage #legacyBoard>div{margin-top:14px!important}
+#boardPage #legacyBoard .panel{
+ box-shadow:none!important;
+}
+#boardPage #wizardLocationPanel{
+ background:transparent!important;border:0!important;
+ border-top:1px solid var(--faro-line)!important;
+ padding:16px 0 0!important;margin-top:12px!important;
+}
+#boardPage #wizardLocationPanel .wizard-fields{gap:10px!important}
+#boardPage #wizardLocationPanel .wizard-fields label{margin:0 0 8px!important}
+#boardPage #wizardSubmit{margin-top:4px!important}
+@media(max-width:520px){
+ #dayview .hourly-section .slots{gap:6px!important}
+ #dayview .hourly-section .slots button{min-height:93px!important}
+ #bestPage .hero-rank>small{max-width:100%!important}
+ #bestPage .hero-footer{gap:8px!important}
+ #boardPage>.faro-guide{padding:15px!important}
+ #boardPage #legacyBoard>summary{flex-wrap:wrap}
+}
+@media(max-width:355px){
+ #forecastPage .picker summary{padding:9px!important}
+ #forecastPage .picker summary b{font-size:15px!important}
+ #dayview .session-glance{padding:13px!important}
+ #dayview .hourly-section .slots button{padding:8px 2px!important}
+ #dayview .hourly-section .slots button .slot-time{font-size:12px}
+ #bestPage .hero-location{font-size:22px!important}
+ #boardPage>.faro-guide h2{font-size:27px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #dayview .hourly-section .slots button{transition:none!important}
 }
