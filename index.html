@@ -465,7 +465,7 @@ html:not([data-theme="light"]) .forecast-metrics-details>summary{color:#c2d1d5}
 <summary>✎ FARO Field Notes <span>Record what you actually found ⌄</span></summary>
 <div class="insight-panel field-notes-panel">
 <p class="field-notes-intro">Build local spot knowledge: log what the waves were like, not what the model predicted.</p>
-<p class="field-notes-spot" id="fieldNotesSpot">—</p>
+<p class="field-notes-spot" id="fieldNotesSpot">—</p><div id="spotDNAContext" class="spot-dna-context"></div>
 <form id="fieldNotesForm" onsubmit="saveFieldObservation(event)">
 <label>Observed local date/time<input id="fieldObservedAt" type="datetime-local" required></label>
 <label>How did you check?<select id="fieldObservationType" required><option value="water">I surfed</option><option value="shore">I watched from shore</option></select></label>
@@ -501,7 +501,7 @@ html:not([data-theme="light"]) .forecast-metrics-details>summary{color:#c2d1d5}
  </div>
  <div class="faro-controls"><button id="faroBack" onclick="faroBack()" class="hide">← Back</button><button id="faroNext" class="wizard-submit" onclick="faroNext()">Continue →</button></div>
  <div id="faroFeedback" class="muted" role="status"></div>
- </div><details class="panel" id="legacyBoard"><summary><span>Advanced board tools</span><span class="legacy-summary-hint">Optional · Original Wizard</span></summary><div><small>YOUR BOARD · YOUR STYLE</small><h2>🏄‍♂️ Board Wizard</h2><p class="muted">Two ways to plan your next session. Personal recommendations never change Surf Quality rankings.</p><div class="app-nav"><button id="wizardRide" class="active" onclick="setWizardMode('ride')">🛹 What should I ride?</button><button id="wizardWhen" onclick="setWizardMode('when')">📅 When should I surf?</button></div><p id="wizardStepHint" class="wizard-step-hint">Step 1 of 2 · Choose your riding style.</p><div class="wizard-fields"><label>Riding style<select id="ridingStyle" onchange="setBoardPreference()"><option value="flow">Relaxed & Flowing</option><option value="progression">Progression & Turns</option><option value="performance">Performance</option></select></label><label id="boardTypeLabel">Board type<select id="boardType" onchange="setBoardPreference()"><option value="soft">Soft-top</option><option value="long">Longboard</option><option value="mid">Mid-length</option><option value="short">Shortboard</option></select></label></div></div></div><div class="panel" id="wizardLocationPanel"><h3 id="wizardPrompt">📍 Choose your session</h3><p id="wizardLocationHint" class="muted wizard-step-hint">Step 2 of 2 · Choose all four fields, then view recommendations.</p><div class="wizard-fields"><label>Beach<select id="boardBeach" onchange="boardSelectBeach(this.value)"></select></label><label id="boardSpotLabel">Surf spot<select id="boardSpot" onchange="boardSelectSpot(this.value)"></select></label><label id="boardDayLabel">Day<select id="boardDay" onchange="boardSelectDay(this.value)"></select></label><label id="boardSlotLabel">Time window<select id="boardSlot" onchange="boardSelectSlot(this.value)"></select></label></div><div class="wizard-action"><p id="wizardReady" class="muted">Ready to find your boards.</p><button id="wizardSubmit" class="wizard-submit" onclick="submitBoardWizard()">✓ View recommendations ↓</button></div></div><div class="panel hide" id="boardResult" aria-live="polite"></div><p class="muted">Experimental guidance from modelled conditions. Tide, actual breaking-wave shape, board volume and hazards are not included. Results are currently scoped to the selected beach and spot.</p><button onclick="switchTab('forecast')">← Back to forecast</button></section></main><script src="surf-engine.js"></script><script src="faro-spot-dna.js"></script><script>
+ </div><details class="panel" id="legacyBoard"><summary><span>Advanced board tools</span><span class="legacy-summary-hint">Optional · Original Wizard</span></summary><div><small>YOUR BOARD · YOUR STYLE</small><h2>🏄‍♂️ Board Wizard</h2><p class="muted">Two ways to plan your next session. Personal recommendations never change Surf Quality rankings.</p><div class="app-nav"><button id="wizardRide" class="active" onclick="setWizardMode('ride')">🛹 What should I ride?</button><button id="wizardWhen" onclick="setWizardMode('when')">📅 When should I surf?</button></div><p id="wizardStepHint" class="wizard-step-hint">Step 1 of 2 · Choose your riding style.</p><div class="wizard-fields"><label>Riding style<select id="ridingStyle" onchange="setBoardPreference()"><option value="flow">Relaxed & Flowing</option><option value="progression">Progression & Turns</option><option value="performance">Performance</option></select></label><label id="boardTypeLabel">Board type<select id="boardType" onchange="setBoardPreference()"><option value="soft">Soft-top</option><option value="long">Longboard</option><option value="mid">Mid-length</option><option value="short">Shortboard</option></select></label></div></div></div><div class="panel" id="wizardLocationPanel"><h3 id="wizardPrompt">📍 Choose your session</h3><p id="wizardLocationHint" class="muted wizard-step-hint">Step 2 of 2 · Choose all four fields, then view recommendations.</p><div class="wizard-fields"><label>Beach<select id="boardBeach" onchange="boardSelectBeach(this.value)"></select></label><label id="boardSpotLabel">Surf spot<select id="boardSpot" onchange="boardSelectSpot(this.value)"></select></label><label id="boardDayLabel">Day<select id="boardDay" onchange="boardSelectDay(this.value)"></select></label><label id="boardSlotLabel">Time window<select id="boardSlot" onchange="boardSelectSlot(this.value)"></select></label></div><div class="wizard-action"><p id="wizardReady" class="muted">Ready to find your boards.</p><button id="wizardSubmit" class="wizard-submit" onclick="submitBoardWizard()">✓ View recommendations ↓</button></div></div><div class="panel hide" id="boardResult" aria-live="polite"></div><p class="muted">Experimental guidance from modelled conditions. Tide, actual breaking-wave shape, board volume and hazards are not included. Results are currently scoped to the selected beach and spot.</p><button onclick="switchTab('forecast')">← Back to forecast</button></section></main><script src="surf-engine.js"></script><script src="faro-spot-dna.js"></script><script src="faro-spot-evidence.js"></script><script>
 const storedTheme=(()=>{try{return localStorage.getItem('zeeland-theme')}catch(e){return null}})();let theme=storedTheme==='light'||storedTheme==='dark'?storedTheme:(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');function applyTheme(){document.documentElement.dataset.theme=theme;const btn=document.getElementById('themeToggle');if(btn)btn.textContent=theme==='dark'?'☀ Light':'☾ Dark';document.querySelector('meta[name="theme-color"]').setAttribute('content',theme==='dark'?'#101011':'#fafafa')}function toggleTheme(){theme=theme==='dark'?'light':'dark';try{localStorage.setItem('zeeland-theme',theme)}catch(e){}applyTheme()}applyTheme();const areas=[{name:'Domburg',spots:[['Noordduine',51.566,3.489,325],['Central beach',51.564,3.496,325],['West sector',51.566,3.476,325]]},{name:'Westkapelle',spots:[['North beach',51.540,3.435,305],['Central area',51.528,3.437,290]]},{name:'Oostkapelle',spots:[['Main beach',51.585,3.547,330],['West sector',51.579,3.528,330]]},{name:'Cadzand',spots:[['Cadzand-Bad',51.378,3.382,315],['West sector',51.382,3.365,315]]},{name:'Brouwersdam',spots:[['North beach',51.765,3.856,300],['Central beach',51.755,3.850,300],['South beach',51.742,3.837,300]]}];let area=0,spot=0,day=0,mode='daily',marine=null,weather=null,slotIndex=0,lastFetch=0,rankings=[];let autoSelectBestOnLoad=true,spotRequestVersion=0;const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0'),hm=s=>s?.slice(11,16)||'—',mins=s=>{let a=hm(s).split(':').map(Number);return a[0]*60+a[1]},clock=n=>pad(Math.floor(n/60))+':'+pad(n%60),angle=(a,b)=>Math.abs(((a-b+540)%360)-180),clamp=(x,a,b)=>Math.max(a,Math.min(b,x));function safetyAssessment(x,valid){if(!x)return {level:'unknown',items:['Forecast data unavailable.']};let danger=[],caution=[];if(x.code>=95&&x.code<=99)danger.push('Thunderstorms forecast: stay out of the water.');if(x.code===48)danger.push('Dense freezing fog or severely reduced visibility possible.');else if(x.code===45)caution.push('Fog may severely reduce visibility.');if(x.wind>=55)danger.push('Very strong winds ('+Math.round(x.wind)+' km/h).');else if(x.wind>=35)caution.push('Strong winds ('+Math.round(x.wind)+' km/h).');if(x.h>=3)danger.push('Large modelled waves ('+x.h.toFixed(1)+' m).');else if(x.h>=2)caution.push('Elevated wave height ('+x.h.toFixed(1)+' m).');if(x.water!=null&&x.water<7)danger.push('Very cold sea water: serious cold-water exposure risk.');else if(x.water!=null&&x.water<12)caution.push('Cold sea water: hypothermia risk.');if(x.air!=null&&x.air<=0)caution.push('Freezing air temperature.');if(x.precip>=7)caution.push('Heavy rain may reduce visibility and affect runoff.');if(!valid)caution.push('Insufficient daylight in this time window.');return {level:danger.length?'danger':caution.length?'caution':'low',items:[...danger,...caution]}}function safetyMarkup(x,valid){
  const a=safetyAssessment(x,valid);
  const note='Not a safety clearance. Rip currents, tides, water quality, local warnings and changing conditions are NOT assessed. Check <a href="https://www.knmi.nl/nederland-nu/weer/waarschuwingen" target="_blank" rel="noopener">KNMI warnings</a> and local beach notices before entering the water.';
@@ -718,7 +718,53 @@ function updateFieldNotesUI(){
  try{
   const info=FaroSpotDNA.summary(spotId);
   el.textContent=spotId.replace('::',' · ')+' · '+info.count+' local notes';
+  renderSpotDNAContext(spotId);
  }catch(e){el.textContent='Local storage is unavailable';}
+}
+
+function renderSpotDNAContext(spotId){
+ const root=$('spotDNAContext');if(!root)return;
+ root.replaceChildren();
+ const p=window.FaroSpotEvidence?.locate(spotId);
+ if(!p)return;
+ const title=document.createElement('strong');title.textContent='SPOT DNA · RESEARCH';
+ root.appendChild(title);
+ const line=(label,value)=>{
+  const paragraph=document.createElement('p');
+  const bold=document.createElement('b');bold.textContent=label+' ';
+  paragraph.append(bold,document.createTextNode(value));
+  root.appendChild(paragraph);
+ };
+ line('Wind:',p.windsFrom+' · reported favourable, not measured.');
+ line('Swell:',p.swellFrom+' · indicative beach-level guide.');
+ line('Tide:',p.tide);
+ const areaData=areas[area]?.spots?.[spot];
+ const b=marine&&weather&&slotIndex>=0?blocks(day)[slotIndex]:null;
+ if(areaData&&b?.s){
+  const sig=FaroSpotEvidence.signal({
+   windDirection:b.s.dir,windSpeed:b.s.wind,
+   waveDirection:b.s.wd,
+   orientation:areaData[3]
+  },spotId);
+  if(sig){
+   const windLabels={'offshore-influenced':'offshore-influenced',
+    'onshore-influenced':'onshore-influenced','cross-shore':'cross-shore'};
+   line('Selected forecast:',(windLabels[sig.windRole]||'unknown')+
+     ' wind · '+(sig.reportedSwellDirection===null?'no wave direction':sig.reportedSwellDirection?'wave direction within reported window':'wave direction outside reported window')+
+     '. Modelled conditions, not confirmed breaking waves.');
+  }
+ }
+ const note=document.createElement('small');
+ note.textContent='Beach-level research only; individual sector geometry and the best tide are not verified. Notes do not change Surf Quality.';
+ root.appendChild(note);
+ const refs=document.createElement('div');refs.className='spot-dna-sources';
+ p.sources.forEach(source=>{
+  const link=document.createElement('a');
+  link.href=source.url;link.target='_blank';link.rel='noopener noreferrer';
+  link.textContent=source.name+' ↗';
+  refs.appendChild(link);
+ });
+ root.appendChild(refs);
 }
 function fieldForecastSnapshot(observedLocal){
  if(!marine?.hourly?.time||!weather?.hourly?.time||!lastFetch||Date.now()-lastFetch>45*60*1000)return null;
