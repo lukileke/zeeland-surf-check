@@ -41,7 +41,7 @@ function validate(data){
  const note=String(data.notes||'').trim();
  if(note.length>450)throw Error('Keep the field note below 450 characters.');
  const observedLocal=String(data.observedLocal||'');
- if(!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(observedLocal))throw Error('Enter an observed date and local time.');
+ if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(observedLocal))throw Error('Enter an observed date and local time.');
  const parsed=new Date(observedLocal+':00Z');
  if(!Number.isFinite(parsed.getTime())||parsed.toISOString().slice(0,16)!==observedLocal)throw Error('Invalid local date or time.');
  return {spotId:data.spotId,observationType:data.observationType,quality:Number(data.quality),surface:data.surface,notes:note,
