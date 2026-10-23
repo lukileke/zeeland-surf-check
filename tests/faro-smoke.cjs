@@ -12,17 +12,19 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const css=fs.readFileSync(path.join(root,'faro-ui.css'),'utf8');
 const engine=fs.readFileSync(path.join(root,'surf-engine.js'),'utf8');
 const dnaSource=fs.readFileSync(path.join(root,'faro-spot-dna.js'),'utf8');
+const evidenceSource=fs.readFileSync(path.join(root,'faro-spot-evidence.js'),'utf8');
 const scripts=Array.from(html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi),m=>m[1]);
 assert.ok(scripts.length>=2,'HTML includes application and translation scripts');
 scripts.forEach((s,i)=>assert.doesNotThrow(()=>new vm.Script(s), 'Script '+i+' syntax'));
 assert.doesNotThrow(()=>new vm.Script(engine),'Shared surf engine syntax');
 assert.doesNotThrow(()=>new vm.Script(dnaSource),'Spot DNA module syntax');
+assert.doesNotThrow(()=>new vm.Script(evidenceSource),'Spot evidence module syntax');
 const ids=Array.from(html.matchAll(/\bid=["']([^"']+)["']/g),m=>m[1]);
 assert.equal(ids.length,new Set(ids).size,'No duplicate static DOM identifiers');
 assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces balanced');
 assert.ok(css.includes('html[data-theme="light"]'),'Light theme present');
 assert.ok(css.includes('html:not([data-theme="light"])'),'Dark theme present');
-assert.ok(html.includes('faro-ui.css?v=13'),'Current CSS cache key');
+assert.ok(html.includes('faro-ui.css?v=16'),'Current CSS cache key');
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
 assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
@@ -39,6 +41,11 @@ assert.ok(css.includes('#bestPage .hero-rank .hero-score.tone-fair .hero-score-v
 assert.ok(css.includes('--faro-selection:#176d78;'),'Selected light-theme day uses ocean-teal, not quality category');
 assert.ok(css.includes('--faro-fair-fill:#f8eabc;'),'Fair word has a soft sunlit label');
 assert.ok(html.includes('id="fieldNotesExpand"'),'Optional field-note disclosure exists');
+assert.ok(html.includes('src="faro-spot-evidence.js"'),'Local beach-level evidence module loaded');
+assert.ok(html.includes('marine.hourly.swell_wave_height'),'Shadow-only features read separate swell height');
+assert.ok(html.includes('weather.hourly.wind_gusts_10m'),'Shadow-only features read wind gust ratio');
+assert.ok(html.includes('<span class="quality-pill">'),'Forecast and ranking use consistent quality tags');
+assert.ok(css.includes('FARO COASTAL / V15 semantic grade consistency'),'Single visual grammar covers all quality levels');
 assert.ok(html.includes('FaroSpotDNA.save('),'Field-note form writes via the local-only API');
 assert.ok(html.includes('FaroSpotDNA.exportData()'),'User can export field notes');
 assert.ok(html.includes('FaroSpotDNA.clear()'),'User can delete field notes');
@@ -101,7 +108,7 @@ assert.equal(new Set(dna.catalogue.map(x=>x.id)).size,12,'Every spot key is uniq
 assert.ok(dna.catalogue.every(x=>x.evidence==='unvalidated'&&x.tideWindow===null),'No invented tidal optimum or calibrated evidence');
 assert.equal(dna.read(store).length,0,'New browser store starts empty');
 const first=dna.catalogue[0].id;
-dna.save({spotId:first,observationType:'water',quality:3,surface:'mixed',notes:'Variable walls',
+dna.save({spotId:first,observationType:'water',quality:3,surface:'mixed',observedLocal:'2026-10-23T14:00',notes:'Variable walls',
  forecastSnapshot:{quality:6.2,height:1.1,period:5.7,wind:23,direction:315,
  fetchedAt:'2026-10-23T12:00:00Z',modelHour:'2026-10-23T14:00'}},
  store,new Date('2026-10-23T14:21:00Z'));
@@ -112,11 +119,34 @@ const json=JSON.parse(dna.exportData(store));
 assert.equal(json.observations.length,1,'Field notes exportable');
 assert.equal(json.observations[0].notes,'Variable walls','Observation notes roundtrip');
 let invalidFailed=false;
-try{dna.save({spotId:first,observationType:'water',quality:10,surface:'mixed'},store)}catch(e){invalidFailed=true}
+try{dna.save({spotId:first,observationType:'water',observedLocal:'2026-10-23T14:00',quality:10,surface:'mixed'},store)}catch(e){invalidFailed=true}
 assert.ok(invalidFailed,'Subjective observation cannot accidentally use 0–10 forecast score');
 assert.equal(dna.read(store).length,1,'Invalid entries do not overwrite prior observations');
 dna.clear(store);
 assert.equal(dna.read(store).length,0,'User can delete notes');
+
+
+/* Evidence features are not the production Surf Quality scale. */
+const evidContext={};
+new Function('globalThis',evidenceSource)(evidContext);
+const evid=evidContext.FaroSpotEvidence;
+assert.equal(Object.keys(evid.beaches).length,5,'Five beach guide research profiles');
+for(const id of dna.catalogue.map(x=>x.id)){
+ const info=evid.locate(id);
+ assert.ok(info&&info.sources.length>=2,'Each of 12 spots inherits at least two beach-level sources');
+ assert.ok(info.spotEvidence.includes('not verified'),'Subspot conditions not presented as calibrated');
+}
+const sourceSignals=evid.signal({
+ orientation:325,windDirection:145,windSpeed:12,windGust:18,
+ waveDirection:310,swellDirection:310,swellHeight:1,windWaveHeight:1
+},'Domburg::Noordduine');
+assert.equal(sourceSignals.windRole,'offshore-influenced','Southeast wind inferred offshore on Domburg');
+assert.equal(sourceSignals.reportedIncidentDirection,true,'NW swell in broad Domburg guide window');
+assert.equal(sourceSignals.swellEnergyProxyShare,0.5,'Height² mix is a proxy rather than measured energy');
+assert.equal(sourceSignals.windGustRatio,1.5,'Gust ratio derived only from available modelled values');
+assert.equal(sourceSignals.status,'shadow-evidence-only','Not a score');
+assert.equal(evid.signal({},'Domburg::Noordduine').swellEnergyProxyShare,null,'Missing swell height not fabricated');
+assert.ok(!Object.prototype.hasOwnProperty.call(sourceSignals,'score'),'Shadow feature has no surf score');
 
 /* Mock a 340 CSS-pixel mobile carousel. This exercises scroll preservation
  * without claiming a real Safari layout/gesture test. */
