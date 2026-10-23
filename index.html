@@ -60,9 +60,9 @@ function boardMatch(x,boardOverride){
  return clamp(Math.round((.55*x.v+.45*(.55*fit(x.h,boards[boardOverride||boardType])+.45*fit(x.h,styles[ridingStyle]))+bonus)*10)/10,0,10);
 }
 function boardSelectBeach(v){area=Number(v);spot=0;marine=null;weather=null;render();load();wizardNeedsRefresh();}
-function boardSelectSpot(v){spot=Number(v);marine=null;weather=null;render();load();renderBoardWizard();}
+function boardSelectSpot(v){spot=Number(v);marine=null;weather=null;render();load();wizardNeedsRefresh();}
 function boardSelectDay(v){day=Number(v);slotIndex=0;render();wizardNeedsRefresh();}
-function boardSelectSlot(v){slotIndex=Number(v);render();renderBoardWizard();}
+function boardSelectSlot(v){slotIndex=Number(v);render();wizardNeedsRefresh();}
 let wizardMode='ride';
 function setWizardMode(m){wizardMode=m;wizardNeedsRefresh()}
 function renderBoardWizard(){
