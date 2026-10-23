@@ -184,3 +184,17 @@ Implemented: `tests/faro-smoke.cjs` and `.github/workflows/faro-checks.yml`. Che
 7. Keep honest caveats on Open-Meteo modelled offshore wave height and limitations (currents, tide, observed breakers).
 
 **QA evidence:** current source regression tests verify structural invariants, translation strings, JS syntax, and future-window logic. **Remaining unverified:** actual iPhone Safari rendering of the new v10 layout in both themes, live Open-Meteo error/timeout behaviour, VoiceOver focus order, precise page overflow at all target mobile widths. Do not claim these passed based on source checks alone.
+
+
+### Detail disclosure refinement — v11
+
+A subsequent pass aligns the collapsed **Wave Wizard**, **Spot Insight**, and **What to Wear** modules as quiet, accessible disclosure rows, with consistent borders, labels, padding, and visible expanded state. The expanded Wave Wizard no longer repeats its own large headline; a small `FORECAST WAVE CHARACTER` eyebrow introduces the chip and explanation. Essential model-based caution remains in the main hero, outside the disclosures; `Danger` continues expanded by default. Added missing short summaries to the English/Spanish translation dictionary.
+
+The CSS asset version is now `faro-ui.css?v=11` so old iPhone styles are not reused. Source regression checks were updated and passed in an isolated JS evaluation with a **mock 340 px carousel**, including scroll preservation, last-day navigation and correct disabled arrow state. This is not a pixel-perfect Safari test.
+
+Further references for editorial restraint:
+- https://needessentials.com/en-gb/pages/about — practical surf culture rooted in only what is needed, not lifestyle gimmicks.
+- https://www.nngroup.com/articles/accordions-on-desktop/ — structured progressive disclosure, clear indicators, and no critical information hidden.
+- https://www.nngroup.com/articles/mobile-accordions/ — preserve orientation when opening an accordion on mobile.
+
+**Next visual verification request:** new iPhone screenshots of the rail after swiping to days 5–7, selected last-day state, open/closed disclosures, 320–430 px light/dark and EN/ES. The project has no native screenshot evidence for this v11 build yet.
