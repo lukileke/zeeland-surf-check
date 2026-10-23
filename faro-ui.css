@@ -18,7 +18,7 @@ html:not([data-theme="light"]) {
   --faro-hero:#1a252a; --faro-raised:#243239;
   --faro-line:#384951; --faro-quiet:#9cb5bb;
   --faro-surf-bg:#2a3032;
-  --surf-great:#60c69e;--surf-good:#78cba0;--surf-fair:#e9be60;
+  --surf-great:#60c69e;--surf-good:#78cba0;--surf-fair:#ead17a;
   --surf-poor:#e9937f;--surf-low:#e68b95;
 }
 html[data-theme="light"] {
@@ -28,7 +28,7 @@ html[data-theme="light"] {
   --faro-hero:#eaf3f4; --faro-raised:#fff;
   --faro-line:#c5d5d8; --faro-quiet:#526a74;
   --faro-surf-bg:#f1f5f4;
-  --surf-great:#086c4e;--surf-good:#146d4d;--surf-fair:#b16b00;
+  --surf-great:#086c4e;--surf-good:#146d4d;--surf-fair:#e3bc56;
   --surf-poor:#9b3b24;--surf-low:#91303e;
 }
 body {
@@ -1366,4 +1366,103 @@ html[data-theme="light"] #bestPage .hero-rank .hero-score.tone-fair .hero-score-
 html[data-theme="light"] #dayview .session-glance .hero-score.tone-fair .hero-stat-label,
 html[data-theme="light"] #bestPage .hero-rank .hero-score.tone-fair .hero-stat-label {
   color:var(--faro-quiet)!important;
+}
+
+
+/* FARO / Coastal Editorial quality system v13.
+   Selection is ocean teal; a moderate-quality Fair signal is sunlit sand.
+   These are independent channels: selected != Good.
+   Avoid brown number panels; colour is paired with the quality word. */
+html[data-theme="light"]{--faro-selection:#176d78;--faro-fair-fill:#f8eabc;--faro-fair-ink:#5a480d}
+html:not([data-theme="light"]){--faro-selection:#90d6dc;--faro-fair-fill:#3a3528;--faro-fair-ink:#f4da91}
+#forecastPage .day-chip.selected{
+ border:2px solid var(--faro-selection)!important;
+ background:var(--tile)!important;
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--faro-selection) 22%,transparent)!important;
+}
+#forecastPage .day-chip.selected strong,
+#forecastPage .day-chip.selected>span:first-child{opacity:1}
+#forecastPage .day-chip.tone-fair .day-chip-grade{
+ color:var(--faro-fair-ink)!important;
+ background:var(--faro-fair-fill)!important;
+ padding:3px 7px!important;border-radius:6px!important;
+ width:fit-content!important;max-width:100%!important;
+ font-size:11px!important;line-height:1.35!important;
+}
+#dayview .hourly-section .slots button.tone-fair{
+ background:var(--tile)!important;border-top-color:var(--surf-fair)!important;
+}
+#dayview .hourly-section .slots button.active{
+ outline:2px solid var(--faro-selection)!important;
+ outline-offset:-2px!important;
+ background:color-mix(in srgb,var(--faro-selection) 6%,var(--tile))!important;
+}
+html[data-theme="light"] #dayview .hourly-section .slots button.tone-fair b{
+ color:var(--fg)!important;
+}
+html[data-theme="light"] #forecastPage .day-chip.tone-fair strong,
+html[data-theme="light"] #dayview .session-glance .hero-score.tone-fair .hero-score-value,
+html[data-theme="light"] #bestPage .hero-rank .hero-score.tone-fair .hero-score-value{
+ color:var(--fg)!important;
+}
+/* Field Notes: optional, opt-in observation and export, never the hero. */
+#dayview .field-notes-panel{
+ display:block;max-width:100%;box-sizing:border-box;
+}
+#dayview .field-notes-intro,
+#dayview .field-notes-privacy{
+ font-size:12px!important;line-height:1.6!important;
+ color:var(--muted)!important;margin:0 0 12px!important;
+}
+#dayview .field-notes-spot{
+ display:inline-flex;align-items:center;max-width:100%;
+ font-size:12px!important;line-height:1.45!important;
+ font-weight:800!important;color:var(--fg)!important;
+ border-bottom:1px solid var(--faro-line)!important;
+ margin:0 0 12px!important;padding-bottom:8px!important;
+}
+#dayview #fieldNotesForm{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:12px!important;margin:2px 0 13px!important;min-width:0;
+}
+#dayview #fieldNotesForm>label{
+ display:block!important;min-width:0!important;
+ font:750 12px/1.4 var(--faro-text)!important;
+ color:var(--fg)!important;
+}
+#dayview #fieldNotesForm>label:nth-of-type(4){grid-column:1/-1}
+#dayview #fieldNotesForm select,
+#dayview #fieldNotesForm textarea{
+ display:block;width:100%;max-width:100%;min-width:0;
+ box-sizing:border-box;margin:6px 0 0!important;
+ padding:10px 12px!important;min-height:44px!important;
+ background:var(--panel)!important;color:var(--fg)!important;
+ border:1px solid var(--faro-line)!important;
+ border-radius:9px!important;font:600 13px/1.4 var(--faro-text)!important;
+ box-shadow:none!important;
+}
+#dayview #fieldNotesForm textarea{
+ min-height:84px!important;resize:vertical;
+}
+#dayview #fieldNotesForm>.field-note-primary{
+ grid-column:1/-1!important;min-height:44px!important;
+ padding:10px 15px!important;background:var(--faro-selection)!important;
+ color:var(--bg)!important;border:0!important;
+ border-radius:9px!important;font-weight:800!important;
+}
+#dayview .field-notes-status{
+ margin:8px 0!important;font-size:12px!important;
+ line-height:1.5!important;color:var(--fg)!important;
+}
+#dayview .field-notes-actions{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0!important}
+#dayview .field-notes-actions button{
+ min-height:44px!important;padding:8px 11px!important;
+ background:transparent!important;color:var(--fg)!important;
+ border:1px solid var(--faro-line)!important;
+ border-radius:9px!important;font:750 12px/1.3 var(--faro-text)!important;
+}
+#dayview .field-notes-privacy{margin:9px 0 0!important}
+@media(max-width:380px){
+ #dayview #fieldNotesForm{grid-template-columns:1fr}
+ #dayview #fieldNotesForm>label:nth-of-type(4){grid-column:auto}
 }
