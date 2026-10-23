@@ -18,7 +18,7 @@ html:not([data-theme="light"]) {
   --faro-hero:#1a252a; --faro-raised:#243239;
   --faro-line:#384951; --faro-quiet:#9cb5bb;
   --faro-surf-bg:#2a3032;
-  --surf-great:#60c69e;--surf-good:#78cba0;--surf-fair:#f4c877;
+  --surf-great:#60c69e;--surf-good:#78cba0;--surf-fair:#e9be60;
   --surf-poor:#e9937f;--surf-low:#e68b95;
 }
 html[data-theme="light"] {
@@ -28,7 +28,7 @@ html[data-theme="light"] {
   --faro-hero:#eaf3f4; --faro-raised:#fff;
   --faro-line:#c5d5d8; --faro-quiet:#526a74;
   --faro-surf-bg:#f1f5f4;
-  --surf-great:#086c4e;--surf-good:#146d4d;--surf-fair:#88590c;
+  --surf-great:#086c4e;--surf-good:#146d4d;--surf-fair:#b16b00;
   --surf-poor:#9b3b24;--surf-low:#91303e;
 }
 body {
@@ -1344,4 +1344,26 @@ main>.app-nav button{
 @media(max-width:380px){
  #dayview>details.forecast-expand>summary{font-size:13px!important;gap:8px!important}
  #dayview>details.forecast-expand>summary>span{font-size:10px!important}
+}
+
+/* FARO / Fair-score treatment: the accent denotes moderate quality;
+   on light foam backgrounds the numeric information remains graphite.
+   Do not tint wave height or shift the Good/Poor thresholds. */
+html[data-theme="light"] .score-tint.tone-fair,
+html[data-theme="light"] .score.tone-fair,
+html[data-theme="light"] .score-feature.tone-fair .value,
+html[data-theme="light"] #dayview .hourly-section .slots button.tone-fair b {
+  color:var(--fg)!important;
+}
+html[data-theme="light"] #forecastPage .day-chip.tone-fair strong,
+html[data-theme="light"] #forecastPage .day-chip.tone-fair .day-chip-grade,
+html[data-theme="light"] #bestPage .rank-list .rank-line .score-tint.tone-fair,
+html[data-theme="light"] #boardPage .faro-result-scores .score-tint.tone-fair,
+html[data-theme="light"] #dayview .session-glance .hero-score.tone-fair .hero-score-value,
+html[data-theme="light"] #bestPage .hero-rank .hero-score.tone-fair .hero-score-value {
+  color:var(--fg)!important;
+}
+html[data-theme="light"] #dayview .session-glance .hero-score.tone-fair .hero-stat-label,
+html[data-theme="light"] #bestPage .hero-rank .hero-score.tone-fair .hero-stat-label {
+  color:var(--faro-quiet)!important;
 }
