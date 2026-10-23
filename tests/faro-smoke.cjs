@@ -65,4 +65,60 @@ assert.equal(es('Compare 2-hour windows'),'Comparar horarios de dos horas');
 assert.equal(es('Refresh forecast'),'Actualizar pronóstico');
 assert.ok(html.includes('function applyTranslatedAttributes()'),'Control labels translated in EN/ES');
 assert.ok(es('Choppy & Messy')!=='Choppy & Messy');
-console.log('FARO smoke checks passed: JavaScript, markup, themes, timing and translations.');
+
+/* Mock a 340 CSS-pixel mobile carousel. This exercises scroll preservation
+ * without claiming a real Safari layout/gesture test. */
+const railStart=html.indexOf('let lastDayStripSelection=-1;');
+const railEnd=html.indexOf('function render(){',railStart);
+assert.ok(railStart>=0&&railEnd>railStart,'Seven-day rail module found');
+const ctx={
+ day:0,marine:{},weather:{},
+ window:{matchMedia:()=>({matches:true})},
+ dateTimes:()=>['2026-10-23','2026-10-24','2026-10-25','2026-10-26','2026-10-27','2026-10-28','2026-10-29'],
+ blocks:()=>[{valid:true,s:{v:6},h:14,to:960,from:840}],
+ upcomingWindow:day=>day>0,
+ nlNow:()=>({date:'2026-10-23'}),
+ pastWindow:()=>true,daylight:()=>({end:960}),enoughTimeRemaining:()=>false,
+ scoreTone:()=> 'tone-fair',surfScoreLabel:()=> 'Fair',
+ pad:n=>String(n).padStart(2,'0'),requestAnimationFrame:fn=>fn()
+};
+const rail={
+ scrollLeft:0,scrollWidth:840,clientWidth:340,offsetLeft:0,
+ getBoundingClientRect(){return {left:0,right:340}},
+ scrollBy({left}){this.scrollLeft=Math.min(500,Math.max(0,this.scrollLeft+left))}
+};
+let railChildren=[];
+Object.defineProperty(rail,'innerHTML',{
+ set(value){
+  this.html=value;
+  railChildren=Array.from({length:7},(_,i)=>({
+   offsetLeft:i*120,clientWidth:110,
+   getBoundingClientRect(){
+    const left=i*120-rail.scrollLeft;return {left,right:left+110};
+   }
+  }));
+ },
+ get(){return this.html}
+});
+rail.querySelectorAll=()=>railChildren;
+rail.querySelector=()=>railChildren[ctx.day];
+const railElements={
+ dayStripItems:rail,dayPrev:{disabled:false},dayNext:{disabled:false},
+ dayStripCount:{textContent:''},dayStripProgress:{style:{transform:''}}
+};
+ctx.$=id=>railElements[id];
+const railFunctions=new Function('ctx','with(ctx){'+html.slice(railStart,railEnd)+'return {renderDayStrip,scrollForecastDays,updateDayStripControls};}')(ctx);
+railFunctions.renderDayStrip();
+assert.equal(railElements.dayStripCount.textContent,'1–3 / 7','First carousel page');
+rail.scrollLeft=249;
+railFunctions.renderDayStrip();
+assert.equal(rail.scrollLeft,249,'Re-render must preserve the reader\'s horizontal position');
+ctx.day=6;
+railFunctions.renderDayStrip();
+assert.equal(rail.scrollLeft,500,'Selecting the last day brings it into view');
+assert.equal(railElements.dayNext.disabled,true,'Next arrow disabled at right edge');
+railFunctions.scrollForecastDays(-1);
+railFunctions.updateDayStripControls();
+assert.ok(rail.scrollLeft<500,'Previous arrow moves the rail left');
+
+console.log('FARO smoke checks passed: JavaScript, markup, themes, timing, translations and the mobile rail.');
