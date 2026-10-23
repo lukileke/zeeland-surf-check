@@ -21,10 +21,11 @@ function pair(row){
  const issue=localTime(f.fetchedAt),observed=row.observedLocal;
  // During Europe's DST fallback, local 02:xx is ambiguous without offset;
  // exclude it until timestamps can be disambiguated.
- const ambiguous=observed.endsWith('T02:'+observed.slice(-2))&&(
-  // Month-end October ambiguity is tested conservatively for all 02xx local observations.
-  observed.slice(5,7)==='10'&&Number(observed.slice(8,10))>=25
- );
+ const year=Number(observed.slice(0,4));
+ const october31=new Date(Date.UTC(year,9,31));
+ const lastSunday=31-october31.getUTCDay();
+ const ambiguous=observed.slice(5,7)==='10'&&
+  Number(observed.slice(8,10))===lastSunday&&observed.slice(11,13)==='02';
  if(ambiguous||!issue||issue>observed||f.modelHour.slice(0,13)!==observed.slice(0,13))return null;
  if(!Number.isFinite(f.quality)||f.quality<0||f.quality>10)return null;
  const q=Number(row.quality);
