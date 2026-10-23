@@ -53,6 +53,28 @@ Not a tide forecast, rip-current assessment, live camera, beach observation or g
 - Do not display algorithm weights in the public UI. Note that current frontend JS source is nevertheless inspectable.
 - Preserve specific user-chosen time windows when navigating back into Forecast.
 
+## Surf editorial brand and typography refinement (Oct 2026)
+
+Faro's visual identity draws from **Firewire / Libre Design** (clean precision with freedom), **GearFreak / Zomeren Studio** (professional outdoor credibility with modern expressive typography), **Coastline / ArloCreative** (restrained coastal lifestyle), and the grid/typography research by **Nielsen Norman Group**. This is design inspiration, not an endorsement or a replication of those companies' branding.
+
+- **Display:** Barlow Condensed (500–800), visually expressive, tall, clear, short headlines. Use in Faro wordmark, Forecast section titles, Best of Week feature titles, Wizard step headings and short spot names. Do not use for model reading details, instructions or small labels.
+- **Body & metrics:** Manrope (400–800), legible geometric grotesque, steady numerical tracking. Use for choices, scores, data, captions and all explanatory text.
+- **Fallback:** Arial Narrow/Impact for display, system UI/Arial for body. Font stylesheet is fetched from Google Fonts with `display=swap`; respect offline and slow network fallbacks.
+- **Logo:** typographic "FARO" accompanied by a small ocean glyph, not a pile of surf emoji illustrations.
+- **Wave-character chip:** a compact clickable pill with its own border and low-saturation colour from the underlying character type; never leave Choppy & Messy floating as bare coloured text.
+- **Titles:** clearer contrast in scale (display ≈ 43–55px; short screen headings ≈ 26–33px; section captions ≈ 11–13px). Avoid decorative all-uppercase running copy.
+- **Typography trust rule:** numerical predictions remain Manrope, never in display faces. Warnings and assumptions must remain readable in both languages and themes.
+- **Apple branding guidance:** custom headline typography is useful for product identity, but do not let it compete with the surf decision itself.
+
+References:
+- https://libredesign.com/case-studies/firewire-surfboards/
+- https://zomeren.studio/projects/gearfreak/
+- https://arlocreative.co.uk/coastline/
+- https://www.nngroup.com/articles/good-visual-design/
+- https://developer.apple.com/design/human-interface-guidelines/branding
+- https://github.com/google/fonts/blob/main/ofl/barlowcondensed/OFL.txt
+- https://fontsource.org/fonts/manrope/about
+
 ## Visual tokens and intended use
 
 - **Dark background:** deep charcoal / wet basalt, not pure black.
