@@ -1,0 +1,26 @@
+name: Faro smoke checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'faro-ui.css'
+      - 'surf-engine.js'
+      - 'tests/**'
+      - '.github/workflows/faro-checks.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'faro-ui.css'
+      - 'surf-engine.js'
+      - 'tests/**'
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify FARO source and timing logic
+        run: node tests/faro-smoke.cjs
