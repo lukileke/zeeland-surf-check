@@ -20,9 +20,15 @@ assert.equal(ids.length,new Set(ids).size,'No duplicate static DOM identifiers')
 assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces balanced');
 assert.ok(css.includes('html[data-theme="light"]'),'Light theme present');
 assert.ok(css.includes('html:not([data-theme="light"])'),'Dark theme present');
-assert.ok(html.includes('faro-ui.css?v=9'),'Current CSS cache key');
+assert.ok(html.includes('faro-ui.css?v=10'),'Current CSS cache key');
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
+assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
+assert.ok(html.includes('function scrollForecastDays(')&&html.includes('function updateDayStripControls('),'Forecast rail remains keyboard/button reachable');
+assert.ok(html.includes('el.scrollLeft=previousScroll;'),'Forecast selection preserves manual horizontal position');
+assert.ok(css.includes('overscroll-behavior-x:contain'),'Horizontal strip keeps its overscroll local');
+assert.ok(css.includes('html[data-theme="light"] .wave-size.size-large{--wave-color:#176f9b}'),'Wave height remains in marine-blue family');
+assert.ok(css.includes('html:not([data-theme="light"]) .wave-size.size-xl{--wave-color:#9cbcf0}'),'Large waves remain blue in dark theme');
 assert.ok(html.includes('aria-disabled="true"'),'Unavailable session controls disabled');
 
 const tStart=html.indexOf('function nlNow('),tEnd=html.indexOf('function chooseForecastDay(',tStart);
@@ -48,6 +54,11 @@ const dict=new Function(translations+';return {'+names.join(',')+'};')();
 const pairs=Object.values(dict).filter(Array.isArray).flat().filter(x=>Array.isArray(x)&&typeof x[0]==='string').sort((a,b)=>b[0].length-a[0].length);
 function es(s){for(const [en,translated] of pairs)s=s.split(en).join(translated);return s;}
 assert.equal(es('Best of the Week'),'Lo mejor de la semana');
+assert.equal(es('Best of Week'),'Lo mejor','Condensed mobile navigation');
+assert.equal(es('BEACH'),'PLAYA');
+assert.equal(es('SURF SPOT'),'SPOT DE SURF');
+assert.equal(es('Where should I surf?'),'¿Dónde surfeo?');
+assert.equal(es('Today'),'Hoy');
 assert.equal(es('Find your next surf session'),'Encuentra tu próxima sesión de surf');
 assert.equal(es('What would you like to find?'),'¿Qué quieres encontrar?');
 assert.equal(es('Compare 2-hour windows'),'Comparar horarios de dos horas');
