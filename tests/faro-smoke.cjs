@@ -11,16 +11,18 @@ const root=path.resolve(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const css=fs.readFileSync(path.join(root,'faro-ui.css'),'utf8');
 const engine=fs.readFileSync(path.join(root,'surf-engine.js'),'utf8');
+const dnaSource=fs.readFileSync(path.join(root,'faro-spot-dna.js'),'utf8');
 const scripts=Array.from(html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi),m=>m[1]);
 assert.ok(scripts.length>=2,'HTML includes application and translation scripts');
 scripts.forEach((s,i)=>assert.doesNotThrow(()=>new vm.Script(s), 'Script '+i+' syntax'));
 assert.doesNotThrow(()=>new vm.Script(engine),'Shared surf engine syntax');
+assert.doesNotThrow(()=>new vm.Script(dnaSource),'Spot DNA module syntax');
 const ids=Array.from(html.matchAll(/\bid=["']([^"']+)["']/g),m=>m[1]);
 assert.equal(ids.length,new Set(ids).size,'No duplicate static DOM identifiers');
 assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces balanced');
 assert.ok(css.includes('html[data-theme="light"]'),'Light theme present');
 assert.ok(css.includes('html:not([data-theme="light"])'),'Dark theme present');
-assert.ok(html.includes('faro-ui.css?v=12'),'Current CSS cache key');
+assert.ok(html.includes('faro-ui.css?v=13'),'Current CSS cache key');
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
 assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
@@ -29,11 +31,17 @@ assert.ok(html.includes('el.scrollLeft=previousScroll;'),'Forecast selection pre
 assert.ok(css.includes('overscroll-behavior-x:contain'),'Horizontal strip keeps its overscroll local');
 assert.ok(css.includes('html[data-theme="light"] .wave-size.size-large{--wave-color:#176f9b}'),'Wave height remains in marine-blue family');
 assert.ok(css.includes('html:not([data-theme="light"]) .wave-size.size-xl{--wave-color:#9cbcf0}'),'Large waves remain blue in dark theme');
-assert.ok(css.includes('--surf-fair:#b16b00;'),'Fair accent uses brighter amber in light mode');
-assert.ok(css.includes('--surf-fair:#e9be60;'),'Fair accent retains luminous contrast in dark mode');
+assert.ok(css.includes('--surf-fair:#e3bc56;'),'Fair accent uses brighter amber in light mode');
+assert.ok(css.includes('--surf-fair:#ead17a;'),'Fair accent retains luminous contrast in dark mode');
 assert.ok(css.includes('#forecastPage .day-chip.tone-fair strong'),'Light-mode Fair day score uses graphite');
 assert.ok(css.includes('#dayview .session-glance .hero-score.tone-fair .hero-score-value'),'Main Fair session score uses graphite');
 assert.ok(css.includes('#bestPage .hero-rank .hero-score.tone-fair .hero-score-value'),'Weekly Fair score follows the same visual treatment');
+assert.ok(css.includes('--faro-selection:#176d78;'),'Selected light-theme day uses ocean-teal, not quality category');
+assert.ok(css.includes('--faro-fair-fill:#f8eabc;'),'Fair word has a soft sunlit label');
+assert.ok(html.includes('id="fieldNotesExpand"'),'Optional field-note disclosure exists');
+assert.ok(html.includes('FaroSpotDNA.save('),'Field-note form writes via the local-only API');
+assert.ok(html.includes('FaroSpotDNA.exportData()'),'User can export field notes');
+assert.ok(html.includes('FaroSpotDNA.clear()'),'User can delete field notes');
 assert.ok(html.includes('aria-disabled="true"'),'Unavailable session controls disabled');
 
 const tStart=html.indexOf('function nlNow('),tEnd=html.indexOf('function chooseForecastDay(',tStart);
@@ -75,6 +83,40 @@ assert.equal(es('Gear advice'),'Equipo recomendado');
 assert.ok(html.includes('class="insight-eyebrow"'),'Wave explanation uses an editorial eyebrow');
 assert.ok(css.includes('#dayview>details.forecast-expand>summary'),'Evidence accordions share a summary style');
 assert.ok(es('Choppy & Messy')!=='Choppy & Messy');
+
+
+/* FARO Spot DNA observations are deliberately local and do NOT alter quality. */
+const memory=new Map();
+const store={
+ getItem:k=>memory.has(k)?memory.get(k):null,
+ setItem:(k,v)=>memory.set(k,String(v)),
+ removeItem:k=>memory.delete(k)
+};
+const dnaContext={localStorage:store};
+new Function('globalThis',dnaSource)(dnaContext);
+const dna=dnaContext.FaroSpotDNA;
+assert.ok(dna,'Spot DNA namespace created');
+assert.equal(dna.catalogue.length,12,'Every current surf spot is catalogued');
+assert.equal(new Set(dna.catalogue.map(x=>x.id)).size,12,'Every spot key is unique');
+assert.ok(dna.catalogue.every(x=>x.evidence==='unvalidated'&&x.tideWindow===null),'No invented tidal optimum or calibrated evidence');
+assert.equal(dna.read(store).length,0,'New browser store starts empty');
+const first=dna.catalogue[0].id;
+dna.save({spotId:first,observationType:'water',quality:3,surface:'mixed',notes:'Variable walls',
+ forecastSnapshot:{quality:6.2,height:1.1,period:5.7,wind:23,direction:315,
+ fetchedAt:'2026-10-23T12:00:00Z',modelHour:'2026-10-23T14:00'}},
+ store,new Date('2026-10-23T14:21:00Z'));
+assert.equal(dna.summary(first,store).count,1,'Observation counted at the correct spot');
+assert.equal(dna.summary(first,store).mean,3,'Subjective 1–5 observations not confused with 0–10 forecast');
+assert.equal(dna.read(store)[0].forecastSnapshot.quality,6.2,'Model forecast preserved separately');
+const json=JSON.parse(dna.exportData(store));
+assert.equal(json.observations.length,1,'Field notes exportable');
+assert.equal(json.observations[0].notes,'Variable walls','Observation notes roundtrip');
+let invalidFailed=false;
+try{dna.save({spotId:first,observationType:'water',quality:10,surface:'mixed'},store)}catch(e){invalidFailed=true}
+assert.ok(invalidFailed,'Subjective observation cannot accidentally use 0–10 forecast score');
+assert.equal(dna.read(store).length,1,'Invalid entries do not overwrite prior observations');
+dna.clear(store);
+assert.equal(dna.read(store).length,0,'User can delete notes');
 
 /* Mock a 340 CSS-pixel mobile carousel. This exercises scroll preservation
  * without claiming a real Safari layout/gesture test. */
@@ -131,4 +173,4 @@ railFunctions.scrollForecastDays(-1);
 railFunctions.updateDayStripControls();
 assert.ok(rail.scrollLeft<500,'Previous arrow moves the rail left');
 
-console.log('FARO smoke checks passed: JavaScript, markup, themes, timing, translations and the mobile rail.');
+console.log('FARO smoke checks passed: JavaScript, markup, themes, timing, translations, the mobile rail and Spot DNA.');
