@@ -20,7 +20,7 @@ assert.equal(ids.length,new Set(ids).size,'No duplicate static DOM identifiers')
 assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces balanced');
 assert.ok(css.includes('html[data-theme="light"]'),'Light theme present');
 assert.ok(css.includes('html:not([data-theme="light"])'),'Dark theme present');
-assert.ok(html.includes('faro-ui.css?v=11'),'Current CSS cache key');
+assert.ok(html.includes('faro-ui.css?v=12'),'Current CSS cache key');
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
 assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
@@ -29,6 +29,11 @@ assert.ok(html.includes('el.scrollLeft=previousScroll;'),'Forecast selection pre
 assert.ok(css.includes('overscroll-behavior-x:contain'),'Horizontal strip keeps its overscroll local');
 assert.ok(css.includes('html[data-theme="light"] .wave-size.size-large{--wave-color:#176f9b}'),'Wave height remains in marine-blue family');
 assert.ok(css.includes('html:not([data-theme="light"]) .wave-size.size-xl{--wave-color:#9cbcf0}'),'Large waves remain blue in dark theme');
+assert.ok(css.includes('--surf-fair:#b16b00;'),'Fair accent uses brighter amber in light mode');
+assert.ok(css.includes('--surf-fair:#e9be60;'),'Fair accent retains luminous contrast in dark mode');
+assert.ok(css.includes('#forecastPage .day-chip.tone-fair strong'),'Light-mode Fair day score uses graphite');
+assert.ok(css.includes('#dayview .session-glance .hero-score.tone-fair .hero-score-value'),'Main Fair session score uses graphite');
+assert.ok(css.includes('#bestPage .hero-rank .hero-score.tone-fair .hero-score-value'),'Weekly Fair score follows the same visual treatment');
 assert.ok(html.includes('aria-disabled="true"'),'Unavailable session controls disabled');
 
 const tStart=html.indexOf('function nlNow('),tEnd=html.indexOf('function chooseForecastDay(',tStart);
