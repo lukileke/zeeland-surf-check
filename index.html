@@ -104,7 +104,8 @@ function faroNext(){
  $('faroFeedback').textContent='Search configured ✓ Regional and multi-day ranking is being developed. No results are claimed yet. For a current single-spot estimate, open Advanced · Original Board Wizard below.';
  $('faroNext').textContent='✓ Search configured';
 }
-\nfunction switchTab(tab){
+
+function switchTab(tab){
  const board=tab==='board';
  $('forecastPage').classList.toggle('hide',board);$('boardPage').classList.toggle('hide',!board);
  $('navForecast').classList.toggle('active',!board);$('navBoard').classList.toggle('active',board);
