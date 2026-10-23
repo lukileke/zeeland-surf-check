@@ -49,6 +49,12 @@ function validate(data){
 }
 function save(data,store=root.localStorage,now=new Date()){
  const clean=validate(data);
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{
+  timeZone:'Europe/Amsterdam',year:'numeric',month:'2-digit',day:'2-digit',
+  hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+ }).formatToParts(now).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+ const localNow=parts.year+'-'+parts.month+'-'+parts.day+'T'+parts.hour+':'+parts.minute;
+ if(clean.observedLocal>localNow)throw Error('Observed time cannot be in the future.');
  const list=read(store);
  const snap=data.forecastSnapshot&&typeof data.forecastSnapshot==='object'?data.forecastSnapshot:null;
  const finite=v=>typeof v==='number'&&Number.isFinite(v)?v:null;
