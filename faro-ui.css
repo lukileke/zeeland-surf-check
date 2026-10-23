@@ -263,11 +263,29 @@ html:not([data-theme="light"]) main>.app-nav button.active{
   flex-wrap:wrap!important;gap:9px 12px!important;margin:0 0 15px!important;
 }
 #dayview .session-glance .glance-eyebrow{
-  font-family:var(--faro-display)!important;
-  font-size:clamp(19px,4.6vw,23px)!important;
+  display:inline-flex!important;
+  align-items:baseline!important;
+  gap:7px!important;
+  flex-wrap:wrap!important;
   color:var(--faro-quiet)!important;
-  font-weight:700!important;letter-spacing:.035em!important;
-  line-height:1.15!important;
+  line-height:1.2!important;
+}
+#dayview .session-glance .glance-title{
+  font-family:var(--faro-display)!important;
+  font-size:clamp(24px,5.2vw,29px)!important;
+  font-weight:700!important;
+  letter-spacing:.012em!important;
+  color:var(--fg)!important;
+  line-height:1!important;
+}
+#dayview .session-glance .glance-window{
+  font-family:var(--faro-text)!important;
+  font-size:12px!important;
+  font-weight:720!important;
+  letter-spacing:.01em!important;
+  font-variant-numeric:tabular-nums!important;
+  color:var(--faro-quiet)!important;
+  white-space:nowrap!important;
 }
 #dayview .session-glance .wizard-pick{
   display:inline-flex!important;
@@ -880,4 +898,20 @@ html[data-theme="light"] #boardPage>.faro-guide>small{color:#256d70!important}
   #bestPage .rank-list .rank-line{align-items:baseline!important;gap:10px!important}
   #bestPage .rank-list .rank-line b:last-child{white-space:nowrap!important}
   #boardPage .faro-result-card .row{flex-wrap:wrap!important}
+}
+
+/* Quiet typographic navigation; identity lives in the wordmark and session. */
+main>.app-nav button{font-family:var(--faro-text)!important;font-weight:750!important}
+#dayview .session-glance .hero-stat-label{
+  font-size:11px!important;
+  letter-spacing:.085em!important;
+  font-weight:780!important;
+}
+#dayview .session-glance .hero-wave-meter .wave-bars{
+  margin:7px 0 4px!important;
+}
+#dayview .session-glance .glance-safety{margin-top:2px!important}
+@media(max-width:520px){
+  #dayview .session-glance .glance-title{font-size:25px!important}
+  #dayview .session-glance .glance-window{font-size:12px!important}
 }
