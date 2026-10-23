@@ -208,7 +208,7 @@ html:not([data-theme="light"]) main>.app-nav button.active{
 .daylight-disclosure{margin:5px 0 0;border:0}
 .daylight-disclosure>summary{
   display:flex;align-items:center;justify-content:space-between;
-  gap:10px;min-height:41px;padding:6px 0;
+  gap:10px;min-height:44px;padding:6px 0;
   list-style:none;cursor:pointer;color:var(--faro-quiet);font-size:12px;
 }
 .daylight-disclosure>summary::-webkit-details-marker{display:none}
@@ -322,7 +322,7 @@ html:not([data-theme="light"]) main>.app-nav button.active{
 #dayview .essential-tag{
   background:var(--tile)!important;border:1px solid var(--faro-line)!important;
   color:var(--fg)!important;border-radius:11px!important;
-  font-size:12px!important;min-height:39px;
+  font-size:12px!important;min-height:44px!important;
 }
 #dayview .essential-tag:focus-visible{outline-color:var(--faro-ocean)!important}
 /* The hourly row is the next action; everything after it is a quieter layer */
