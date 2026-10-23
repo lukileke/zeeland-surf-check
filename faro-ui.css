@@ -263,8 +263,11 @@ html:not([data-theme="light"]) main>.app-nav button.active{
   flex-wrap:wrap!important;gap:9px 12px!important;margin:0 0 15px!important;
 }
 #dayview .session-glance .glance-eyebrow{
-  font-size:11px!important;color:var(--faro-quiet)!important;
-  font-weight:780!important;letter-spacing:.065em!important;line-height:1.5!important;
+  font-family:var(--faro-display)!important;
+  font-size:clamp(19px,4.6vw,23px)!important;
+  color:var(--faro-quiet)!important;
+  font-weight:700!important;letter-spacing:.035em!important;
+  line-height:1.15!important;
 }
 #dayview .session-glance .wizard-pick{
   display:inline-flex!important;
