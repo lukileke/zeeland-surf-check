@@ -501,14 +501,14 @@ html[data-theme="light"]{
   --faro-sea-ink:#1e5261;
 }
 /* Colours do not carry meaning alone: numbers are also labelled. */
-html[data-theme="light"] .wave-size.size-small{--wave-color:#176b72}
-html[data-theme="light"] .wave-size.size-medium{--wave-color:#18768f}
-html[data-theme="light"] .wave-size.size-large{--wave-color:#6b549f}
-html[data-theme="light"] .wave-size.size-xl{--wave-color:#8b427a}
-html:not([data-theme="light"]) .wave-size.size-small{--wave-color:#77c6c9}
-html:not([data-theme="light"]) .wave-size.size-medium{--wave-color:#7dbbd0}
-html:not([data-theme="light"]) .wave-size.size-large{--wave-color:#c9adf0}
-html:not([data-theme="light"]) .wave-size.size-xl{--wave-color:#e5a3cd}
+html[data-theme="light"] .wave-size.size-small{--wave-color:#146d81}
+html[data-theme="light"] .wave-size.size-medium{--wave-color:#187b97}
+html[data-theme="light"] .wave-size.size-large{--wave-color:#176f9b}
+html[data-theme="light"] .wave-size.size-xl{--wave-color:#285e9e}
+html:not([data-theme="light"]) .wave-size.size-small{--wave-color:#83d1dc}
+html:not([data-theme="light"]) .wave-size.size-medium{--wave-color:#81c8dd}
+html:not([data-theme="light"]) .wave-size.size-large{--wave-color:#88c2e5}
+html:not([data-theme="light"]) .wave-size.size-xl{--wave-color:#9cbcf0}
 /* A memorable wordmark without a heavy advertising header. */
 .top h1{
   font-weight:800!important;
@@ -1202,4 +1202,93 @@ main>.app-nav button{font-family:var(--faro-text)!important;font-weight:750!impo
 }
 @media(prefers-reduced-motion:reduce){
  #dayview .hourly-section .slots button{transition:none!important}
+}
+
+
+/* FARO Coastal Editorial: navigation belongs to the seven-day rail,
+   not to a horizontally scrollable entire page. */
+html,body{max-width:100%;overflow-x:clip}
+#forecastPage,#forecastPage #dayStrip,#forecastPage .day-strip-wrap{
+ min-width:0;max-width:100%;box-sizing:border-box;
+}
+#forecastPage #dayStrip{overflow:hidden}
+#forecastPage .day-strip-title{
+ display:flex!important;flex-wrap:wrap;align-items:center!important;
+ justify-content:space-between!important;gap:6px 10px!important;
+ margin:0 0 3px!important;
+}
+#forecastPage .day-strip-title strong{
+ font-size:clamp(21px,5.4vw,29px)!important;
+ line-height:1.12!important;letter-spacing:-.035em!important;
+}
+#forecastPage .day-strip-tools{
+ margin-left:auto;display:inline-flex;align-items:center;gap:5px;
+ flex-shrink:0;
+}
+#forecastPage .day-strip-count{
+ min-width:55px;text-align:right;color:var(--faro-quiet);
+ font:700 11px/1 var(--faro-text);font-variant-numeric:tabular-nums;
+}
+#forecastPage .day-strip-arrow{
+ display:grid;place-items:center;min-width:36px;min-height:36px;
+ border-radius:10px;border:1px solid var(--faro-line);
+ background:var(--faro-raised);color:var(--fg);
+ font-family:var(--faro-text);font-size:25px;line-height:1;
+ padding:0 0 3px;box-shadow:none;
+}
+#forecastPage .day-strip-arrow:disabled{
+ opacity:.3;cursor:not-allowed;
+}
+#forecastPage .day-strip-arrow:not(:disabled):active{
+ background:var(--faro-soft-glow);
+}
+#forecastPage .day-strip-arrow:focus-visible{
+ outline:2px solid var(--faro-ocean);outline-offset:2px;
+}
+#forecastPage .day-strip-deck{
+ font:600 11px/1.4 var(--faro-text);
+ color:var(--faro-quiet);margin:0 0 9px;
+}
+#forecastPage #dayStripItems{
+ box-sizing:border-box;width:100%;max-width:100%;min-width:0;
+ scroll-padding-inline:3px;overscroll-behavior-x:contain;
+ -webkit-overflow-scrolling:touch;
+}
+#forecastPage .day-strip-progress{
+ height:3px;border-radius:999px;overflow:hidden;
+ background:var(--faro-line);
+ margin:2px 2px 12px;
+}
+#forecastPage .day-strip-progress span{
+ display:block;width:100%;height:100%;border-radius:inherit;
+ background:var(--faro-ocean);
+ transform-origin:left center;transform:scaleX(.14);
+ transition:transform .13s ease-out;
+}
+main>.app-nav{width:100%;max-width:540px!important;box-sizing:border-box}
+main>.app-nav button{
+ min-width:0!important;overflow-wrap:normal!important;
+ line-height:1.15!important;white-space:nowrap!important;
+ font-size:clamp(11px,3vw,13px)!important;
+}
+#forecastPage .forecast-section-heading h3,
+#bestPage>.panel>.row h2{
+ text-wrap:balance;
+}
+#dayview .session-glance .hero-wave .wave-size,
+#bestPage .hero-wave .wave-size{
+ font-variant-numeric:tabular-nums;
+}
+#dayview .session-glance .hero-wave-meter .wave-bars span.on,
+#bestPage .hero-wave-meter .wave-bars span.on{
+ background:var(--wave-color,#187b97)!important;
+}
+@media(max-width:380px){
+ #forecastPage .day-strip-title strong{font-size:21px!important}
+ #forecastPage .day-strip-arrow{min-width:34px;min-height:34px}
+ #forecastPage .day-strip-count{min-width:48px;font-size:10px}
+ main>.app-nav button{font-size:11px!important;padding-inline:3px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #forecastPage .day-strip-progress span{transition:none}
 }
