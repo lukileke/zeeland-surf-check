@@ -855,7 +855,21 @@ const languagePhrases=[
 ['Connecting to Open-Meteo…','Conectando con Open-Meteo…'],['Starting…','Iniciando…'],
 ['Updating…','Actualizando…'],['Updated','Actualizado'],['Offline','Sin conexión'],
 ['Sunrise','Amanecer'],['Sunset','Atardecer'],['Leave before','Salir antes de'],
-['Score by 2-hour windows','Puntuación por franjas de 2 horas'],['Best of the Week','Lo mejor de la semana'],['Best of Week','Lo mejor de la semana'],
+['Score by 2-hour windows','Puntuación por franjas de 2 horas'],['Compare 2-hour windows','Comparar horarios de dos horas'],
+['DISCOVER · ZEELAND','DESCUBRE · ZEELAND'],
+['Where and when is it worth surfing? The best 2-hour windows across Zeeland.','¿Dónde y cuándo conviene surfear? Las mejores ventanas de dos horas en Zeeland.'],
+['FARO WIZARD BETA · GUIDED SEARCH','FARO WIZARD BETA · BÚSQUEDA GUIADA'],
+["Start with what you know. We'll guide you through the rest.",'Parte por lo que sabes. Te ayudamos con el resto.'],
+['My goal','Mi objetivo'],['My board','Mi tabla'],
+['Continue →','Continuar →'],['Step 1 of 3','Paso 1 de 3'],['Step 2 of 3','Paso 2 de 3'],['Step 3 of 3','Paso 3 de 3'],
+['Model estimate','Estimación del modelo'],['Model estimates','Estimaciones del modelo'],
+['Faro sections','Secciones de Faro'],['Change language','Cambiar idioma'],
+['Refresh forecast','Actualizar pronóstico'],['Switch colour theme','Cambiar tema de color'],
+['Choose forecast day','Elegir día del pronóstico'],
+['past window','ventana pasada'],['less than 40 minutes remaining','menos de 40 minutos restantes'],
+['insufficient daylight','luz diurna insuficiente'],['no forecast','sin pronóstico'],
+['no data','sin datos'],[' out of 10',' de 10'],[' metres',' metros'],
+['Best of the Week','Lo mejor de la semana'],['Best of Week','Lo mejor de la semana'],
 ['Find your next surf session','Encuentra tu próxima sesión de surf'],
 ['What would you like to find?','¿Qué quieres encontrar?'],
 ['Advanced board tools','Herramientas avanzadas de tablas'],
@@ -910,6 +924,26 @@ const languagePhrases=[
 ].concat(surfChileanPhrases).sort((a,b)=>b[0].length-a[0].length);
 let siteLanguage=(()=>{try{return localStorage.getItem('zeeland-language')==='es'?'es':'en'}catch(e){return 'en'}})();
 const originalNodes=new WeakMap();
+const originalAttributes=new WeakMap();
+function translateAttributeValue(value){
+ // Keep times legible without altering hours, model values, or numeric scores.
+ return translateText(value).replace(/(\d{2}:\d{2}) to (\d{2}:\d{2})/g,'$1 a $2');
+}
+function applyTranslatedAttributes(){
+ for(const el of document.querySelectorAll('[aria-label],[title],[placeholder]')){
+  const originals=originalAttributes.get(el)||{};
+  for(const name of ['aria-label','title','placeholder']){
+   if(!el.hasAttribute(name))continue;
+   const current=el.getAttribute(name);
+   const previous=originals[name];
+   const original=previous&&current===translateAttributeValue(previous)?previous:current;
+   originals[name]=original;
+   const desired=siteLanguage==='es'?translateAttributeValue(original):original;
+   if(current!==desired)el.setAttribute(name,desired);
+  }
+  originalAttributes.set(el,originals);
+ }
+}
 function translateText(source){
  let output=source;
  for(const [english,spanish] of [...additionalSpanishPhrases,...moreSpanishPhrases,...surfChileanPhrases,...languagePhrases].sort((a,b)=>b[0].length-a[0].length)){
@@ -935,6 +969,7 @@ function applyLanguage(){
    const desired=siteLanguage==='es'?translateText(original):original;
    if(current!==desired)node.nodeValue=desired;
   }
+  applyTranslatedAttributes();
  }finally{translating=false}
 }
 function toggleLanguage(){
