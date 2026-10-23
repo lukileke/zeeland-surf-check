@@ -50,5 +50,8 @@ function es(s){for(const [en,translated] of pairs)s=s.split(en).join(translated)
 assert.equal(es('Best of the Week'),'Lo mejor de la semana');
 assert.equal(es('Find your next surf session'),'Encuentra tu próxima sesión de surf');
 assert.equal(es('What would you like to find?'),'¿Qué quieres encontrar?');
+assert.equal(es('Compare 2-hour windows'),'Comparar horarios de dos horas');
+assert.equal(es('Refresh forecast'),'Actualizar pronóstico');
+assert.ok(html.includes('function applyTranslatedAttributes()'),'Control labels translated in EN/ES');
 assert.ok(es('Choppy & Messy')!=='Choppy & Messy');
 console.log('FARO smoke checks passed: JavaScript, markup, themes, timing and translations.');
