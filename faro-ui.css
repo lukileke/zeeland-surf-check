@@ -1292,3 +1292,56 @@ main>.app-nav button{
 @media(prefers-reduced-motion:reduce){
  #forecastPage .day-strip-progress span{transition:none}
 }
+
+
+/* One disclosure language for wave, spot, and gear evidence.
+   Keep warnings in the session hero and danger alerts expanded. */
+#dayview>details.forecast-expand{
+ display:block!important;margin:0!important;min-width:0;
+ border:0!important;border-top:1px solid var(--faro-line)!important;
+ border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+#dayview>details.forecast-expand:last-child{
+ border-bottom:1px solid var(--faro-line)!important;
+}
+#dayview>details.forecast-expand>summary{
+ display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,auto)!important;
+ align-items:center!important;column-gap:12px!important;
+ min-height:56px!important;margin:0!important;padding:12px 2px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;color:var(--fg)!important;
+ font:750 14px/1.3 var(--faro-text)!important;
+ text-align:left!important;
+}
+#dayview>details.forecast-expand>summary>span{
+ max-width:100%!important;min-width:0!important;white-space:normal;
+ color:var(--faro-quiet)!important;font:600 11px/1.25 var(--faro-text)!important;
+ text-align:right!important;
+}
+#dayview>details.forecast-expand[open]>summary{
+ color:var(--faro-ocean)!important;
+}
+#dayview>details.forecast-expand>summary:focus-visible{
+ outline:2px solid var(--faro-ocean)!important;outline-offset:2px!important;
+}
+#dayview>details.forecast-expand>.insight-panel,
+#dayview>details.forecast-expand>.panel{
+ margin:0 0 12px!important;padding:13px 13px 15px!important;
+ background:var(--faro-raised)!important;
+ border:1px solid var(--faro-line)!important;border-radius:12px!important;
+ box-shadow:none!important;
+}
+#dayview .insight-panel .insight-eyebrow{
+ display:block!important;font:800 10px/1.5 var(--faro-text)!important;
+ letter-spacing:.11em!important;color:var(--faro-quiet)!important;
+ margin:0 0 10px!important;
+}
+#dayview .insight-panel p{line-height:1.55!important}
+#dayview .insight-panel .insight-note{
+ font-size:12px!important;line-height:1.55!important;
+ color:var(--faro-quiet)!important;
+}
+@media(max-width:380px){
+ #dayview>details.forecast-expand>summary{font-size:13px!important;gap:8px!important}
+ #dayview>details.forecast-expand>summary>span{font-size:10px!important}
+}
