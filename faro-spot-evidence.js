@@ -23,7 +23,7 @@ const E={
   evidence:'regional surf guides; local sector positions not verified',
   sources:[
    {name:'SurfInfo — Westkapelle',url:'https://www.surfinfo.nl/spots/westkapelle/'},
-   {name:'Zeeland.com — Westkapelle',url:'https://www.zeeland.com/en/visit/islands/walcheren/towns-and-villages/westkapelle'},
+   {name:'Wompy — Westkapelle (high-tide hypothesis)',url:'https://www.wompy.nl/wanneer-surfen/westkapelle'},
    {name:'Westkapelle local guide',url:'https://www.westkapelle.com/nl/recreatie-en-sport/surfen-in-zeeland'}
   ]
  },
@@ -33,8 +33,8 @@ const E={
   caveat:'Local sandbars, groynes and beach zoning; confirm legal surf location for each entry.',
   evidence:'indirect local/regional guides; no validated sector-specific optima',
   sources:[
-   {name:'Oostkapelle Duinweg beach context',url:'https://strandalert.nl/nl/strand/oostkapelle-duinweg-veere'},
-   {name:'Surfzeeland — Berkenbosch',url:'https://www.surfzeeland.nl/spot/oostkapelle-berkenbosch'}
+   {name:'StrandAlert — Duinweg beach orientation (not a breaking-wave survey)',url:'https://strandalert.nl/nl/strand/oostkapelle-duinweg-veere'},
+   {name:'Surfzeeland — Berkenbosch (windsurf/foil context)',url:'https://www.surfzeeland.nl/spot/oostkapelle-berkenbosch'}
   ]
  },
  Cadzand:{
@@ -44,7 +44,7 @@ const E={
   evidence:'regional surf directory, low-to-moderate location specificity',
   sources:[
    {name:'Boardshortz surf map',url:'https://www.boardshortz.nl/surfen/nederland/surfspots/'},
-   {name:'WaveSpot — Cadzand',url:'https://wavespot.nl/surf/cadzand'}
+   {name:'WaveSpot — Cadzand forecast (not validated spot optimum)',url:'https://wavespot.nl/surf/cadzand'}
   ]
  },
  Brouwersdam:{
@@ -54,7 +54,7 @@ const E={
   evidence:'surf guide + on-site water-sports provider; not verified for the three Faro surf sectors',
   sources:[
    {name:'SurfInfo — Brouwersdam',url:'https://www.surfinfo.nl/spots/brouwersdam/'},
-   {name:'Natural High — Brouwersdam spots',url:'https://surfshop.natural-high.nl/pages/brouwersdam-surf-spot-guide'}
+   {name:'Natural High — Ouddorp and Brouwersdam (mostly kite/foil)',url:'https://surfshop.natural-high.nl/pages/brouwersdam-and-ouddorp-surf-spot-guide'}
   ]
  }
 };
@@ -92,7 +92,8 @@ function signal(input,spotId){
   input.windGust/input.windSpeed:null;
  return {
   status:'shadow-evidence-only',beach:p.beach,spotId,
-  windRole,windInReportedSector:sectorWind,reportedSwellDirection:swellAligned,
+  windRole,windInReportedSector:sectorWind,reportedIncidentDirection:swellAligned,
+  waveDirectionSource:valid(input?.swellDirection)?'separate swell':'total wave direction',
   swellEnergyProxyShare:proxy,windGustRatio:gustiness,
   modelMissing:[...(proxy===null?['separate swell / wind-wave heights']:[]),
    ...(gustiness===null?['wind gusts']:[]),
