@@ -40,7 +40,12 @@ function validate(data){
  if(!['clean','mixed','choppy','unknown'].includes(data.surface))throw Error('Choose a wave-surface description.');
  const note=String(data.notes||'').trim();
  if(note.length>450)throw Error('Keep the field note below 450 characters.');
- return {spotId:data.spotId,observationType:data.observationType,quality:Number(data.quality),surface:data.surface,notes:note};
+ const observedLocal=String(data.observedLocal||'');
+ if(!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(observedLocal))throw Error('Enter an observed date and local time.');
+ const parsed=new Date(observedLocal+':00Z');
+ if(!Number.isFinite(parsed.getTime())||parsed.toISOString().slice(0,16)!==observedLocal)throw Error('Invalid local date or time.');
+ return {spotId:data.spotId,observationType:data.observationType,quality:Number(data.quality),surface:data.surface,notes:note,
+  observedLocal,observationTimeZone:'Europe/Amsterdam'};
 }
 function save(data,store=root.localStorage,now=new Date()){
  const clean=validate(data);
@@ -56,7 +61,7 @@ function save(data,store=root.localStorage,now=new Date()){
   type:'Open-Meteo model estimate; not measured surf'
  }:null;
  const observation={schemaVersion:VERSION,id:'field-'+now.getTime()+'-'+Math.random().toString(36).slice(2,9),
-  observedAt:now.toISOString(),...clean,forecastSnapshot};
+  recordedAt:now.toISOString(),...clean,forecastSnapshot};
  const next=[...list,observation].slice(-MAX_ENTRIES);
  store.setItem(KEY,JSON.stringify(next));
  return observation;
