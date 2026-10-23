@@ -16,6 +16,8 @@ html:not([data-theme="light"]) {
   --faro-hero:#1a252a; --faro-raised:#243239;
   --faro-line:#384951; --faro-quiet:#9cb5bb;
   --faro-surf-bg:#2a3032;
+  --surf-great:#60c69e;--surf-good:#78cba0;--surf-fair:#f4c877;
+  --surf-poor:#e9937f;--surf-low:#e68b95;
 }
 html[data-theme="light"] {
   --bg:#f6f9f8; --fg:#1c3038; --muted:#526772;
@@ -24,6 +26,8 @@ html[data-theme="light"] {
   --faro-hero:#eaf3f4; --faro-raised:#fff;
   --faro-line:#c5d5d8; --faro-quiet:#526a74;
   --faro-surf-bg:#f1f5f4;
+  --surf-great:#086c4e;--surf-good:#146d4d;--surf-fair:#88590c;
+  --surf-poor:#9b3b24;--surf-low:#91303e;
 }
 body {
   background:var(--bg)!important;
@@ -445,6 +449,15 @@ html[data-theme="light"]{
   --faro-soft-glow:rgba(52,139,154,.075);
   --faro-sea-ink:#1e5261;
 }
+/* Colours do not carry meaning alone: numbers are also labelled. */
+html[data-theme="light"] .wave-size.size-small{--wave-color:#176b72}
+html[data-theme="light"] .wave-size.size-medium{--wave-color:#18768f}
+html[data-theme="light"] .wave-size.size-large{--wave-color:#6b549f}
+html[data-theme="light"] .wave-size.size-xl{--wave-color:#8b427a}
+html:not([data-theme="light"]) .wave-size.size-small{--wave-color:#77c6c9}
+html:not([data-theme="light"]) .wave-size.size-medium{--wave-color:#7dbbd0}
+html:not([data-theme="light"]) .wave-size.size-large{--wave-color:#c9adf0}
+html:not([data-theme="light"]) .wave-size.size-xl{--wave-color:#e5a3cd}
 /* A memorable wordmark without a heavy advertising header. */
 .top h1{
   font-weight:850!important;
