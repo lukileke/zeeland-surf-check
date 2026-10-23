@@ -8,7 +8,7 @@
   --faro-ocean:#77c3c4;
   --faro-wave:#66b7d5;
   --faro-easing:cubic-bezier(.2,.7,.25,1);
-  --faro-display:"Barlow Condensed","Arial Narrow","Helvetica Neue Condensed",-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+  --faro-display:"Archivo Black","Arial Black","Helvetica Neue",Arial,sans-serif;
   --faro-text:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
 html:not([data-theme="light"]) {
@@ -914,4 +914,77 @@ main>.app-nav button{font-family:var(--faro-text)!important;font-weight:750!impo
 @media(max-width:520px){
   #dayview .session-glance .glance-title{font-size:25px!important}
   #dayview .session-glance .glance-window{font-size:12px!important}
+}
+
+/* Coastline-inspired editorial typography: bold, broad grotesque rather than condensed.
+   We are not claiming this is the source designer's exact proprietary font.
+   Archivo Black headlines; Manrope remains the numeric and functional face. */
+.top h1{
+  font-family:var(--faro-display)!important;
+  font-size:clamp(34px,8.8vw,49px)!important;
+  font-weight:400!important;
+  letter-spacing:-.055em!important;
+  line-height:1.04!important;
+}
+.faro-logo .faro-brand-tide{
+  font-family:var(--faro-text)!important;
+  font-size:.53em!important;
+  font-weight:700!important;
+  letter-spacing:0!important;
+  transform:translateY(-.14em) rotate(-6deg)!important;
+}
+#forecastPage .day-strip-title strong,
+#forecastPage .forecast-overview #datehead,
+#dayview .forecast-section-heading h3,
+#dayview .session-glance .glance-title,
+#bestPage .best-intro h2,
+#bestPage>.panel>.row h2,
+#bestPage .hero-location,
+#boardPage>.faro-guide h2,
+#boardPage .faro-step h3,
+#boardPage #faroFeedback>h3,
+#boardPage .faro-result-card h3{
+  font-family:var(--faro-display)!important;
+  font-weight:400!important;
+  letter-spacing:-.042em!important;
+}
+#forecastPage .day-strip-title strong{
+  font-size:clamp(22px,5.3vw,29px)!important;
+}
+#forecastPage .forecast-overview #datehead{
+  font-size:clamp(21px,5.3vw,28px)!important;
+  line-height:1.15!important;
+}
+#dayview .forecast-section-heading h3{
+  font-size:clamp(21px,5.4vw,28px)!important;
+  line-height:1.15!important;
+}
+#dayview .session-glance .glance-title{
+  font-size:clamp(18px,4.5vw,23px)!important;
+  line-height:1.16!important;
+}
+#bestPage .best-intro h2{
+  font-size:clamp(31px,7.4vw,48px)!important;
+  line-height:1.06!important;
+}
+#bestPage>.panel>.row h2{font-size:clamp(22px,5.4vw,29px)!important}
+#bestPage .hero-location{
+  font-size:clamp(23px,5.5vw,32px)!important;
+  line-height:1.14!important;
+}
+#boardPage>.faro-guide h2{
+  font-size:clamp(29px,6.5vw,41px)!important;
+  line-height:1.12!important;
+}
+#boardPage .faro-step h3,
+#boardPage #faroFeedback>h3{
+  font-size:clamp(22px,5.4vw,30px)!important;
+  line-height:1.16!important;
+}
+#boardPage .faro-result-card h3{font-size:23px!important}
+@media(max-width:390px){
+  .top h1{font-size:34px!important}
+  #forecastPage .forecast-overview #datehead{font-size:21px!important}
+  #dayview .session-glance .glance-title{font-size:18px!important}
+  #bestPage .hero-location{font-size:23px!important}
 }
