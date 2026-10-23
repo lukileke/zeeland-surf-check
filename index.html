@@ -60,7 +60,8 @@ const savedBoard=(()=>{try{return JSON.parse(localStorage.getItem('zeeland-board
 let ridingStyle=['flow','progression','performance'].includes(savedBoard.style)?savedBoard.style:'flow';
 let boardType=['soft','long','mid','short'].includes(savedBoard.board)?savedBoard.board:'mid';
 
-let faroStep=1;\nwindow.addEventListener('DOMContentLoaded',faroInit);
+let faroStep=1;
+window.addEventListener('DOMContentLoaded',faroInit);
 function faroChange(){
  const goal=$('faroGoal').value,availability=$('faroAvailability').value,scope=$('faroScope').value;
  $('faroBoardLabel').classList.toggle('hide',goal==='ride');
