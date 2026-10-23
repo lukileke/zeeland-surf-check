@@ -94,12 +94,12 @@ main{width:100%;max-width:820px;padding:24px clamp(16px,4vw,32px) 76px}
  <div class="faro-progress" aria-label="Wizard progress"><span id="faroBar1"></span><span id="faroBar2"></span><span id="faroBar3"></span></div>
  <p class="muted" id="faroStepLabel">Step 1 of 3</p>
  <div id="faroStep1" class="faro-step"><h3>What would you like to find?</h3>
-  <label>My goal<select id="faroGoal" onchange="faroChange()"><option value="ride">🏄 What board should I ride?</option><option value="when">📅 When should I surf?</option><option value="where">📍 Where should I surf?</option></select></label>
-  <label>Riding style<select id="faroStyle" onchange="faroChange()"><option value="versatile">Versatile · All-rounder</option><option value="flow">Relaxed & flowing</option><option value="progression">Progression & turns</option><option value="performance">Performance</option></select></label>
+  <label>My goal<select id="faroGoal" onchange="faroChange()"><option value="ride">🏄 What board should I ride?</option><option value="when">📅 When should I surf?</option><option value="where" selected>📍 Where should I surf?</option></select></label>
+  <label>Riding style<select id="faroStyle" onchange="faroChange()"><option value="versatile">Versatile · All-rounder</option><option value="flow" selected>Relaxed & flowing</option><option value="progression">Progression & turns</option><option value="performance">Performance</option></select></label>
   <label id="faroBoardLabel" class="hide">My board<select id="faroBoard"><option value="soft">Soft-top</option><option value="long">Longboard</option><option value="mid">Mid-length</option><option value="short">Shortboard</option></select></label>
  </div>
  <div id="faroStep2" class="faro-step hide"><h3>When could you surf?</h3>
-  <label>Availability<select id="faroAvailability" onchange="faroChange()"><option value="range">Several days</option><option value="exact">A specific day and time</option><option value="flexible">Any time in the next 7 days</option></select></label>
+  <label>Availability<select id="faroAvailability" onchange="faroChange()"><option value="range">Several days</option><option value="exact">A specific day and time</option><option value="flexible" selected>Any time in the next 7 days</option></select></label>
   <div id="faroDaysWrap"><p class="muted">Choose one or more days:</p><div id="faroDays" class="faro-days"></div></div>
   <label id="faroHoursWrap">Preferred hours<select id="faroHours"><option value="any">Any daylight hours</option><option value="morning">Morning · 06:00–12:00</option><option value="afternoon">Afternoon · 12:00–18:00</option></select></label>
  </div>
