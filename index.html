@@ -245,6 +245,45 @@ html:not([data-theme="light"]) .day-chip small{color:#c0ccd2!important}
 html:not([data-theme="light"]) .day-strip-title>span,html:not([data-theme="light"]) .forecast-section-heading p{color:#bdcbd1!important}
 html:not([data-theme="light"]) .day-chip.tone-fair strong{color:#f4c96e!important}
 @media(max-width:520px){.day-chip{flex-basis:112px!important;min-width:112px!important}.day-chip strong{font-size:30px!important}.day-chip>span{font-size:14px!important}.day-chip small{font-size:12px!important}.forecast-section-heading h3{font-size:17px!important}.forecast-section-heading p{font-size:12px!important}.day-strip-title>span{max-width:46%;text-align:right}}
+/* Desktop layout rebuilt for the current Forecast DOM (old grid used obsolete nodes) */
+@media(min-width:900px){
+ main{max-width:1180px!important;padding:30px 34px 90px!important}
+ #forecastPage{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;column-gap:22px!important;row-gap:18px!important;align-items:start}
+ #forecastPage.hide,#bestPage.hide,#boardPage.hide{display:none!important}
+ #forecastPage>.forecast-toolbar{grid-column:1/-1!important;grid-row:1!important;margin:0!important;justify-self:stretch}
+ #forecastPage>.picker-grid{grid-column:1/-1!important;grid-row:2!important;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0!important}
+ #forecastPage>.picker-grid>.picker,#forecastPage>.picker-grid>div{min-width:0}
+ #forecastPage>#dayStrip{grid-column:1/-1!important;grid-row:3!important;margin:0!important}
+ #forecastPage>.forecast-overview{grid-column:1/-1!important;grid-row:4!important;margin:0!important;padding:22px 24px!important}
+ #forecastPage>.forecast-overview>.row{grid-template-columns:minmax(0,1fr) minmax(210px,270px)!important}
+ #forecastPage>.forecast-overview .metric{grid-template-columns:repeat(3,minmax(0,1fr));max-width:100%}
+ #forecastPage>#dayview{grid-column:1/-1!important;grid-row:5!important;display:grid!important;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr)!important;gap:18px 22px!important;margin:0!important;align-items:start}
+ #forecastPage>#dayview.hide{display:none!important}
+ #dayview>.session-section{grid-column:1!important;grid-row:1!important;margin:0!important;min-width:0}
+ #dayview>#waveInsightExpand{grid-column:2!important;grid-row:1!important;margin:0!important;align-self:start}
+ #dayview>.hourly-section{grid-column:1/-1!important;grid-row:2!important;margin:0!important;padding-top:18px}
+ #dayview>.hourly-section .slots{grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:9px}
+ #dayview>.detail-section{grid-column:1/-1!important;grid-row:3!important;margin:0!important;padding-top:18px}
+ #dayview>#spotInsightExpand{grid-column:1!important;grid-row:4!important;margin:0!important}
+ #dayview>#wearExpand{grid-column:2!important;grid-row:4!important;margin:0!important}
+ #forecastPage>#weekview{grid-column:1/-1!important}
+ .day-strip{overflow-x:auto}
+ .day-chip{flex:1 0 0!important;min-width:0!important}
+ .day-chip>span{font-size:15px!important}
+ .day-chip strong{font-size:31px!important}
+ .day-chip small{font-size:11px!important}
+ .session-glance .hero-score-value{font-size:clamp(38px,4vw,52px)!important}
+ .session-glance .hero-wave strong{font-size:clamp(30px,3vw,40px)!important}
+ #dayview .slots button{min-width:0}
+ #dayview .slots button small{overflow-wrap:anywhere}
+}
+@media(min-width:900px) and (max-width:1050px){
+ #dayview>.session-section,#dayview>#waveInsightExpand{grid-column:1/-1!important;grid-row:auto!important}
+ #forecastPage>#dayview{grid-template-columns:1fr!important}
+ #dayview>.hourly-section,#dayview>.detail-section,#dayview>#spotInsightExpand,#dayview>#wearExpand{grid-column:1/-1!important;grid-row:auto!important}
+ .day-chip{flex:0 0 125px!important}
+ #dayview>.hourly-section .slots{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
 </style></head><body><main><div class="top"><div><small>ZEELAND SURF CHECK · FORECAST · WEB APP</small><h1>🌊 Surf Forecast</h1></div><div class="top-actions"><button class="language-toggle" id="languageToggle" onclick="toggleLanguage()" aria-label="Change language">ES</button><button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Switch colour theme">☀ Light</button><span id="status" class="pill">Starting…</span></div></div><nav class="app-nav"><button id="navForecast" class="active" onclick="switchTab('forecast')">🌊 Forecast</button><button id="navBest" onclick="switchTab('best')">🏆 Best of Week</button><button id="navBoard" onclick="switchTab('board')">🏄 Wizard</button></nav><div id="forecastPage"><div class="forecast-toolbar"><div class="forecast-updated"><span class="live-indicator" aria-hidden="true"></span><span class="forecast-updated-label" id="updated">Connecting to Open-Meteo…</span></div><button class="forecast-refresh" type="button" onclick="load();loadRankings()" aria-label="Refresh forecast" title="Refresh forecast">↻ <span>Refresh</span></button></div><div class="picker-grid"><div id="areas"></div><div id="spots"></div></div><section id="dayStrip" class="day-strip-wrap forecast-section" aria-label="Choose forecast day"><div class="day-strip-title"><strong>CHOOSE YOUR DAY</strong><span>7-day spot outlook · tap to compare</span></div><div id="dayStripItems" class="day-strip"></div></section><div class="panel forecast-overview"><div class="row"><div class="day-identity"><small class="day-identity-label">📍 YOUR SURF SPOT</small><div id="spotname"></div><h2 id="datehead"></h2></div><div class="best-session-brief"><small>🏄 BEST WINDOW</small><div id="bestTime" class="best-time">—</div><div id="best" class="score">—</div></div></div><div class="week-back-row"><button id="backToWeek" class="back-to-week hide" onclick="returnToWeek()">← Back to 7 days</button></div><div class="metric"><div>🌅 Sunrise<b id="rise">—</b></div><div>🌇 Sunset<b id="set">—</b></div><div>🏄 Leave before<b id="cutoff">—</b></div></div><p id="summary"></p></div><div id="dayview"><section class="forecast-section session-section" aria-label="Selected surf session"><div id="sessionAtGlance" class="session-glance"></div><div class="session-essentials"><small>SESSION ESSENTIALS · AT A GLANCE</small><div id="sessionEssentials" class="essentials-tags"></div></div></section><details id="waveInsightExpand" class="forecast-expand"><summary>🌊 Wave Wizard <span>What does this wave character mean? ⌄</span></summary><div id="waveinsight" class="insight-panel"><h3 class="sr-only">Wave character explanation</h3><p class="muted">Select a time window to see an estimate.</p></div></details><section class="forecast-section hourly-section" aria-label="Compare two-hour surf windows"><div class="forecast-section-heading"><span class="section-step">02</span><div><h3>Compare surf windows</h3><p>Choose a 2-hour window to explore its conditions</p></div></div><div id="slots" class="slots"></div></section><section class="forecast-section detail-section" aria-label="Selected window details"><div class="forecast-section-heading"><span class="section-step">03</span><div><h3>Window details</h3><p>Conditions and model guidance for your selection</p></div></div><div class="panel" id="detail"></div></section><details id="spotInsightExpand" class="forecast-expand"><summary>📍 Spot Insight <span>Local conditions and considerations ⌄</span></summary><div id="spotinsight" class="insight-panel"><h3 class="sr-only">Spot considerations</h3><p class="muted">Choose a beach to see local considerations.</p></div></details><details id="wearExpand" class="forecast-expand"><summary>🧥 What to Wear <span>Temperature and equipment advice ⌄</span></summary><div class="panel" id="wetsuit"><h3 class="sr-only">Equipment advice</h3><p class="muted">Select a time window.</p></div></details></div><div id="weekview" class="hide"><h3>Next 7 days</h3><div id="weekrows"></div></div></div><section id="bestPage" class="hide"><div class="best-intro"><small>DISCOVER · ZEELAND</small><h2>Best of the Week</h2><p class="muted">Where and when is it worth surfing? The best 2-hour windows across Zeeland.</p></div><section class="panel" aria-label="Best of the week"><div class="row"><h2 style="margin:0;font-size:19px">🏆 Best of the week</h2><small id="rankingstatus">Calculating…</small></div><p class="muted" style="font-size:12px">Comparing 5 beaches and 12 spots individually, with at least 40 minutes of daylight per window.</p><div class="highlights" id="highlights"><div class="muted">Fetching forecasts…</div></div></section></section><section id="boardPage" class="hide"><div class="panel faro-guide" id="faroGuide">
  <small>🌊 FARO WIZARD BETA · GUIDED SEARCH</small><h2>Find your next surf session</h2>
  <p class="muted">Start with what you know. We'll guide you through the rest.</p>
