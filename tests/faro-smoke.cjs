@@ -20,7 +20,7 @@ assert.equal(ids.length,new Set(ids).size,'No duplicate static DOM identifiers')
 assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces balanced');
 assert.ok(css.includes('html[data-theme="light"]'),'Light theme present');
 assert.ok(css.includes('html:not([data-theme="light"])'),'Dark theme present');
-assert.ok(html.includes('faro-ui.css?v=10'),'Current CSS cache key');
+assert.ok(html.includes('faro-ui.css?v=11'),'Current CSS cache key');
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
 assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
@@ -64,6 +64,11 @@ assert.equal(es('What would you like to find?'),'¿Qué quieres encontrar?');
 assert.equal(es('Compare 2-hour windows'),'Comparar horarios de dos horas');
 assert.equal(es('Refresh forecast'),'Actualizar pronóstico');
 assert.ok(html.includes('function applyTranslatedAttributes()'),'Control labels translated in EN/ES');
+assert.equal(es('Understand the wave'),'Entiende la ola');
+assert.equal(es('Spot notes'),'Notas del spot');
+assert.equal(es('Gear advice'),'Equipo recomendado');
+assert.ok(html.includes('class="insight-eyebrow"'),'Wave explanation uses an editorial eyebrow');
+assert.ok(css.includes('#dayview>details.forecast-expand>summary'),'Evidence accordions share a summary style');
 assert.ok(es('Choppy & Messy')!=='Choppy & Messy');
 
 /* Mock a 340 CSS-pixel mobile carousel. This exercises scroll preservation
