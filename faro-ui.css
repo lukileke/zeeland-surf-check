@@ -1430,8 +1430,9 @@ html[data-theme="light"] #bestPage .hero-rank .hero-score.tone-fair .hero-score-
  font:750 12px/1.4 var(--faro-text)!important;
  color:var(--fg)!important;
 }
-#dayview #fieldNotesForm>label:nth-of-type(4){grid-column:1/-1}
+#dayview #fieldNotesForm>label:nth-of-type(5){grid-column:1/-1}
 #dayview #fieldNotesForm select,
+#dayview #fieldNotesForm input,
 #dayview #fieldNotesForm textarea{
  display:block;width:100%;max-width:100%;min-width:0;
  box-sizing:border-box;margin:6px 0 0!important;
@@ -1464,5 +1465,5 @@ html[data-theme="light"] #bestPage .hero-rank .hero-score.tone-fair .hero-score-
 #dayview .field-notes-privacy{margin:9px 0 0!important}
 @media(max-width:380px){
  #dayview #fieldNotesForm{grid-template-columns:1fr}
- #dayview #fieldNotesForm>label:nth-of-type(4){grid-column:auto}
+ #dayview #fieldNotesForm>label:nth-of-type(5){grid-column:auto}
 }
