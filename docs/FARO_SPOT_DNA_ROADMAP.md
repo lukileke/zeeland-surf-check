@@ -115,3 +115,57 @@ A score isn't a decorative sports grade. Use **strong ink for reading**, and res
 5. Decide backend/privacy/data consent architecture before launching crowdsourced aggregation or hiding algorithm parameters.
 
 Do **not** claim proprietary prediction accuracy, numerical safety, tide-aware rating, community training or observed breaking wave heights based on the current prototype.
+
+---
+
+
+## October 2026: source audit and shadow lab (new)
+
+**Read this before adjusting the production score:** SurfInfo already has static exposure, wind and tidal factors per spot (https://www.surfinfo.nl/bronnen/), so **merely adding hand-tuned per-beach weights is not a unique FARO advantage**. The differentiation hypothesis must be based on prospective forecast archives, independent local observations, versioned experiments and proven transfer to unseen surf sessions.
+
+### Source evidence at beach level (not 12 independent confirmed breaks)
+
+| FARO parent beach | Source-backed candidate patterns | Important gaps and contradictory accounts |
+|---|---|---|
+| **Domburg** | SE offshore, NW/N/SW directions can work, banks around groynes, substantial tide effects. | Surfline describes low–mid tide in general; Goede Golven distinguishes **N swell mid-to-high** from **SW swell low**; Wompy favours mid tide. Do not infer a single optimum. |
+| **Westkapelle** | W/NW swell, generally E–SE wind, wave exposure near dyke and groynes. | SurfInfo suggests mid tide; Wompy says rising/high tide for bigger waves. Need sector-specific shore evidence and safety/access review. |
+| **Oostkapelle** | NNW-oriented Duinweg shore (~329° from StrandAlert) with land-wind shelter from S/SE; Berkenbosch guide mentions mid tide. | The Berkenbosch source addresses windsurf/foil and must not automatically determine a shortboard/longboard rideability optimum at FARO's Main Beach or West Sector. |
+| **Cadzand** | Boardshortz lists NW swell and E–SE wind as candidate positive indicators, mid/high tide, occasionally SW events. | This is a directory-level hypothesis with limited independent break observations. Wavespot provides live model forecast, not empirical optimum. |
+| **Brouwersdam** | North Sea-facing outer coast receives modelled western/northern sea state; public surf sources say opportunities are particular. | Many detailed guides are about kite, foil and windsurf, sometimes sheltered water, and **must not be transferred to paddle surfing**. Sandbanks, currents, access rules and protected zones require local verification. |
+
+Source URLs, research caveats and candidate direction intervals live in `faro-spot-evidence.js`. The corresponding observation module `faro-spot-dna.js` still flags the 12 individual sectors **unvalidated**.
+
+Research references:
+- Surfline Domburg: https://www.surfline.com/surf-report/domburg/584204204e65fad6a77095f9/spot-guide
+- Goede Golven Domburg (Tobias): https://goedegolven.nl/surfspots/domburg
+- Wompy Westkapelle: https://www.wompy.nl/wanneer-surfen/westkapelle
+- SurfInfo Westkapelle: https://surfinfo.nl/spots/westkapelle/
+- StrandAlert Oostkapelle Duinweg: https://strandalert.nl/nl/strand/oostkapelle-duinweg-veere
+- Surfzeeland Berkenbosch (wind/foil-specific): https://www.surfzeeland.nl/spot/oostkapelle-berkenbosch
+- Boardshortz surfspot map: https://www.boardshortz.nl/surfen/nederland/surfspots/
+- SurfInfo Brouwersdam: https://surfinfo.nl/spots/brouwersdam/
+- NKV Brouwersdam (kite discipline only): https://kitesurfvereniging.nl/kitespot/brouwersdam/
+- Open-Meteo marine variable definitions: https://open-meteo.com/en/docs/marine-weather-api
+
+### Implemented now
+
+- `faro-spot-evidence.js`: research-backed **beach-level** candidate wind/swell sectors and references. A *shadow-only* feature extractor reports offshore/cross/onshore relationship, wind-gust ratio (when available), and a squared-height swell-mix **proxy** (not wave energy flux), with provenance and missing-data labels.
+- The single-spot Forecast now requests separate `swell_wave_height`, `swell_wave_direction`, `swell_wave_period`, `wind_wave_height`, `wind_wave_direction` and `wind_gusts_10m` from Open-Meteo. These optional values **never enter the production Surf Quality scorer**. The 12-spot Best of Week still uses its existing lean base request, so the experimental data does not increase its network payload.
+- *FARO Field Notes* expands to show a compact, cited research context, with predicted conditional signals only if model fields exist.
+- `faro-dna-validation.js` is a research-only diagnostics library to compare ordinal 1–5 observations with paired, pre-observation 0–10 model values. It excludes forecasts fetched after the user's observation, flags ambiguous autumn DST local times, and computes an **ordinal pairwise ranking concordance**, not a new model score. It requires at least 10 comparable pairs from different dates to show even a pilot diagnostic; this **does not demonstrate validated prediction performance**.
+- `tests/faro-smoke.cjs` tests the evidence registry, source labelling, model-feature fallback and validation pairing.
+- **No production score adjustment, hidden weighting or community backend has yet been deployed.** All source files on GitHub Pages are publicly inspectable.
+
+### Local knowledge in Chile: preserving the moat ethically
+
+To scale later in Chile, recruit willing local surf schools and regulars with **explicit permission**, rather than scraping private groups, identifying individual surfers on cameras, or publicly disclosing sensitive locations. Collect precise definitions of rideability, break shape, set frequency, tide state (with documented local tide gauge/datum), current direction if measured, board type and observer expertise. Record independent good **and** poor sessions to reduce selection bias.
+
+Credibility requires both quantitative and qualitative validation: compare forecasted top sessions with observed outcomes, evaluate false positives / missed surf, keep holdout periods by storm and season, handle changing sandbars as a drift problem, and show sample sizes and uncertainty. Until sufficient representative observations exist, shrink spot estimates towards a parent-beach or Zeeland prior rather than inventing twelve confident "secret" formulae.
+
+**Product security:** if the trained model is eventually a proprietary asset, move inference and calibration to a controlled backend. GitHub Pages/JavaScript cannot keep coefficients secret; hiding UI weights only hides them visually.
+
+### Colour system v15/v16
+
+Following user feedback, the Fair-only exceptions were removed. **All** score tiers now use semantic numeric ink *and* a low-saturation bordered quality pill. Fair uses a darker golden-olive ink (`#65561E`) on light foam backgrounds and a pale sand fill (`#F7EDCC`); Poor stays coral, Good/Excellent remain green. A selected session/day has **ocean teal** border regardless of its score. The UI explicitly separates Surf Quality from blue Wave Height. This is a UI revision, **not algorithm calibration**.
+
+Source smoke checks pass, including mocked DOM navigation and synthetic model-observation pairing. **Outstanding:** real iPhone Safari light/dark + EN/ES visual checks, practical API response error/fallback tests, source-angle field review with locals, and evaluation against actual logged sessions.
