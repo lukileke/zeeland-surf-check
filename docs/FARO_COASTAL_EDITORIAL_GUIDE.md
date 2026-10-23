@@ -152,3 +152,35 @@ Implemented: `tests/faro-smoke.cjs` and `.github/workflows/faro-checks.yml`. Che
 **Not yet independently validated:** actual iPhone Safari rendering of these new commits, VoiceOver, measured layout overflow at 320/375/390/430 px, complete end-to-end Open-Meteo fetch and all Wizard steps in a browser, and colour contrast of every interaction state. Earlier iPhone images are the design baseline, not proof of the newly committed result. Never present these as passing until tested.
 
 **Technical debt:** legacy CSS in `index.html` still competes with `faro-ui.css`, which currently uses many `!important` overrides. The current change is deliberately scoped to styling and functional UI defects; a subsequent regression-tested consolidation should migrate legacy styles without breaking the DOM/translation flow. Do not present source visibility of the scoring engine as confidentiality.
+
+---
+
+## Design pass: Surf culture without dashboard clutter (23 October 2026)
+
+### Research considered
+- Firewire × Libre Design: https://libredesign.com/case-studies/firewire-surfboards/ — clean lines, precision, playfulness; the identity should last longer than a visual trend.
+- GearFreak × Zomeren: https://zomeren.studio/projects/gearfreak/ — Manrope, professional technical credibility plus outdoor energy.
+- NN/g mobile carousel discoverability: https://www.nngroup.com/articles/mobile-carousels/ — expose continuation, provide accessible alternative controls, avoid swipe-only interaction.
+- MDN scroll snap: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll_snap — keep snapping local to the horizontal container.
+- Web.dev responsive sizing: https://web.dev/articles/responsive-web-design-basics — do not create a horizontally scrollable entire document on mobile.
+- Surfline ratings: https://support.surfline.com/hc/en-us/articles/36277684017819-Surf-Ratings-Colors — model ratings are guides rather than observed breaking waves.
+
+### Implementation in main (after the previous v9 pass)
+- Introduced `faro-ui.css?v=10`.
+- Seven-day forecast **remains horizontally swipeable**, but now has previous/next controls with disabled states, a visible day-range count, and a quiet progress line. The scroller keeps its horizontal position when a spot/time/day triggers re-rendering; a selected offscreen day is brought into view. Swipe containment and page-width clipping are distinct: page scrolling stays vertical, the day rail is horizontal.
+- Simplified the Spanish centre nav label to **Lo mejor** while preserving the editorial **Lo mejor de la semana** headline.
+- Separated the visual vocabularies: **Surf Quality** retains semantic poor/fair/good colours; **Wave Height** now uses entirely marine blue/turquoise tones across all size classes in both light and dark modes. Its eight-bar wavemeter stays.
+- Changed the sunlight note to a shorter **suggested cut-off**, keeping clear that this is a planning suggestion rather than a hazard clearance or an official beach restriction.
+- Filled essential Spanish terms in beach/spot selection, day/time strip, Wizard options, exploratory disclosures and brief technical notes. Proprietary named features such as FARO Wizard / Wave Wizard can remain branded terms.
+- A calm coastal identity should come from **editorial typography, waveform metrics, authentic surf vocabulary, sea-inspired colour and selective whitespace**, not stock tropical imagery, invented surf conditions, emojis in every row or extra boxed tiles.
+
+### Practical design rules
+1. Product decisions before decoration. Present location and date, then the strongest **available** daylight session, then optional evidence; label mediocre weeks as mediocre.
+2. Use Archivo Black only where the heading conveys a significant navigational or editorial step. Manrope remains the data/control voice.
+3. One primary recommendation card. Secondary content can be structured by thin rules and native disclosure controls.
+4. Quality is not Wave Height. A tall wave is not automatically a good or safe wave; don't conflate their colour systems.
+5. In the seven-day rail, the offscreen continuation must be visible/operable without touch gestures and the selected item must not disappear after interaction.
+6. UI must work with long Dutch spot names and English/Spanish strings, 320/375/390/430 px; never shrink fonts indiscriminately to force fit.
+7. Keep honest caveats on Open-Meteo modelled offshore wave height and limitations (currents, tide, observed breakers).
+
+**QA evidence:** current source regression tests verify structural invariants, translation strings, JS syntax, and future-window logic. **Remaining unverified:** actual iPhone Safari rendering of the new v10 layout in both themes, live Open-Meteo error/timeout behaviour, VoiceOver focus order, precise page overflow at all target mobile widths. Do not claim these passed based on source checks alone.
