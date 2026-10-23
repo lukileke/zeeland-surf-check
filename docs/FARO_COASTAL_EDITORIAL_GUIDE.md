@@ -129,3 +129,26 @@ Reference: [ArloCreative Coastline](https://arlocreative.co.uk/coastline/). The 
 - Should a future Live mode show camera and observations only where usage rights and appropriate data provenance are established?
 
 This is a product design reference and implementation guide, not proof of calibrated surf forecast accuracy.
+
+---
+
+## Implementation checkpoint — 23 October 2026 (Coastal Editorial refinement)
+
+The following items are now **implemented in the current main branch**, not only proposals:
+- **Archivo Black + Manrope** retained: bold display for brand/editorial focus, Manrope for forecasts, controls and technical data.
+- Forecast day selection and Best of Week rankings reject elapsed time windows. For a partially elapsed 2-hour slot, at least **40 minutes of usable forecast daylight** must remain. This threshold is about remaining surf time, **not a travel-time estimate**.
+- The initial Forecast view advances to a later available day if today's daylight surf opportunity has passed. Explicitly selecting a day without an upcoming opportunity shows an honest no-session state rather than a misleading past recommendation.
+- The two-hour window grid now uses short wave-character descriptors. Passed, late, unavailable and insufficient-daylight windows cannot be selected.
+- Best of Week displays wave-character tags in bordered tinted pills, matching Forecast. The hard-coded calendar emoji depicting an unrelated date was removed.
+- Wizard's original advanced flow is still accessible under a secondary expandable section. The main three-step Wizard remains primary.
+- Shared spacing and typographic hierarchy adjusted across Forecast, Best of Week and Wizard. The single main session hero, eight-bar wavemeter, Surf Quality, Wave Height and model caveats remain.
+- English/Spanish mappings added for previously untranslated major titles and new time-status messages.
+- Cache stylesheet is now `faro-ui.css?v=9`.
+
+### Validation and outstanding work
+
+Implemented: `tests/faro-smoke.cjs` and `.github/workflows/faro-checks.yml`. Checks cover JS syntax, unique DOM IDs, CSS structural balance, basic theme invariants, date/time rules (including Europe/Amsterdam winter/summer) and selected translations. The smoke test was also evaluated against the live repository source after the changes.
+
+**Not yet independently validated:** actual iPhone Safari rendering of these new commits, VoiceOver, measured layout overflow at 320/375/390/430 px, complete end-to-end Open-Meteo fetch and all Wizard steps in a browser, and colour contrast of every interaction state. Earlier iPhone images are the design baseline, not proof of the newly committed result. Never present these as passing until tested.
+
+**Technical debt:** legacy CSS in `index.html` still competes with `faro-ui.css`, which currently uses many `!important` overrides. The current change is deliberately scoped to styling and functional UI defects; a subsequent regression-tested consolidation should migrate legacy styles without breaking the DOM/translation flow. Do not present source visibility of the scoring engine as confidentiality.
