@@ -8,6 +8,7 @@ on:
       - 'surf-engine.js'
       - 'faro-spot-dna.js'
       - 'faro-spot-evidence.js'
+      - 'faro-dna-validation.js'
       - 'tests/**'
       - '.github/workflows/faro-checks.yml'
   pull_request:
@@ -17,6 +18,7 @@ on:
       - 'surf-engine.js'
       - 'faro-spot-dna.js'
       - 'faro-spot-evidence.js'
+      - 'faro-dna-validation.js'
       - 'tests/**'
 jobs:
   smoke:
