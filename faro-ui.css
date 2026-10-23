@@ -22,7 +22,7 @@ html[data-theme="light"] {
   --panel:#fff; --tile:#eaf1f2; --button:#edf3f3;
   --border:#bfced0;
   --faro-hero:#eaf3f4; --faro-raised:#fff;
-  --faro-line:#c5d5d8; --faro-quiet:#59727b;
+  --faro-line:#c5d5d8; --faro-quiet:#526a74;
   --faro-surf-bg:#f1f5f4;
 }
 body {
@@ -49,7 +49,7 @@ button:focus-visible,summary:focus-visible,a:focus-visible {
   letter-spacing:-.055em!important;margin:7px 0 0!important;font-weight:800}
 .top-actions{gap:6px!important;align-items:center!important}
 .top-actions .theme-toggle,.top-actions .language-toggle {
-  min-height:36px!important;
+  min-height:44px!important;
   border:1px solid var(--faro-line)!important;
   background:var(--tile)!important;
   border-radius:11px!important;
@@ -70,7 +70,7 @@ main>.app-nav button {
   border:0!important;border-radius:11px!important;background:transparent!important;
   color:var(--muted)!important;font-weight:650!important;
   font-size:clamp(11px,2.7vw,13px)!important;letter-spacing:-.01em;
-  min-height:43px!important;padding:10px 5px!important;
+  min-height:44px!important;padding:10px 5px!important;
   box-shadow:none!important;outline:0!important;
   transition:background .2s var(--faro-easing),color .2s var(--faro-easing);
 }
@@ -90,7 +90,7 @@ html:not([data-theme="light"]) main>.app-nav button.active{
   font-size:11px!important;opacity:1!important;color:var(--muted)!important;
 }
 #forecastPage .live-indicator{background:#76bda6!important;opacity:1!important}
-#forecastPage .forecast-refresh{min-height:32px;padding:4px 8px!important;
+#forecastPage .forecast-refresh{min-height:44px;min-width:44px;padding:4px 8px!important;
   font-size:19px!important;color:var(--faro-quiet)!important;opacity:1!important}
 #forecastPage .picker-grid {
   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
@@ -155,7 +155,7 @@ html:not([data-theme="light"]) main>.app-nav button.active{
   margin:8px 0 7px!important;letter-spacing:-.04em!important;color:var(--tone)!important;
 }
 #forecastPage .day-chip small{
-  color:var(--muted)!important;font-size:11px!important;line-height:1.3!important;
+  color:var(--muted)!important;font-size:12px!important;line-height:1.3!important;
   white-space:nowrap!important;
 }
 /* A short decision summary, not a competing card */
@@ -260,7 +260,7 @@ html:not([data-theme="light"]) main>.app-nav button.active{
   color:var(--wave-text,var(--faro-ocean))!important;
   border:0!important;border-radius:8px!important;
   background:transparent!important;padding:5px 2px!important;
-  margin:0!important;min-height:40px!important;
+  margin:0!important;min-height:44px!important;
   text-align:left!important;
 }
 #dayview .session-glance .hero-stats{
@@ -421,4 +421,9 @@ html[data-theme="light"] #dayview .session-glance .hero-wave-caption{color:#4f66
 @media(prefers-reduced-motion:reduce){
   #forecastPage .day-chip,.daylight-disclosure .daylight-arrow,
   #dayview .session-glance .wizard-pick{transition:none!important}
+}
+
+/* Accessible focus styling even when legacy nav overrides declare outlines. */
+main>.app-nav button:focus-visible,main>.app-nav button.active:focus-visible {
+  outline:2px solid var(--faro-ocean)!important;outline-offset:3px!important;
 }
