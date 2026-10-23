@@ -198,3 +198,8 @@ Further references for editorial restraint:
 - https://www.nngroup.com/articles/mobile-accordions/ — preserve orientation when opening an accordion on mobile.
 
 **Next visual verification request:** new iPhone screenshots of the rail after swiping to days 5–7, selected last-day state, open/closed disclosures, 320–430 px light/dark and EN/ES. The project has no native screenshot evidence for this v11 build yet.
+
+
+### Fair score colour correction — v12
+
+On real light-theme iPhone screenshots, the brown-dominant `Fair / Regular` score felt inconsistent with the coastal palette. The `5.0–6.9` quality tier keeps its semantic amber association, but **large Fair numerals now use foreground graphite on light backgrounds** (Forecast's day rail, selected session hero, time slots, Best of Week and Wizard scores). The accent remains warm golden amber `#B16B00` in the light theme for selected outlines and discreet signals. In the dark theme, Fair remains a luminous gold `#E9BE60`. Good/Poor thresholds, Board Fit and blue Wave Height were not modified. The style is published as `faro-ui.css?v=12` and regression assertions cover the new treatment. Rendering in Safari still needs a visual check.
