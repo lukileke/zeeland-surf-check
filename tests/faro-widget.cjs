@@ -61,7 +61,7 @@ async function run(family,parameter,mem=new Map(),fail=false){
 (async()=>{
  const base=await run('medium','BEST');
  assert.ok(base.text.includes('FARO')&&base.text.includes('BEST OF WEEK'),JSON.stringify({text:base.text,warnings:base.warnings,requests:base.requests}));
- assert.ok(base.text.includes('MODEL WIND RISK'),'48-hour model warning is visible');
+ assert.ok(base.text.includes('MODEL WIND RISK'),'48-hour model warning is visible: '+JSON.stringify({texts:base.text,requests:base.requests}));
  assert.equal(base.requests.filter(x=>x.includes('marine-api')).length,1);
  assert.equal(base.requests.filter(x=>x.includes('api.open-meteo.com')).length,1);
  const u=new URL(base.requests.find(x=>x.includes('marine-api')));
