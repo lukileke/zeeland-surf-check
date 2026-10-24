@@ -67,7 +67,8 @@ assert.ok(css.includes('#forecastPage #dayStrip{\n contain:layout paint!importan
 assert.ok(css.includes('#forecastPage #dayStripItems{\n contain:layout paint!important'),'Rail cannot widen document layout');
 assert.ok(css.includes('main{overflow-x:clip!important'),'App shell is horizontally clipped');
 assert.ok(css.includes('#datehead{text-transform:capitalize'),'Localized weekday headings capitalized');
-assert.ok(css.includes('.faro-safety-region-select'),'Country source selector styled');
+assert.ok(!html.includes('faro-safety-region-select'),'Zeeland UI never exposes a country selector');
+assert.ok(!safetySource.includes('faro-alert-country'),'Legacy alert-country choice cannot affect Zeeland warnings');
 
 assert.ok(html.includes('src="faro-spot-evidence.js"'),'Local beach-level evidence module loaded');
 assert.ok(html.includes('marine.hourly.swell_wave_height'),'Shadow-only features read separate swell height');
@@ -185,8 +186,7 @@ const safety=safetyContext.FaroSafety;
 assert.ok(safety,'Independent safety model loads');
 assert.equal(safety.SOURCES.CL.links.length,3,'Chile uses several distinct official sources');
 assert.equal(safety.SOURCES.NL.links[0].url,safety.KNMI_URL,'Zeeland uses KNMI');
-assert.equal(safety.countryForCoordinates(-39.8,-73.2),'CL','Chile coordinates select Chile provider');
-assert.equal(safety.countryForCoordinates(51.56,3.5),'NL','Zeeland coordinates select Dutch provider');
+assert.ok(!Object.hasOwn(safety,'setAlertCountry'),'Country routing is not exposed until local Chile support launches');
 assert.equal(safety.translatedReason('Modelled gusts up to 87 km/h',true),
  'Rachas modeladas de hasta 87 km/h','Danger reason has direct Spanish translation');
 
@@ -235,21 +235,20 @@ assert.ok(warningBanner.children[0].children[1].textContent.includes('84 km/h'),
 assert.ok(warningBanner.children[0].children[2].textContent.includes('Not a live alert feed'),
  'Dated official bulletin is clearly identified as non-live');
 
-const chileStore=new Map([['faro-alert-country','CL'],['zeeland-language','es']]);
-const chileContext={localStorage:{getItem:key=>chileStore.get(key)||null,setItem:(key,value)=>chileStore.set(key,value)}};
-new Function('globalThis','document',safetySource)(chileContext,fakeDocument);
-const chileBanner=fakeNode('section');
-chileContext.FaroSafety.render(chileBanner,example,'Domburg',new Date('2026-10-24T08:00:00+02:00'));
-assert.ok(chileBanner.children[0].children[0].textContent.includes('RIESGO SEGÚN EL MODELO'),
- 'Severe Spanish model hazard not stuck in English');
-assert.ok(chileBanner.children[0].children[1].textContent.includes('Rachas modeladas'),
- 'Spanish warning includes translated physical reason');
-assert.ok(chileBanner.children[0].children[2].textContent.includes('no a Chile'),
- 'Model conditions cannot be falsely attributed to Chile');
-assert.ok(chileBanner.children[1].href.includes('directemar.cl'),
- 'Official Chile alert links use maritime authority, not KNMI');
-chileContext.FaroSafety.setAlertCountry('NL');
-assert.equal(chileContext.FaroSafety.alertCountry(),'NL','Country switch persisted');
+// Legacy selection from an old version must not switch alert sources.
+const legacyStore=new Map([['faro-alert-country','CL'],['zeeland-language','es']]);
+const legacyContext={localStorage:{getItem:key=>legacyStore.get(key)||null}};
+new Function('globalThis','document',safetySource)(legacyContext,fakeDocument);
+const legacyBanner=fakeNode('section');
+legacyContext.FaroSafety.render(legacyBanner,example,'Domburg',new Date('2026-10-24T08:00:00+02:00'));
+assert.ok(legacyBanner.children[0].children[0].textContent.includes('RIESGO SEGÚN EL MODELO'),
+ 'Spanish severe warning still works in Zeeland');
+assert.ok(legacyBanner.children[0].children[1].textContent.includes('Rachas modeladas'),
+ 'Spanish gust reason remains translated');
+assert.equal(legacyBanner.children[1].href,safety.KNMI_URL,
+ 'Stored Chile selection from an old release must not replace Zeeland KNMI');
+assert.equal(legacyBanner.children[0].children.length,3,
+ 'Current Zeeland safety banner must not append country settings');
 
 const fallbackBanner=fakeNode('section');
 viewContext.FaroSafety.render(fallbackBanner,null,'Domburg',new Date('2026-10-26T12:00:00+01:00'));
