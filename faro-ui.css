@@ -1596,39 +1596,6 @@ html:not([data-theme="light"]) .tone-low{--quality-ink:#ef9eb2;--quality-wash:#4
 }
 
 
-/* FARO v18 — distinct weather-safety system, visible in all tabs.
-   A KNMI bulletin is source-dated, not a live alert; Open-Meteo hazard
-   screening uses a different label and never claims official status. */
-.faro-safety-center{
- --alert-border:var(--faro-line);
- display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
- min-width:0;max-width:100%;box-sizing:border-box;
- margin:4px 0 16px;padding:13px 15px;
- border-radius:12px;border:1px solid var(--alert-border);
- background:var(--tile);color:var(--fg);
-}
-.faro-safety-center.advisory{--alert-border:var(--faro-line);background:var(--tile)}
-.faro-safety-center.caution{--alert-border:#c4a45c;background:color-mix(in srgb,#ca9c48 9%,var(--panel))}
-.faro-safety-center.danger{--alert-border:#ce6371;background:color-mix(in srgb,#da5964 11%,var(--panel))}
-.faro-safety-copy{flex:1;min-width:0}
-.faro-safety-kicker{
- display:block;font:800 11px/1.4 var(--faro-text);
- letter-spacing:.065em;color:var(--fg);margin-bottom:4px;
-}
-.faro-safety-center.danger .faro-safety-kicker{color:#e47c86}
-html[data-theme="light"] .faro-safety-center.danger .faro-safety-kicker{color:#a82b36}
-html[data-theme="light"] .faro-safety-center.caution .faro-safety-kicker{color:#69511b}
-.faro-safety-headline{margin:0!important;font:700 13px/1.42 var(--faro-text)!important;color:var(--fg)!important}
-.faro-safety-source{margin:6px 0 0!important;font:500 11px/1.5 var(--faro-text)!important;color:var(--muted)!important}
-.faro-safety-link{
- align-self:center;display:inline-flex;align-items:center;justify-content:center;
- flex:0 0 auto;min-height:44px;padding:9px 11px;
- border:1px solid var(--alert-border);border-radius:10px;
- color:var(--fg)!important;background:var(--panel);
- font:800 12px/1.25 var(--faro-text)!important;
- text-align:center;text-decoration:none!important;
-}
-.faro-safety-link:focus-visible{outline:2px solid var(--faro-ocean);outline-offset:2px}
 #dayview .session-glance .glance-safety .safety-inline.danger{
  border:2px solid #bf5260!important;
  background:color-mix(in srgb,#cc5a64 12%,var(--faro-hero))!important;
@@ -1636,14 +1603,6 @@ html[data-theme="light"] .faro-safety-center.caution .faro-safety-kicker{color:#
 #dayview .session-glance .glance-safety .safety-inline.danger summary{
  font-weight:750!important;
 }
-@media(max-width:520px){
- .faro-safety-center{flex-direction:column;gap:8px;margin:5px 0 14px;padding:12px 13px}
- .faro-safety-link{align-self:flex-start}
- .faro-safety-headline{font-size:12px!important}
- .faro-safety-source{font-size:10px!important}
-}
-
-
 /* FARO v19 — structural viewport confinement, not just a painted background */
 html,body{max-width:100%;overflow-x:hidden!important}
 main{overflow-x:clip!important;max-inline-size:100%;min-inline-size:0}
@@ -1670,4 +1629,114 @@ main{overflow-x:clip!important;max-inline-size:100%;min-inline-size:0}
  max-inline-size:100%!important;
  -webkit-overflow-scrolling:touch;
  overscroll-behavior-inline:contain;
+}
+
+
+/* FARO v23 — Coastal Editorial safety rail.
+   Hazard essentials stay visible; supporting evidence uses native disclosure. */
+.faro-safety-center{
+ --safety-accent:var(--faro-line);
+ --safety-ink:var(--fg);
+ display:block!important;min-width:0!important;max-width:100%!important;
+ box-sizing:border-box!important;margin:4px 0 17px!important;padding:0!important;
+ background:var(--tile)!important;
+ border:1px solid var(--faro-line)!important;
+ border-inline-start:3px solid var(--safety-accent)!important;
+ border-radius:12px!important;box-shadow:none!important;
+ color:var(--fg)!important;overflow:hidden!important;
+}
+.faro-safety-center.danger{
+ --safety-accent:#c35d64;
+ --safety-ink:#ae3947;
+ background:color-mix(in srgb,#c75a64 3%,var(--tile))!important;
+}
+.faro-safety-center.caution{--safety-accent:#c3a15c;--safety-ink:#856223}
+.faro-safety-center.advisory{--safety-accent:var(--faro-ocean);--safety-ink:var(--faro-quiet)}
+html:not([data-theme="light"]) .faro-safety-center.danger{--safety-ink:#f2a1a7}
+html:not([data-theme="light"]) .faro-safety-center.caution{--safety-ink:#f2d18b}
+.faro-safety-disclosure{display:block!important;min-width:0!important;margin:0!important;padding:0!important}
+.faro-safety-summary{
+ position:relative;display:grid!important;
+ grid-template-columns:minmax(0,1fr) 14px;grid-template-rows:auto auto auto;
+ align-items:center;column-gap:12px;row-gap:3px;
+ padding:12px 15px!important;min-height:68px;
+ list-style:none!important;cursor:pointer;background:transparent!important;
+ color:var(--fg)!important;outline-offset:-3px;
+}
+.faro-safety-summary::-webkit-details-marker{display:none}
+.faro-safety-summary::marker{content:""}
+.faro-safety-summary:focus-visible{outline:2px solid var(--faro-ocean);border-radius:10px}
+.faro-safety-top{
+ grid-column:1;grid-row:1;display:flex;align-items:center;gap:8px;
+ flex-wrap:wrap;min-width:0;
+}
+.faro-safety-kicker{
+ display:inline-block!important;min-width:0;margin:0!important;
+ font:800 10px/1.3 var(--faro-text)!important;
+ letter-spacing:.085em;text-transform:uppercase;color:var(--safety-ink)!important;
+}
+.faro-safety-severity{
+ display:inline-flex;align-items:center;padding:2px 7px;
+ border-radius:5px;white-space:nowrap;
+ font:750 10px/1.25 var(--faro-text)!important;
+ color:var(--safety-ink)!important;
+ background:color-mix(in srgb,var(--safety-accent) 11%,transparent)!important;
+}
+.faro-safety-headline{
+ grid-column:1;grid-row:2;display:block!important;min-width:0;
+ margin:0!important;font:750 13px/1.4 var(--faro-text)!important;
+ overflow-wrap:anywhere;color:var(--fg)!important;
+}
+.faro-safety-inline-source{
+ grid-column:1;grid-row:3;display:block!important;min-width:0;
+ font:500 11px/1.4 var(--faro-text)!important;
+ color:var(--faro-quiet)!important;
+}
+.faro-safety-chevron{
+ display:block;grid-column:2;grid-row:1 / span 3;
+ align-self:center;justify-self:center;width:8px;height:8px;
+ border-right:2px solid var(--faro-quiet);
+ border-bottom:2px solid var(--faro-quiet);
+ transform:translateY(-2px) rotate(45deg);
+ transition:transform .16s ease;
+}
+.faro-safety-disclosure[open] .faro-safety-chevron{
+ transform:translateY(2px) rotate(225deg);
+}
+.faro-safety-expanded{
+ padding:12px 15px 15px;margin:0;
+ border-top:1px solid var(--faro-line);
+ background:color-mix(in srgb,var(--panel) 45%,var(--tile));
+}
+.faro-safety-detail-heading{
+ display:block;font:800 12px/1.4 var(--faro-text);margin-bottom:6px;color:var(--fg);
+}
+.faro-safety-detail-description,
+.faro-safety-source{
+ margin:0 0 10px!important;
+ font:500 12px/1.55 var(--faro-text)!important;color:var(--faro-quiet)!important;
+}
+.faro-safety-reasons{
+ margin:8px 0 11px!important;padding-left:20px!important;
+ color:var(--fg);font:600 12px/1.6 var(--faro-text);
+}
+.faro-safety-reasons li{margin:2px 0}
+.faro-safety-link{
+ display:inline-flex!important;min-height:38px;align-items:center;
+ margin-top:2px!important;padding:7px 10px!important;
+ border:1px solid var(--faro-line)!important;border-radius:8px!important;
+ background:transparent!important;color:var(--fg)!important;
+ font:750 12px/1.35 var(--faro-text)!important;text-decoration:none!important;
+}
+.faro-safety-link:focus-visible{outline:2px solid var(--faro-ocean);outline-offset:2px}
+.faro-safety-center.advisory .faro-safety-inline-source{display:none!important}
+.faro-safety-center.advisory .faro-safety-headline{font-weight:600!important}
+@media(max-width:380px){
+ .faro-safety-summary{padding:11px 12px!important;column-gap:8px!important}
+ .faro-safety-expanded{padding:12px!important}
+ .faro-safety-headline{font-size:12px!important}
+ .faro-safety-inline-source{font-size:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .faro-safety-chevron{transition:none}
 }
