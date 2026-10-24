@@ -58,6 +58,11 @@ assert.ok(css.includes('--faro-selection:#176d78;'),'Selected light-theme day us
 assert.ok(css.includes('--faro-fair-fill:#f8eabc;'),'Fair word has a soft sunlit label');
 assert.ok(html.includes('id="fieldNotesExpand"'),'Optional field-note disclosure exists');
 assert.ok(html.includes('id="faroSafetyCenter"'),'Safety banner is visible in every tab');
+assert.ok(html.includes('<details class="faro-safety-disclosure">'),'Initial warning works as a native disclosure');
+assert.ok(css.includes('FARO v23 — Coastal Editorial safety rail'),'Compact safety styles present');
+assert.ok(css.includes('.faro-safety-summary'),'Click/tap target styled');
+assert.ok(css.includes('.faro-safety-expanded'),'Expanded explanation styled');
+
 assert.ok(html.indexOf('id="faroSafetyCenter"')<html.indexOf('id="forecastPage"'),'Safety banner not trapped inside Forecast');
 assert.ok(html.includes('src="faro-safety.js"'),'Dedicated safety module loads');
 assert.ok(html.includes('gust:w')===false,'Gusts not accidentally fabricated as constants');
@@ -225,38 +230,46 @@ const fakeDocument={createElement:fakeNode},viewContext={};
 new Function('globalThis','document',safetySource)(viewContext,fakeDocument);
 const warningBanner=fakeNode('section');
 viewContext.FaroSafety.render(warningBanner,example,'Domburg',new Date('2026-10-24T08:00:00+02:00'));
-assert.ok(warningBanner.className.includes('danger'),'Danger is visible independently of Surf Quality');
-assert.equal(warningBanner.attrs.role,'alert','Critical model warning announces to assistive technology');
-assert.equal(warningBanner.attrs['aria-live'],'assertive','Severe danger announced promptly');
-assert.equal(warningBanner.children.length,2,'Banner presents message and official link');
-assert.equal(warningBanner.children[1].href,safety.KNMI_URL,'Official link is region-specific');
-assert.ok(warningBanner.children[0].children[1].textContent.includes('84 km/h'),
- 'Forecast alert explains the peak gust');
-assert.ok(warningBanner.children[0].children[2].textContent.includes('Not a live alert feed'),
- 'Dated official bulletin is clearly identified as non-live');
+assert.ok(warningBanner.className.includes('danger'),'Danger remains visible independent of Surf Quality');
+assert.equal(warningBanner.attrs.role,'alert','Danger is announced accessibly');
+assert.equal(warningBanner.children.length,1,'Warning is a single native disclosure');
+const details=warningBanner.children[0];
+assert.equal(details.tagName,'details','Uses accessible native details');
+assert.equal(details.open,false,'Danger details start closed, with essentials remaining visible');
+const summary=details.children[0],expanded=details.children[1];
+assert.equal(summary.tagName,'summary','Entire compact summary is operable');
+assert.ok(summary.children[0].children[0].textContent.includes('MODEL HAZARD'),'Hazard severity heading is visible');
+assert.ok(summary.children[1].textContent.includes('84 km/h'),'Critical gust is visible while collapsed');
+assert.ok(summary.children[2].textContent.includes('not official alert'),'No misleading official alert status');
+assert.ok(expanded.children.some(x=>x.tagName==='ul'),'Reasons are available on expansion');
+assert.ok(expanded.children.some(x=>x.textContent.includes('Not updated live')),
+ 'Dated bulletin is explicitly not a live feed');
+assert.equal(expanded.children.at(-1).href,safety.KNMI_URL,'Official KNMI link in expanded panel');
 
-// Legacy selection from an old version must not switch alert sources.
+// A legacy country value may be present in localStorage but must not alter NL warnings.
 const legacyStore=new Map([['faro-alert-country','CL'],['zeeland-language','es']]);
 const legacyContext={localStorage:{getItem:key=>legacyStore.get(key)||null}};
 new Function('globalThis','document',safetySource)(legacyContext,fakeDocument);
 const legacyBanner=fakeNode('section');
 legacyContext.FaroSafety.render(legacyBanner,example,'Domburg',new Date('2026-10-24T08:00:00+02:00'));
-assert.ok(legacyBanner.children[0].children[0].textContent.includes('RIESGO SEGÚN EL MODELO'),
- 'Spanish severe warning still works in Zeeland');
-assert.ok(legacyBanner.children[0].children[1].textContent.includes('Rachas modeladas'),
- 'Spanish gust reason remains translated');
-assert.equal(legacyBanner.children[1].href,safety.KNMI_URL,
- 'Stored Chile selection from an old release must not replace Zeeland KNMI');
-assert.equal(legacyBanner.children[0].children.length,3,
- 'Current Zeeland safety banner must not append country settings');
+const legacyDetails=legacyBanner.children[0];
+assert.ok(legacyDetails.children[0].children[0].children[0].textContent.includes('RIESGO SEGÚN EL MODELO'),
+ 'Spanish danger heading is visible');
+assert.ok(legacyDetails.children[0].children[1].textContent.includes('Rachas hasta'),
+ 'Spanish summary communicates numeric gust');
+assert.ok(legacyDetails.children[0].children[2].textContent.includes('no aviso oficial'),
+ 'Spanish source warning is visible even while collapsed');
+assert.equal(legacyDetails.children[1].children.at(-1).href,safety.KNMI_URL,
+ 'Stale Chile selection must never override Zeeland KNMI');
 
 const fallbackBanner=fakeNode('section');
 viewContext.FaroSafety.render(fallbackBanner,null,'Domburg',new Date('2026-10-26T12:00:00+01:00'));
 assert.ok(fallbackBanner.className.includes('advisory'),'Missing model is not called safe');
-assert.equal(fallbackBanner.children[1].href,safety.KNMI_URL,
- 'Live KNMI link survives missing data and expired dated bulletin');
-assert.equal(fallbackBanner.attrs.role,'region',
- 'Informational notices do not masquerade as emergency alerts');
+assert.equal(fallbackBanner.children[0].children[1].children.at(-1).href,safety.KNMI_URL,
+ 'Official link survives unavailable model and expired dated bulletin');
+assert.equal(fallbackBanner.attrs.role,'region','Routine notices are not emergency alerts');
+assert.ok(fallbackBanner.children[0].children[0].children[1].textContent.includes('Check official warnings'),
+ 'When status is unknown, users are urged to consult official warnings');
 
 /* Time-separated observations versus pre-observation model snapshots. */
 const labContext={};
