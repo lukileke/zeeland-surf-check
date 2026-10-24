@@ -73,9 +73,9 @@
   return t>=publication.showFrom&&t<publication.expires?publication:null;
  }
 
- function render(rootEl,weather,beachName){
+ function render(rootEl,weather,beachName,now=new Date()){
   if(!rootEl)return;
-  const report=scan48h(weather),bulletin=datedBulletin();
+  const report=scan48h(weather,now),bulletin=datedBulletin(now);
   const strong=report.level==='danger',notice=Boolean(bulletin);
   rootEl.className='faro-safety-center '+(strong?'danger':notice||report.level==='caution'?'caution':'advisory');
   rootEl.replaceChildren();
