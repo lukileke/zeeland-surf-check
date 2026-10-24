@@ -215,3 +215,18 @@ An iPhone report showed that a horizontal swipe could pan the **entire document*
 - Updated asset cache to `faro-ui.css?v=17` and enhanced source regression assertions. The existing Node smoke tests pass.
 
 **Still unverified:** real iPhone Safari horizontal movement and visual output. The report may include native browser overscroll/rubber-band behaviour, which CSS can mitigate but cannot always eliminate. Test both light/dark and Forecast/Best/Wizard at 320/375/390/430 px. In Safari remote inspection compare `document.documentElement.scrollWidth` with `document.documentElement.clientWidth`, and inspect any element whose bounding rectangle extends beyond the viewport. Do not claim a Safari visual pass based on JavaScript/CSS checks.
+
+
+### Safety regression and KNMI warning transparency — v18 (24 Oct 2026)
+
+The Instagram storm report prompted an audit: prior `safetyAssessment` evaluated only a chosen 2-hour window and **mean wind** thresholds (55 km/h danger, 35 km/h caution), while Open-Meteo's gust variable was fetched but never passed into the safety decision. This could leave dangerous coastal gusts invisible even if an excellent surf window was shown.
+
+**Implementation:** A separate `faro-safety.js` risk engine and a single safety centre directly after global navigation, **outside** Forecast / Best of Week / Wizard. It scans the upcoming 48 h of selected-spot hourly weather independently of score, day-selection or daylight: model wind gusts >=75 km/h trigger Danger; >=50 km/h Caution; thunderstorms trigger Danger; mean wind and water temperature retain their other screening heuristics. In the selected 2-hour session, the maximum gust and any thunderstorm code across both hourly samples now feed the expanded Danger assessment. This does **not** change Surf Quality or mean-wind scoring.
+
+The banner provides a **persistent link to KNMI Zeeland** even without JavaScript/when the Open-Meteo request fails. For this particular event, a **dated KNMI bulletin** published at 07:43 on 24 Oct 2026 forecasts 75–90 km/h gusts in coastal areas from Sat 24 Oct 22:00 through Sunday 25 Oct (published official end around 23:00). The snapshot explicitly says it is not live and expires automatically on 25 October at 23:00 local. The 07:43 KNMI update explicitly said **no active warnings at that moment**: a forecast-for-tonight must not be labelled currently active. The Friday/overnight storm Austen and the expected Saturday-night Boelo weather should not be conflated.
+
+**Critical limitation:** The official KNMI feed has NOT been connected to Faro automatically. Model warning thresholds are Faro heuristics and not KNMI's colour codes. The weather source only covers model-based risks and **cannot certify safe surfing, tides, currents, wave breaking or permitted access**. A future approved KNMI/MeteoAlarm backend feed is tracked in GitHub issue [#1](https://github.com/lukileke/zeeland-surf-check/issues/1). KNMI has announced new polygon-based alerts from 2 November 2026, subject to change; plan for this dataset transition.
+
+The change is shipped as `faro-ui.css?v=18`. Source tests check severe and caution gust thresholds, thunderstorm danger, optional inputs, 48-hour scan, official bulletin expiry, initial HTML warning link, DOM mock rendering and accessible role priority. Source smoke suite passes. **A real iPhone Safari visual test remains outstanding** in both languages, all three tabs and both colour themes.
+
+Official pages: https://www.knmi.nl/nederland-nu/weer/waarschuwingen/zeeland and https://english.knmidata.nl/latest/news/2026/10/07/transition-to-warning-on-a-local-scale .
