@@ -77,6 +77,25 @@ async function swipe(session,x0,y0,x1,y1){
    const page=await context.newPage();
    await page.goto('http://127.0.0.1:'+PORT+'/?qa=1',{waitUntil:'domcontentloaded'});
    await page.waitForSelector('#dayStripItems .day-chip',{timeout:15000});
+   if(width===320){
+    const widths=await page.evaluate(()=>{
+     const root=document.documentElement;
+     const selectors=['#dayStripItems','#dayStrip','#forecastPage','#bestPage','#boardPage','#faroSafetyCenter','main'];
+     const snapshot=()=>({scroll:root.scrollWidth,viewport:root.clientWidth,
+       inner:innerWidth,railScroll:document.getElementById('dayStripItems')?.scrollWidth,
+       railClient:document.getElementById('dayStripItems')?.clientWidth});
+     const before=snapshot(),probes=[];
+     for(const selector of selectors){
+      const el=document.querySelector(selector);if(!el)continue;
+      const prior=el.style.display;
+      el.style.setProperty('display','none','important');
+      probes.push({selector,whileHidden:snapshot()});
+      el.style.display=prior;
+     }
+     return {before,probes};
+    });
+    console.log('FARO WIDTH DIAGNOSTICS '+JSON.stringify(widths));
+   }
    for(const locale of ['en','es']){
     const actual=await page.evaluate(()=>document.documentElement.lang);
     if(actual!==locale)await page.evaluate(()=>toggleLanguage());
