@@ -74,8 +74,9 @@
  }
 
 
- /* Country sources are independently configurable; these are links to
-    official sources, NOT active machine-read alerts. */
+ /* Source registry is retained ONLY for future geographic expansion.
+    This build covers Zeeland; Chile is NOT enabled in the current UI.
+    None of these links constitute live machine-read government alerts. */
  const SOURCES=Object.freeze({
   NL:Object.freeze({label:'Zeeland · NL',links:Object.freeze([
    Object.freeze({label:'KNMI Zeeland',url:KNMI_URL})
@@ -87,15 +88,6 @@
   ])})
  });
  const readStore=(key)=>{try{return root.localStorage?.getItem(key)||null}catch(e){return null}};
- const writeStore=(key,value)=>{try{root.localStorage?.setItem(key,value)}catch(e){}};
- const alertCountry=()=>readStore('faro-alert-country')==='CL'?'CL':'NL';
- function setAlertCountry(code){
-  const country=SOURCES[code]?code:'NL';
-  writeStore('faro-alert-country',country);
-  return country;
- }
- const countryForCoordinates=(lat,lon)=>Number.isFinite(lat)&&Number.isFinite(lon)&&
-    lat>=-56&&lat<=-17&&lon>=-76&&lon<=-66?'CL':'NL';
  const currentLanguage=()=>readStore('zeeland-language')==='es'?'es':'en';
  function translatedReason(value,es){
   if(!es)return value;
@@ -116,8 +108,10 @@
  function render(rootEl,weather,beachName,now=new Date()){
   if(!rootEl)return;
   const es=currentLanguage()==='es';
-  const region=alertCountry(),source=SOURCES[region];
-  const report=scan48h(weather,now),bulletin=region==='NL'?datedBulletin(now):null;
+  // FARO Zeeland release: the active authority and forecast geography are fixed.
+  // Enable region routing only after launching genuine local surf spots and alerts.
+  const source=SOURCES.NL;
+  const report=scan48h(weather,now),bulletin=datedBulletin(now);
   const strong=report.level==='danger',notice=Boolean(bulletin);
   rootEl.className='faro-safety-center '+(strong?'danger':notice||report.level==='caution'?'caution':'advisory');
   rootEl.replaceChildren();
@@ -150,41 +144,13 @@
          'Official alerts are not fetched live; model data may be missing.'):
      (es?'Evaluación mediante modelos Open-Meteo; los avisos oficiales no se consultan automáticamente.':
          'Open-Meteo screening; official alert status is not automatically checked.');
-  if(region==='CL'){
-   foot.textContent+=' '+(es?
-    'Las condiciones modeladas corresponden a '+beachName+' (Zeeland), no a Chile. Las fuentes chilenas son enlaces oficiales, no alertas sincronizadas.':
-    'Modelled conditions still refer to '+beachName+' in Zeeland, not Chile. Chile links are official sources, not synced warnings.');
-  }
-  const settings=document.createElement('div');settings.className='faro-safety-settings';
-  const label=document.createElement('label');label.className='faro-safety-region-label';
-  label.textContent=es?'Fuentes de avisos':'Alert sources';
-  const sel=document.createElement('select');sel.className='faro-safety-region-select';
-  sel.setAttribute('aria-label',es?'País de fuentes meteorológicas':'Weather alert source country');
-  Object.entries(SOURCES).forEach(([key,src])=>{
-   const option=document.createElement('option');
-   option.value=key;option.textContent=src.label;option.selected=key===region;
-   sel.append(option);
-  });
-  sel.value=region;
-  sel.addEventListener?.('change',()=>{setAlertCountry(sel.value);render(rootEl,weather,beachName,new Date())});
-  label.append(sel);settings.append(label);
-  if(region==='CL'){
-   const extras=document.createElement('div');extras.className='faro-safety-extra-links';
-   source.links.slice(1).forEach(ref=>{
-    const a=document.createElement('a');
-    a.href=ref.url;a.target='_blank';a.rel='noopener noreferrer';
-    a.textContent=ref.label+' ↗';
-    extras.append(a);
-   });
-   settings.append(extras);
-  }
   const action=document.createElement('a');action.className='faro-safety-link';
   action.href=source.links[0].url;action.target='_blank';action.rel='noopener noreferrer';
   action.textContent=(es?'Consultar ':'Check ')+source.links[0].label+' ↗';
-  copy.append(head,p,foot,settings);rootEl.append(copy,action);
+  copy.append(head,p,foot);rootEl.append(copy,action);
   rootEl.setAttribute('aria-label',es?'Avisos meteorológicos y evaluación de riesgos del modelo':'Weather warnings and model hazard screening');
   rootEl.setAttribute('role',strong?'alert':'region');
   rootEl.setAttribute('aria-live',strong?'assertive':'polite');
  }
- root.FaroSafety=Object.freeze({KNMI_URL,localStamp,risk,scan48h,datedBulletin,SOURCES,alertCountry,setAlertCountry,countryForCoordinates,translatedReason,render});
+ root.FaroSafety=Object.freeze({KNMI_URL,localStamp,risk,scan48h,datedBulletin,SOURCES,translatedReason,render});
 })(typeof globalThis!=='undefined'?globalThis:this);
