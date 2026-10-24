@@ -91,7 +91,7 @@
    p.textContent='Check current KNMI Zeeland alerts before travelling or entering the water.';
   }
   const foot=document.createElement('p');foot.className='faro-safety-source';
-  foot.textContent=notice?'KNMI bulletin published 24 Oct 2026, 07:43 NL · Expected 24 Oct 22:00–25 Oct 23:00. Not a live alert feed.':
+  foot.textContent=notice?(strong||report.level==='caution'?'Open-Meteo modelled risk; not an official KNMI alert. · ':'')+'KNMI bulletin published 24 Oct 2026, 07:43 NL · Expected 24 Oct 22:00–25 Oct 23:00. Not a live alert feed.':
    report.level==='unknown'?'Official alerts are not automatically fetched; local model data may be missing.':
    'Open-Meteo model-based screening; official alert status is not automatically checked.';
   const link=document.createElement('a');link.className='faro-safety-link';
@@ -100,6 +100,7 @@
   copy.append(head,p,foot);rootEl.append(copy,link);
   rootEl.setAttribute('aria-label','Weather warnings and model hazard screening');
   rootEl.setAttribute('role',strong?'alert':'region');
+  rootEl.setAttribute('aria-live',strong?'assertive':'polite');
  }
  root.FaroSafety=Object.freeze({KNMI_URL,localStamp,risk,scan48h,datedBulletin,render});
 })(typeof globalThis!=='undefined'?globalThis:this);
