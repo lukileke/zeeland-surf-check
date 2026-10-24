@@ -33,7 +33,8 @@ function response(n,isMarine){
  }
  return n===1?records[0]:records;
 }
-function labels(x){return [x,...x.children.flatMap(labels)].filter(n=>n.type==='text').map(n=>n.text)}
+function nodes(x){return [x,...x.children.flatMap(nodes)]}
+function labels(x){return nodes(x).filter(n=>n.type==='text').map(n=>n.text)}
 async function run(family,parameter,mem=new Map(),fail=false){
  let widget,complete=false;const requests=[],warnings=[];
  const files={cacheDirectory:()=>'/cache',joinPath:(a,b)=>a+'/'+b,
