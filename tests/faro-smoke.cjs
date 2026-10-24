@@ -26,13 +26,23 @@ assert.equal(ids.length,new Set(ids).size,'No duplicate static DOM identifiers')
 assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces balanced');
 assert.ok(css.includes('html[data-theme="light"]'),'Light theme present');
 assert.ok(css.includes('html:not([data-theme="light"])'),'Dark theme present');
-assert.ok(html.includes('faro-ui.css?v=16'),'Current CSS cache key');
+assert.ok(html.includes('faro-ui.css?v=17'),'Current CSS cache key');
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
 assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
 assert.ok(html.includes('function scrollForecastDays(')&&html.includes('function updateDayStripControls('),'Forecast rail remains keyboard/button reachable');
 assert.ok(html.includes('el.scrollLeft=previousScroll;'),'Forecast selection preserves manual horizontal position');
 assert.ok(css.includes('overscroll-behavior-x:contain'),'Horizontal strip keeps its overscroll local');
+assert.match(html,/<style>html\{width:100%;max-width:100%;overflow-x:hidden;background:#101517\}/,
+ 'Root canvas painted before asynchronous CSS loads');
+assert.match(css,/html,body\{[^}]*overflow-x:hidden!important;[^}]*background:var\(--bg\)!important;/s,
+ 'Body and root canvas prohibit horizontal document overflow in Safari');
+assert.match(css,/#forecastPage #dayStripItems\{[^}]*overflow-x:auto!important;[^}]*overflow-y:hidden!important;/s,
+ 'Seven-day strip independently retains horizontal scrolling');
+assert.match(css,/@media\(min-width:900px\)\{\s*#forecastPage #dayStripItems\{[^}]*overflow-x:visible!important;/s,
+ 'Desktop seven-day layout does not acquire a horizontal scroll trap');
+assert.ok(css.includes('max-width:100%!important;'),'Root viewport descendants remain constrained');
+
 assert.ok(css.includes('html[data-theme="light"] .wave-size.size-large{--wave-color:#176f9b}'),'Wave height remains in marine-blue family');
 assert.ok(css.includes('html:not([data-theme="light"]) .wave-size.size-xl{--wave-color:#9cbcf0}'),'Large waves remain blue in dark theme');
 assert.ok(css.includes('--surf-fair:#e3bc56;'),'Fair accent uses brighter amber in light mode');
