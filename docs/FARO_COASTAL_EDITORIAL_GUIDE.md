@@ -230,3 +230,19 @@ The banner provides a **persistent link to KNMI Zeeland** even without JavaScrip
 The change is shipped as `faro-ui.css?v=18`. Source tests check severe and caution gust thresholds, thunderstorm danger, optional inputs, 48-hour scan, official bulletin expiry, initial HTML warning link, DOM mock rendering and accessible role priority. Source smoke suite passes. **A real iPhone Safari visual test remains outstanding** in both languages, all three tabs and both colour themes.
 
 Official pages: https://www.knmi.nl/nederland-nu/weer/waarschuwingen/zeeland and https://english.knmidata.nl/latest/news/2026/10/07/transition-to-warning-on-a-local-scale .
+
+
+### Coastal warning rail — v23 (24 October 2026)
+
+User feedback from iPhone Safari made clear that the old v18 warning panel was too large and visually overwhelmed the day's forecast. The permanent safety entry now uses a **compact native HTML `<details>/<summary>` disclosure** in `faro-safety.js`, with a minimal coloured left accent in `faro-ui.css`.
+
+**Collapsed is not hidden:** important hazard facts (model risk level, current spot, peak modelled gusts, sustained wind, storm where present, 48 h horizon, non-official-source limitation) remain visible at all times. Only supporting reasons, historic dated bulletin, model uncertainty detail and the external KNMI warning link move into the expandable body. No country toggle is present; Faro currently serves Zeeland only.
+
+- Danger: restrained coral line + small severity chip; Caution: warm amber accent; Advisory: quiet ocean accent. Strong categorical wording is text, not colour alone.
+- A native `summary` makes the whole rail tappable and keyboard-accessible. A small chevron changes direction when expanded. The user-open state survives ordinary app rerendering.
+- Both EN/ES are constructed directly rather than relying on the legacy MutationObserver for essential warnings. KNMI's historical 24–25 Oct 2026 bulletin remains clearly identified as dated and not live, expiring at its previously documented end.
+- Static fallback HTML has the same disclosure shape before JS and keeps a functional KNMI link inside.
+- Versioned CSS asset `faro-ui.css?v=23`.
+- Smoke check + real Chromium mobile QA completed successfully (320, 375, 390, 430 px; light/dark; EN/ES), including closed height limit, visible gust value, summary click/open/close and absence of root horizontal overflow. **Not a claim of physical iPhone Safari testing.**
+
+Safety principle: a compact alert is acceptable only when the key danger information is never concealed; the surfer must not have to expand the rail to discover hurricane-strength gusts.
