@@ -35,7 +35,7 @@ function response(n,isMarine){
 }
 function labels(x){return [x,...x.children.flatMap(labels)].filter(n=>n.type==='text').map(n=>n.text)}
 async function run(family,parameter,mem=new Map(),fail=false){
- let widget,complete=false;const requests=[];
+ let widget,complete=false;const requests=[],warnings=[];
  const files={cacheDirectory:()=>'/cache',joinPath:(a,b)=>a+'/'+b,
   fileExists:p=>mem.has(p),readString:p=>mem.get(p).text,
   writeString:(p,text)=>mem.set(p,{text,date:new Date()}),modificationDate:p=>mem.get(p).date};
@@ -52,14 +52,14 @@ async function run(family,parameter,mem=new Map(),fail=false){
  for(const method of ['heavySystemFont','boldSystemFont','semiboldSystemFont','systemFont'])Font[method]=size=>({method,size});
  const env={args:{widgetParameter:parameter},config:{widgetFamily:family,runsInApp:false},
   Color,Size,Font,FileManager:{local:()=>files},ListWidget:Widget,Request,
-  Script:{setWidget(x){widget=x},complete(){complete=true}},console:{warn(){}},globalThis:{}};
+  Script:{setWidget(x){widget=x},complete(){complete=true}},console:{warn(...x){warnings.push(x.map(String).join(' '))}},globalThis:{}};
  await new AsyncFunction(...Object.keys(env),code)(...Object.values(env));
  assert.ok(complete&&widget,'Scriptable rendered a widget');
- return {widget,text:labels(widget),requests,mem};
+ return {widget,text:labels(widget),requests,mem,warnings};
 }
 (async()=>{
  const base=await run('medium','BEST');
- assert.ok(base.text.includes('FARO')&&base.text.includes('BEST OF WEEK'));
+ assert.ok(base.text.includes('FARO')&&base.text.includes('BEST OF WEEK'),JSON.stringify({text:base.text,warnings:base.warnings,requests:base.requests}));
  assert.ok(base.text.includes('MODEL WIND RISK'),'48-hour model warning is visible');
  assert.equal(base.requests.filter(x=>x.includes('marine-api')).length,1);
  assert.equal(base.requests.filter(x=>x.includes('api.open-meteo.com')).length,1);
