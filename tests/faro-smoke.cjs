@@ -14,6 +14,7 @@ const engine=fs.readFileSync(path.join(root,'surf-engine.js'),'utf8');
 const dnaSource=fs.readFileSync(path.join(root,'faro-spot-dna.js'),'utf8');
 const evidenceSource=fs.readFileSync(path.join(root,'faro-spot-evidence.js'),'utf8');
 const dnaLabSource=fs.readFileSync(path.join(root,'faro-dna-validation.js'),'utf8');
+const safetySource=fs.readFileSync(path.join(root,'faro-safety.js'),'utf8');
 const scripts=Array.from(html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi),m=>m[1]);
 assert.ok(scripts.length>=2,'HTML includes application and translation scripts');
 scripts.forEach((s,i)=>assert.doesNotThrow(()=>new vm.Script(s), 'Script '+i+' syntax'));
@@ -21,12 +22,13 @@ assert.doesNotThrow(()=>new vm.Script(engine),'Shared surf engine syntax');
 assert.doesNotThrow(()=>new vm.Script(dnaSource),'Spot DNA module syntax');
 assert.doesNotThrow(()=>new vm.Script(evidenceSource),'Spot evidence module syntax');
 assert.doesNotThrow(()=>new vm.Script(dnaLabSource),'Spot validation syntax');
+assert.doesNotThrow(()=>new vm.Script(safetySource),'Independent safety module syntax');
 const ids=Array.from(html.matchAll(/\bid=["']([^"']+)["']/g),m=>m[1]);
 assert.equal(ids.length,new Set(ids).size,'No duplicate static DOM identifiers');
 assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces balanced');
 assert.ok(css.includes('html[data-theme="light"]'),'Light theme present');
 assert.ok(css.includes('html:not([data-theme="light"])'),'Dark theme present');
-assert.ok(html.includes('faro-ui.css?v=17'),'Current CSS cache key');
+assert.ok(html.includes('faro-ui.css?v=18'),'Current CSS cache key');
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
 assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
@@ -53,6 +55,12 @@ assert.ok(css.includes('#bestPage .hero-rank .hero-score.tone-fair .hero-score-v
 assert.ok(css.includes('--faro-selection:#176d78;'),'Selected light-theme day uses ocean-teal, not quality category');
 assert.ok(css.includes('--faro-fair-fill:#f8eabc;'),'Fair word has a soft sunlit label');
 assert.ok(html.includes('id="fieldNotesExpand"'),'Optional field-note disclosure exists');
+assert.ok(html.includes('id="faroSafetyCenter"'),'Safety banner is visible in every tab');
+assert.ok(html.indexOf('id="faroSafetyCenter"')<html.indexOf('id="forecastPage"'),'Safety banner not trapped inside Forecast');
+assert.ok(html.includes('src="faro-safety.js"'),'Dedicated safety module loads');
+assert.ok(html.includes('gust:w')===false,'Gusts not accidentally fabricated as constants');
+assert.ok(html.includes('gust:scores.reduce('),'Entire two-hour window uses worst gust');
+assert.ok(css.includes('.faro-safety-center.danger'),'Severe alert is visible separately from score');
 assert.ok(html.includes('src="faro-spot-evidence.js"'),'Local beach-level evidence module loaded');
 assert.ok(html.includes('marine.hourly.swell_wave_height'),'Shadow-only features read separate swell height');
 assert.ok(html.includes('weather.hourly.wind_gusts_10m'),'Shadow-only features read wind gust ratio');
@@ -160,6 +168,35 @@ assert.equal(sourceSignals.status,'shadow-evidence-only','Not a score');
 assert.equal(evid.signal({},'Domburg::Noordduine').swellEnergyProxyShare,null,'Missing swell height not fabricated');
 assert.ok(!Object.prototype.hasOwnProperty.call(sourceSignals,'score'),'Shadow feature has no surf score');
 
+
+
+/* FARO weather screening: alerts must not depend on Surf Quality. */
+const safetyContext={};
+new Function('globalThis',safetySource)(safetyContext);
+const safety=safetyContext.FaroSafety;
+assert.ok(safety,'Independent safety model loads');
+assert.equal(safety.risk({wind:15,gust:83,code:0},true).level,'danger',
+ 'Severe gust warns even if average wind is modest');
+assert.equal(safety.risk({wind:15,gust:60,code:0},true).level,'caution',
+ 'Elevated modelled gust is not silently discarded');
+assert.equal(safety.risk({wind:10,gust:12,code:95},true).level,'danger',
+ 'Lightning always outranks a high surf score');
+assert.equal(safety.risk({wind:15,code:0},true).level,'low',
+ 'Gust data absence does not invent dangerous gust');
+assert.equal(safety.risk(null,true).level,'unknown',
+ 'No forecast is not reported as safety clearance');
+assert.ok(safety.datedBulletin(new Date('2026-10-24T07:00:00Z')),
+ 'Dated KNMI notice visible from publication onward');
+assert.equal(safety.datedBulletin(new Date('2026-10-26T00:00:00Z')),null,
+ 'Dated bulletin expires automatically, avoiding permanent false warnings');
+const hours=Array.from({length:72},(_,h)=>'2026-10-'+String(24+Math.floor(h/24)).padStart(2,'0')+'T'+String(h%24).padStart(2,'0')+':00');
+const example={hourly:{time:hours,wind_speed_10m:hours.map(()=>18),
+ wind_gusts_10m:hours.map((_,i)=>i===15?84:25),
+ weather_code:hours.map(()=>0)}};
+const screening=safety.scan48h(example,new Date('2026-10-24T08:00:00+02:00'));
+assert.equal(screening.level,'danger','Storm gust later today remains visible regardless of selected daytime slot');
+assert.equal(screening.peakGust,84);
+assert.equal(safety.scan48h(null).level,'unknown');
 
 /* Time-separated observations versus pre-observation model snapshots. */
 const labContext={};
