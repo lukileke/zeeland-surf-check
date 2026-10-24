@@ -296,8 +296,13 @@ function renderMedium(best,data,hazard){
  site.addSpacer();
  label(site,dayLabel(best.day)+" "+windowLabel(best.h),10,C.quiet,"semi");
  widget.addSpacer(4);
- if(!hazardLine(widget,hazard))freshness(widget,data);
- else{
+ if(!hazardLine(widget,hazard)){
+  const foot=hstack(widget,4);foot.centerAlignContent();
+  const character=globalThis.ZeelandEngine.waveCharacter(best.x);
+  label(foot,character.name,9,C.ink,"semi");
+  foot.addSpacer();
+  label(foot,data.stale?T.stale:(LANG==="es"?"MODELO":"MODEL")+" · "+timestampLabel(data.saved),9,C.quiet);
+ }else{
   const note=hstack(widget,3);note.addSpacer();
   label(note,data.stale?T.stale:T.model,8,C.quiet);
  }
