@@ -63,7 +63,7 @@ async function run(family,parameter,mem=new Map(),fail=false){
  assert.ok(base.text.includes('FARO')&&base.text.includes('BEST OF WEEK'),JSON.stringify({text:base.text,warnings:base.warnings,requests:base.requests}));
  assert.ok(base.text.some(t=>t.startsWith('MODEL WIND RISK')),'48-hour model warning is visible');
  assert.equal(base.requests.filter(x=>x.includes('marine-api')).length,1);
- assert.equal(base.requests.filter(x=>x.includes('api.open-meteo.com')).length,1);
+ assert.equal(base.requests.filter(x=>new URL(x).hostname==='api.open-meteo.com').length,1);
  const u=new URL(base.requests.find(x=>x.includes('marine-api')));
  assert.equal(u.searchParams.get('latitude').split(',').length,12);
  assert.equal(u.searchParams.get('forecast_days'),'7');
