@@ -91,6 +91,32 @@ async function swipe(session,x0,y0,x1,y1){
        const hazard=await page.locator('#faroSafetyCenter .faro-safety-kicker').innerText();
        const expected=locale==='es'?'RIESGO SEGÚN EL MODELO':'MODEL HAZARD';
        if(!hazard.includes(expected))failures.push({width,locale,theme,bannerTranslation:hazard,expected});
+       const compact=await page.evaluate(()=>{
+        const center=document.getElementById('faroSafetyCenter');
+        const disclosure=center.querySelector('details'),summary=disclosure.querySelector('summary');
+        return {height:Math.round(center.getBoundingClientRect().height),
+          closed:!disclosure.open,summaryText:summary.innerText,
+          modelDisclaimer:summary.innerText.includes(document.documentElement.lang==='es'?'no aviso oficial':'not official alert')};
+       });
+       if(!compact.closed||compact.height>170||!compact.modelDisclaimer||
+          !compact.summaryText.includes('87 km/h')){
+        failures.push({width,locale,theme,issue:'Collapsed danger must be compact and honest',compact});
+       }
+       await page.locator('#faroSafetyCenter summary').click();
+       const expanded=await page.evaluate(()=>{
+        const root=document.getElementById('faroSafetyCenter'),d=root.querySelector('details');
+        return {open:d.open,height:Math.round(root.getBoundingClientRect().height),
+          link:d.querySelector('.faro-safety-link')?.href,
+          reasonCount:d.querySelectorAll('.faro-safety-reasons li').length};
+       });
+       if(!expanded.open||expanded.height<=compact.height||
+          !expanded.link.includes('knmi.nl')||expanded.reasonCount<1){
+        failures.push({width,locale,theme,issue:'Warning detail failed to expand',expanded});
+       }
+       await page.locator('#faroSafetyCenter summary').click();
+       if(await page.locator('#faroSafetyCenter details').evaluate(d=>d.open)){
+        failures.push({width,locale,theme,issue:'Warning failed to collapse'});
+       }
       }
 
       const info=await page.evaluate(horizontalIssues);
