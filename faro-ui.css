@@ -1207,7 +1207,55 @@ main>.app-nav button{font-family:var(--faro-text)!important;font-weight:750!impo
 
 /* FARO Coastal Editorial: navigation belongs to the seven-day rail,
    not to a horizontally scrollable entire page. */
-html,body{max-width:100%;overflow-x:clip}
+/* Document-root horizontal containment.
+   On iOS WebKit, overflow-x:clip alone can allow the viewport to rubber-band
+   into an unpainted root canvas. Hidden is the compatible fallback. */
+html,body{
+ width:100%;
+ max-width:100%;
+ overflow-x:hidden!important;
+ overscroll-behavior-x:none;
+ background:var(--bg)!important;
+}
+html{min-height:100%;background-color:var(--bg)!important}
+body{min-height:100vh;min-height:100dvh;margin:0!important}
+main{
+ width:100%!important;
+ max-width:1000px!important;
+ min-width:0!important;
+ margin-inline:auto!important;
+ box-sizing:border-box!important;
+}
+main>.top,main>.app-nav,
+#forecastPage,#bestPage,#boardPage,
+#forecastPage>.forecast-toolbar,
+#forecastPage>.picker-grid,
+#forecastPage>#dayStrip,
+#forecastPage>.forecast-overview,
+#forecastPage>#dayview,
+#forecastPage>#weekview{
+ min-width:0!important;
+ max-width:100%!important;
+ box-sizing:border-box!important;
+}
+#forecastPage #dayStripItems{
+ display:flex!important;
+ width:100%!important;
+ max-width:100%!important;
+ min-width:0!important;
+ overflow-x:auto!important;
+ overflow-y:hidden!important;
+ -webkit-overflow-scrolling:touch;
+ overscroll-behavior-x:contain;
+}
+@media(min-width:900px){
+ #forecastPage #dayStripItems{
+  display:grid!important;
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  overflow-x:visible!important;
+  overflow-y:visible!important;
+ }
+}
 #forecastPage,#forecastPage #dayStrip,#forecastPage .day-strip-wrap{
  min-width:0;max-width:100%;box-sizing:border-box;
 }
