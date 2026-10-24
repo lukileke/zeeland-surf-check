@@ -197,6 +197,35 @@ const screening=safety.scan48h(example,new Date('2026-10-24T08:00:00+02:00'));
 assert.equal(screening.level,'danger','Storm gust later today remains visible regardless of selected daytime slot');
 assert.equal(screening.peakGust,84);
 assert.equal(safety.scan48h(null).level,'unknown');
+/* The banner itself must remain available in all modes, including failed API
+ * reads. A mocked DOM verifies content/link/priority, not Safari layout. */
+function fakeNode(tag){
+ return {tagName:tag,children:[],attrs:{},className:'',textContent:'',
+   append(...children){this.children.push(...children)},
+   replaceChildren(...children){this.children=children},
+   setAttribute(name,value){this.attrs[name]=value}
+ };
+}
+const fakeDocument={createElement:fakeNode},viewContext={};
+new Function('globalThis','document',safetySource)(viewContext,fakeDocument);
+const warningBanner=fakeNode('section');
+viewContext.FaroSafety.render(warningBanner,example,'Domburg',new Date('2026-10-24T08:00:00+02:00'));
+assert.ok(warningBanner.className.includes('danger'),'Danger is visible independently of Surf Quality');
+assert.equal(warningBanner.attrs.role,'alert','Critical model warning announces to assistive technology');
+assert.equal(warningBanner.attrs['aria-live'],'assertive','Severe danger announced promptly');
+assert.equal(warningBanner.children.length,2,'Banner presents message and official link');
+assert.equal(warningBanner.children[1].href,safety.KNMI_URL,'Official link is region-specific');
+assert.ok(warningBanner.children[0].children[1].textContent.includes('84 km/h'),
+ 'Forecast alert explains the peak gust');
+assert.ok(warningBanner.children[0].children[2].textContent.includes('Not a live alert feed'),
+ 'Dated official bulletin is clearly identified as non-live');
+const fallbackBanner=fakeNode('section');
+viewContext.FaroSafety.render(fallbackBanner,null,'Domburg',new Date('2026-10-26T12:00:00+01:00'));
+assert.ok(fallbackBanner.className.includes('advisory'),'Missing model is not called safe');
+assert.equal(fallbackBanner.children[1].href,safety.KNMI_URL,
+ 'Live KNMI link survives missing data and expired dated bulletin');
+assert.equal(fallbackBanner.attrs.role,'region',
+ 'Informational notices do not masquerade as emergency alerts');
 
 /* Time-separated observations versus pre-observation model snapshots. */
 const labContext={};
