@@ -73,34 +73,118 @@
   return t>=publication.showFrom&&t<publication.expires?publication:null;
  }
 
+
+ /* Country sources are independently configurable; these are links to
+    official sources, NOT active machine-read alerts. */
+ const SOURCES=Object.freeze({
+  NL:Object.freeze({label:'Zeeland · NL',links:Object.freeze([
+   Object.freeze({label:'KNMI Zeeland',url:KNMI_URL})
+  ])}),
+  CL:Object.freeze({label:'Chile · CL',links:Object.freeze([
+   Object.freeze({label:'SERVIMET / DIRECTEMAR · marejadas y temporal',url:'https://meteoarmada.directemar.cl/'}),
+   Object.freeze({label:'Dirección Meteorológica de Chile',url:'https://www.meteochile.gob.cl/'}),
+   Object.freeze({label:'SENAPRED · alertas',url:'https://senapred.cl/alertas/'})
+  ])})
+ });
+ const readStore=(key)=>{try{return root.localStorage?.getItem(key)||null}catch(e){return null}};
+ const writeStore=(key,value)=>{try{root.localStorage?.setItem(key,value)}catch(e){}};
+ const alertCountry=()=>readStore('faro-alert-country')==='CL'?'CL':'NL';
+ function setAlertCountry(code){
+  const country=SOURCES[code]?code:'NL';
+  writeStore('faro-alert-country',country);
+  return country;
+ }
+ const countryForCoordinates=(lat,lon)=>Number.isFinite(lat)&&Number.isFinite(lon)&&
+    lat>=-56&&lat<=-17&&lon>=-76&&lon<=-66?'CL':'NL';
+ const currentLanguage=()=>readStore('zeeland-language')==='es'?'es':'en';
+ function translatedReason(value,es){
+  if(!es)return value;
+  return String(value)
+   .replace('Modelled gusts up to ','Rachas modeladas de hasta ')
+   .replace('Modelled sustained wind ','Viento sostenido modelado de ')
+   .replace('Thunderstorms are forecast','Se pronostican tormentas eléctricas')
+   .replace('Offshore modelled waves ','Olas modeladas mar adentro de ')
+   .replace('Elevated offshore wave height ','Altura elevada de olas mar adentro de ')
+   .replace('Dense freezing fog possible','Posible niebla densa con heladas')
+   .replace('Fog may impair visibility','La niebla podría limitar la visibilidad')
+   .replace('Very cold sea water','Agua de mar muy fría')
+   .replace('Cold sea water','Agua de mar fría')
+   .replace('Freezing air temperature','Temperatura del aire bajo cero')
+   .replace('Heavy rain may impair visibility','La lluvia fuerte podría limitar la visibilidad')
+   .replace('Insufficient daylight','Luz diurna insuficiente');
+ }
  function render(rootEl,weather,beachName,now=new Date()){
   if(!rootEl)return;
-  const report=scan48h(weather,now),bulletin=datedBulletin(now);
+  const es=currentLanguage()==='es';
+  const region=alertCountry(),source=SOURCES[region];
+  const report=scan48h(weather,now),bulletin=region==='NL'?datedBulletin(now):null;
   const strong=report.level==='danger',notice=Boolean(bulletin);
   rootEl.className='faro-safety-center '+(strong?'danger':notice||report.level==='caution'?'caution':'advisory');
   rootEl.replaceChildren();
   const copy=document.createElement('div');copy.className='faro-safety-copy';
   const head=document.createElement('strong');head.className='faro-safety-kicker';
-  head.textContent=strong?'⛔ MODEL HAZARD':notice?'⚠️ DATED KNMI BULLETIN':'KNMI · OFFICIAL WARNINGS';
+  head.textContent=strong?(es?'⛔ RIESGO SEGÚN EL MODELO':'⛔ MODEL HAZARD'):
+   notice?(es?'⚠️ BOLETÍN KNMI FECHADO':'⚠️ DATED KNMI BULLETIN'):
+   (es?'AVISOS METEOROLÓGICOS · FUENTES OFICIALES':'WEATHER ALERTS · OFFICIAL SOURCES');
   const p=document.createElement('p');p.className='faro-safety-headline';
   if(strong||report.level==='caution'){
-   p.textContent='Next 48 h near '+beachName+': '+report.reasons.join('; ')+'.';
+   p.textContent=(es?'Próximas 48 h cerca de ':'Next 48 h near ')+beachName+': '+
+    report.reasons.map(v=>translatedReason(v,es)).join('; ')+'.';
   }else if(notice){
-   p.textContent='KNMI forecast 75–90 km/h gusts in coastal Zeeland for Saturday night and Sunday.';
+   p.textContent=es?
+    'KNMI pronosticó rachas de 75–90 km/h en la costa de Zeeland para la noche del sábado y el domingo.':
+    'KNMI forecast 75–90 km/h gusts in coastal Zeeland for Saturday night and Sunday.';
   }else{
-   p.textContent='Check current KNMI Zeeland alerts before travelling or entering the water.';
+   p.textContent=es?
+    'Consulta las alertas oficiales antes de viajar o entrar al agua.':
+    'Check official weather warnings before travelling or entering the water.';
   }
   const foot=document.createElement('p');foot.className='faro-safety-source';
-  foot.textContent=notice?(strong||report.level==='caution'?'Open-Meteo modelled risk; not an official KNMI alert. · ':'')+'KNMI bulletin published 24 Oct 2026, 07:43 NL · Expected 24 Oct 22:00–25 Oct 23:00. Not a live alert feed.':
-   report.level==='unknown'?'Official alerts are not automatically fetched; local model data may be missing.':
-   'Open-Meteo model-based screening; official alert status is not automatically checked.';
-  const link=document.createElement('a');link.className='faro-safety-link';
-  link.href=KNMI_URL;link.target='_blank';link.rel='noopener noreferrer';
-  link.textContent='Check KNMI Zeeland ↗';
-  copy.append(head,p,foot);rootEl.append(copy,link);
-  rootEl.setAttribute('aria-label','Weather warnings and model hazard screening');
+  const modelLabel=es?'Riesgo estimado por Open-Meteo, no aviso oficial.':'Open-Meteo model risk, not an official alert.';
+  const datedLabel=es?
+   'Boletín KNMI publicado el 24 oct 2026 a las 07:43 (NL); previsto del 24 oct 22:00 al 25 oct 23:00. No es una alerta en tiempo real.':
+   'KNMI bulletin published 24 Oct 2026, 07:43 NL; expected 24 Oct 22:00–25 Oct 23:00. Not a live alert feed.';
+  foot.textContent=notice?(strong||report.level==='caution'?modelLabel+' · ':'')+datedLabel:
+   report.level==='unknown'?
+     (es?'No se reciben alertas oficiales en directo; pueden faltar datos del modelo.':
+         'Official alerts are not fetched live; model data may be missing.'):
+     (es?'Evaluación mediante modelos Open-Meteo; los avisos oficiales no se consultan automáticamente.':
+         'Open-Meteo screening; official alert status is not automatically checked.');
+  if(region==='CL'){
+   foot.textContent+=' '+(es?
+    'Las condiciones modeladas corresponden a '+beachName+' (Zeeland), no a Chile. Las fuentes chilenas son enlaces oficiales, no alertas sincronizadas.':
+    'Modelled conditions still refer to '+beachName+' in Zeeland, not Chile. Chile links are official sources, not synced warnings.');
+  }
+  const settings=document.createElement('div');settings.className='faro-safety-settings';
+  const label=document.createElement('label');label.className='faro-safety-region-label';
+  label.textContent=es?'Fuentes de avisos':'Alert sources';
+  const sel=document.createElement('select');sel.className='faro-safety-region-select';
+  sel.setAttribute('aria-label',es?'País de fuentes meteorológicas':'Weather alert source country');
+  Object.entries(SOURCES).forEach(([key,src])=>{
+   const option=document.createElement('option');
+   option.value=key;option.textContent=src.label;option.selected=key===region;
+   sel.append(option);
+  });
+  sel.value=region;
+  sel.addEventListener?.('change',()=>{setAlertCountry(sel.value);render(rootEl,weather,beachName,new Date())});
+  label.append(sel);settings.append(label);
+  if(region==='CL'){
+   const extras=document.createElement('div');extras.className='faro-safety-extra-links';
+   source.links.slice(1).forEach(ref=>{
+    const a=document.createElement('a');
+    a.href=ref.url;a.target='_blank';a.rel='noopener noreferrer';
+    a.textContent=ref.label+' ↗';
+    extras.append(a);
+   });
+   settings.append(extras);
+  }
+  const action=document.createElement('a');action.className='faro-safety-link';
+  action.href=source.links[0].url;action.target='_blank';action.rel='noopener noreferrer';
+  action.textContent=(es?'Consultar ':'Check ')+source.links[0].label+' ↗';
+  copy.append(head,p,foot,settings);rootEl.append(copy,action);
+  rootEl.setAttribute('aria-label',es?'Avisos meteorológicos y evaluación de riesgos del modelo':'Weather warnings and model hazard screening');
   rootEl.setAttribute('role',strong?'alert':'region');
   rootEl.setAttribute('aria-live',strong?'assertive':'polite');
  }
- root.FaroSafety=Object.freeze({KNMI_URL,localStamp,risk,scan48h,datedBulletin,render});
+ root.FaroSafety=Object.freeze({KNMI_URL,localStamp,risk,scan48h,datedBulletin,SOURCES,alertCountry,setAlertCountry,countryForCoordinates,translatedReason,render});
 })(typeof globalThis!=='undefined'?globalThis:this);
