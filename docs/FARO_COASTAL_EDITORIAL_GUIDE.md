@@ -203,3 +203,15 @@ Further references for editorial restraint:
 ### Fair score colour correction — v12
 
 On real light-theme iPhone screenshots, the brown-dominant `Fair / Regular` score felt inconsistent with the coastal palette. The `5.0–6.9` quality tier keeps its semantic amber association, but **large Fair numerals now use foreground graphite on light backgrounds** (Forecast's day rail, selected session hero, time slots, Best of Week and Wizard scores). The accent remains warm golden amber `#B16B00` in the light theme for selected outlines and discreet signals. In the dark theme, Fair remains a luminous gold `#E9BE60`. Good/Poor thresholds, Board Fit and blue Wave Height were not modified. The style is published as `faro-ui.css?v=12` and regression assertions cover the new treatment. Rendering in Safari still needs a visual check.
+
+### Mobile horizontal overflow hotfix — v17 (24 October 2026)
+
+An iPhone report showed that a horizontal swipe could pan the **entire document** into a white/blank area outside FARO, rather than scrolling only the seven-day rail.
+
+- The prior fallback was `html,body{overflow-x:clip}`. This was replaced by stronger cross-WebKit `overflow-x:hidden!important` and `overscroll-behavior-x:none` on the root and body.
+- Root `html` now paints `var(--bg)` in both themes; an inline early background fallback also paints the root before the external stylesheet loads. This avoids revealing an unpainted white canvas during bounce or slow style loading.
+- `main` and principal Forecast/Best/Wizard containers are explicitly constrained to the viewport width and use `min-width:0`, without affecting the separate day rail.
+- **Important:** `#dayStripItems` retains `overflow-x:auto` on mobile and its normal seven-day navigation. Desktop retains its seven-column non-scrolling layout. Do not use `touch-action:pan-y` on ancestors, as this would disable intentional horizontal gestures.
+- Updated asset cache to `faro-ui.css?v=17` and enhanced source regression assertions. The existing Node smoke tests pass.
+
+**Still unverified:** real iPhone Safari horizontal movement and visual output. The report may include native browser overscroll/rubber-band behaviour, which CSS can mitigate but cannot always eliminate. Test both light/dark and Forecast/Best/Wizard at 320/375/390/430 px. In Safari remote inspection compare `document.documentElement.scrollWidth` with `document.documentElement.clientWidth`, and inspect any element whose bounding rectangle extends beyond the viewport. Do not claim a Safari visual pass based on JavaScript/CSS checks.
