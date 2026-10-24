@@ -9,6 +9,7 @@ on:
       - 'faro-spot-dna.js'
       - 'faro-spot-evidence.js'
       - 'faro-dna-validation.js'
+      - 'faro-safety.js'
       - 'tests/**'
       - '.github/workflows/faro-checks.yml'
   pull_request:
@@ -19,6 +20,7 @@ on:
       - 'faro-spot-dna.js'
       - 'faro-spot-evidence.js'
       - 'faro-dna-validation.js'
+      - 'faro-safety.js'
       - 'tests/**'
 jobs:
   smoke:
