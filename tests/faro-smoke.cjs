@@ -63,8 +63,8 @@ assert.ok(html.includes('src="faro-safety.js"'),'Dedicated safety module loads')
 assert.ok(html.includes('gust:w')===false,'Gusts not accidentally fabricated as constants');
 assert.ok(html.includes('gust:scores.reduce('),'Entire two-hour window uses worst gust');
 assert.ok(css.includes('.faro-safety-center.danger'),'Severe alert is visible separately from score');
-assert.ok(html.includes('installHorizontalViewportGuard'),'Horizontal viewport guard installed');
-assert.ok(html.includes("closest?.('#dayStripItems')"),'Seven-day strip excluded from document gesture lock');
+assert.ok(css.includes('#forecastPage #dayStrip{\n contain:layout paint!important'),'Seven-day rail parent isolates paint and layout');
+assert.ok(css.includes('#forecastPage #dayStripItems{\n contain:layout paint!important'),'Rail cannot widen document layout');
 assert.ok(css.includes('main{overflow-x:clip!important'),'App shell is horizontally clipped');
 assert.ok(css.includes('#datehead{text-transform:capitalize'),'Localized weekday headings capitalized');
 assert.ok(css.includes('.faro-safety-region-select'),'Country source selector styled');
