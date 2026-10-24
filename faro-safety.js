@@ -72,5 +72,34 @@
   const t=localStamp(now);
   return t>=publication.showFrom&&t<publication.expires?publication:null;
  }
- root.FaroSafety=Object.freeze({KNMI_URL,localStamp,risk,scan48h,datedBulletin});
+
+ function render(rootEl,weather,beachName){
+  if(!rootEl)return;
+  const report=scan48h(weather),bulletin=datedBulletin();
+  const strong=report.level==='danger',notice=Boolean(bulletin);
+  rootEl.className='faro-safety-center '+(strong?'danger':notice||report.level==='caution'?'caution':'advisory');
+  rootEl.replaceChildren();
+  const copy=document.createElement('div');copy.className='faro-safety-copy';
+  const head=document.createElement('strong');head.className='faro-safety-kicker';
+  head.textContent=strong?'⛔ MODEL HAZARD':notice?'⚠️ DATED KNMI BULLETIN':'KNMI · OFFICIAL WARNINGS';
+  const p=document.createElement('p');p.className='faro-safety-headline';
+  if(strong||report.level==='caution'){
+   p.textContent='Next 48 h near '+beachName+': '+report.reasons.join('; ')+'.';
+  }else if(notice){
+   p.textContent='KNMI forecast 75–90 km/h gusts in coastal Zeeland for Saturday night and Sunday.';
+  }else{
+   p.textContent='Check current KNMI Zeeland alerts before travelling or entering the water.';
+  }
+  const foot=document.createElement('p');foot.className='faro-safety-source';
+  foot.textContent=notice?'KNMI bulletin published 24 Oct 2026, 07:43 NL · Expected 24 Oct 22:00–25 Oct 23:00. Not a live alert feed.':
+   report.level==='unknown'?'Official alerts are not automatically fetched; local model data may be missing.':
+   'Open-Meteo model-based screening; official alert status is not automatically checked.';
+  const link=document.createElement('a');link.className='faro-safety-link';
+  link.href=KNMI_URL;link.target='_blank';link.rel='noopener noreferrer';
+  link.textContent='Check KNMI Zeeland ↗';
+  copy.append(head,p,foot);rootEl.append(copy,link);
+  rootEl.setAttribute('aria-label','Weather warnings and model hazard screening');
+  rootEl.setAttribute('role',strong?'alert':'region');
+ }
+ root.FaroSafety=Object.freeze({KNMI_URL,localStamp,risk,scan48h,datedBulletin,render});
 })(typeof globalThis!=='undefined'?globalThis:this);
