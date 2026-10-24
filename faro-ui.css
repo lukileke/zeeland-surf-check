@@ -1666,3 +1666,24 @@ main{overflow-x:clip!important;max-inline-size:100%;min-inline-size:0}
  .faro-safety-region-label{flex-wrap:wrap}
  .faro-safety-center{min-width:0!important}
 }
+
+
+/* FARO v20: isolate the real overflow root.
+   Mobile browser QA isolated #dayStripItems as the ONLY element whose
+   presence widens the document layout viewport. Contain its paint/layout
+   while retaining internal overflow-x scrolling and seven-day access. */
+#forecastPage #dayStrip{
+ contain:layout paint!important;
+ overflow:hidden!important;
+ min-width:0!important;max-width:100%!important;
+}
+#forecastPage #dayStripItems{
+ contain:layout paint!important;
+ position:relative!important;
+ isolation:isolate;
+ display:flex!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+ max-inline-size:100%!important;
+ -webkit-overflow-scrolling:touch;
+ overscroll-behavior-inline:contain;
+}
