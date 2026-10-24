@@ -1,0 +1,31 @@
+name: Faro mobile browser QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'faro-ui.css'
+      - 'faro-safety.js'
+      - 'tests/faro-browser.cjs'
+      - '.github/workflows/faro-browser.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'faro-ui.css'
+      - 'faro-safety.js'
+      - 'tests/faro-browser.cjs'
+jobs:
+  mobile-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test browser
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Verify mobile horizontal layout and touch
+        run: node tests/faro-browser.cjs
