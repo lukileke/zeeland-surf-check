@@ -878,6 +878,7 @@ function scrollForecastDays(direction){
 /* iOS Safari viewport containment: only the seven-day filmstrip may pan
    horizontally. Do not suppress vertical scroll, pinch zoom or select input. */
 (function installHorizontalViewportGuard(){
+ if(typeof document==='undefined'||typeof window==='undefined')return;
  let startX=0,startY=0;
  document.addEventListener('touchstart',e=>{
   if(e.touches.length!==1)return;
