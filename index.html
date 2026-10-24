@@ -1121,6 +1121,13 @@ const languagePhrases=[
 ['Heavy rain may impair visibility','La lluvia intensa puede reducir la visibilidad'],
 ['Freezing air temperature','Temperatura del aire bajo cero'],
 ['Insufficient daylight','Luz diurna insuficiente'],
+[' s period',' s de período'],
+['What to wear','Qué traje usar'],
+['Step 1 of 2','Paso 1 de 2'],
+['Step 2 of 2','Paso 2 de 2'],
+['Choose your beach, spot, day and time window.','Elige la playa, el spot, el día y la franja horaria.'],
+['Choose your riding style.','Elige tu estilo de surf.'],
+['No major model flags','Sin avisos relevantes del modelo'],
 ['BEACH','PLAYA'],['SURF SPOT','SPOT DE SURF'],['BEST WINDOW','MEJOR HORARIO'],
 ['Forecast','Pronóstico'],['Today','Hoy'],
 ['Where should I surf?','¿Dónde surfeo?'],
@@ -1242,6 +1249,13 @@ function translateText(source){
  let output=source;
  for(const [english,spanish] of [...additionalSpanishPhrases,...moreSpanishPhrases,...surfChileanPhrases,...languagePhrases].sort((a,b)=>b[0].length-a[0].length)){
   output=output.split(english).join(spanish);
+ }
+ // Capitalise dates at the beginning of a display label, not all Spanish text.
+ const weekdays=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+ const first=source.trimStart();
+ if(weekdays.some(day=>first===day||first.startsWith(day+' '))){
+  const translated=output.trimStart(),pos=output.indexOf(translated);
+  if(translated)output=output.slice(0,pos)+translated[0].toLocaleUpperCase('es-ES')+translated.slice(1);
  }
  return output;
 }
