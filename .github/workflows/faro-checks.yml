@@ -6,6 +6,7 @@ on:
       - 'index.html'
       - 'faro-ui.css'
       - 'surf-engine.js'
+      - 'zeeland-widget.js'
       - 'faro-spot-dna.js'
       - 'faro-spot-evidence.js'
       - 'faro-dna-validation.js'
@@ -17,6 +18,7 @@ on:
       - 'index.html'
       - 'faro-ui.css'
       - 'surf-engine.js'
+      - 'zeeland-widget.js'
       - 'faro-spot-dna.js'
       - 'faro-spot-evidence.js'
       - 'faro-dna-validation.js'
@@ -32,3 +34,5 @@ jobs:
           node-version: '22'
       - name: Verify FARO source and timing logic
         run: node tests/faro-smoke.cjs
+      - name: Verify Scriptable widget across families and failure modes
+        run: node tests/faro-widget.cjs
