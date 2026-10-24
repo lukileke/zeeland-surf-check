@@ -1652,22 +1652,6 @@ main{overflow-x:clip!important;max-inline-size:100%;min-inline-size:0}
 #dayStripItems{touch-action:pan-x pan-y!important;overscroll-behavior-x:contain!important}
 #forecastPage .forecast-overview #datehead{text-transform:capitalize!important}
 #forecastPage #dayStripItems .day-chip>span:first-child{text-transform:capitalize!important}
-.faro-safety-settings{display:flex;flex-wrap:wrap;align-items:center;gap:8px 15px;margin-top:9px}
-.faro-safety-region-label{display:inline-flex;align-items:center;gap:7px;
- font:700 11px/1.4 var(--faro-text);color:var(--fg)}
-.faro-safety-region-select{appearance:auto!important;min-height:38px!important;max-width:100%;
- padding:6px 10px!important;border-radius:8px!important;
- border:1px solid var(--alert-border)!important;background:var(--panel)!important;
- color:var(--fg)!important;font:700 12px/1.3 var(--faro-text)!important}
-.faro-safety-extra-links{display:flex;gap:7px 12px;flex-wrap:wrap}
-.faro-safety-extra-links a{font:700 11px/1.4 var(--faro-text);
- color:var(--fg);text-decoration:underline;text-underline-offset:2px}
-@media(max-width:380px){
- .faro-safety-region-label{flex-wrap:wrap}
- .faro-safety-center{min-width:0!important}
-}
-
-
 /* FARO v20: isolate the real overflow root.
    Mobile browser QA isolated #dayStripItems as the ONLY element whose
    presence widens the document layout viewport. Contain its paint/layout
