@@ -28,7 +28,9 @@ assert.equal(ids.length,new Set(ids).size,'No duplicate static DOM identifiers')
 assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces balanced');
 assert.ok(css.includes('html[data-theme="light"]'),'Light theme present');
 assert.ok(css.includes('html:not([data-theme="light"])'),'Dark theme present');
-assert.ok(html.includes('faro-ui.css?v=18'),'Current CSS cache key');
+// A changing asset version must not itself fail a source test.
+const cssAsset=html.match(/<link\s+rel="stylesheet"\s+href="faro-ui\.css\?v=(\d+)"\s*\/?\s*>/);
+assert.ok(cssAsset&&Number(cssAsset[1])>0,'Local stylesheet has a versioned cache key');
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
 assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
@@ -61,6 +63,12 @@ assert.ok(html.includes('src="faro-safety.js"'),'Dedicated safety module loads')
 assert.ok(html.includes('gust:w')===false,'Gusts not accidentally fabricated as constants');
 assert.ok(html.includes('gust:scores.reduce('),'Entire two-hour window uses worst gust');
 assert.ok(css.includes('.faro-safety-center.danger'),'Severe alert is visible separately from score');
+assert.ok(html.includes('installHorizontalViewportGuard'),'Horizontal viewport guard installed');
+assert.ok(html.includes("closest?.('#dayStripItems')"),'Seven-day strip excluded from document gesture lock');
+assert.ok(css.includes('main{overflow-x:clip!important'),'App shell is horizontally clipped');
+assert.ok(css.includes('#datehead{text-transform:capitalize'),'Localized weekday headings capitalized');
+assert.ok(css.includes('.faro-safety-region-select'),'Country source selector styled');
+
 assert.ok(html.includes('src="faro-spot-evidence.js"'),'Local beach-level evidence module loaded');
 assert.ok(html.includes('marine.hourly.swell_wave_height'),'Shadow-only features read separate swell height');
 assert.ok(html.includes('weather.hourly.wind_gusts_10m'),'Shadow-only features read wind gust ratio');
@@ -175,6 +183,13 @@ const safetyContext={};
 new Function('globalThis',safetySource)(safetyContext);
 const safety=safetyContext.FaroSafety;
 assert.ok(safety,'Independent safety model loads');
+assert.equal(safety.SOURCES.CL.links.length,3,'Chile uses several distinct official sources');
+assert.equal(safety.SOURCES.NL.links[0].url,safety.KNMI_URL,'Zeeland uses KNMI');
+assert.equal(safety.countryForCoordinates(-39.8,-73.2),'CL','Chile coordinates select Chile provider');
+assert.equal(safety.countryForCoordinates(51.56,3.5),'NL','Zeeland coordinates select Dutch provider');
+assert.equal(safety.translatedReason('Modelled gusts up to 87 km/h',true),
+ 'Rachas modeladas de hasta 87 km/h','Danger reason has direct Spanish translation');
+
 assert.equal(safety.risk({wind:15,gust:83,code:0},true).level,'danger',
  'Severe gust warns even if average wind is modest');
 assert.equal(safety.risk({wind:15,gust:60,code:0},true).level,'caution',
@@ -219,6 +234,23 @@ assert.ok(warningBanner.children[0].children[1].textContent.includes('84 km/h'),
  'Forecast alert explains the peak gust');
 assert.ok(warningBanner.children[0].children[2].textContent.includes('Not a live alert feed'),
  'Dated official bulletin is clearly identified as non-live');
+
+const chileStore=new Map([['faro-alert-country','CL'],['zeeland-language','es']]);
+const chileContext={localStorage:{getItem:key=>chileStore.get(key)||null,setItem:(key,value)=>chileStore.set(key,value)}};
+new Function('globalThis','document',safetySource)(chileContext,fakeDocument);
+const chileBanner=fakeNode('section');
+chileContext.FaroSafety.render(chileBanner,example,'Domburg',new Date('2026-10-24T08:00:00+02:00'));
+assert.ok(chileBanner.children[0].children[0].textContent.includes('RIESGO SEGÚN EL MODELO'),
+ 'Severe Spanish model hazard not stuck in English');
+assert.ok(chileBanner.children[0].children[1].textContent.includes('Rachas modeladas'),
+ 'Spanish warning includes translated physical reason');
+assert.ok(chileBanner.children[0].children[2].textContent.includes('no a Chile'),
+ 'Model conditions cannot be falsely attributed to Chile');
+assert.ok(chileBanner.children[1].href.includes('directemar.cl'),
+ 'Official Chile alert links use maritime authority, not KNMI');
+chileContext.FaroSafety.setAlertCountry('NL');
+assert.equal(chileContext.FaroSafety.alertCountry(),'NL','Country switch persisted');
+
 const fallbackBanner=fakeNode('section');
 viewContext.FaroSafety.render(fallbackBanner,null,'Domburg',new Date('2026-10-26T12:00:00+01:00'));
 assert.ok(fallbackBanner.className.includes('advisory'),'Missing model is not called safe');
