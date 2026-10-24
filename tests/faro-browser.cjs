@@ -151,7 +151,21 @@ async function swipe(session,x0,y0,x1,y1){
    await sleep(120);
    const after=await page.evaluate(horizontalIssues);
    if(after.scrollX!==0||after.scroll>after.view+2)failures.push({width,touchSwipe:true,...after});
-   if(width===375)await page.screenshot({path:'/tmp/faro-mobile-browser.png',fullPage:true});
+   if(width===375){
+    await page.screenshot({path:'/tmp/faro-mobile-browser.png',fullPage:true});
+    // Scriptable widget tap: open the specific location and forecast window.
+    const nextDay=weather.daily.time[1];
+    const widgetLink='http://127.0.0.1:'+PORT+'/?faroSpot='+encodeURIComponent('Oostkapelle:West sector')+
+      '&day='+nextDay+'&hour=14';
+    await page.goto(widgetLink,{waitUntil:'domcontentloaded'});
+    try{
+     await page.waitForFunction(()=>area===2&&spot===1&&day===1&&slotIndex===4,
+       {timeout:11000});
+    }catch(e){
+     const state=await page.evaluate(()=>({area,spot,day,slotIndex,launch:widgetLaunch}));
+     failures.push({width,widgetDeepLink:state,expected:{area:2,spot:1,day:1,slotIndex:4}});
+    }
+   }
    await context.close();
   }
   if(failures.length){
