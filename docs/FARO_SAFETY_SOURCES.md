@@ -1,10 +1,14 @@
 # FARO · Safety sources & mobile regression (2026-10-24)
 
+## Zeeland-only safety scope — v22 correction
+
+The previous v21 alert-country dropdown was a product misunderstanding: selecting Chile while still forecasting a Zeeland beach added a meaningless and confusing control. **Removed from the UI and from active configuration in v22.** The Chile source registry is design preparation only. Future activation should accompany real Chile spots, coordinate-based jurisdiction matching, verified official feed integration, and appropriate local forecast data. No Chile warning UI is live today.
+
 ## What Faro currently DOES, and what it does NOT
 
 Faro's surf forecast is modelled with Open-Meteo. It **does not ingest live government alerts**, either Dutch or Chilean. The numerical danger/caution triggers are independent model-based **screening heuristics**, not official warning classifications or swimming/surfing safety clearance.
 
-A **persistent warning centre** appears above Forecast, Best of Week and Wizard. It can be set to *Zeeland · NL* or *Chile · CL*, stored locally as `faro-alert-country`. The list configures links to authorities, **not country-specific automated alerts**. Actual sea-state forecasts still use the selected Zeeland spot (and this is explicitly shown if Chilean source links are selected). In a future Chile deployment, country should default from spot coordinates, with optional user override.
+A **persistent warning centre** appears above Forecast, Best of Week and Wizard. **The current FARO deployment is exclusively for Zeeland:** its visible warning source is fixed to KNMI Zeeland, with no country selector. A legacy `faro-alert-country` preference is deliberately ignored. Chilean authorities are retained only in an internal registry to inform a future Chile rollout, not as selectable sources in the Zeeland app. The displayed sea-state forecast and modelled safety screening both refer to the selected Zeeland spot. In a future Chile deployment, alert sources should be chosen automatically from the actual surf-spot geography, rather than by an unrelated user country toggle.
 
 ### Official authority registry
 
