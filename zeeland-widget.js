@@ -302,9 +302,6 @@ function renderMedium(best,data,hazard){
   label(foot,character.name,9,C.ink,"semi");
   foot.addSpacer();
   label(foot,data.stale?T.stale:(LANG==="es"?"MODELO":"MODEL")+" · "+timestampLabel(data.saved),9,C.quiet);
- }else{
-  const note=hstack(widget,3);note.addSpacer();
-  label(note,data.stale?T.stale:T.model,8,C.quiet);
  }
 }
 function renderSmall(best,data,hazard){
