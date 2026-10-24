@@ -111,17 +111,13 @@ async function swipe(session,x0,y0,x1,y1){
    }
    if(width===375){
     await page.evaluate(()=>{
-     const selector=document.querySelector('.faro-safety-region-select');
-     selector.value='CL';selector.dispatchEvent(new Event('change',{bubbles:true}));
+     localStorage.setItem('faro-alert-country','CL'); // legacy value from v21
+     renderSafetyCenter();
     });
-    const chile=await page.locator('.faro-safety-link').getAttribute('href');
-    const notes=await page.locator('.faro-safety-source').innerText();
-    if(!chile.includes('directemar.cl')||!notes.includes('Chile'))
-     failures.push({width,countryProvider:chile,countryDisclaimer:notes});
-    await page.evaluate(()=>{
-     const selector=document.querySelector('.faro-safety-region-select');
-     selector.value='NL';selector.dispatchEvent(new Event('change',{bubbles:true}));
-    });
+    const regionSelector=await page.locator('.faro-safety-region-select').count();
+    const warningUrl=await page.locator('#faroSafetyCenter .faro-safety-link').getAttribute('href');
+    if(regionSelector!==0||!warningUrl.includes('knmi.nl'))
+     failures.push({width,regionSelector,warningUrl,issue:'Zeeland must not expose Chile source selection'});
    }
    await page.evaluate(()=>switchTab('forecast'));
    const cdpsession=await context.newCDPSession(page);
