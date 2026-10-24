@@ -28,7 +28,7 @@ function data(){
    swell_wave_period:constant(7),wind_wave_height:constant(0.4),
    wind_wave_direction:constant(295)}},
   weather:{hourly:{time:times,wind_speed_10m:constant(21),
-   wind_direction_10m:constant(145),wind_gusts_10m:constant(30),
+   wind_direction_10m:constant(145),wind_gusts_10m:constant(87),
    precipitation:constant(0),cloud_cover:constant(30),
    weather_code:constant(2),temperature_2m:constant(11),
    apparent_temperature:constant(9)},
@@ -77,25 +77,6 @@ async function swipe(session,x0,y0,x1,y1){
    const page=await context.newPage();
    await page.goto('http://127.0.0.1:'+PORT+'/?qa=1',{waitUntil:'domcontentloaded'});
    await page.waitForSelector('#dayStripItems .day-chip',{timeout:15000});
-   if(width===320){
-    const widths=await page.evaluate(()=>{
-     const root=document.documentElement;
-     const selectors=['#dayStripItems','#dayStrip','#forecastPage','#bestPage','#boardPage','#faroSafetyCenter','main'];
-     const snapshot=()=>({scroll:root.scrollWidth,viewport:root.clientWidth,
-       inner:innerWidth,railScroll:document.getElementById('dayStripItems')?.scrollWidth,
-       railClient:document.getElementById('dayStripItems')?.clientWidth});
-     const before=snapshot(),probes=[];
-     for(const selector of selectors){
-      const el=document.querySelector(selector);if(!el)continue;
-      const prior=el.style.display;
-      el.style.setProperty('display','none','important');
-      probes.push({selector,whileHidden:snapshot()});
-      el.style.display=prior;
-     }
-     return {before,probes};
-    });
-    console.log('FARO WIDTH DIAGNOSTICS '+JSON.stringify(widths));
-   }
    for(const locale of ['en','es']){
     const actual=await page.evaluate(()=>document.documentElement.lang);
     if(actual!==locale)await page.evaluate(()=>toggleLanguage());
@@ -106,6 +87,12 @@ async function swipe(session,x0,y0,x1,y1){
      for(const [tab,nav] of [['forecast','forecastPage'],['best','bestPage'],['board','boardPage']]){
       await page.evaluate(t=>switchTab(t),tab);
       await sleep(100);
+      if(tab==='forecast'){
+       const hazard=await page.locator('#faroSafetyCenter .faro-safety-kicker').innerText();
+       const expected=locale==='es'?'RIESGO SEGÚN EL MODELO':'MODEL HAZARD';
+       if(!hazard.includes(expected))failures.push({width,locale,theme,bannerTranslation:hazard,expected});
+      }
+
       const info=await page.evaluate(horizontalIssues);
       if(info.scroll>info.view+2||info.scrollX!==0||info.offenders.length){
        failures.push({width,locale,theme,tab,...info});
@@ -121,6 +108,20 @@ async function swipe(session,x0,y0,x1,y1){
       }
      }
     }
+   }
+   if(width===375){
+    await page.evaluate(()=>{
+     const selector=document.querySelector('.faro-safety-region-select');
+     selector.value='CL';selector.dispatchEvent(new Event('change',{bubbles:true}));
+    });
+    const chile=await page.locator('.faro-safety-link').getAttribute('href');
+    const notes=await page.locator('.faro-safety-source').innerText();
+    if(!chile.includes('directemar.cl')||!notes.includes('Chile'))
+     failures.push({width,countryProvider:chile,countryDisclaimer:notes});
+    await page.evaluate(()=>{
+     const selector=document.querySelector('.faro-safety-region-select');
+     selector.value='NL';selector.dispatchEvent(new Event('change',{bubbles:true}));
+    });
    }
    await page.evaluate(()=>switchTab('forecast'));
    const cdpsession=await context.newCDPSession(page);
