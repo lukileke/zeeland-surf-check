@@ -10,6 +10,7 @@ FARO helps decide **where and when to surf**, and what kind of session the model
 - Five numeric quality colour bands; Wave Wizard describes modelled wave character independently
 - FARO Match for optional board/riding-style preferences
 - Spot Insight: twelve named FARO sectors, local beach-guide evidence, conservative sector context, official/local source links
+- Spot Fit: independently adjustable wind, wave-direction, tide-uncertainty and evidence signals for each sector. [Calibration guide](FARO_SPOT_FIT_GUIDE.md)
 - Local Field Notes (stored only on the current device unless explicitly exported)
 - Weather-model risk screening and external official-warning references
 
