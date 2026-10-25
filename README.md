@@ -25,3 +25,7 @@ You must replace the code of an existing Scriptable widget script with the curre
 ## Data integrity
 
 All widgets and website score calculations use `surf-engine.js`. Scores, spot orientation and guide-derived signals are estimates; tidal response, the shape of specific sandbars, permitted access, rip currents and breaking-wave height are **not calibrated at individual FARO sectors**. Local coastal advice must be verified on site.
+
+## Chile research atlas (not live)
+
+[Chile regional catalog](chile/README.md) — **16 regions and an initial source-traced surf spot inventory**, with cautious fields for break type, wind/swell, tide, risks, timezone, confidence and later calibration. Chile forecasting and Chile-specific alerts are deliberately **disabled** until independently checked. [Implementation roadmap](chile/IMPLEMENTATION_ROADMAP.md).
