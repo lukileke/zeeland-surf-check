@@ -23,7 +23,9 @@ assert.ok(html.includes('src="assets/faro-logo.svg"'),'Official vector logo is u
 assert.ok(html.includes('href="faro-brand.css?v='),'Official brand layer remains versioned');
 assert.ok(brand.includes('Selected = paper. Alternatives = open canvas.'),'FARO distinguishes chosen day from unselected options');
 assert.ok(brand.includes('background:transparent!important'),'Unselected surfaces stay transparent');
-assert.ok(brand.includes('border:2px solid var(--brand-blue)!important'),'Blue stroke belongs to active selection');
+assert.ok(brand.includes('--faro-choice-selected-stroke:#526a74;'),'Selected light-theme day uses official slate grey');
+assert.ok(brand.includes('--faro-choice-stroke:#c9d8da;'),'Unselected light-theme day uses pale official mist grey');
+assert.ok(brand.includes('border-color:var(--faro-choice-selected-stroke)!important'),'Active day stroke is grey, not blue');
 assert.ok(logo.includes('viewBox="0 0 128.81 43.63"')&&logo.includes('#ffda71')&&logo.includes('#1f3b3d'),'Brand SVG retains original vector proportions and colours');
 assert.ok(salva.includes('viewBox="0 0 126.82 126.5"')&&salva.includes('opacity=".13"'),'Salva rojo is an unobtrusive supplied danger watermark');
 for(const hex of ['#ce762e','#efbc62','#6b9347','#a4d156','#e55845','#f47b67','#526a74','#c9d8da','#355baf','#5878e0','#1f3b3d','#ffda71'])
