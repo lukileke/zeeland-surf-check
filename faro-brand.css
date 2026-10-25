@@ -540,3 +540,22 @@ html[data-theme="light"] #forecastPage .day-chip:not(.selected)[class*="brand-ba
  border-color:transparent!important;
  color:var(--brand-ink)!important;
 }
+
+/* FARO v31 — one four-interval colour scale for every numeric score.
+ * The five verbal condition labels are a separate classification and must
+ * not introduce extra colours in picker, day or hourly score numbers.
+ * Preserves background-free numeric figures in the light theme. */
+html[data-theme="light"] .brand-band-low{--tone:var(--brand-score-ink);--quality-ink:var(--brand-score-ink)}
+html[data-theme="light"] .brand-band-mid{--tone:var(--brand-score-ink);--quality-ink:var(--brand-score-ink)}
+html[data-theme="light"] .brand-band-regular{--tone:var(--brand-score-ink);--quality-ink:var(--brand-score-ink)}
+html[data-theme="light"] .brand-band-high{--tone:var(--brand-score-ink);--quality-ink:var(--brand-score-ink)}
+html:not([data-theme="light"]) .brand-band-low{--tone:var(--brand-score-ink);--quality-ink:var(--brand-score-ink)}
+html:not([data-theme="light"]) .brand-band-mid{--tone:var(--brand-score-ink);--quality-ink:var(--brand-score-ink)}
+html:not([data-theme="light"]) .brand-band-regular{--tone:var(--brand-score-ink);--quality-ink:var(--brand-score-ink)}
+html:not([data-theme="light"]) .brand-band-high{--tone:var(--brand-score-ink);--quality-ink:var(--brand-score-ink)}
+:is(#forecastPage,#dayview,#bestPage,#boardPage) .score[class*="brand-band-"],
+#forecastPage .picker .score-chip.score-tint[class*="brand-band-"],
+#bestPage .week b.score-tint[class*="brand-band-"],
+#dayview .hourly-section .slots button[class*="brand-band-"] b{
+ color:var(--brand-score-ink)!important;
+}
