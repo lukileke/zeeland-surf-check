@@ -1,0 +1,89 @@
+/* FARO / Tide-to-Olive palette · v1 (25 October 2026)
+ * Five evenly spaced QUALITY bands. This is a display scale, not a change
+ * to surf-engine.js or the distinct Poor/Fair/Good vocabulary.
+ * On light backgrounds, number inks meet large-text contrast (>=3:1).
+ * On dark, the colours are brighter but the hue identities are unchanged.
+ * Coral is exclusively reserved for model hazards.
+ */
+:root{
+ --score-copper:#C46639;
+ --score-amber:#BA7C31;
+ --score-sand:#9C8431;
+ --score-lime:#6E9E43;
+ --score-olive:#547642;
+ --score-copper-night:#F0A46D;
+ --score-amber-night:#F0BF69;
+ --score-sand-night:#E3D471;
+ --score-lime-night:#B0DB75;
+ --score-olive-night:#96C67A;
+ --brand-score-verylow:var(--score-copper);
+ --brand-score-low:var(--score-amber);
+ --brand-score-mid:var(--score-sand);
+ --brand-score-regular:var(--score-lime);
+ --brand-score-high:var(--score-olive);
+}
+html[data-theme="light"] .brand-band-verylow{
+ --brand-score-color:var(--score-copper);--brand-score-ink:var(--score-copper);
+}
+html[data-theme="light"] .brand-band-low{
+ --brand-score-color:var(--score-amber);--brand-score-ink:var(--score-amber);
+}
+html[data-theme="light"] .brand-band-mid{
+ --brand-score-color:var(--score-sand);--brand-score-ink:var(--score-sand);
+}
+html[data-theme="light"] .brand-band-regular{
+ --brand-score-color:var(--score-lime);--brand-score-ink:var(--score-lime);
+}
+html[data-theme="light"] .brand-band-high{
+ --brand-score-color:var(--score-olive);--brand-score-ink:var(--score-olive);
+}
+html:not([data-theme="light"]) .brand-band-verylow{
+ --brand-score-color:var(--score-copper);--brand-score-ink:var(--score-copper-night);
+}
+html:not([data-theme="light"]) .brand-band-low{
+ --brand-score-color:var(--score-amber);--brand-score-ink:var(--score-amber-night);
+}
+html:not([data-theme="light"]) .brand-band-mid{
+ --brand-score-color:var(--score-sand);--brand-score-ink:var(--score-sand-night);
+}
+html:not([data-theme="light"]) .brand-band-regular{
+ --brand-score-color:var(--score-lime);--brand-score-ink:var(--score-lime-night);
+}
+html:not([data-theme="light"]) .brand-band-high{
+ --brand-score-color:var(--score-olive);--brand-score-ink:var(--score-olive-night);
+}
+:is(#forecastPage,#dayview,#bestPage,#boardPage)
+ :is(.day-chip,.score-tint,.hero-score,.score,.daily-verdict)[class*="brand-band-"]{
+ --tone:var(--brand-score-ink)!important;
+ --quality-ink:var(--brand-score-ink)!important;
+ --quality-border:var(--brand-score-color)!important;
+ --quality-accent:var(--brand-score-color)!important;
+}
+html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"] strong,
+html[data-theme="light"] #dayview .hero-score[class*="brand-band-"] .hero-score-value,
+html[data-theme="light"] #bestPage .hero-score[class*="brand-band-"] .hero-score-value,
+html[data-theme="light"] #dayview .slots button[class*="brand-band-"] b,
+html[data-theme="light"] #bestPage .score-tint[class*="brand-band-"],
+html[data-theme="light"] #boardPage .score-tint[class*="brand-band-"],
+html:not([data-theme="light"]) #forecastPage .day-chip[class*="brand-band-"] strong,
+html:not([data-theme="light"]) #dayview .hero-score[class*="brand-band-"] .hero-score-value,
+html:not([data-theme="light"]) #bestPage .hero-score[class*="brand-band-"] .hero-score-value,
+html:not([data-theme="light"]) #dayview .slots button[class*="brand-band-"] b{
+ color:var(--brand-score-ink)!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+#forecastPage .day-chip[class*="brand-band-"] .day-chip-grade{
+ border-color:var(--brand-score-color)!important;
+ color:var(--fg)!important;
+ background:color-mix(in srgb,var(--brand-score-color) 9%,transparent)!important;
+}
+#dayview .session-glance .quality-pill,
+#bestPage .hero-rank .quality-pill{
+ color:var(--fg)!important;
+ background:color-mix(in srgb,var(--brand-score-color) 9%,transparent)!important;
+ border-color:var(--brand-score-color)!important;
+}
+/* Metric identity and safety identity are separate from quality. */
+#forecastPage #dailyOverview .day-signal-metric:first-child strong{color:var(--faro-wave)!important}
+#forecastPage #dailyOverview .best-time{color:var(--faro-selection)!important}
