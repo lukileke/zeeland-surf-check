@@ -57,9 +57,6 @@ const C={
  panel:palette("#FFFFFF","#234347"),subtle:palette("#EFF5F5","#193337"),
  alert:palette("#D85B48","#FF9A87"),caution:palette("#CE762E","#EFBC62")
 };
-/* Compact PNG converted from the user-provided genuine Logo_mientras 2.svg.
-   Data URI embedding makes the iOS Scriptable script self-contained/offline. */
-const FARO_LOGO_PNG_B64="iVBORw0KGgoAAAANSUhEUgAAALQAAAA9CAMAAAAzrLMQAAAAwFBMVEUAAAAeOz3+2XAeOzweOj0eOzwcOTkhOzseOzweOjweOzwmODggOz0hQkISQUEgOj0gOz0gOzwiPT1IWEZ2eVGNiVbKtWTszGwbNkKwol7/2nEAVVUgOzwgOEAnQT82TEJYY0r/2XD/2XE9UERhaky2pmD/2nL/2nHBrmPdwWn/2XH//wArKysiM0QxSUREU0taZkqVj1ijmlyrnl2llWDYvmXVu2f/2nH/34D//1UAAAAAAAAAAAAAAAAAAAAAAAAs/zx6AAAAQHRSTlMA/v510ScNKJOzThKQDAtOb7D+//7///4W/9ADyyH///8RdP///zBY//+SAQYPYiJxtpD/ME5trggDAAAAAAAAqyUtiQAABBhJREFUeNrtmml7oyAQgKOggiSaO22atundbve+9///sdU0TThmBtTus1+cL30qiC8Dc0EGg1566aWXXv6rFCeqCOlXMkpyu3uGtuwlAccps5GHIxlLHu2ES5Z45hbRoqyhjy1jcLwzdKRJjlMoxs3OnKUEdOaBtuYstSZwIVNirA2CXQyh3sP0jaBHelPZFLoCUcArOdabvQ00M9a7OXTETxw1S7y3TN8C2tx5aXPoiFsGmXCye9YdOjHbxi2gI9Ho81HSGVpYWmsDbZhC4e0dqY7Q7wMWzw/NNQzlh05bQJ/rccgxFA+0rIXbu1bfVSPpmWHm3R7ckSHmpF9kREK/vpwyYqqmJi4ujH9zv/dgdPAE1nIcBG1b8AfjjR/z6cvj2WIZV7JczPb95j8HnaGBuMUDoc0AYkSlqwqzprz8Fh/k7rJ+8BjH952hg/woAm14eP07z+uacjHdrmJNVrfTRf13/bsjdOn3ugS0QL7zEJNy3RF6ctwUQ9wjhUBrM/2zpqHjq07QJ5r5JXjWhEFP4O94FI2oOhia6drFXTUCXTiOTO3C1i8f9Ho36KglNNddhkCTAwRaOEGuUoIcf4q98j0X3DadUOjE6JagpghDM9dPvkSqm/npiiCufPYUcK14RJykSK6kTPd3hkLLfCflmAO5/eHZdHaKEG+P4TE49yhhFm7NIW+YMO0djjaRGQw9194Jhs7hkohZu0U2hGZOqNr6oVUbaGlbHpY1eaHloA102gI6cdINgdivD3qTunEd2R63HbeHi5ghWdMotEQ8Qk/nMPTiohP0GVAVcNhV09CTws4ZK59HebztFAphQdCaGW4A5YtQ6LEVYcXHlS+2rD5XsYUKLii0tEuoSjawbaehlXhR1gu09kbE5yrilyoYWgWXnyzUEJ3S+trH/M6XMIlUFwUHYdC84O2xi4iCTL+vfND3bbM87g0YGajpHaLi5NnLXtV3T9ZWviMUHQKd+COzwKHN8tA5dLiqd/XTLLownMjyMrpZojVACLTwQx+jogs9oFV9X1eIdcvt8qDmXX0+na/ih7aFbcDRleZpAOicrt+/zg6RcXH6uDzdZ6N1Pf6l9RECC4GWBLR5yGPVZ2pIDqtaQvMQ6IMzg6ATXNV5A2/aAPo8iPnwLgRtqjofNDqAzNpAC+LoTroFDAidYKemRpEOh4CiBXSBHAk4i5sT0Kaq9c+kvlPTtM32KKmVKlxThKHP8SPnf2GIE/LgXzg3dDC06etZqC2yopXLG9HN7tsjGFoRp/vYFtlkIVdywMXPWGs+of0hp6BNVdsfygB75HnYNXNJrr8YeC4unWkwrHYU3nvmIX07XiSvAmnyjGytNXvosPeH6vz1gWlE6tAxga1L5WIy4VzKYZ70v8fopZdeevkLMhM2p2t8R/4AAAAASUVORK5CYII=";
 function addBrandLogo(parent,compact=false){
  const row=hstack(parent,3);row.centerAlignContent();
  label(row,"FARO",compact?15:18,C.ink,"black");
@@ -289,11 +286,26 @@ function titleBlock(parent,best,small=false){
  label(parent,small?locationLabel(best,true):locationLabel(best),small?11:13,C.ink,"bold");
  label(parent,dayLabel(best.day)+" · "+windowLabel(best.h),small?10:11,C.quiet,"semi");
 }
+function localizedWave(ch,short=false){
+ if(LANG!=="es")return ch.name;
+ const names={
+  "Wild & Windy":short?"WINDY":"WINDY · Viento fuerte",
+  "Choppy & Messy":short?"CHOPPY":"CHOPPY · Mar picado",
+  "Tiny & Tricky":short?"TINY":"TINY · Pequeñas",
+  "Clean Lines":short?"CLEAN":"CLEAN · Ordenadas",
+  "Mellow & Cruisy":short?"MELLOW":"MELLOW · Suaves",
+  "Punchy & Powerful":short?"PUNCHY":"PUNCHY · Potentes",
+  "Easygoing Sessions":short?"EASYGOING":"EASYGOING · Tranquilo",
+  "Short & Soft":short?"SHORT":"SHORT · Período corto",
+  "Mixed Bag":short?"MIXED":"MIXED · Variable"
+ };
+ return names[ch.name]||ch.name;
+}
 function waveFeeling(parent,best,small=false){
  const ch=globalThis.ZeelandEngine.waveCharacter(best.x);
  const row=hstack(parent,4);row.centerAlignContent();
  label(row,ch.emoji,small?10:12,C.ink);
- label(row,ch.name,small?10:12,C.ink,"bold");
+ label(row,localizedWave(ch,small),small?10:12,C.ink,"bold");
 }
 function futureRows(parent,best,sessions,max=2){
  const used=new Set([best.day]);let count=0;
@@ -355,7 +367,7 @@ function renderMedium(best,data,hazard,sessions){
   }else{
    const line=hstack(widget,4);line.centerAlignContent();
    const ch=globalThis.ZeelandEngine.waveCharacter(best.x);
-   label(line,ch.emoji+" "+ch.name,10,C.ink,"semi");
+   label(line,ch.emoji+" "+localizedWave(ch,true),10,C.ink,"semi");
    line.addSpacer();label(line,data.stale?T.stale:timestampLabel(data.saved),9,C.quiet);
   }
  }
