@@ -691,3 +691,12 @@ html:not([data-theme="light"]) .brand-band-high{--tone:var(--brand-score-ink);--
 @media(max-width:390px){
  #forecastPage .day-chip small{font-size:11px!important}
 }
+
+/* FARO v36 — independent palette for conservative short-period wave label.
+ * This is a wave-character interpretation, not a new score category. */
+html[data-theme="light"] .wave-character--short{
+ --wave-text:#365e70;--wave-bg:#e9f3f6;--wave-border:#91bbc9;
+}
+html:not([data-theme="light"]) .wave-character--short{
+ --wave-text:#b3dbe8;--wave-bg:rgba(81,143,163,.18);--wave-border:#628a9b;
+}
