@@ -599,7 +599,8 @@ if(config.runsInApp){
  else if(family==="accessoryCircular")await widget.presentAccessoryCircular();
  else if(family==="accessoryRectangular")await widget.presentAccessoryRectangular();
  else if(family==="small")await widget.presentSmall();
- else if(family==="large"||family==="extraLarge")await widget.presentLarge();
+ else if(family==="extraLarge")await widget.presentExtraLarge();
+ else if(family==="large")await widget.presentLarge();
  else await widget.presentMedium();
 }
 Script.complete();
