@@ -19,10 +19,10 @@ input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{ou
 .caveat{padding:12px 13px;border-radius:10px;background:#f2f3f0;font-size:12px;line-height:1.5;color:var(--muted);margin-top:15px}.source{font-size:12px;line-height:1.55;padding:15px 0 0;color:var(--muted)}.alert{border-left:3px solid #d76957;padding:9px 12px;background:#fcf6f2;border-radius:4px 9px 9px 4px;font-size:12px;margin-top:14px}
 .footer{margin-top:25px;font-size:12px;color:var(--muted)}.footer a{display:inline-block;margin-right:13px;margin-top:8px}
 @media(max-width:700px){.layout{grid-template-columns:1fr}main{width:min(100% - 24px,680px)}.panel{padding:19px}.signals{gap:8px}.fields{gap:0 12px}}
-@media(prefers-color-scheme:dark){:root{color-scheme:dark;--paper:#102427;--card:#1c3538;--ink:#eff4ef;--muted:#bdcdd0;--line:#496368;--blue:#a1afff}header img{filter:brightness(0) invert(1)}select,input{background:#294348}.signal{background:#253f42}.vibe{background:#2b4032;border-color:#688b54}.caveat{background:#2c4041}.alert{background:#393330}.slices span{background:#425458}.score{color:#a9d376}a{color:#b6c7ff}}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--paper:#102427;--card:#1c3538;--ink:#eff4ef;--muted:#bdcdd0;--line:#496368;--blue:#a1afff}select,input{background:#294348}.signal{background:#253f42}.vibe{background:#2b4032;border-color:#688b54}.caveat{background:#2c4041}.alert{background:#393330}.slices span{background:#425458}.score{color:#a9d376}a{color:#b6c7ff}}
 </style></head>
 <body><main>
-<header><div><img src="../assets/faro-logo.svg" alt="FARO"><div class="overline">VALPARAÍSO · LABORATORIO DE SPOTS</div></div><span class="lab">EXPERIMENTAL / NO LIVE</span></header>
+<header><div><picture><source media="(prefers-color-scheme: dark)" srcset="../assets/faro-logo-dark.svg"><img src="../assets/faro-logo.svg" alt="FARO"></picture><div class="overline">VALPARAÍSO · LABORATORIO DE SPOTS</div></div><span class="lab">EXPERIMENTAL / NO LIVE</span></header>
 <h1>El mismo swell.<br>Distintas olas.</h1>
 <p class="intro">Compara cómo una misma situación meteorológica podría encajar con las guías de cada playa. Son <strong>datos introducidos manualmente</strong>, no un pronóstico en tiempo real. La calidad real de la rompiente sigue sin calibrar.</p>
 <div class="layout">
@@ -64,7 +64,7 @@ const $=id=>document.getElementById(id);
 const colors={copper:"#C46639",amber:"#BA7C31",sand:"#9C8431",lime:"#6E9E43",olive:"#547642"};
 function render(){
 const ids=["windFromDeg","windKmh","swellFromDeg","swellPeriodS","swellHeightM","gustKmh"];
-const values=Object.fromEntries(ids.map(id=>[id,Number($(id).value)]));
+const values=Object.fromEntries(ids.map(id=>[id,$(id).value.trim()===""?null:Number($(id).value)]));
 const result=window.FaroChileScoreLab.evaluate(cfg,$("spot").value,values,{locale:"es"});
 $("score").textContent=result.score===null?"—":result.score.toFixed(1);
 $("score").style.color=colors[result.band]||"var(--ink)";
