@@ -44,6 +44,18 @@ assert.ok(html.includes("v>=7.5?'brand-band-high':v>=5?'brand-band-regular':v>=2
 assert.ok(scripts.length>=2,'HTML includes application and translation scripts');
 scripts.forEach((s,i)=>assert.doesNotThrow(()=>new vm.Script(s), 'Script '+i+' syntax'));
 assert.doesNotThrow(()=>new vm.Script(engine),'Shared surf engine syntax');
+const faroRuntime={globalThis:{}};
+new vm.Script(engine).runInNewContext(faroRuntime);
+const sharedEngine=faroRuntime.globalThis.ZeelandEngine;
+assert.equal(typeof sharedEngine.quickRead,'function','FARO READ uses the shared forecasting engine');
+const mellowRead=sharedEngine.quickRead({h:1.1,period:6.2,wind:12,gust:20,code:0},'en');
+assert.equal(mellowRead.headline,'Mellow, flowing potential','Calm conditions receive a cautious FARO interpretation');
+assert.equal(sharedEngine.quickRead({h:1.1,period:6.2,wind:12,gust:20,code:0},'es').headline,'Potencial para surf fluido','Shared interpretation supports natural Spanish');
+assert.equal(sharedEngine.quickRead({h:1,period:7,wind:19,gust:86,code:0},'en').key,'windRisk','Dangerous gusts override a positive wave description');
+assert.equal(sharedEngine.quickRead({h:1,period:7,wind:19,gust:20,code:95},'en').key,'storm','Thunderstorms override positive surf descriptions');
+assert.ok(html.includes('id="faroReadTitle"')&&html.includes('id="faroRead"'),'FARO READ is a first-class forecast section');
+assert.ok(html.includes('function openFaroMatch(){')&&html.includes("faroStep=1;faroRenderStep();"),'Matching CTA carries current selection into guided flow');
+assert.ok(html.includes('>FARO Match</button>'),'Match is a branded primary tab');
 assert.doesNotThrow(()=>new vm.Script(dnaSource),'Spot DNA module syntax');
 assert.doesNotThrow(()=>new vm.Script(evidenceSource),'Spot evidence module syntax');
 assert.doesNotThrow(()=>new vm.Script(dnaLabSource),'Spot validation syntax');
