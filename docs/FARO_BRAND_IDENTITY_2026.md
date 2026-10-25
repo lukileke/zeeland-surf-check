@@ -59,3 +59,19 @@ The user supplied an updated reference shot and an actual Safari shot on 25 Octo
 - Apply each visual state to **both themes**, with a raised petrol surface replacing white in dark mode. Preserve colour contrast, keyboard focus, full seven-day horizontal swipe, mobile 320–430 px layout, labels, physics, and source disclaimers.
 
 Implementation: `faro-brand.css?v=25` after `faro-ui.css`; update rules in the brand layer rather than changing forecast JS or overwriting the user-provided SVG art. Automated mobile Chromium QA now examines the computed backgrounds, borders, badge fills and tab/slot selection styles for EN/ES and light/dark across all supported mobile widths. As always, a Chromium result is not an iPhone Safari screenshot.
+
+
+## v26 · Corrected score-box stroke hierarchy (user feedback)
+
+This revision **supersedes the blue-selected-border instruction for score cards** in v25. The user explicitly corrected the reference: **the selected score box must have a dark grey border; unselected boxes a lighter grey border**. The original selected white / unselected transparent backgrounds remain correct.
+
+Official-brand tokens avoid arbitrary new colours:
+
+| Interactive score surface | Light mode | Dark mode |
+|---|---|---|
+| Selected day or two-hour window | White paper + **slate grey border `#526A74`**, 2 px | Raised petrol + lighter readable grey border `#C9D8DA`, 2 px |
+| Unselected day or two-hour window | Transparent background + **mist grey border `#C9D8DA`**, 1 px | Transparent background + muted slate border `#507074`, 1 px |
+
+The **blue `#5878E0`** still highlights the active **top navigation tab** and interactive focus states; it is *not* the stroke around a chosen surf score or forecast time. Numeric score hues and warning hues remain independent of selection. This distinction is required by the comparison and branding brief.
+
+Implementation lives in `faro-brand.css?v=26`; the mobile Chromium regression asserts actual rendered border colours for light/dark, EN/ES and mobile viewport widths. Original SVG assets, score physics, forecasts and warning logic are untouched.
