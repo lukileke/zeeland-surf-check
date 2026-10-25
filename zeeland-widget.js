@@ -1,4 +1,4 @@
-// FARO Widget · Coastal Editorial v3 · Scriptable iOS
+// FARO Widget · Coastal Punch v5 · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -46,9 +46,9 @@ const detectedFamily=(typeof config!=="undefined"&&config.widgetFamily)||"medium
 const family=(typeof config!=="undefined"&&config.runsInApp&&PREVIEW)?PREVIEW:detectedFamily;
 const lockFamily=family.startsWith("accessory");
 const fm=FileManager.local();
-const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v4.js");
+const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v5.js");
 const cacheName=isBest?"all":chosen.map(x=>x[0]+"-"+x[1]).join("_").replace(/[^a-zA-Z0-9_-]/g,"-").slice(0,80);
-const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v3-"+cacheName+".json");
+const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v4-"+cacheName+".json");
 function palette(light,dark){return THEME==="LIGHT"?new Color(light):THEME==="DARK"?new Color(dark):Color.dynamic(new Color(light),new Color(dark))}
 const C={
  bg:palette("#F7FAFA","#102427"),ink:palette("#1F3B3D","#F3F8F7"),
@@ -63,13 +63,20 @@ function addBrandLogo(parent,compact=false){
  label(row,"◉",compact?12:15,C.sun,"black");
 }
 function scoreInk(v){
- if(v<2.5)return palette("#CE762E","#F2AE70");
- if(v<5)return palette("#EFBC62","#EFBC62");
- if(v<7.5)return palette("#A4D156","#A4D156");
- return palette("#6B9347","#A9D07B");
+ if(v<2)return palette("#C46639","#F0A46D");
+ if(v<4)return palette("#BA7C31","#F0BF69");
+ if(v<6)return palette("#9C8431","#E3D471");
+ if(v<8)return palette("#6E9E43","#B0DB75");
+ return palette("#547642","#96C67A");
 }
 const widget=new ListWidget();
 widget.backgroundColor=C.bg;
+try{
+ const grad=new LinearGradient();
+ grad.colors=[palette("#FFFFFF","#102427"),palette("#EEF6F3","#1F3F42")];
+ grad.locations=[0,1];
+ widget.backgroundGradient=grad;
+}catch(e){/* Solid fallback is intentional for older Scriptable versions. */}
 widget.url=SITE;
 widget.setPadding(13,14,12,14);
 function label(parent,value,size=12,color=C.ink,weight="regular",limit=1){
@@ -110,6 +117,7 @@ const copy={
   today:"Hoy",tomorrow:"Mañana",updated:"Actualizado"}
 };
 const T=copy[LANG];
+const word=(es,en)=>LANG==="es"?es:en;
 // Numeric band colour comes from the official brand PDF; grade labels remain independent.
 async function json(url){
  const req=new Request(url);req.timeoutInterval=17;
@@ -251,188 +259,221 @@ function locationLabel(best,brief=false){
 function timestampLabel(epoch){return new Intl.DateTimeFormat(LANG==="es"?"es-ES":"en-GB",{
  timeZone:TZ,hour:"2-digit",minute:"2-digit",hour12:false
  }).format(new Date(epoch));}
-// Native Scriptable layouts: size-specific compositions, not scaled HTML.
-function topBar(parent,sub,small=false){
- const row=hstack(parent,4);row.centerAlignContent();
- addBrandLogo(row,small);row.addSpacer();
- label(row,sub,small?8:9,C.quiet,"semi");
+// Editorial surf compositions, purpose-built per iOS widget family.
+function accentLine(parent,width=66,height=4,tone=C.sun){
+ const line=parent.addStack();
+ line.size=new Size(width,height);
+ line.backgroundColor=tone;line.cornerRadius=height/2;
+ return line;
+}
+function glyph(parent,name,size=13,tint=C.wave){
+ try{
+  const sf=SFSymbol.named(name);
+  if(!sf||!sf.image)throw Error("Symbol not found");
+  const img=parent.addImage(sf.image);
+  img.tintColor=tint;img.imageSize=new Size(size,size);
+  return img;
+ }catch(e){return label(parent,"≈",size,tint,"bold");}
+}
+function brandRow(parent,small=false){
+ const row=hstack(parent,5);row.centerAlignContent();
+ label(row,"FARO",small?16:19,C.ink,"black");
+ label(row,"◒",small?12:15,C.sun,"black");
+ row.addSpacer();
+ label(row,"ZEELAND",small?8:9,C.quiet,"bold");
 }
 function scoreRow(parent,best,size){
  const row=hstack(parent,3);row.bottomAlignContent();
  label(row,best.score.toFixed(1),size,scoreInk(best.score),"black");
- label(row,"/10",12,C.quiet,"semi");
+ label(row,"/10",Math.max(11,Math.floor(size*.28)),C.quiet,"semi");
+}
+function meter(parent,score,width=23,height=5,gap=5){
+ const row=hstack(parent,gap);row.centerAlignContent();
+ const active=Math.max(1,Math.min(5,Math.ceil(score/2)));
+ for(let i=0;i<5;i++){
+  const cell=row.addStack();
+  cell.size=new Size(width,height);
+  cell.cornerRadius=height/2;
+  cell.backgroundColor=i<active?scoreInk(score):C.line;
+ }
  return row;
 }
-function scoreChip(parent,best){
- label(parent,T[gradeOf(best.score)],11,scoreInk(best.score),"bold");
+function gradeRow(parent,best){
+ const row=hstack(parent,6);row.centerAlignContent();
+ label(row,T[gradeOf(best.score)].toUpperCase(),10,scoreInk(best.score),"bold");
+ row.addSpacer();
+ label(row,T.model.includes("·")?word("ESTIMACIÓN","MODEL"):"MODEL",8,C.quiet,"semi");
 }
-function hazardLine(parent,hazard){
+function waveText(best,short=false){
+ const ch=globalThis.ZeelandEngine.waveCharacter(best.x);
+ return localizedWave(ch,short);
+}
+function hazardLine(parent,hazard,compact=false){
  if(!["danger","caution"].includes(hazard?.level))return false;
- const row=hstack(parent,5);row.centerAlignContent();
+ const line=hstack(parent,5);line.centerAlignContent();
  const tone=hazard.level==="danger"?C.alert:C.caution;
- label(row,hazard.thunder?"⚡":"!",12,tone,"black");
- label(row,hazard.thunder?T.storm:T.risk+" "+Math.max(hazard.gust||0,hazard.mean||0)+" km/h",10,tone,"bold");
+ label(line,"!",compact?10:12,tone,"black");
+ const info=hazard.thunder?T.storm:(T.risk+" · "+Math.max(hazard.gust||0,hazard.mean||0)+" km/h");
+ label(line,info,compact?9:10,tone,"bold",1);
  return true;
 }
 function freshness(parent,data){
- const row=hstack(parent,3);row.centerAlignContent();
- label(row,data.stale?T.stale:T.model,9,C.quiet,"semi");
- row.addSpacer();label(row,timestampLabel(data.saved),9,C.quiet);
-}
-function topScore(parent,best,size=44){
- scoreRow(parent,best,size);parent.addSpacer(2);scoreChip(parent,best);
-}
-function titleBlock(parent,best,small=false){
- label(parent,small?locationLabel(best,true):locationLabel(best),small?11:13,C.ink,"bold");
- label(parent,dayLabel(best.day)+" · "+windowLabel(best.h),small?10:11,C.quiet,"semi");
-}
-function localizedWave(ch,short=false){
- if(LANG!=="es")return ch.name;
- const names={
-  "Wild & Windy":short?"WINDY":"WINDY · Viento fuerte",
-  "Choppy & Messy":short?"CHOPPY":"CHOPPY · Mar picado",
-  "Tiny & Tricky":short?"TINY":"TINY · Pequeñas",
-  "Clean Lines":short?"CLEAN":"CLEAN · Ordenadas",
-  "Mellow & Cruisy":short?"MELLOW":"MELLOW · Suaves",
-  "Punchy & Powerful":short?"PUNCHY":"PUNCHY · Potentes",
-  "Easygoing Sessions":short?"EASYGOING":"EASYGOING · Tranquilo",
-  "Short & Soft":short?"SHORT":"SHORT · Período corto",
-  "Mixed Bag":short?"MIXED":"MIXED · Variable"
- };
- return names[ch.name]||ch.name;
-}
-function waveFeeling(parent,best,small=false){
- const ch=globalThis.ZeelandEngine.waveCharacter(best.x);
  const row=hstack(parent,4);row.centerAlignContent();
- label(row,ch.emoji,small?10:12,C.ink);
- label(row,localizedWave(ch,small),small?10:12,C.ink,"bold");
+ label(row,data.stale?T.stale:word("PRONÓSTICO MODELADO","MODEL FORECAST"),9,C.quiet,"semi");
+ row.addSpacer();
+ label(row,timestampLabel(data.saved),9,C.quiet,"semi");
 }
-function futureRows(parent,best,sessions,max=2){
- const used=new Set([best.day]);let count=0;
- for(const item of sessions){
-  if(item===best||used.has(item.day))continue;
-  used.add(item.day);
-  const row=hstack(parent,4);row.centerAlignContent();
-  label(row,(isBest?item.spot[0]+" · ":"")+dayLabel(item.day)+" "+windowLabel(item.h),10,C.quiet,"semi",1);
-  row.addSpacer();label(row,item.score.toFixed(1),12,scoreInk(item.score),"bold");
-  parent.addSpacer(5);
-  if(++count>=max)break;
+function spotHeading(parent,best,small=false){
+ label(parent,small?best.spot[0]:locationLabel(best),small?11:13,C.ink,"bold",1);
+ label(parent,dayLabel(best.day)+" · "+windowLabel(best.h),small?10:11,C.quiet,"semi",1);
+}
+function compactMetric(parent,symbol,title,val,tone=C.ink){
+ const unit=hstack(parent,5);unit.centerAlignContent();
+ glyph(unit,symbol,12,tone);
+ label(unit,val,11,C.ink,"bold",1);
+ return unit;
+}
+function nextWindows(parent,best,sessions,limit=3){
+ const seen=new Set([best.day]);let n=0;
+ for(const s of sessions){
+  if(seen.has(s.day))continue;
+  seen.add(s.day);
+  const row=hstack(parent,6);row.centerAlignContent();
+  label(row,dayLabel(s.day)+"  "+windowLabel(s.h),11,C.quiet,"semi",1);
+  row.addSpacer();
+  label(row,s.score.toFixed(1),14,scoreInk(s.score),"bold");
+  n++;
+  if(n>=limit)break;
+  parent.addSpacer(6);
  }
- if(count===0)label(parent,LANG==="es"?"No hay más ventanas":"No more windows",10,C.quiet);
+ if(!n)label(parent,word("Sin más ventanas con luz","No more daylight windows"),10,C.quiet);
+}
+function sectionRule(parent){
+ parent.addSpacer(7);
+ const line=parent.addStack();line.size=new Size(0,1);
+ line.backgroundColor=C.line;
+ parent.addSpacer(7);
+}
+function heroWave(parent,best){
+ const row=hstack(parent,5);row.centerAlignContent();
+ glyph(row,"water.waves",20,C.wave);
+ label(row,best.x.h.toFixed(1)+" m",26,C.wave,"black");
+}
+function vibePanel(parent,best,small=false){
+ const block=vstack(parent,4);
+ block.backgroundColor=C.panel;block.cornerRadius=10;
+ block.setPadding(small?6:9,small?8:10,small?6:9,small?8:10);
+ const head=hstack(block,6);head.centerAlignContent();
+ label(head,"FARO VIBE",9,C.quiet,"bold");
+ head.addSpacer();
+ glyph(head,"water.waves",small?11:13,scoreInk(best.score));
+ label(block,waveText(best,small),small?11:12,C.ink,"bold",1);
+ return block;
 }
 function renderSmall(best,data,hazard,sessions){
- widget.setPadding(11,12,10,12);
- topBar(widget,STYLE==="WEEK"?"WEEK":"ZEELAND",true);
- widget.addSpacer(STYLE==="MINIMAL"?17:8);
- topScore(widget,best,STYLE==="MINIMAL"?46:41);
- widget.addSpacer();
- titleBlock(widget,best,true);
+ widget.setPadding(12,13,10,13);
+ accentLine(widget,48,4,scoreInk(best.score));widget.addSpacer(7);
+ brandRow(widget,true);widget.addSpacer(8);
+ scoreRow(widget,best,43);
+ meter(widget,best.score,19,4,4);
  widget.addSpacer(6);
- const flagged=hazard?.level==="danger"||hazard?.level==="caution";
- if(flagged){
-  // Safety takes the limited bottom row; decorative wave copy is suppressed.
-  hazardLine(widget,hazard);
- }else if(STYLE==="DATA"){
-  label(widget,"🌊 "+best.x.h.toFixed(1)+" m · "+best.x.period.toFixed(1)+" s",10,C.wave,"semi");
- }else if(STYLE==="WEEK"){
-  const other=sessions.find(x=>x!==best&&x.day!==best.day);
-  label(widget,other?dayLabel(other.day)+" · "+other.score.toFixed(1)+"/10":T.model,9,C.quiet,"semi");
- }else if(STYLE==="FLOW"){
-  waveFeeling(widget,best,true);
+ label(widget,best.spot[0],12,C.ink,"bold",1);
+ label(widget,dayLabel(best.day)+" · "+windowLabel(best.h),9,C.quiet,"semi",1);
+ widget.addSpacer(5);
+ if(!hazardLine(widget,hazard,true)){
+  if(STYLE==="DATA")label(widget,best.x.h.toFixed(1)+" m  /  "+best.x.period.toFixed(1)+" s",10,C.wave,"bold",1);
+  else if(STYLE==="WEEK"){
+   const next=sessions.find(x=>x.day!==best.day);
+   label(widget,next?dayLabel(next.day)+"  "+next.score.toFixed(1):T.model,9,C.quiet,"semi",1);
+  }else if(STYLE==="FLOW")label(widget,waveText(best,true),10,C.ink,"semi",1);
  }
  if(data.stale)label(widget,T.stale,8,C.quiet,"semi");
 }
 function renderMedium(best,data,hazard,sessions){
- widget.setPadding(12,14,11,14);
- topBar(widget,isBest?T.best:T.spot);
- widget.addSpacer(8);
- const main=hstack(widget,9);main.centerAlignContent();
- const left=vstack(main,3);topScore(left,best,43);
+ widget.setPadding(12,15,10,15);
+ accentLine(widget,64,4,scoreInk(best.score));widget.addSpacer(8);
+ brandRow(widget,false);widget.addSpacer(6);
+ const main=hstack(widget,7);main.centerAlignContent();
+ const quality=vstack(main,1);
+ scoreRow(quality,best,48);
+ label(quality,T[gradeOf(best.score)].toUpperCase(),10,scoreInk(best.score),"bold");
  main.addSpacer();
- const right=vstack(main,3);
- label(right,best.x.h.toFixed(1)+" m",26,C.wave,"black");
- label(right,best.x.period.toFixed(1)+" s · "+best.x.wind+" km/h",10,C.quiet,"semi");
- widget.addSpacer(8);
- const rule=widget.addStack();rule.size=new Size(0,1);rule.backgroundColor=C.line;
- widget.addSpacer(7);
- const row=hstack(widget,5);row.centerAlignContent();
- label(row,locationLabel(best),11,C.ink,"bold");
- row.addSpacer();label(row,dayLabel(best.day)+" "+windowLabel(best.h),10,C.quiet,"semi");
+ const waves=vstack(main,3);
+ heroWave(waves,best);
+ label(waves,best.x.period.toFixed(1)+" s · "+best.x.wind+" km/h",9,C.quiet,"semi");
  widget.addSpacer(6);
- if(!hazardLine(widget,hazard)){
+ meter(widget,best.score,27,4,5);
+ sectionRule(widget);
+ const row=hstack(widget,5);row.centerAlignContent();
+ label(row,best.spot[0]+" · "+best.spot[1],11,C.ink,"bold",1);
+ row.addSpacer();
+ label(row,dayLabel(best.day)+" "+windowLabel(best.h),9,C.quiet,"semi",1);
+ widget.addSpacer(5);
+ if(!hazardLine(widget,hazard,true)){
   if(STYLE==="WEEK"){
-   const other=sessions.find(x=>x!==best&&x.day!==best.day);
-   label(widget,other?dayLabel(other.day)+" "+other.score.toFixed(1)+"/10":T.model,10,C.quiet,"semi");
-  }else if(STYLE==="DATA"){
-   label(widget,"💨 "+best.x.wind+" km/h · "+T.period+" "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi");
-  }else if(STYLE==="MINIMAL"){
-   freshness(widget,data);
-  }else{
-   const line=hstack(widget,4);line.centerAlignContent();
-   const ch=globalThis.ZeelandEngine.waveCharacter(best.x);
-   label(line,ch.emoji+" "+localizedWave(ch,true),10,C.ink,"semi");
-   line.addSpacer();label(line,data.stale?T.stale:timestampLabel(data.saved),9,C.quiet);
-  }
+   const next=sessions.find(x=>x.day!==best.day);
+   label(widget,next?word("PRÓXIMA ","NEXT ")+dayLabel(next.day)+"  "+next.score.toFixed(1):T.model,9,C.quiet,"semi",1);
+  }else if(STYLE==="DATA")compactMetric(widget,"wind",T.wind,best.x.wind+" km/h",C.wave);
+  else if(STYLE==="FLOW")label(widget,"FARO VIBE  ·  "+waveText(best,true),10,C.ink,"semi",1);
+  else label(widget,data.stale?T.stale:T.model,9,C.quiet,"semi",1);
  }
 }
 function renderLarge(best,data,hazard,sessions){
- widget.setPadding(17,17,15,17);
- topBar(widget,isBest?T.best:T.spot);
+ widget.setPadding(18,18,16,18);
+ accentLine(widget,84,5,scoreInk(best.score));widget.addSpacer(13);
+ brandRow(widget);widget.addSpacer(12);
+ spotHeading(widget,best);widget.addSpacer(13);
+ const top=hstack(widget,10);top.centerAlignContent();
+ const score=vstack(top,5);
+ scoreRow(score,best,62);
+ label(score,T[gradeOf(best.score)].toUpperCase(),12,scoreInk(best.score),"bold");
+ top.addSpacer();
+ const wave=vstack(top,5);
+ heroWave(wave,best);
+ label(wave,T.period+" "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi");
  widget.addSpacer(13);
- titleBlock(widget,best);
- widget.addSpacer(13);
- const r=hstack(widget,15);r.centerAlignContent();
- const left=vstack(r,4);topScore(left,best,51);
- r.addSpacer();
- const right=vstack(r,3);
- label(right,best.x.h.toFixed(1)+" m",32,C.wave,"black");
- label(right,T.wave+" · "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi");
- widget.addSpacer(14);
- const rule=widget.addStack();rule.size=new Size(0,1);rule.backgroundColor=C.line;
- widget.addSpacer(12);
- if(hazardLine(widget,hazard))widget.addSpacer(12);
+ meter(widget,best.score,37,6,6);
+ sectionRule(widget);
+ if(hazardLine(widget,hazard))widget.addSpacer(11);
  if(STYLE==="WEEK"){
-  label(widget,LANG==="es"?"PRÓXIMAS VENTANAS":"NEXT SURF WINDOWS",10,C.quiet,"bold");
-  widget.addSpacer(10);futureRows(widget,best,sessions,3);
+  label(widget,word("PRÓXIMAS VENTANAS","NEXT SURF WINDOWS"),10,C.quiet,"bold");
+  widget.addSpacer(10);nextWindows(widget,best,sessions,3);
  }else if(STYLE==="DATA"){
-  label(widget,LANG==="es"?"MÉTRICAS DEL MODELO":"MODEL METRICS",10,C.quiet,"bold");
-  widget.addSpacer(9);
-  label(widget,"🌊 "+best.x.h.toFixed(1)+" m  ·  "+best.x.period.toFixed(1)+" s",14,C.wave,"bold");
-  widget.addSpacer(7);
-  label(widget,"💨 "+best.x.wind+" km/h · "+best.x.gust+" km/h gust",12,C.ink,"semi");
-  widget.addSpacer(11);waveFeeling(widget,best);
+  label(widget,word("CONDICIONES MODELO","MODEL CONDITIONS"),10,C.quiet,"bold");
+  widget.addSpacer(10);
+  const metrics=hstack(widget,16);
+  compactMetric(metrics,"wind",T.wind,best.x.wind+" km/h",C.wave);
+  compactMetric(metrics,"clock",T.period,best.x.period.toFixed(1)+" s",C.wave);
+  widget.addSpacer(10);vibePanel(widget,best);
  }else if(STYLE==="MINIMAL"){
-  waveFeeling(widget,best);widget.addSpacer(9);
-  label(widget,best.x.period.toFixed(1)+" s  ·  "+best.x.wind+" km/h",11,C.quiet,"semi");
+  vibePanel(widget,best);widget.addSpacer(12);
+  label(widget,best.x.period.toFixed(1)+" s  ·  "+best.x.wind+" km/h",12,C.quiet,"semi");
  }else{
-  label(widget,"WAVE WIZARD",10,C.quiet,"bold");
-  widget.addSpacer(7);waveFeeling(widget,best);
-  widget.addSpacer(10);
-  const read=globalThis.ZeelandEngine.quickRead(best.x,LANG);
-  label(widget,read.headline,15,C.ink,"bold",2);
-  widget.addSpacer(4);label(widget,read.detail,11,C.quiet,"regular",2);
-  widget.addSpacer(10);
-  label(widget,LANG==="es"?"OTRAS OPORTUNIDADES":"ALSO WORTH CHECKING",10,C.quiet,"bold");
-  widget.addSpacer(7);futureRows(widget,best,sessions,2);
+  vibePanel(widget,best);widget.addSpacer(11);
+  const insight=globalThis.ZeelandEngine.quickRead(best.x,LANG);
+  label(widget,insight.headline,15,C.ink,"bold",2);
+  widget.addSpacer(5);
+  label(widget,insight.detail,11,C.quiet,"regular",2);
  }
  widget.addSpacer();
- const foot=widget.addStack();foot.size=new Size(0,1);foot.backgroundColor=C.line;
- widget.addSpacer(7);freshness(widget,data);
+ freshness(widget,data);
 }
 function renderAccessory(best,hazard){
- widget.backgroundColor=new Color("#000000",0);widget.setPadding(0,0,0,0);
+ widget.backgroundColor=new Color("#000000",0);
+ widget.setPadding(0,0,0,0);
  if(family==="accessoryInline"){
-  label(widget,"FARO "+best.score.toFixed(1)+" · "+dayLabel(best.day)+" "+windowLabel(best.h),11,Color.white(),"semi");
+  label(widget,"FARO "+best.score.toFixed(1)+" · "+best.spot[0],11,Color.white(),"semi",1);
  }else if(family==="accessoryCircular"){
-  const c=vstack(widget,1);label(c,"FARO",10,Color.white(),"bold");
-  label(c,best.score.toFixed(1),27,Color.white(),"black");
- }else{
   const col=vstack(widget,2);
-  label(col,"FARO · "+best.spot[0],12,Color.white(),"semi");
-  const row=hstack(col,6);row.centerAlignContent();
-  label(row,best.score.toFixed(1),27,Color.white(),"black");
-  label(row,hazard?.level==="danger"?"!":T[gradeOf(best.score)].toUpperCase(),11,Color.white(),"semi");
-  label(col,dayLabel(best.day)+" "+windowLabel(best.h),10,Color.white());
+  label(col,"FARO",9,Color.white(),"bold");
+  label(col,best.score.toFixed(1),26,Color.white(),"black");
+ }else{
+  const col=vstack(widget,4);
+  label(col,"FARO / "+best.spot[0],11,Color.white(),"bold");
+  const row=hstack(col,5);row.centerAlignContent();
+  label(row,best.score.toFixed(1),25,Color.white(),"black");
+  label(row,hazard?.level==="danger"?"!":T[gradeOf(best.score)],9,Color.white(),"semi");
+  label(col,dayLabel(best.day)+" · "+windowLabel(best.h),9,Color.white(),"semi");
  }
 }
 function emptyWidget(message){
