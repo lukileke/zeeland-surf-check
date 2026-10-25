@@ -142,16 +142,21 @@
   top.append(kicker,level);
 
   const title=document.createElement('span');title.className='faro-safety-headline';
+  let fullSignal='';
   if(dangerous||caution){
    const facts=[];
+   if(report.stormAt)facts.push(es?'Tormentas eléctricas':'Thunderstorms');
    if(Number.isFinite(report.peakGust))
     facts.push((es?'Rachas hasta ':'Gusts up to ')+Math.round(report.peakGust)+' km/h');
    if(Number.isFinite(report.peakWind))
     facts.push((es?'Viento sostenido ':'Mean wind ')+Math.round(report.peakWind)+' km/h');
-   if(report.stormAt)
-    facts.push(es?'Tormentas eléctricas':'Thunderstorms');
    if(!facts.length)facts.push(...report.reasons.map(x=>translatedReason(x,es)));
-   title.textContent=beachName+' · '+facts.join(' · ');
+   const cause=report.stormAt?(es?'Posibles tormentas eléctricas':'Thunderstorms possible'):
+    Number.isFinite(report.peakGust)?(es?'Rachas de hasta ':'Gusts up to ')+Math.round(report.peakGust)+' km/h':
+    Number.isFinite(report.peakWind)?(es?'Viento sostenido de ':'Sustained wind ')+Math.round(report.peakWind)+' km/h':
+    translatedReason(report.reasons[0]||'',es);
+   title.textContent=beachName+' · '+cause;
+   fullSignal=facts.join(' · ');
   }else if(hasBulletin){
    title.textContent=es?
     'KNMI previó fuertes rachas costeras este fin de semana':
@@ -168,13 +173,14 @@
     (es?'KNMI · Consulta oficial, no sincronizada':'KNMI · Official source, not synced');
   const chevron=document.createElement('span');chevron.className='faro-safety-chevron';
   chevron.setAttribute('aria-hidden','true');
-  summary.append(top,title,sourceNote,chevron);
+  summary.append(top,title,chevron);
   detail.append(summary);
 
   const expanded=document.createElement('div');expanded.className='faro-safety-expanded';
   const explainer=document.createElement('strong');explainer.className='faro-safety-detail-heading';
   explainer.textContent=es?'Por qué aparece este aviso':'Why this notice appears';
-  expanded.append(explainer);
+  expanded.append(sourceNote,explainer);
+  if(fullSignal){const overview=document.createElement('p');overview.className='faro-safety-snapshot';overview.textContent=beachName+' · '+fullSignal;expanded.append(overview);}
   const description=document.createElement('p');description.className='faro-safety-detail-description';
   description.textContent=dangerous||caution?
    (es?'Faro detecta condiciones potencialmente peligrosas en los modelos meteorológicos para las próximas 48 horas cerca de '+beachName+'. No significa que exista una alerta oficial activa.':
@@ -209,6 +215,19 @@
   action.href=KNMI_URL;action.target='_blank';action.rel='noopener noreferrer';
   action.textContent=es?'Ver avisos oficiales KNMI ↗':'View official KNMI warnings ↗';
   expanded.append(action);
+  const more=document.createElement('a');
+  more.className='faro-safety-more';
+  more.href='#faroSafetyGuide';
+  more.addEventListener('click',event=>{
+   event.preventDefault();
+   if(typeof root.openFaroSafetyGuide==='function')root.openFaroSafetyGuide();
+   else{
+    const destination=document.getElementById('faroSafetyGuide');
+    if(destination){destination.open=true;destination.scrollIntoView({block:'start',behavior:'smooth'});}
+   }
+  });
+  more.textContent=es?'Cómo interpretar estas alertas ↓':'How to interpret these warnings ↓';
+  expanded.append(more);
   detail.append(expanded);
   rootEl.append(detail);
   rootEl.setAttribute('aria-label',es?'Avisos y riesgos meteorológicos de Zeeland':'Zeeland weather notices and model risks');
