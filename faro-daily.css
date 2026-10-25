@@ -1,0 +1,163 @@
+/* FARO Daily Take v1 — concise surf editorial, no decorative wallpaper.
+   This layer styles only the chosen day's high-level summary.
+   Scores and model algorithms remain in surf-engine.js. */
+#forecastPage .day-outlook-section{
+ margin:17px 0 10px!important;min-width:0!important;
+}
+#forecastPage #dailyOverview.forecast-overview{
+ --day-accent:var(--brand-score-color,var(--brand-score-mid));
+ position:relative!important;
+ padding:19px 18px 13px!important;
+ margin:0!important;
+ background:linear-gradient(155deg,
+   color-mix(in srgb,var(--day-accent) 7%,var(--faro-hero)) 0%,
+   var(--faro-hero) 57%,var(--faro-hero) 100%)!important;
+ border:1px solid var(--faro-line)!important;
+ border-radius:19px!important;
+ box-shadow:none!important;overflow:hidden!important;
+}
+#forecastPage #dailyOverview::before{
+ content:"";position:absolute;top:0;left:18px;
+ height:3px;width:70px;border-radius:0 0 3px 3px;
+ background:var(--day-accent)!important;
+}
+#forecastPage #dailyOverview .day-editorial-overline{
+ color:var(--faro-quiet)!important;
+ font:800 10px/1.25 var(--faro-text)!important;
+ letter-spacing:.12em!important;
+ margin-bottom:12px!important;
+}
+#forecastPage #dailyOverview .day-editorial-overline span{
+ padding:0 3px!important;color:var(--day-accent)!important;
+}
+#forecastPage #dailyOverview>.day-overview-row{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ align-items:center!important;gap:9px 12px!important;
+}
+#forecastPage #dailyOverview #datehead{
+ font:700 clamp(25px,6.25vw,34px)/1.08 var(--faro-display)!important;
+ letter-spacing:-.035em!important;margin:0 0 5px!important;
+ color:var(--fg)!important;
+}
+#forecastPage #dailyOverview #spotname{
+ font:600 12px/1.35 var(--faro-text)!important;
+ color:var(--faro-quiet)!important;
+}
+#forecastPage #dailyOverview .best-session-brief{
+ position:relative!important;padding:0 0 0 12px!important;
+ text-align:right!important;border-left:1px solid var(--faro-line)!important;
+ min-width:0!important;align-self:center!important;
+}
+#forecastPage #dailyOverview .best-session-brief small{
+ color:var(--faro-quiet)!important;
+ font:800 9px/1.25 var(--faro-text)!important;
+ letter-spacing:.09em!important;
+}
+#forecastPage #dailyOverview .best-session-brief .best-time{
+ color:var(--fg)!important;
+ font:800 clamp(14px,3.85vw,17px)/1.2 var(--faro-text)!important;
+ margin:6px 0 0!important;letter-spacing:-.02em!important;
+ white-space:nowrap!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics[hidden]{display:none!important}
+#forecastPage #dailyOverview .day-signal-metrics{
+ display:flex!important;align-items:stretch!important;flex-wrap:wrap!important;
+ gap:6px 0!important;
+ margin-top:17px!important;padding:12px 0 11px!important;
+ border-top:1px solid var(--faro-line)!important;
+ border-bottom:1px solid var(--faro-line)!important;
+ background:transparent!important;
+}
+#forecastPage #dailyOverview .day-signal-metric{
+ flex:1 1 0!important;min-width:0!important;
+ display:flex!important;align-items:center!important;
+ justify-content:flex-start!important;gap:7px!important;
+ padding:0 8px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+}
+#forecastPage #dailyOverview .day-signal-metric:first-child{padding-left:0!important}
+#forecastPage #dailyOverview .day-signal-metric+.day-signal-metric{
+ border-left:1px solid var(--faro-line)!important;
+}
+#forecastPage #dailyOverview .day-signal-icon{
+ font-size:16px!important;line-height:1!important;flex-shrink:0!important;
+}
+#forecastPage #dailyOverview .day-signal-figure{
+ display:flex!important;flex-direction:column!important;
+ justify-content:center!important;min-width:0!important;gap:3px!important;
+}
+#forecastPage #dailyOverview .day-signal-figure small{
+ color:var(--faro-quiet)!important;
+ font:800 9px/1.2 var(--faro-text)!important;
+ letter-spacing:.06em!important;text-transform:uppercase!important;
+}
+#forecastPage #dailyOverview .day-signal-figure strong{
+ color:var(--fg)!important;
+ font:800 13px/1.2 var(--faro-text)!important;
+ white-space:nowrap!important;
+ font-variant-numeric:tabular-nums!important;
+}
+#forecastPage #dailyOverview .day-signal-metric:first-child strong{
+ color:var(--faro-wave)!important;
+}
+#forecastPage #dailyOverview .wave-wizard-strip{
+ margin:13px 0 0!important;
+ padding:0 0 9px!important;
+ border:0!important;gap:6px 9px!important;
+}
+#forecastPage #dailyOverview .wave-wizard-kicker{
+ color:var(--faro-quiet)!important;font-size:9px!important;
+ letter-spacing:.1em!important;
+}
+#forecastPage #dailyOverview .wave-wizard-tag{
+ min-height:35px!important;padding:7px 10px!important;
+ font-size:11.5px!important;border-radius:10px!important;
+}
+#forecastPage #dailyOverview .wave-wizard-note{display:none!important}
+#forecastPage #dailyOverview .faro-read{
+ display:block!important;
+ margin:2px 0 0!important;
+ padding:9px 0 0!important;
+ border-top:1px solid var(--faro-line)!important;
+ border-bottom:0!important;
+ background:transparent!important;
+}
+#forecastPage #dailyOverview .faro-read-details>summary{
+ padding:4px 0 7px!important;gap:7px 10px!important;
+}
+#forecastPage #dailyOverview .faro-read-kicker{
+ gap:6px!important;line-height:1.2!important;
+}
+#forecastPage #dailyOverview .faro-read-title{
+ font:800 clamp(19px,4.95vw,24px)/1.19 var(--faro-text)!important;
+ letter-spacing:-.036em!important;
+ text-wrap:balance!important;
+}
+#forecastPage #dailyOverview .faro-read-chevron{
+ font-size:20px!important;color:var(--faro-quiet)!important;
+}
+#forecastPage #dailyOverview .faro-read-expanded{
+ padding:3px 0 6px!important;
+}
+#forecastPage #dailyOverview .faro-read-expanded .daily-verdict{
+ font-size:12px!important;line-height:1.5!important;
+}
+#forecastPage #dailyOverview .faro-read-match{margin-top:10px!important}
+#forecastPage #dayview>.hourly-section{margin-top:18px!important}
+@media(max-width:420px){
+ #forecastPage #dailyOverview.forecast-overview{
+  padding:17px 14px 11px!important;border-radius:16px!important;
+ }
+ #forecastPage #dailyOverview::before{left:14px!important}
+ #forecastPage #dailyOverview .day-signal-metric{gap:5px!important;padding:0 6px!important}
+ #forecastPage #dailyOverview .day-signal-icon{font-size:14px!important}
+ #forecastPage #dailyOverview .day-signal-figure strong{font-size:12.5px!important}
+ #forecastPage #dailyOverview .day-signal-figure small{font-size:8.5px!important}
+}
+@media(max-width:350px){
+ #forecastPage #dailyOverview>.day-overview-row{grid-template-columns:1fr!important}
+ #forecastPage #dailyOverview .best-session-brief{
+  border-left:0!important;padding:0!important;text-align:left!important;
+ }
+ #forecastPage #dailyOverview .day-signal-metric{flex-basis:33.333%!important}
+}
