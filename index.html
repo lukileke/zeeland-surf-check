@@ -572,7 +572,11 @@ function faroPopulateSpots(){
 function faroInit(){
  $('faroBeach').innerHTML=areas.map((a,i)=>'<option value="'+i+'">'+a.name+'</option>').join('');
  faroPopulateSpots();
- const dates=Array.from({length:7},(_,i)=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+i);return d});
+ // Widget and website forecast dates are in Zeeland local time, even
+ // when a user opens FARO while travelling in another timezone.
+ const dates=Array.from({length:7},(_,i)=>{
+  const d=new Date(nlNow().date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+i);return d;
+ });
  $('faroDays').innerHTML=dates.map((d,i)=>'<label><input type="checkbox" value="'+i+'" '+(i<3?'checked':'')+'><span>'+new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'numeric',month:'short'}).format(d)+'</span></label>').join('');
  faroRenderStep();
 }
