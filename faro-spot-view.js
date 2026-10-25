@@ -36,6 +36,72 @@ function render(target,input){
    tr(notes.count+' personal field notes',notes.count+' notas personales')));
  }catch(e){/* User may have disabled local storage. */}
  intro.append(trust);target.append(intro);
+ // Four compact, independent signals. They never change the 0–10 score.
+ const fit=root.FaroSpotSignals?.interpret({
+  spotId:id,orientation:input.orientation,forecast:input.forecast
+ });
+ if(fit?.enabled){
+  const signalPanel=el('section','spot-fit-panel');
+  signalPanel.setAttribute('aria-label',tr('Model-to-spot compatibility','Compatibilidad orientativa con el spot'));
+  const eyebrow=el('div','spot-fit-eyebrow');
+  eyebrow.append(el('span','spot-fit-kicker',tr('SPOT FIT / MODEL VIEW','ENCAJE CON EL SPOT / MODELO')),
+   el('span','spot-fit-scope',tr('Beach-level reference','Referencia de playa')));
+  signalPanel.append(eyebrow);
+  const headlines={
+   'both-align':[ 'Wind and wave direction look aligned.', 'Viento y oleaje parecen alineados.' ],
+   'wind-helps':[ 'The wind could help; wave shape remains uncertain.', 'El viento podría ayudar; la forma de la ola sigue incierta.' ],
+   'wind-challenge':[ 'Wind could make this session harder.', 'El viento podría complicar esta sesión.' ],
+   'wave-question':[ 'Wave direction is less compatible with the guide.', 'La dirección del oleaje encaja menos con la guía.' ],
+   mixed:[ 'Mixed local signals. Check the beach.', 'Señales mixtas. Conviene revisar la playa.' ],
+   uncertain:[ 'Insufficient local signals to decide.', 'Faltan datos locales para interpretar la sesión.' ]
+  };
+  signalPanel.append(el('p','spot-fit-verdict',
+    (headlines[fit.verdict]||headlines.uncertain)[es?1:0]));
+  const grid=el('div','spot-fit-grid');
+  const statuses={
+   favourable:[tr('Potentially favourable','Potencialmente favorable'),'positive'],
+   mixed:[tr('Mixed','Mixto'),'mixed'],
+   unfavourable:[tr('Less favourable','Menos favorable'),'negative'],
+   unknown:[tr('Unknown','Sin datos'),'unknown']
+  };
+  function tile(name,heading,key,detail){
+   const pair=statuses[key]||statuses.unknown;
+   const item=el('div','spot-fit-item spot-fit--'+pair[1]);
+   item.dataset.signal=name;
+   item.append(el('span','spot-fit-label',heading),el('strong','spot-fit-state',pair[0]));
+   if(detail)item.append(el('small','spot-fit-detail',detail));
+   grid.append(item);
+  }
+  const windText={
+   'light-offshore':tr('Light landward-origin wind','Viento suave desde tierra'),
+   'wind-strength':tr('Strong wind or gusts','Viento o rachas fuertes'),
+   'onshore-or-strong':tr('Onshore or strong wind','Viento de mar o intenso'),
+   'cross-or-variable':tr('Cross-shore or variable angle','Viento lateral o ángulo variable')
+  };
+  const waveText={
+   'direction-in-range':tr('Modelled direction in guide range','Dirección modelada dentro del rango'),
+   'sector-edge':tr('Near the reported angle range','Cerca del límite de orientación'),
+   'short-period':tr('Short-period modelled waves','Oleaje modelado de período corto'),
+   'outside-reported-window':tr('Outside the guide angle range','Fuera del rango indicado por la guía')
+  };
+  tile('wind',tr('WIND / VIENTO','VIENTO'),fit.wind,windText[fit.windContext]||
+    tr('Direction or speed missing','Falta dirección o velocidad'));
+  tile('wave',tr('MODEL WAVES','OLEAJE DEL MODELO'),fit.wave,waveText[fit.waveContext]||
+    tr('Direction unavailable','Dirección no disponible'));
+  tile('tide',tr('TIDE','MAREA'),fit.tide,
+    tr('No validated tide-to-break model','Sin modelo de marea validado'));
+  // Confidence is NOT an ordinal "high/medium" judgement: all twelve
+  // subspots currently inherit beach-level literature, not observed banks.
+  tile('evidence',tr('EVIDENCE','EVIDENCIA'),'unknown',
+   fit.validationScope==='local'?
+    tr('Local corroboration added','Validación local incorporada'):
+    tr('Beach guide, not a measured sandbank','Guía de playa, no banco medido'));
+  signalPanel.append(grid);
+  signalPanel.append(el('p','spot-fit-method',
+   tr('Indicative only: wave direction represents modelled total waves, not a measured breaking swell. These signals are not a safety clearance and do not change Surf Quality.',
+    'Solo orientativo: la dirección corresponde al oleaje total del modelo, no al swell que rompe en la playa. No evalúa seguridad ni modifica Surf Quality.')));
+  target.append(signalPanel);
+ }
  function highlight(icon,title,value){
   if(!value)return;
   const item=el('div','spot-profile-highlight');
