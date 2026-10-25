@@ -3,7 +3,7 @@
   "status": "experimental",
   "region": "CL-VS",
   "active": false,
-  "statement": "FARO Lab scores are speculative directional compatibility prototypes, NOT a live surf-quality forecast or a safe-entry determination.",
+  "statement": "Directional compatibility prototype with an uncalibrated minimum offshore swell presence adjustment (0.9 m scale). NOT a live surf-quality forecast, breaking-wave height or safety approval.",
   "calibration": {
     "fieldSessions": 0,
     "requiredBeforeLaunch": true
