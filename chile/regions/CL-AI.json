@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "0.1.0",
+  "country": "CL",
+  "regionCode": "CL-AI",
+  "region": "Aysén del General Carlos Ibáñez del Campo",
+  "timeZone": "America/Coyhaique",
+  "geography": "Patagonia",
+  "forecastEnabled": false,
+  "spots": []
+}
