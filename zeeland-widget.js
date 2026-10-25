@@ -318,12 +318,15 @@ function renderMedium(best,data,hazard){
  site.addSpacer();
  label(site,dayLabel(best.day)+" "+windowLabel(best.h),10,C.quiet,"semi");
  widget.addSpacer(4);
- if(!hazardLine(widget,hazard)){
+ const warned=hazardLine(widget,hazard);
+ if(!warned){
   const foot=hstack(widget,4);foot.centerAlignContent();
-  const character=globalThis.ZeelandEngine.waveCharacter(best.x);
-  label(foot,character.name,9,C.ink,"semi");
+  const read=globalThis.ZeelandEngine.quickRead(best.x,LANG);
+  label(foot,"FARO READ · "+read.short,10,C.ink,"semi");
   foot.addSpacer();
-  label(foot,data.stale?T.stale:(LANG==="es"?"MODELO":"MODEL")+" · "+timestampLabel(data.saved),9,C.quiet);
+  label(foot,data.stale?T.stale:(LANG==="es"?"MODELO":"MODEL")+" "+timestampLabel(data.saved),9,C.quiet);
+ }else if(data.stale){
+  label(widget,T.stale,9,C.quiet,"semi");
  }
 }
 function renderSmall(best,data,hazard){
@@ -336,10 +339,12 @@ function renderSmall(best,data,hazard){
  widget.addSpacer();
  label(widget,locationLabel(best,true),12,C.ink,"bold");
  label(widget,dayLabel(best.day)+" · "+windowLabel(best.h),10,C.quiet,"semi");
+ widget.addSpacer(3);
  if(!hazardLine(widget,hazard)){
-  widget.addSpacer(3);
-  label(widget,best.x.h.toFixed(1)+" m · "+(data.stale?T.stale:T.model),9,C.wave);
+  const read=globalThis.ZeelandEngine.quickRead(best.x,LANG);
+  label(widget,best.x.h.toFixed(1)+" m · "+read.short,9,C.wave,"semi");
  }
+ if(data.stale)label(widget,T.stale,8,C.quiet,"semi");
 }
 function renderLarge(best,data,hazard,sessions){
  widget.setPadding(16,16,14,16);
@@ -355,11 +360,11 @@ function renderLarge(best,data,hazard,sessions){
  label(widget,locationLabel(best),13,C.ink,"bold");
  label(widget,dayLabel(best.day)+" · "+windowLabel(best.h),11,C.quiet);
  widget.addSpacer(10);
- const character=globalThis.ZeelandEngine.waveCharacter(best.x);
- const characterTag=hstack(widget,5);characterTag.setPadding(6,9,6,9);
- characterTag.cornerRadius=8;characterTag.backgroundColor=C.panel;
- label(characterTag,character.emoji,14,C.wave);
- label(characterTag,character.name,12,C.ink,"semi");
+ const read=globalThis.ZeelandEngine.quickRead(best.x,LANG);
+ label(widget,"FARO READ · "+(LANG==="es"?"PRONÓSTICO MODELADO":"MODEL OUTLOOK"),9,C.quiet,"bold");
+ widget.addSpacer(4);
+ label(widget,read.headline,15,C.ink,"bold",2);
+ label(widget,read.detail,11,C.quiet,"regular",2);
  widget.addSpacer(10);
  label(widget,LANG==="es"?"PRÓXIMAS OPORTUNIDADES":"NEXT SURF WINDOWS",10,C.quiet,"bold");
  widget.addSpacer(5);
