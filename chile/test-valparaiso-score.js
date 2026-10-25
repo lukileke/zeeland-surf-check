@@ -35,6 +35,10 @@ const total=Object.values(cfg.weights).reduce((sum,x)=>sum+x,0);
 assert.ok(Math.abs(total-1)<1e-10,'Scoring weights should sum to 1');
 assert.equal(laBoca.status,'experimental');
 assert.equal(laBoca.score,7.9);
+const nearFlat=score(cfg,'CL-VS:la-boca-concon',{...example,swellHeightM:0.15},{locale:'es'});
+assert.ok(nearFlat.score<3,'Near-flat swell must not score highly merely due to favourable directions');
+assert.equal(score(cfg,'CL-VS:la-boca-concon',{...example,swellHeightM:0}).score,0);
+
 assert.ok(laBoca.score>ritoque.score,'Same marine input should respond differently to the local spot');
 assert.ok(renaca.score>ritoque.score);
 assert.equal(laBoca.tags.length,7);
