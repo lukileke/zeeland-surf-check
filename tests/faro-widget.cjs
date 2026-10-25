@@ -27,7 +27,8 @@ function response(n,isMarine){
  for(let i=0;i<n;i++){
   records.push(isMarine?{hourly:{time:times,wave_height:arr(1.2),wave_period:arr(6.5),wave_direction:arr(315)}}:
    {hourly:{time:times,wind_speed_10m:arr(12),wind_direction_10m:arr(145),
-     wind_gusts_10m:times.map((_,j)=>i===0&&j===12?85:20),
+     // Put modelled severe gusts tomorrow at noon, inside the 48 h future scan even when QA runs after noon today.
+     wind_gusts_10m:times.map((_,j)=>i===0&&j===36?85:20),
      precipitation:arr(0),weather_code:arr(0)},
     daily:{time:days,sunrise:days.map(d=>d+'T07:00'),sunset:days.map(d=>d+'T19:00')}});
  }
