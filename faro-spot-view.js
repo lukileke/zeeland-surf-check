@@ -64,11 +64,12 @@ function render(target,input){
    unfavourable:[tr('Less favourable','Menos favorable'),'negative'],
    unknown:[tr('Unknown','Sin datos'),'unknown']
   };
-  function tile(name,heading,key,detail){
+  function tile(name,heading,key,detail,displayOverride){
    const pair=statuses[key]||statuses.unknown;
    const item=el('div','spot-fit-item spot-fit--'+pair[1]);
    item.dataset.signal=name;
-   item.append(el('span','spot-fit-label',heading),el('strong','spot-fit-state',pair[0]));
+   item.append(el('span','spot-fit-label',heading),
+    el('strong','spot-fit-state',displayOverride||pair[0]));
    if(detail)item.append(el('small','spot-fit-detail',detail));
    grid.append(item);
   }
@@ -89,13 +90,16 @@ function render(target,input){
   tile('wave',tr('MODEL WAVES','OLEAJE DEL MODELO'),fit.wave,waveText[fit.waveContext]||
     tr('Direction unavailable','Dirección no disponible'));
   tile('tide',tr('TIDE','MAREA'),fit.tide,
-    tr('No validated tide-to-break model','Sin modelo de marea validado'));
+    tr('No validated tide-to-break model','Sin modelo de marea validado'),
+    tr('Not calibrated','No calibrada'));
   // Confidence is NOT an ordinal "high/medium" judgement: all twelve
   // subspots currently inherit beach-level literature, not observed banks.
   tile('evidence',tr('EVIDENCE','EVIDENCIA'),'unknown',
    fit.validationScope==='local'?
     tr('Local corroboration added','Validación local incorporada'):
-    tr('Beach guide, not a measured sandbank','Guía de playa, no banco medido'));
+    tr('Beach guide, not a measured sandbank','Guía de playa, no banco medido'),
+   fit.validationScope==='local'?tr('Local reference','Referencia local'):
+    tr('Beach-level only','Solo de playa'));
   signalPanel.append(grid);
   signalPanel.append(el('p','spot-fit-method',
    tr('Indicative only: wave direction represents modelled total waves, not a measured breaking swell. These signals are not a safety clearance and do not change Surf Quality.',
