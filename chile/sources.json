@@ -133,6 +133,84 @@
       "url": "https://www.surfline.com/surf-report/el-gringo/5842041f4e65fad6a7708cc7",
       "type": "surf-spot-guide",
       "reviewed": "2026-10-25"
+    },
+    "surf-la-boca": {
+      "name": "SurfRip · La Boca de Concón, wind/swell sectors and typical conditions",
+      "url": "https://surfrip.com/surf-spots/1749/la-boca-con-con",
+      "type": "spot-guide",
+      "reviewed": "2026-10-25"
+    },
+    "uv-concon": {
+      "name": "Universidad de Valparaíso · Modelled nearshore wave outlook at ~20m, Concón",
+      "url": "https://marejadas.uv.cl/pronosticos/cl15cc",
+      "type": "university-wave-model",
+      "reviewed": "2026-10-25"
+    },
+    "concon-pladetur": {
+      "name": "Municipalidad de Concón · Playa La Boca physical description and currents",
+      "url": "https://transparenciaconcon.cl/upload/planilla/07_actosyresoluciones/Pladetur/Parte2.pdf",
+      "type": "municipal-planning",
+      "reviewed": "2026-10-25"
+    },
+    "concon-wetland": {
+      "name": "Municipalidad de Concón · Humedal Desembocadura Río Aconcagua, protected use",
+      "url": "https://www.concon.cl/medio_ambiente/humedal_urbano",
+      "type": "municipal-conservation",
+      "reviewed": "2026-10-25"
+    },
+    "mma-aconcagua": {
+      "name": "Ministerio del Medio Ambiente · Wetland river-mouth morphology and sandbars",
+      "url": "https://sistemahumedales.mma.gob.cl/OficioHU/DetailsPublico/30",
+      "type": "national-environment",
+      "reviewed": "2026-10-25"
+    },
+    "surf-ritoque": {
+      "name": "Surfline · Ritoque ideal wind/swell/tide and beachbreak description",
+      "url": "https://www.surfline.com/surf-report/ritoque/5842041f4e65fad6a7708cbd/spot-guide",
+      "type": "spot-guide",
+      "reviewed": "2026-10-25"
+    },
+    "surf-renaca": {
+      "name": "Surfline · Reñaca ideal wind/swell/tide and peaks",
+      "url": "https://www.surfline.com/surf-report/renaca/5842041f4e65fad6a7708cc2/spot-guide",
+      "type": "spot-guide",
+      "reviewed": "2026-10-25"
+    },
+    "surf-papagayo": {
+      "name": "Surfline · Papagayo reef break, Quintero",
+      "url": "https://www.surfline.com/surf-report/papagayo/5842041f4e65fad6a7708cc1",
+      "type": "spot-guide",
+      "reviewed": "2026-10-25"
+    },
+    "surf-valpo-region": {
+      "name": "Surfline · Valparaíso regional spot listing",
+      "url": "https://www.surfline.com/travel/chile/regi-n-de-valpara-so-surfing-and-beaches/3868621",
+      "type": "surf-directory",
+      "reviewed": "2026-10-25"
+    },
+    "lineup-valpo": {
+      "name": "Lineup · Valparaíso named spot listing; candidate names only",
+      "url": "https://lineup.surf/es/spots/chile/valparaiso",
+      "type": "surf-directory",
+      "reviewed": "2026-10-25"
+    },
+    "waves-maitencillo": {
+      "name": "WeWave · Maitencillo beachbreak and board overview",
+      "url": "https://wewave.surf/es/spots/maitencillo",
+      "type": "independent-guide",
+      "reviewed": "2026-10-25"
+    },
+    "waves-ritoque": {
+      "name": "WeWave · Ritoque conditions and guide",
+      "url": "https://wewave.surf/es/spots/ritoque",
+      "type": "independent-guide",
+      "reviewed": "2026-10-25"
+    },
+    "beach-concon": {
+      "name": "Playas de Chile · La Boca and Playa Amarilla geographical descriptions",
+      "url": "https://www.playasdechile.com/playas-en-concon/",
+      "type": "local-place-guide",
+      "reviewed": "2026-10-25"
     }
   }
 }
