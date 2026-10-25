@@ -1,0 +1,184 @@
+/* FARO / official visual identity v24
+ * Brand source: user-provided colores_marca.pdf (25 Oct 2026).
+ * Layout source: user-provided iPhone reference screenshot.
+ * Scores: numeric intervals, independent from existing Poor/Fair/Good wording.
+ * Original vectors: assets/faro-logo.svg and assets/faro-salva-red.svg
+ */
+:root{
+ --brand-ink:#1f3b3d;
+ --brand-sun:#ffda71;
+ --brand-danger:#e55845;
+ --brand-coral:#f47b67;
+ --brand-slate:#526a74;
+ --brand-mist:#c9d8da;
+ --brand-deep-blue:#355baf;
+ --brand-blue:#5878e0;
+ --brand-score-low:#ce762e;
+ --brand-score-mid:#efbc62;
+ --brand-score-regular:#6b9347;
+ --brand-score-high:#a4d156;
+ --faro-selection:#5878e0;
+}
+html[data-theme="light"]{
+ --bg:#f7fafa;--fg:var(--brand-ink);--muted:var(--brand-slate);
+ --panel:#fff;--tile:#f5f9f9;--button:#f5f9f9;--border:var(--brand-mist);
+ --faro-hero:#f6faf9;--faro-raised:#fff;--faro-line:var(--brand-mist);
+ --faro-quiet:var(--brand-slate);--faro-ocean:var(--brand-deep-blue);
+ --faro-wave:var(--brand-deep-blue);--faro-sea-ink:var(--brand-ink);
+ --faro-selection:var(--brand-blue);
+}
+html:not([data-theme="light"]){
+ /* Use the official ink as the dark-mode canvas, not as unreadable text. */
+ --bg:#102427;--fg:#f3f8f7;--muted:#bbcbcd;
+ --panel:#193337;--tile:#203b3f;--button:#203b3f;--border:#507074;
+ --faro-hero:#193337;--faro-raised:#234347;--faro-line:#547275;
+ --faro-quiet:#bbcbcd;--faro-ocean:#a3b7ff;
+ --faro-wave:#97b7fd;--faro-selection:#8ea6ff;
+ --faro-sea-ink:#f4f8f7;
+}
+html[data-theme="light"] body{background:var(--bg)!important}
+html[data-theme="light"] main{color:var(--brand-ink)!important}
+.top{align-items:center!important}
+.top>.faro-brand-block{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.top>.faro-brand-block>small{font-size:10px!important;letter-spacing:.14em!important}
+.top h1.faro-logo{margin:5px 0 0!important;padding:0!important;
+ line-height:0!important;display:block!important;white-space:normal!important}
+.top h1.faro-logo .faro-logo-art{display:block!important;
+ width:clamp(116px,30vw,170px)!important;height:auto!important;max-width:100%;
+ aspect-ratio:128.81/43.63;object-fit:contain}
+html:not([data-theme="light"]) .faro-logo-art{
+ background:#eef5f1;border-radius:8px;padding:4px;box-sizing:border-box;
+}
+.top-actions .theme-toggle,.top-actions .language-toggle{
+ background:transparent!important;border-color:var(--faro-line)!important;
+ color:var(--fg)!important;box-shadow:none!important
+}
+main>.app-nav{max-width:none!important;width:100%!important;
+ padding:3px!important;border:1px solid var(--faro-line)!important;
+ border-radius:15px!important;background:transparent!important;box-shadow:none!important}
+main>.app-nav button{font-weight:750!important;border-radius:11px!important;
+ color:var(--fg)!important;background:transparent!important;box-shadow:none!important}
+main>.app-nav button.active,main>.app-nav button[aria-pressed="true"]{
+ color:var(--brand-blue)!important;border:1px solid var(--brand-blue)!important;
+ background:color-mix(in srgb,var(--brand-blue) 4%,transparent)!important
+}
+html:not([data-theme="light"]) main>.app-nav button.active,
+html:not([data-theme="light"]) main>.app-nav button[aria-pressed="true"]{
+ color:#a5baff!important;border-color:#a5baff!important
+}
+#forecastPage .picker summary{
+ border:1.5px solid var(--brand-ink)!important;border-radius:12px!important;
+ background:var(--panel)!important
+}
+#forecastPage .picker summary b{color:var(--brand-blue)!important}
+html:not([data-theme="light"]) #forecastPage .picker summary{
+ border-color:var(--faro-line)!important
+}
+html:not([data-theme="light"]) #forecastPage .picker summary b{
+ color:#a5baff!important
+}
+html[data-theme="light"] #forecastPage .day-chip{
+ background:#fff!important;border:1.5px solid var(--brand-ink)!important;
+ border-radius:15px!important;box-shadow:none!important
+}
+html[data-theme="light"] #forecastPage .day-chip.selected,
+html[data-theme="light"] #forecastPage .day-chip.score-tint.selected{
+ border:2px solid var(--brand-blue)!important;
+ background:color-mix(in srgb,var(--brand-blue) 3%,#fff)!important;
+ box-shadow:none!important
+}
+html[data-theme="light"] #forecastPage .day-strip-arrow{
+ border-color:var(--brand-slate)!important;color:var(--brand-slate)!important
+}
+html[data-theme="light"] #forecastPage .day-strip-progress span{
+ background:var(--brand-slate)!important
+}
+html[data-theme="light"] #forecastPage .day-strip-title strong{
+ color:var(--brand-ink)!important
+}
+/* Scale from PDF: interval is continuous regardless of the text grade.
+   Contrast ink may be deeper than the swatch on very light surfaces. */
+.brand-band-low{--brand-score-color:var(--brand-score-low);--brand-score-ink:#9d541c}
+.brand-band-mid{--brand-score-color:var(--brand-score-mid);--brand-score-ink:#93600f}
+.brand-band-regular{--brand-score-color:var(--brand-score-regular);--brand-score-ink:#527530}
+.brand-band-high{--brand-score-color:var(--brand-score-high);--brand-score-ink:#49771a}
+html:not([data-theme="light"]) .brand-band-low{--brand-score-ink:#f2ae70}
+html:not([data-theme="light"]) .brand-band-mid{--brand-score-ink:#efbc62}
+html:not([data-theme="light"]) .brand-band-regular{--brand-score-ink:#a9d07b}
+html:not([data-theme="light"]) .brand-band-high{--brand-score-ink:#a4d156}
+html[data-theme="light"] :is(#forecastPage,#dayview,#bestPage,#boardPage)
+ :is(.day-chip,.score-tint,.hero-score,.score,.daily-verdict)[class*="brand-band-"]{
+ --quality-ink:var(--brand-score-ink)!important;
+ --quality-border:var(--brand-score-color)!important;
+ --quality-accent:var(--brand-score-color)!important;
+}
+html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"] strong,
+html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"] .day-chip-score,
+html[data-theme="light"] #dayview .session-glance .hero-score[class*="brand-band-"] .hero-score-value,
+html[data-theme="light"] #bestPage .hero-rank .hero-score[class*="brand-band-"] .hero-score-value,
+html[data-theme="light"] #bestPage .rank-list .score-tint[class*="brand-band-"],
+html[data-theme="light"] #boardPage .faro-result-scores .score-tint[class*="brand-band-"]{
+ color:var(--brand-score-ink)!important
+}
+html:not([data-theme="light"]) #forecastPage .day-chip[class*="brand-band-"] strong,
+html:not([data-theme="light"]) #dayview .session-glance .hero-score[class*="brand-band-"] .hero-score-value,
+html:not([data-theme="light"]) #bestPage .hero-rank .hero-score[class*="brand-band-"] .hero-score-value{
+ color:var(--brand-score-ink)!important
+}
+#forecastPage .day-chip[class*="brand-band-"] .day-chip-grade{
+ color:var(--brand-score-ink)!important;
+ background:color-mix(in srgb,var(--brand-score-color) 10%,transparent)!important;
+ border:1px solid var(--brand-score-color)!important;
+ border-radius:7px!important;
+}
+#dayview .hero-score[class*="brand-band-"] .quality-label,
+#dayview .hourly-section .slots button[class*="brand-band-"]{
+ border-color:var(--brand-score-color)!important
+}
+/* The original supplied coral salva is a watermark ONLY for hazard notices.
+   Never treat a risk icon as the brand mark or a surf-quality badge. */
+.faro-safety-center.danger{
+ --safety-accent:var(--brand-danger)!important;
+ --safety-ink:var(--brand-danger)!important;
+ border:1.5px solid var(--brand-danger)!important;
+ border-inline-start:1.5px solid var(--brand-danger)!important;
+ background:color-mix(in srgb,var(--brand-coral) 2%,var(--panel))!important;
+ border-radius:13px!important
+}
+.faro-safety-center.danger .faro-safety-summary:before{
+ content:"";position:absolute;inset:0 auto 0 -20px;
+ width:130px;background:url("assets/faro-salva-red.svg") center / 120px auto no-repeat;
+ pointer-events:none;z-index:0
+}
+.faro-safety-center.danger .faro-safety-summary>*{
+ position:relative;z-index:1
+}
+.faro-safety-center.danger .faro-safety-severity{
+ background:var(--brand-coral)!important;color:var(--brand-ink)!important;
+ font-weight:800!important;border-radius:6px!important
+}
+.faro-safety-center.danger .faro-safety-kicker{color:var(--brand-danger)!important}
+.faro-safety-center.danger .faro-safety-chevron{
+ border-color:var(--brand-danger)!important
+}
+.faro-safety-center.danger .faro-safety-headline{
+ color:var(--fg)!important
+}
+.faro-safety-center.caution{
+ --safety-accent:var(--brand-score-mid)!important;
+ --safety-ink:var(--brand-score-low)!important
+}
+html:not([data-theme="light"]) .faro-safety-center.danger{
+ background:color-mix(in srgb,var(--brand-danger) 6%,var(--panel))!important
+}
+html:not([data-theme="light"]) .faro-safety-center.danger .faro-safety-kicker{
+ color:#ff9a87!important
+}
+@media(max-width:390px){
+ .top h1.faro-logo .faro-logo-art{width:112px!important}
+ .top-actions{gap:5px!important}
+ main>.app-nav button{font-size:clamp(10px,2.9vw,13px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+ main>.app-nav button{transition:none!important}
+}
