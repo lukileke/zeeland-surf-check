@@ -14,7 +14,7 @@ The same **`zeeland-widget.js`** script adapts to the widget size chosen in iOS.
 
 The size comes from iOS; a parameter cannot make a small iOS widget physically large.
 
-The redesigned layout uses a narrow coloured quality rail, larger score typography, a five-step quality meter, and SF Symbols for marine metrics. The background supports iOS light and dark appearances; no embedded logo raster is required.
+The redesigned layout uses a narrow coloured quality rail, larger score typography, a five-step quality meter, and SF Symbols for marine metrics. **The original FARO SVG logo is embedded in the widget script**, preserving the custom wordmark and rescue-ring 'O'. Scriptable renders the SVG to a high-resolution PNG on first run and caches it for future updates. For `THEME=AUTO` the official white-and-yellow logo sits on a small fixed dark backing so it remains legible across light/dark appearances; `THEME=LIGHT` uses the original dark-ink logo and `THEME=DARK` uses the original white logo.
 
 ## Styles
 
@@ -79,3 +79,7 @@ When running the script from within Scriptable, append `SIZE=SMALL`, `SIZE=MEDIU
 - `faro-spot-evidence.js`: beach guide registry and indicative research
 - `faro-spot-view.js`: mobile web UI for each sector
 
+
+## Official FARO logo
+
+The original source artworks are [`assets/faro-logo.svg`](assets/faro-logo.svg) (light background) and [`assets/faro-logo-dark.svg`](assets/faro-logo-dark.svg) (dark background). Do not replace the custom rescue-ring `O` with a generic circular character. The Scriptable conversion uses its `WebView` only on the first run per theme and caches the transparent PNG on-device. If conversion is unavailable, the widget falls back to a plain `FARO` wordmark rather than substituting a misleading icon. Re-run the script once inside Scriptable after replacing the source to populate the cache.
