@@ -114,6 +114,43 @@ async function swipe(session,x0,y0,x1,y1){
       await page.evaluate(t=>switchTab(t),tab);
       await sleep(100);
       if(tab==='forecast'){
+       // Actual computed styles, not just source tokens: only a selected
+       // day / time / tab earns white paper and an interaction-blue stroke.
+       const hierarchy=await page.evaluate(()=>{
+        const chosen=document.querySelector('#dayStripItems .day-chip.selected');
+        const other=document.querySelector('#dayStripItems .day-chip:not(.selected)');
+        const nav=document.querySelector('main>.app-nav button.active');
+        const navOther=document.querySelector('main>.app-nav button:not(.active)');
+        const time=document.querySelector('#dayview .hourly-section .slots button.active');
+        const otherTime=document.querySelector('#dayview .hourly-section .slots button:not(.active):not(:disabled)');
+        const hero=document.querySelector('#dayview .session-glance');
+        const css=x=>x?getComputedStyle(x):null;
+        return {
+         chosenBg:css(chosen)?.backgroundColor,otherBg:css(other)?.backgroundColor,
+         chosenStroke:css(chosen)?.borderTopColor,otherStroke:css(other)?.borderTopColor,
+         chosenShadow:css(chosen)?.boxShadow,otherShadow:css(other)?.boxShadow,
+         chosenBadge:css(chosen?.querySelector('.day-chip-grade'))?.backgroundColor,
+         otherBadge:css(other?.querySelector('.day-chip-grade'))?.backgroundColor,
+         navBg:css(nav)?.backgroundColor,navOtherBg:css(navOther)?.backgroundColor,
+         timeBg:css(time)?.backgroundColor,otherTimeBg:css(otherTime)?.backgroundColor,
+         heroBg:css(hero)?.backgroundColor,
+         activeCount:document.querySelectorAll('#dayStripItems .day-chip.selected').length
+        };
+       });
+       const clear='rgba(0, 0, 0, 0)';
+       const paper=theme==='light'?'rgb(255, 255, 255)':'rgb(35, 67, 71)';
+       const blue=theme==='light'?'rgb(88, 120, 224)':'rgb(142, 166, 255)';
+       if(hierarchy.activeCount!==1||hierarchy.chosenBg!==paper||
+           hierarchy.otherBg!==clear||hierarchy.chosenStroke!==blue||
+           hierarchy.otherStroke===blue||
+           hierarchy.otherBadge!==clear||
+           hierarchy.navOtherBg!==clear||
+           hierarchy.navBg!==paper||
+           (theme==='light'&&hierarchy.heroBg!==paper)||
+           (hierarchy.timeBg&&hierarchy.timeBg!==paper)||
+           (hierarchy.otherTimeBg&&hierarchy.otherTimeBg!==clear)){
+        failures.push({width,locale,theme,issue:'Selection hierarchy lost; unselected cards must remain transparent',hierarchy,paper,blue});
+       }
        const hazard=await page.locator('#faroSafetyCenter .faro-safety-kicker').innerText();
        const expected=locale==='es'?'RIESGO SEGÚN EL MODELO':'MODEL HAZARD';
        if(!hazard.includes(expected))failures.push({width,locale,theme,bannerTranslation:hazard,expected});
