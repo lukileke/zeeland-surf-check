@@ -8,7 +8,9 @@ A swell coming from the same direction can meet one bay directly, refract around
 
 The [editable scoring configuration](valparaiso-score.config.json) contains experimental wind / wave direction sectors and weights. The [stand-alone scoring engine](valparaiso-score-lab.js) calculates:
 
-`FARO Lab = 10 × (0.28 wind-direction fit + 0.28 swell-direction fit + 0.19 wind-strength fit + 0.17 period proxy + 0.08 offshore-swell-presence proxy)`.
+`FARO Lab = min(7.9, 10 × (0.28 wind-direction fit + 0.28 swell-direction fit + 0.19 wind-strength fit + 0.17 period proxy + 0.08 offshore-swell-presence proxy) × offshore-swell-presence gate)`.
+
+The separate availability gate equals `clamp(offshore_swell_height_m / 0.9, 0, 1)` in the **current experiment**. It prevents a tiny offshore swell producing a high result simply because the wind and compass directions line up. The 0.9 m value is a generic uncalibrated placeholder (not an observed optimal La Boca surf height), and ignores independent windsea and other swell partitions. Tune/replace it only with local data.
 
 All components are bounded between 0 and 1. The weights are **engineering hypotheses**, not experimentally fitted coefficients. With no observations the total is capped at **7.9**, and it is never displayed on the main FARO website. No tide fit is scored. Neither `waveHeightM` from offshore nor `swellHeightM` in the simulator equals a predicted *breaking surf height*. The user selects model parameters manually, and the result is explicitly non-live.
 
