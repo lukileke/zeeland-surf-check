@@ -5,6 +5,8 @@ on:
     paths:
       - 'index.html'
       - 'faro-ui.css'
+      - 'faro-brand.css'
+      - 'assets/**'
       - 'surf-engine.js'
       - 'zeeland-widget.js'
       - 'faro-spot-dna.js'
@@ -17,6 +19,8 @@ on:
     paths:
       - 'index.html'
       - 'faro-ui.css'
+      - 'faro-brand.css'
+      - 'assets/**'
       - 'surf-engine.js'
       - 'zeeland-widget.js'
       - 'faro-spot-dna.js'
