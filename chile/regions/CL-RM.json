@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "0.1.0",
+  "country": "CL",
+  "regionCode": "CL-RM",
+  "region": "Metropolitana de Santiago",
+  "timeZone": "America/Santiago",
+  "geography": "Centro interior",
+  "forecastEnabled": false,
+  "spots": []
+}
