@@ -114,8 +114,9 @@ async function swipe(session,x0,y0,x1,y1){
       await page.evaluate(t=>switchTab(t),tab);
       await sleep(100);
       if(tab==='forecast'){
-       // Actual computed styles, not just source tokens: only a selected
-       // day / time / tab earns white paper and an interaction-blue stroke.
+       // Actual computed styles, not just source tokens: chosen day/time
+       // cards have a dark-slate border, alternatives light grey; blue
+       // remains an interaction colour for navigation, not score boxes.
        const hierarchy=await page.evaluate(()=>{
         const chosen=document.querySelector('#dayStripItems .day-chip.selected');
         const other=document.querySelector('#dayStripItems .day-chip:not(.selected)');
@@ -133,23 +134,30 @@ async function swipe(session,x0,y0,x1,y1){
          otherBadge:css(other?.querySelector('.day-chip-grade'))?.backgroundColor,
          navBg:css(nav)?.backgroundColor,navOtherBg:css(navOther)?.backgroundColor,
          timeBg:css(time)?.backgroundColor,otherTimeBg:css(otherTime)?.backgroundColor,
+         timeStroke:css(time)?.borderTopColor,otherTimeStroke:css(otherTime)?.borderTopColor,
+         navStroke:css(nav)?.borderTopColor,
          heroBg:css(hero)?.backgroundColor,
          activeCount:document.querySelectorAll('#dayStripItems .day-chip.selected').length
         };
        });
        const clear='rgba(0, 0, 0, 0)';
        const paper=theme==='light'?'rgb(255, 255, 255)':'rgb(35, 67, 71)';
-       const blue=theme==='light'?'rgb(88, 120, 224)':'rgb(142, 166, 255)';
+       const selectedStroke=theme==='light'?'rgb(82, 106, 116)':'rgb(201, 216, 218)';
+       const passiveStroke=theme==='light'?'rgb(201, 216, 218)':'rgb(80, 112, 116)';
+       const navigationBlue=theme==='light'?'rgb(88, 120, 224)':'rgb(165, 186, 255)';
        if(hierarchy.activeCount!==1||hierarchy.chosenBg!==paper||
-           hierarchy.otherBg!==clear||hierarchy.chosenStroke!==blue||
-           hierarchy.otherStroke===blue||
+           hierarchy.otherBg!==clear||hierarchy.chosenStroke!==selectedStroke||
+           hierarchy.otherStroke!==passiveStroke||
            hierarchy.otherBadge!==clear||
            hierarchy.navOtherBg!==clear||
            hierarchy.navBg!==paper||
+           hierarchy.navStroke!==navigationBlue||
            (theme==='light'&&hierarchy.heroBg!==paper)||
            (hierarchy.timeBg&&hierarchy.timeBg!==paper)||
-           (hierarchy.otherTimeBg&&hierarchy.otherTimeBg!==clear)){
-        failures.push({width,locale,theme,issue:'Selection hierarchy lost; unselected cards must remain transparent',hierarchy,paper,blue});
+           (hierarchy.otherTimeBg&&hierarchy.otherTimeBg!==clear)||
+           (hierarchy.timeStroke&&hierarchy.timeStroke!==selectedStroke)||
+           (hierarchy.otherTimeStroke&&hierarchy.otherTimeStroke!==passiveStroke)){
+        failures.push({width,locale,theme,issue:'Selected scores need dark-grey borders and passive options need softer-grey borders',hierarchy,paper,selectedStroke,passiveStroke,navigationBlue});
        }
        const hazard=await page.locator('#faroSafetyCenter .faro-safety-kicker').innerText();
        const expected=locale==='es'?'RIESGO SEGÚN EL MODELO':'MODEL HAZARD';
