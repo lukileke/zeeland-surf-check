@@ -1,4 +1,4 @@
-// FARO Widget · Coastal Editorial v2 · Scriptable iOS
+// FARO Widget · Coastal Editorial v3 · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -37,19 +37,47 @@ if(invalidTarget)chosen=SPOTS.slice();
 const family=(typeof config!=="undefined"&&config.widgetFamily)||"medium";
 const lockFamily=family.startsWith("accessory");
 const fm=FileManager.local();
-const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v2.js");
+const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v3.js");
 const cacheName=isBest?"all":chosen.map(x=>x[0]+"-"+x[1]).join("_").replace(/[^a-zA-Z0-9_-]/g,"-").slice(0,80);
 const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v2-"+cacheName+".json");
 const C={
- bg:Color.dynamic(new Color("#E9F1F2"),new Color("#172327")),
- ink:Color.dynamic(new Color("#20323A"),new Color("#F0F6F5")),
- quiet:Color.dynamic(new Color("#5A7079"),new Color("#ADC0C3")),
- teal:Color.dynamic(new Color("#157C89"),new Color("#87D2D3")),
- wave:Color.dynamic(new Color("#147F99"),new Color("#8CCDEC")),
- line:Color.dynamic(new Color("#C6D6D9"),new Color("#394E54")),
- panel:Color.dynamic(new Color("#F5F9F9"),new Color("#202E33")),
- alert:Color.dynamic(new Color("#A43B47"),new Color("#F1A2AC"))
+ bg:Color.dynamic(new Color("#F7FAFA"),new Color("#102427")),
+ ink:Color.dynamic(new Color("#1F3B3D"),new Color("#F3F8F7")),
+ quiet:Color.dynamic(new Color("#526A74"),new Color("#BBCBCD")),
+ brandYellow:new Color("#FFDA71"),
+ wave:Color.dynamic(new Color("#355BAF"),new Color("#A5BAFF")),
+ line:Color.dynamic(new Color("#C9D8DA"),new Color("#507074")),
+ panel:Color.dynamic(new Color("#FFFFFF"),new Color("#234347")),
+ alert:Color.dynamic(new Color("#E55845"),new Color("#FF9A87")),
+ caution:Color.dynamic(new Color("#9D541C"),new Color("#EFBC62"))
 };
+/* Compact PNG converted from the user-provided genuine Logo_mientras 2.svg.
+   Data URI embedding makes the iOS Scriptable script self-contained/offline. */
+const FARO_LOGO_PNG_B64="iVBORw0KGgoAAAANSUhEUgAAALQAAAA9CAMAAAAzrLMQAAAAwFBMVEUAAAAeOz3+2XAeOzweOj0eOzwcOTkhOzseOzweOjweOzwmODggOz0hQkISQUEgOj0gOz0gOzwiPT1IWEZ2eVGNiVbKtWTszGwbNkKwol7/2nEAVVUgOzwgOEAnQT82TEJYY0r/2XD/2XE9UERhaky2pmD/2nL/2nHBrmPdwWn/2XH//wArKysiM0QxSUREU0taZkqVj1ijmlyrnl2llWDYvmXVu2f/2nH/34D//1UAAAAAAAAAAAAAAAAAAAAAAAAs/zx6AAAAQHRSTlMA/v510ScNKJOzThKQDAtOb7D+//7///4W/9ADyyH///8RdP///zBY//+SAQYPYiJxtpD/ME5trggDAAAAAAAAqyUtiQAABBhJREFUeNrtmml7oyAQgKOggiSaO22atundbve+9///sdU0TThmBtTus1+cL30qiC8Dc0EGg1566aWXXv6rFCeqCOlXMkpyu3uGtuwlAccps5GHIxlLHu2ES5Z45hbRoqyhjy1jcLwzdKRJjlMoxs3OnKUEdOaBtuYstSZwIVNirA2CXQyh3sP0jaBHelPZFLoCUcArOdabvQ00M9a7OXTETxw1S7y3TN8C2tx5aXPoiFsGmXCye9YdOjHbxi2gI9Ho81HSGVpYWmsDbZhC4e0dqY7Q7wMWzw/NNQzlh05bQJ/rccgxFA+0rIXbu1bfVSPpmWHm3R7ckSHmpF9kREK/vpwyYqqmJi4ujH9zv/dgdPAE1nIcBG1b8AfjjR/z6cvj2WIZV7JczPb95j8HnaGBuMUDoc0AYkSlqwqzprz8Fh/k7rJ+8BjH952hg/woAm14eP07z+uacjHdrmJNVrfTRf13/bsjdOn3ugS0QL7zEJNy3RF6ctwUQ9wjhUBrM/2zpqHjq07QJ5r5JXjWhEFP4O94FI2oOhia6drFXTUCXTiOTO3C1i8f9Ho36KglNNddhkCTAwRaOEGuUoIcf4q98j0X3DadUOjE6JagpghDM9dPvkSqm/npiiCufPYUcK14RJykSK6kTPd3hkLLfCflmAO5/eHZdHaKEG+P4TE49yhhFm7NIW+YMO0djjaRGQw9194Jhs7hkohZu0U2hGZOqNr6oVUbaGlbHpY1eaHloA102gI6cdINgdivD3qTunEd2R63HbeHi5ghWdMotEQ8Qk/nMPTiohP0GVAVcNhV09CTws4ZK59HebztFAphQdCaGW4A5YtQ6LEVYcXHlS+2rD5XsYUKLii0tEuoSjawbaehlXhR1gu09kbE5yrilyoYWgWXnyzUEJ3S+trH/M6XMIlUFwUHYdC84O2xi4iCTL+vfND3bbM87g0YGajpHaLi5NnLXtV3T9ZWviMUHQKd+COzwKHN8tA5dLiqd/XTLLownMjyMrpZojVACLTwQx+jogs9oFV9X1eIdcvt8qDmXX0+na/ih7aFbcDRleZpAOicrt+/zg6RcXH6uDzdZ6N1Pf6l9RECC4GWBLR5yGPVZ2pIDqtaQvMQ6IMzg6ATXNV5A2/aAPo8iPnwLgRtqjofNDqAzNpAC+LoTroFDAidYKemRpEOh4CiBXSBHAk4i5sT0Kaq9c+kvlPTtM32KKmVKlxThKHP8SPnf2GIE/LgXzg3dDC06etZqC2yopXLG9HN7tsjGFoRp/vYFtlkIVdywMXPWGs+of0hp6BNVdsfygB75HnYNXNJrr8YeC4unWkwrHYU3nvmIX07XiSvAmnyjGytNXvosPeH6vz1gWlE6tAxga1L5WIy4VzKYZ70v8fopZdeevkLMhM2p2t8R/4AAAAASUVORK5CYII=";
+function addBrandLogo(parent){
+ try{
+  if(typeof Data!=="undefined"&&typeof Image!=="undefined"){
+   const data=Data.fromBase64String(FARO_LOGO_PNG_B64);
+   const image=data&&Image.fromData(data);
+   if(image){
+    const shell=parent.addStack();shell.setPadding(2,3,2,3);
+    shell.backgroundColor=Color.dynamic(new Color("#F7FAFA"),new Color("#E9F1F2"));
+    shell.cornerRadius=5;
+    const mark=shell.addImage(image);mark.imageSize=new Size(63,22);
+    return;
+   }
+  }
+ }catch(e){}
+ // Graceful fallback on unsupported Scriptable versions.
+ label(parent,"FARO",16,C.ink,"black");
+}
+
+function scoreInk(v){
+ if(v<2.5)return Color.dynamic(new Color("#9D541C"),new Color("#CE762E"));
+ if(v<5)return Color.dynamic(new Color("#93600F"),new Color("#EFBC62"));
+ if(v<7.5)return Color.dynamic(new Color("#527530"),new Color("#A9D07B"));
+ return Color.dynamic(new Color("#49771A"),new Color("#A4D156"));
+}
 const widget=new ListWidget();
 widget.backgroundColor=C.bg;
 widget.url=SITE;
@@ -92,13 +120,7 @@ const copy={
   today:"Hoy",tomorrow:"Mañana",updated:"Actualizado"}
 };
 const T=copy[LANG];
-const scoreColors={
- excellent:Color.dynamic(new Color("#086C4E"),new Color("#75D9AD")),
- good:Color.dynamic(new Color("#176449"),new Color("#83D6A8")),
- fair:Color.dynamic(new Color("#65561E"),new Color("#EAD17A")),
- poor:Color.dynamic(new Color("#943F2F"),new Color("#F4A08A")),
- veryPoor:Color.dynamic(new Color("#873147"),new Color("#EF9EB2"))
-};
+// Numeric band colour comes from the official brand PDF; grade labels remain independent.
 async function json(url){
  const req=new Request(url);req.timeoutInterval=17;
  return await req.loadJSON();
@@ -226,8 +248,8 @@ function modelHazard(data,now=localParts()){
 function dayLabel(day){
  const today=localParts().date;
  if(day===today)return T.today;
- const next=new Date();next.setDate(next.getDate()+1);
- if(day===localParts(next).date)return T.tomorrow;
+ const next=new Date(today+"T12:00:00Z");next.setUTCDate(next.getUTCDate()+1);
+ if(day===next.toISOString().slice(0,10))return T.tomorrow;
  const dt=new Date(day+"T12:00:00Z");
  return new Intl.DateTimeFormat(LANG==="es"?"es-ES":"en-GB",{timeZone:TZ,weekday:"short",day:"numeric",month:"short"}).format(dt);
 }
@@ -241,31 +263,31 @@ function timestampLabel(epoch){return new Intl.DateTimeFormat(LANG==="es"?"es-ES
  }).format(new Date(epoch));}
 function topBar(parent,subtitle){
  const top=hstack(parent,6);top.centerAlignContent();
- label(top,"FARO",16,C.ink,"black");label(top,"≈",16,C.teal,"bold");
+ addBrandLogo(top);
  top.addSpacer();
  label(top,subtitle,9,C.quiet,"bold");
  return top;
 }
 function scoreRow(parent,best,compact=false){
  const grade=gradeOf(best.score),row=hstack(parent,3);row.bottomAlignContent();
- label(row,best.score.toFixed(1),compact?38:45,scoreColors[grade],"black");
+ label(row,best.score.toFixed(1),compact?38:45,scoreInk(best.score),"black");
  label(row,"/10",12,C.quiet,"semi");
  return row;
 }
 function scoreChip(parent,best){
  const g=gradeOf(best.score);
- const group=hstack(parent);group.setPadding(3,7,3,7);
- group.backgroundColor=C.panel;group.cornerRadius=6;
- label(group,T[g],11,scoreColors[g],"bold");
+ const group=hstack(parent);group.setPadding(2,0,2,0);
+ label(group,T[g],11,scoreInk(best.score),"bold");
  return group;
 }
 function hazardLine(parent,hazard){
  if(hazard?.level!=="danger"&&hazard?.level!=="caution")return false;
  const row=hstack(parent,5);row.centerAlignContent();
- label(row,hazard.level==="danger"?"!":"·",12,C.alert,"black");
+ const hue=hazard.level==="danger"?C.alert:C.caution;
+ label(row,hazard.level==="danger"?"!":"·",12,hue,"black");
  const msg=hazard.thunder?T.storm:
   T.risk+" · "+Math.max(hazard.gust||0,hazard.mean||0)+" km/h";
- label(row,msg,10,C.alert,"bold");
+ label(row,msg,10,hue,"bold");
  return true;
 }
 function freshness(parent,data){
@@ -352,7 +374,7 @@ function renderLarge(best,data,hazard,sessions){
   const r=hstack(widget,6);r.centerAlignContent();
   label(r,dayLabel(next.day)+" "+windowLabel(next.h),10,C.quiet,"semi");
   r.addSpacer();
-  label(r,next.score.toFixed(1)+"/10",11,scoreColors[gradeOf(next.score)],"bold");
+  label(r,next.score.toFixed(1)+"/10",11,scoreInk(next.score),"bold");
   widget.addSpacer(5);
  }
  widget.addSpacer();
