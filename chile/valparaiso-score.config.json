@@ -119,6 +119,66 @@
       "hazardContextEn": "Northern and southern sections differ; swell can strengthen currents. Verify the surf locally.",
       "status": "guide_only",
       "observations": 0
+    },
+    "CL-VS:maitencillo": {
+      "name": "Maitencillo · perfil general",
+      "kind": "exposed beachbreak",
+      "windFromDeg": [
+        [
+          67.5,
+          112.5
+        ]
+      ],
+      "waveFromDeg": [
+        [
+          210,
+          255
+        ]
+      ],
+      "origins": {
+        "wind": "surfnerd-maitencillo",
+        "swell": "surfnerd-maitencillo",
+        "tide": "surfnerd-maitencillo"
+      },
+      "tideReference": "Medium or rising suggested in guides; not modelled or calibrated by FARO.",
+      "personality": {
+        "es": "Bancos variables; varios picos",
+        "en": "Shifting sandbars; multiple peaks"
+      },
+      "hazardContextEs": "Maitencillo incluye diferentes secciones y referencias contradictorias sobre el tipo de fondo. El índice no sustituye una lectura del pico seleccionado.",
+      "hazardContextEn": "Maitencillo covers several sections and sources disagree on break type. This index cannot replace checking the actual peak.",
+      "status": "guide_only",
+      "observations": 0
+    },
+    "CL-VS:papagayo-quintero": {
+      "name": "Papagayo · Quintero",
+      "kind": "reef/point left",
+      "windFromDeg": [
+        [
+          67.5,
+          112.5
+        ]
+      ],
+      "waveFromDeg": [
+        [
+          210,
+          255
+        ]
+      ],
+      "origins": {
+        "wind": "surf-forecast-papagayo",
+        "swell": "surf-forecast-papagayo",
+        "tide": "surf-papagayo"
+      },
+      "tideReference": "No reliable ideal local tide reference; not modelled.",
+      "personality": {
+        "es": "Izquierda rápida sobre fondo rocoso",
+        "en": "Fast left over a rocky break"
+      },
+      "hazardContextEs": "Rompiente exigente sobre roca; secciones rápidas, posibles tubos y accesos específicos. Un score alto no indica que sea segura ni apropiada para tu nivel.",
+      "hazardContextEn": "Demanding rocky break with faster sections and specific access. A high score does not imply safety or suitability for your level.",
+      "status": "guide_only",
+      "observations": 0
     }
   }
 }
