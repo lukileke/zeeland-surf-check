@@ -1,4 +1,4 @@
-/* FARO / official visual identity v26
+/* FARO / official visual identity v27
  * Brand source: user-provided colores_marca.pdf (25 Oct 2026).
  * Layout source: user-provided iPhone reference screenshot.
  * Scores: numeric intervals, independent from existing Poor/Fair/Good wording.
@@ -46,8 +46,17 @@ html[data-theme="light"] main{color:var(--brand-ink)!important}
 .top h1.faro-logo .faro-logo-art{display:block!important;
  width:clamp(116px,30vw,170px)!important;height:auto!important;max-width:100%;
  aspect-ratio:128.81/43.63;object-fit:contain}
-html:not([data-theme="light"]) .faro-logo-art{
- background:#eef5f1;border-radius:8px;padding:4px;box-sizing:border-box;
+/* Keep the supplied FARO vector geometry intact in both themes.
+ * Dark theme replaces only ink fills with white; the original yellow
+ * circular mark remains yellow. Neither version needs a background plate. */
+.top h1.faro-logo .faro-logo-art--dark{display:none!important}
+html[data-theme="light"] .top h1.faro-logo .faro-logo-art--light{display:block!important}
+html[data-theme="light"] .top h1.faro-logo .faro-logo-art--dark{display:none!important}
+html:not([data-theme="light"]) .top h1.faro-logo .faro-logo-art--light{display:none!important}
+html:not([data-theme="light"]) .top h1.faro-logo .faro-logo-art--dark{display:block!important}
+html:not([data-theme="light"]) .top h1.faro-logo .faro-logo-art{
+ background:transparent!important;
+ border-radius:0!important;padding:0!important;box-shadow:none!important;
 }
 .top-actions .theme-toggle,.top-actions .language-toggle{
  background:transparent!important;border-color:var(--faro-line)!important;
