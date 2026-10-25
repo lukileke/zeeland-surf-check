@@ -201,6 +201,42 @@ async function swipe(session,x0,y0,x1,y1){
        if(await page.locator('#faroSafetyCenter details').evaluate(d=>d.open)){
         failures.push({width,locale,theme,issue:'Warning failed to collapse'});
        }
+       if(width===375&&theme==='light'){
+        const editorial=await page.evaluate(()=>{
+         const hero=document.querySelector('#faroRead');
+         const expected=window.ZeelandEngine.quickRead(blocks(day)[slotIndex].s,'en');
+         const headline=hero.querySelector('#faroReadTitle')?.textContent?.trim();
+         const detail=hero.querySelector('#summary')?.textContent?.trim();
+         const copy=hero.querySelector('.faro-read-match')?.textContent?.trim();
+         const nav=document.querySelector('#navBoard')?.textContent?.trim();
+         const branded=document.querySelector('#faroGuide .faro-match-kicker')?.textContent?.trim();
+         return {headline,detail,expected,copy,nav,branded};
+        });
+        const expectedHeadline=locale==='es'?'Potencial para surf fluido':'Mellow, flowing potential';
+        if(editorial.headline!==expectedHeadline||
+           !editorial.copy.includes(locale==='es'?'Buscar mi surf match':'Find my surf fit')||
+           editorial.nav!=='FARO Match'||!editorial.branded.includes('FARO MATCH')){
+         failures.push({width,locale,theme,issue:'FARO READ/MATCH brand and interpretation must be visible and translated',editorial,expectedHeadline});
+        }
+        await page.locator('#faroRead .faro-read-match').click();
+        const contextFromForecast=await page.evaluate(()=>({
+         boardVisible:!document.querySelector('#boardPage').classList.contains('hide'),
+         goal:document.querySelector('#faroGoal').value,
+         availability:document.querySelector('#faroAvailability').value,
+         scope:document.querySelector('#faroScope').value,
+         ai:document.querySelector('#faroBeach').value,
+         si:document.querySelector('#faroSpot').value,
+         day,checked:[...document.querySelectorAll('#faroDays input:checked')].map(e=>e.value)
+        }));
+        if(!contextFromForecast.boardVisible||contextFromForecast.goal!=='ride'||
+           contextFromForecast.availability!=='exact'||contextFromForecast.scope!=='spot'||
+           Number(contextFromForecast.ai)!==0||Number(contextFromForecast.si)!==0||
+           contextFromForecast.checked.length!==1||
+           Number(contextFromForecast.checked[0])!==contextFromForecast.day){
+         failures.push({width,locale,theme,issue:'FARO MATCH CTA should carry the selected beach and day',contextFromForecast});
+        }
+        await page.evaluate(()=>switchTab('forecast'));
+       }
        if((width===320||width===375)&&theme==='light'){
         // A chosen day triggers FARO's recommendation, not 'your session'.
         // Only a deliberate time-slot tap should switch to a selected window.
