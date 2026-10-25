@@ -246,3 +246,16 @@ User feedback from iPhone Safari made clear that the old v18 warning panel was t
 - Smoke check + real Chromium mobile QA completed successfully (320, 375, 390, 430 px; light/dark; EN/ES), including closed height limit, visible gust value, summary click/open/close and absence of root horizontal overflow. **Not a claim of physical iPhone Safari testing.**
 
 Safety principle: a compact alert is acceptable only when the key danger information is never concealed; the surfer must not have to expand the rail to discover hurricane-strength gusts.
+
+
+### Forecast microcopy: recommendation versus reader choice — 25 October 2026
+
+The previous Forecast session hero was titled **YOUR SESSION / TU SESIÓN** even immediately after a reader chose only a *day*. FARO itself automatically picks the highest-scored valid two-hour daylight window, so that label incorrectly implied a personally planned or confirmed surf session.
+
+New user-facing states:
+- On initial forecast loading, after choosing a day, after switching beach/spot, or whenever FARO automatically replaces an unavailable time: **SUGGESTED WINDOW / HORARIO RECOMENDADO**.
+- After the reader explicitly taps a time in **Find your time**, or follows a specific session from Best of Week, Wizard or Scriptable: **SELECTED WINDOW / HORARIO SELECCIONADO**.
+- Changing the day returns the hero to **SUGGESTED WINDOW**, because the new time is chosen by FARO rather than by the reader.
+- A manually selected interval never represents a reservation, live observed wave, or safety clearance; it is merely the forecast window being examined. Existing model-origin and safety qualifications stay visible.
+
+No buttons, new panels, additional scores or numerical methods were added. The time range remains beside the headline, and the Chilean Spanish translation is maintained alongside the English copy. Automated smoke and mobile-browser tests check both state transitions and their localisation.
