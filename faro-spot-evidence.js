@@ -6,7 +6,7 @@
 'use strict';
 const E={
  Domburg:{
-  windsFrom:'ESE–S / especially SE',swellFrom:'SW–N (changes with tide)',tide:'North swell: mid-to-higher tide in a local guide; SW swell: low tide. Surfline reports low–mid generally. Opinions differ.',
+  windsFrom:'ESE–S / especially SE',swellFrom:'SW–N (changes with tide)',tide:'North swell: mid-to-higher tide in a local guide; SW swell: low tide. Surfline reports low–mid generally. Opinions differ.',tideEs:'Con oleaje del norte algunas guías sugieren marea media a alta; con oleaje del suroeste, marea baja. Surfline menciona baja a media. No existe consenso.',
   sector:[[220,360],[0,20]],windSector:[[105,180]],conditions:'Bank-dependent beach break around groynes. Tide and swell direction interact; no universal optimum.',
   caveat:'Groynes and rip currents; different banks have different breaking shapes.',
   evidence:'multiple independent surf guides, not verified at each Faro sector',
@@ -17,7 +17,7 @@ const E={
   ]
  },
  Westkapelle:{
-  windsFrom:'E–SE',swellFrom:'SW–N / particularly W–NW',tide:'Mid tide is suggested by SurfInfo; other accounts highlight bigger waves at high water. No accepted single tide optimum.',
+  windsFrom:'E–SE',swellFrom:'SW–N / particularly W–NW',tide:'Mid tide is suggested by SurfInfo; other accounts highlight bigger waves at high water. No accepted single tide optimum.',tideEs:'SurfInfo sugiere media marea; otras fuentes describen olas mayores con marea alta. No hay una marea óptima establecida.',
   sector:[[220,360],[0,10]],windSector:[[65,145]],conditions:'West-facing coast and sea-defence structures alter exposure and reflected wave shape.',
   caveat:'Rock revetment, groynes and strong currents; not automatically a learner break.',
   evidence:'regional surf guides; local sector positions not verified',
@@ -28,7 +28,7 @@ const E={
   ]
  },
  Oostkapelle:{
-  windsFrom:'E–S (shoreline-dependent)',swellFrom:'W–NW, and sometimes SW',tide:'Regional guide describes NW swell at mid–higher tide and SW swell at lower tide. Berkenbosch guide mentions mid tide; these are candidate patterns.',
+  windsFrom:'E–S (shoreline-dependent)',swellFrom:'W–NW, and sometimes SW',tide:'Regional guide describes NW swell at mid–higher tide and SW swell at lower tide. Berkenbosch guide mentions mid tide; these are candidate patterns.',tideEs:'Una guía regional asocia oleaje noroeste con marea media a alta y suroeste con marea más baja. Para Berkenbosch se menciona media marea; son hipótesis no validadas.',
   sector:[[225,355]],windSector:[[70,180]],conditions:'Beach breaks and changing banks; Berkenbosch evidence should not automatically be assigned to Main beach.',
   caveat:'Local sandbars, groynes and beach zoning; confirm legal surf location for each entry.',
   evidence:'indirect local/regional guides; no validated sector-specific optima',
@@ -38,7 +38,7 @@ const E={
   ]
  },
  Cadzand:{
-  windsFrom:'E–SE',swellFrom:'NW / some SW events',tide:'Mid–high tide reported in a Zeeland surf directory; insufficient local validation for a definitive rule.',
+  windsFrom:'E–SE',swellFrom:'NW / some SW events',tide:'Mid–high tide reported in a Zeeland surf directory; insufficient local validation for a definitive rule.',tideEs:'Un directorio de surf de Zeeland menciona marea media a alta, sin validación local suficiente para considerarlo una regla.',
   sector:[[280,360],[0,10]],windSector:[[65,150]],conditions:'Forecast direction is not enough to establish the breaking height at every bank.',
   caveat:'Check local tide, banks and currents. The two Faro sectors still lack separate field evidence.',
   evidence:'regional surf directory, low-to-moderate location specificity',
@@ -48,7 +48,7 @@ const E={
   ]
  },
  Brouwersdam:{
-  windsFrom:'E–SE for east-facing offshore conditions on North Sea side',swellFrom:'SW–N (nearshore exposure uncertain)',tide:'Mid tide is proposed in a generic guide. Do not infer surfing tide optimum from windsurf/foil guidance.',
+  windsFrom:'E–SE for east-facing offshore conditions on North Sea side',swellFrom:'SW–N (nearshore exposure uncertain)',tide:'Mid tide is proposed in a generic guide. Do not infer surfing tide optimum from windsurf/foil guidance.',tideEs:'Una guía general propone media marea, pero la información de windsurf y foil no permite establecer la marea óptima para surf de remo.',
   sector:[[220,360],[0,10]],windSector:[[65,145]],conditions:'North Sea side can differ substantially from the sheltered lagoon. Water-sports guidance mostly addresses kite, wing and foil rather than paddle surfing.',
   caveat:'Currents around dam structures and separation of water-sports zones; local signage is essential.',
   evidence:'surf guide + on-site water-sports provider; not verified for the three Faro surf sectors',
