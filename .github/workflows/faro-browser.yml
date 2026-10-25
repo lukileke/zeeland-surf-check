@@ -5,6 +5,8 @@ on:
     paths:
       - 'index.html'
       - 'faro-ui.css'
+      - 'faro-brand.css'
+      - 'assets/**'
       - 'faro-safety.js'
       - 'tests/faro-browser.cjs'
       - '.github/workflows/faro-browser.yml'
@@ -12,6 +14,8 @@ on:
     paths:
       - 'index.html'
       - 'faro-ui.css'
+      - 'faro-brand.css'
+      - 'assets/**'
       - 'faro-safety.js'
       - 'tests/faro-browser.cjs'
 jobs:
