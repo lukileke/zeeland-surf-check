@@ -21,7 +21,8 @@
       "waveHand": "both",
       "abilityReference": "advanced",
       "sources": [
-        "travel-arica"
+        "travel-arica",
+        "surfline-elgringo"
       ],
       "conditions": {
         "favourableWindDegrees": null,
@@ -30,13 +31,13 @@
         "periodResponse": null,
         "breakingHeightCalibration": null,
         "publishedReference": null,
-        "regionSpecificNoteEs": "Ola tubular sobre roca; sector exigente. Evitar extrapolar tamaño rompiente de la altura offshore.",
+        "regionSpecificNoteEs": "Rompiente tubular potente sobre roca; Surfline advierte secciones someras y, en algunos swells pequeños, rompientes cerca de roca expuesta. Acceso, oleaje y nivel de dificultad deben comprobarse localmente; no es una recomendación de entrada.",
         "fieldVerification": "required"
       },
       "hazards": {
         "ripCurrents": "unassessed",
-        "rocks": "known_in_area",
-        "access": "unverified"
+        "rocks": "shallow_reef_documented",
+        "access": "local_entry_knowledge_required"
       },
       "confidence": {
         "existence": "documented_in_source",
