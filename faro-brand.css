@@ -15,8 +15,8 @@
  --brand-blue:#5878e0;
  --brand-score-low:#ce762e;
  --brand-score-mid:#efbc62;
- --brand-score-regular:#6b9347;
- --brand-score-high:#a4d156;
+ --brand-score-regular:#a4d156;
+ --brand-score-high:#6b9347;
  --faro-selection:#5878e0;
 }
 html[data-theme="light"]{
@@ -119,12 +119,12 @@ html[data-theme="light"] #forecastPage .day-strip-title strong{
    Contrast ink may be deeper than the swatch on very light surfaces. */
 .brand-band-low{--brand-score-color:var(--brand-score-low);--brand-score-ink:#9d541c}
 .brand-band-mid{--brand-score-color:var(--brand-score-mid);--brand-score-ink:#93600f}
-.brand-band-regular{--brand-score-color:var(--brand-score-regular);--brand-score-ink:#527530}
-.brand-band-high{--brand-score-color:var(--brand-score-high);--brand-score-ink:#49771a}
+.brand-band-regular{--brand-score-color:var(--brand-score-regular);--brand-score-ink:#49771a}
+.brand-band-high{--brand-score-color:var(--brand-score-high);--brand-score-ink:#527530}
 html:not([data-theme="light"]) .brand-band-low{--brand-score-ink:#f2ae70}
 html:not([data-theme="light"]) .brand-band-mid{--brand-score-ink:#efbc62}
-html:not([data-theme="light"]) .brand-band-regular{--brand-score-ink:#a9d07b}
-html:not([data-theme="light"]) .brand-band-high{--brand-score-ink:#a4d156}
+html:not([data-theme="light"]) .brand-band-regular{--brand-score-ink:#a4d156}
+html:not([data-theme="light"]) .brand-band-high{--brand-score-ink:#a9d07b}
 html[data-theme="light"] :is(#forecastPage,#dayview,#bestPage,#boardPage)
  :is(.day-chip,.score-tint,.hero-score,.score,.daily-verdict)[class*="brand-band-"]{
  --quality-ink:var(--brand-score-ink)!important;
@@ -512,8 +512,8 @@ html[data-theme="light"]{
 }
 html[data-theme="light"] .brand-band-low{--brand-score-ink:#f2ae70}
 html[data-theme="light"] .brand-band-mid{--brand-score-ink:#efbc62}
-html[data-theme="light"] .brand-band-regular{--brand-score-ink:#a9d07b}
-html[data-theme="light"] .brand-band-high{--brand-score-ink:#a4d156}
+html[data-theme="light"] .brand-band-regular{--brand-score-ink:#a4d156}
+html[data-theme="light"] .brand-band-high{--brand-score-ink:#6b9347}
 /* Numerals are colour on paper, never dark tiles. */
 html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"] strong,
 html[data-theme="light"] #dayview .session-glance .hero-score[class*="brand-band-"] .hero-score-value,
