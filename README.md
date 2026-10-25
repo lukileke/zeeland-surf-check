@@ -7,7 +7,7 @@ FARO helps decide **where and when to surf**, and what kind of session the model
 ## Key features
 
 - Seven-day forecasts with two-hour windows and daylight checks
-- Four numeric quality colour bands; Wave Wizard describes modelled wave character independently
+- Five numeric quality colour bands; Wave Wizard describes modelled wave character independently
 - FARO Match for optional board/riding-style preferences
 - Spot Insight: twelve named FARO sectors, local beach-guide evidence, conservative sector context, official/local source links
 - Local Field Notes (stored only on the current device unless explicitly exported)
