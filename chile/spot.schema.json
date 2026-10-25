@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lukileke.github.io/zeeland-surf-check/chile/spot.schema.json",
+  "title": "FARO Chile candidate spot / beach sector",
+  "description": "Candidate-stage local surf dossier. Null calibration fields deliberately mean NOT verified; do not interpret as zero.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "locality",
+    "timeZone",
+    "precision",
+    "evidenceStatus",
+    "forecastEnabled",
+    "coordinates",
+    "breakType",
+    "waveHand",
+    "abilityReference",
+    "sources",
+    "conditions",
+    "hazards",
+    "confidence"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^CL-[A-Z]{2}:[a-z0-9-]+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "locality": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subarea": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timeZone": {
+      "type": "string",
+      "minLength": 1
+    },
+    "precision": {
+      "enum": [
+        "named_area_not_breaking_coordinate",
+        "regional_only"
+      ]
+    },
+    "evidenceStatus": {
+      "enum": [
+        "directory_listed",
+        "guide_described",
+        "field_checked",
+        "locally_calibrated"
+      ]
+    },
+    "forecastEnabled": {
+      "const": false
+    },
+    "coordinates": {
+      "type": "null",
+      "description": "No false precision; require verified break coordinate before pilot forecasting."
+    },
+    "breakType": {
+      "enum": [
+        "reef",
+        "beach",
+        "point",
+        "river-mouth",
+        "mixed",
+        "unverified"
+      ]
+    },
+    "waveHand": {
+      "enum": [
+        "left",
+        "right",
+        "both",
+        "unverified"
+      ]
+    },
+    "abilityReference": {
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "experienced",
+        "expert",
+        "variable",
+        "unverified"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "required": [
+        "favourableWindDegrees",
+        "swellWindowsDegrees",
+        "idealTide",
+        "periodResponse",
+        "breakingHeightCalibration",
+        "publishedReference",
+        "regionSpecificNoteEs",
+        "fieldVerification"
+      ],
+      "properties": {
+        "favourableWindDegrees": {
+          "type": "null"
+        },
+        "swellWindowsDegrees": {
+          "type": "null"
+        },
+        "idealTide": {
+          "type": "null"
+        },
+        "periodResponse": {
+          "type": "null"
+        },
+        "breakingHeightCalibration": {
+          "type": "null"
+        },
+        "publishedReference": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "regionSpecificNoteEs": {
+          "type": "string"
+        },
+        "fieldVerification": {
+          "const": "required"
+        }
+      }
+    },
+    "hazards": {
+      "type": "object"
+    },
+    "confidence": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}
