@@ -1,4 +1,4 @@
-// FARO Widget · Coastal Punch v6 · original FARO brand · Scriptable iOS
+// FARO Widget · Coastal Punch v7 · unboxed official logo · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -34,6 +34,9 @@ const LANG=opt("LANG")==="ES"||tokens.some(t=>t.toUpperCase()==="ES")?"es":"en";
 const STYLE=["FLOW","MINIMAL","DATA","WEEK"].includes(opt("STYLE"))?opt("STYLE"):
  (tokens.find(t=>["FLOW","MINIMAL","DATA","WEEK"].includes(t.toUpperCase()))||"FLOW").toUpperCase();
 const THEME=["AUTO","LIGHT","DARK"].includes(opt("THEME"))?opt("THEME"):"AUTO";
+// AUTO deliberately uses a dark coastal widget, avoiding an artificial logo capsule.
+// Scriptable cannot inspect system light/dark appearance from a widget reliably.
+const EFFECTIVE_THEME=THEME==="AUTO"?"DARK":THEME;
 const PREVIEW=["SMALL","MEDIUM","LARGE"].includes(opt("SIZE"))?opt("SIZE").toLowerCase():null;
 const requestTarget=tokens.find(t=>!/^(ES|EN|FLOW|MINIMAL|DATA|WEEK)$/i.test(t)&&!t.includes("="))||"BEST";
 const isBest=requestTarget.toUpperCase()==="BEST";
@@ -49,7 +52,7 @@ const fm=FileManager.local();
 const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v5.js");
 const cacheName=isBest?"all":chosen.map(x=>x[0]+"-"+x[1]).join("_").replace(/[^a-zA-Z0-9_-]/g,"-").slice(0,80);
 const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v4-"+cacheName+".json");
-function palette(light,dark){return THEME==="LIGHT"?new Color(light):THEME==="DARK"?new Color(dark):Color.dynamic(new Color(light),new Color(dark))}
+function palette(light,dark){return EFFECTIVE_THEME==="LIGHT"?new Color(light):new Color(dark)}
 const C={
  bg:palette("#F7FAFA","#102427"),ink:palette("#1F3B3D","#F3F8F7"),
  quiet:palette("#526A74","#BBCBCD"),sun:new Color("#FFDA71"),
@@ -61,12 +64,13 @@ const C={
  * assets/faro-logo.svg and assets/faro-logo-dark.svg (same repository).
  * The SVG is rasterised once at high resolution via WebView, then cached
  * locally as PNG. This retains the ORIGINAL custom FARO type and rescue ring.
- * AUTO uses the white-on-ink original inside a dark capsule so that it stays
- * legible in either wallpaper / system colour scheme (Scriptable has no
- * supported dynamic Image equivalent to Color.dynamic).
+ * AUTO uses the complete dark coastal theme and the transparent original
+ * white-and-yellow SVG, with NO pill, plate or synthetic backing.
+ * LIGHT and DARK are explicit themes; dynamic appearance detection is
+ * unsupported inside Scriptable widgets.
  */
 const ORIGINAL_FARO_SVG={"light":"<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 128.81 43.63\" role=\"img\" aria-label=\"FARO\"><circle fill=\"#ffda71\" cx=\"108.11\" cy=\"22.27\" r=\"12.65\"/><g fill=\"#1f3b3d\"><path d=\"M5.62,7.08c0-.3.08-.54.25-.71.16-.17.36-.27.59-.28h20.58c.33,0,.58.09.74.28.17.19.25.44.25.75v5.32c0,.24-.09.48-.26.7-.17.22-.42.33-.75.33h-13.07v6.67h9.65c.27,0,.5.08.69.23.19.15.28.39.28.72v5.14c0,.24-.08.48-.25.7-.17.22-.39.33-.68.33h-9.7v9.85c0,.62-.33.92-.99.92h-6.56c-.52-.07-.77-.37-.77-.9V7.08Z\"/><path d=\"M39.12,6.93c.01-.09.06-.18.14-.28.08-.1.18-.19.29-.28s.24-.15.37-.2.25-.08.37-.08h5.5c.24,0,.45.08.62.23.17.15.3.28.39.4l.54,1.23,11.29,29.11c.11.29.09.52-.06.7-.16.18-.43.27-.82.27h-6.17c-.33,0-.58-.06-.76-.18s-.32-.33-.42-.61c-.29-.73-.57-1.46-.84-2.18s-.54-1.45-.82-2.18h-11.42c-.27.73-.55,1.46-.83,2.18-.28.72-.56,1.45-.83,2.18-.19.53-.55.8-1.1.8h-6.34c-.27,0-.5-.07-.68-.21-.18-.14-.21-.36-.1-.65l11.67-30.23ZM43.03,16.13c-.27.73-.55,1.52-.83,2.37-.28.85-.56,1.7-.83,2.56-.27.86-.55,1.71-.83,2.55-.28.84-.56,1.62-.83,2.35h6.6l-3.29-9.83Z\"/><path d=\"M62.94,7.08c0-.3.08-.54.24-.72.16-.18.39-.27.71-.27h13.89c1.48,0,2.86.28,4.15.83,1.29.55,2.42,1.3,3.38,2.25.96.95,1.72,2.05,2.27,3.32.55,1.27.83,2.62.83,4.05,0,.98-.13,1.9-.4,2.78-.27.88-.63,1.71-1.11,2.47-.47.77-1.04,1.46-1.69,2.09s-1.37,1.16-2.14,1.6l5.53,10.41c.1.2.23.44.39.71.16.27.24.51.24.71,0,.23-.08.41-.23.53s-.35.18-.61.18h-7.37c-.24,0-.46-.07-.66-.21s-.32-.34-.38-.58l-5.22-9.83h-3.48v9.7c0,.62-.33.92-.99.92h-6.39c-.29,0-.52-.08-.69-.23-.17-.15-.26-.38-.26-.7V7.08ZM79.77,16.63c0-.43-.08-.86-.24-1.29-.16-.43-.38-.82-.67-1.18-.29-.36-.63-.66-1.03-.9-.4-.24-.85-.4-1.33-.47-.4-.03-.78-.05-1.13-.08-.35-.02-.73-.03-1.15-.03h-2.97v7.89h3.96c.26,0,.49,0,.69-.02.2-.01.42-.04.67-.06.5-.06.95-.2,1.35-.44.4-.24.74-.53,1.01-.88.27-.35.48-.75.62-1.18.14-.44.21-.88.21-1.34Z\"/><path d=\"M99.98,22.07c0-.39.02-.76.07-1.14.03-.27-.13-.53-.4-.6l-6.99-1.85c-.31-.08-.63.11-.69.42-.2,1.03-.31,2.09-.31,3.18,0,1.22.13,2.41.38,3.55.07.31.38.49.69.41l6.97-1.84c.28-.07.44-.35.4-.63-.08-.49-.12-.99-.12-1.51Z\"/><path d=\"M116.24,22.07c0,.52-.04,1.02-.12,1.51-.05.28.12.56.4.63l6.97,1.84c.3.08.62-.1.69-.41.26-1.14.39-2.33.39-3.55,0-1.09-.11-2.15-.32-3.18-.06-.31-.38-.5-.69-.42l-6.99,1.85c-.27.07-.43.33-.4.6.04.37.07.75.07,1.14Z\"/><path d=\"M104.83,14.2c.99-.44,2.08-.67,3.26-.67s2.28.22,3.27.67c.82.36,1.54.84,2.17,1.43.24.22.59.27.86.09l5.65-3.6c.41-.26.47-.81.15-1.17-.15-.17-.31-.34-.47-.51-1-1-2.12-1.86-3.33-2.57s-2.53-1.26-3.94-1.66c-1.41-.39-2.86-.59-4.37-.59s-2.98.2-4.38.59-2.71.95-3.93,1.66c-1.22.71-2.33,1.57-3.32,2.57-.16.16-.32.33-.47.51-.32.36-.25.92.16,1.17l5.65,3.6c.27.17.62.13.86-.09.63-.59,1.35-1.06,2.16-1.43Z\"/><path d=\"M111.38,29.95c-.99.44-2.08.67-3.26.67s-2.28-.22-3.27-.67c-.82-.36-1.54-.84-2.17-1.43-.24-.22-.59-.27-.86-.09l-5.65,3.6c-.41.26-.47.81-.15,1.17.15.17.31.34.47.51,1,1,2.12,1.86,3.33,2.57s2.53,1.26,3.94,1.66c1.41.39,2.86.59,4.37.59s2.98-.2,4.38-.59,2.71-.95,3.93-1.66c1.22-.71,2.33-1.57,3.32-2.57.16-.16.32-.33.47-.51.32-.36.25-.92-.16-1.17l-5.65-3.6c-.27-.17-.62-.13-.86.09-.63.59-1.35,1.06-2.16,1.43Z\"/></g></svg>","dark":"<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 128.81 43.63\" role=\"img\" aria-label=\"FARO, versión para fondo oscuro\"><circle fill=\"#ffda71\" cx=\"108.11\" cy=\"22.27\" r=\"12.65\"/><g fill=\"#ffffff\"><path d=\"M5.62,7.08c0-.3.08-.54.25-.71.16-.17.36-.27.59-.28h20.58c.33,0,.58.09.74.28.17.19.25.44.25.75v5.32c0,.24-.09.48-.26.7-.17.22-.42.33-.75.33h-13.07v6.67h9.65c.27,0,.5.08.69.23.19.15.28.39.28.72v5.14c0,.24-.08.48-.25.7-.17.22-.39.33-.68.33h-9.7v9.85c0,.62-.33.92-.99.92h-6.56c-.52-.07-.77-.37-.77-.9V7.08Z\"/><path d=\"M39.12,6.93c.01-.09.06-.18.14-.28.08-.1.18-.19.29-.28s.24-.15.37-.2.25-.08.37-.08h5.5c.24,0,.45.08.62.23.17.15.3.28.39.4l.54,1.23,11.29,29.11c.11.29.09.52-.06.7-.16.18-.43.27-.82.27h-6.17c-.33,0-.58-.06-.76-.18s-.32-.33-.42-.61c-.29-.73-.57-1.46-.84-2.18s-.54-1.45-.82-2.18h-11.42c-.27.73-.55,1.46-.83,2.18-.28.72-.56,1.45-.83,2.18-.19.53-.55.8-1.1.8h-6.34c-.27,0-.5-.07-.68-.21-.18-.14-.21-.36-.1-.65l11.67-30.23ZM43.03,16.13c-.27.73-.55,1.52-.83,2.37-.28.85-.56,1.7-.83,2.56-.27.86-.55,1.71-.83,2.55-.28.84-.56,1.62-.83,2.35h6.6l-3.29-9.83Z\"/><path d=\"M62.94,7.08c0-.3.08-.54.24-.72.16-.18.39-.27.71-.27h13.89c1.48,0,2.86.28,4.15.83,1.29.55,2.42,1.3,3.38,2.25.96.95,1.72,2.05,2.27,3.32.55,1.27.83,2.62.83,4.05,0,.98-.13,1.9-.4,2.78-.27.88-.63,1.71-1.11,2.47-.47.77-1.04,1.46-1.69,2.09s-1.37,1.16-2.14,1.6l5.53,10.41c.1.2.23.44.39.71.16.27.24.51.24.71,0,.23-.08.41-.23.53s-.35.18-.61.18h-7.37c-.24,0-.46-.07-.66-.21s-.32-.34-.38-.58l-5.22-9.83h-3.48v9.7c0,.62-.33.92-.99.92h-6.39c-.29,0-.52-.08-.69-.23-.17-.15-.26-.38-.26-.7V7.08ZM79.77,16.63c0-.43-.08-.86-.24-1.29-.16-.43-.38-.82-.67-1.18-.29-.36-.63-.66-1.03-.9-.4-.24-.85-.4-1.33-.47-.4-.03-.78-.05-1.13-.08-.35-.02-.73-.03-1.15-.03h-2.97v7.89h3.96c.26,0,.49,0,.69-.02.2-.01.42-.04.67-.06.5-.06.95-.2,1.35-.44.4-.24.74-.53,1.01-.88.27-.35.48-.75.62-1.18.14-.44.21-.88.21-1.34Z\"/><path d=\"M99.98,22.07c0-.39.02-.76.07-1.14.03-.27-.13-.53-.4-.6l-6.99-1.85c-.31-.08-.63.11-.69.42-.2,1.03-.31,2.09-.31,3.18,0,1.22.13,2.41.38,3.55.07.31.38.49.69.41l6.97-1.84c.28-.07.44-.35.4-.63-.08-.49-.12-.99-.12-1.51Z\"/><path d=\"M116.24,22.07c0,.52-.04,1.02-.12,1.51-.05.28.12.56.4.63l6.97,1.84c.3.08.62-.1.69-.41.26-1.14.39-2.33.39-3.55,0-1.09-.11-2.15-.32-3.18-.06-.31-.38-.5-.69-.42l-6.99,1.85c-.27.07-.43.33-.4.6.04.37.07.75.07,1.14Z\"/><path d=\"M104.83,14.2c.99-.44,2.08-.67,3.26-.67s2.28.22,3.27.67c.82.36,1.54.84,2.17,1.43.24.22.59.27.86.09l5.65-3.6c.41-.26.47-.81.15-1.17-.15-.17-.31-.34-.47-.51-1-1-2.12-1.86-3.33-2.57s-2.53-1.26-3.94-1.66c-1.41-.39-2.86-.59-4.37-.59s-2.98.2-4.38.59-2.71.95-3.93,1.66c-1.22.71-2.33,1.57-3.32,2.57-.16.16-.32.33-.47.51-.32.36-.25.92.16,1.17l5.65,3.6c.27.17.62.13.86-.09.63-.59,1.35-1.06,2.16-1.43Z\"/><path d=\"M111.38,29.95c-.99.44-2.08.67-3.26.67s-2.28-.22-3.27-.67c-.82-.36-1.54-.84-2.17-1.43-.24-.22-.59-.27-.86-.09l-5.65,3.6c-.41.26-.47.81-.15,1.17.15.17.31.34.47.51,1,1,2.12,1.86,3.33,2.57s2.53,1.26,3.94,1.66c1.41.39,2.86.59,4.37.59s2.98-.2,4.38-.59,2.71-.95,3.93-1.66c1.22-.71,2.33-1.57,3.32-2.57.16-.16.32-.33.47-.51.32-.36.25-.92-.16-1.17l-5.65-3.6c-.27-.17-.62-.13-.86.09-.63.59-1.35,1.06-2.16,1.43Z\"/></g></svg>"};
-const LOGO_MODE=THEME==="LIGHT"?"light":"dark";
+const LOGO_MODE=EFFECTIVE_THEME==="LIGHT"?"light":"dark";
 const LOGO_PATH=fm.joinPath(fm.cacheDirectory(),"faro-official-logo-"+LOGO_MODE+"-v1.png");
 async function officialFaroLogo(){
  try{
@@ -116,7 +120,7 @@ const widget=new ListWidget();
 widget.backgroundColor=C.bg;
 try{
  const grad=new LinearGradient();
- grad.colors=[palette("#FFFFFF","#102427"),palette("#EEF6F3","#1F3F42")];
+ grad.colors=[palette("#FFFFFF","#102427"),palette("#EEF6F3","#1B3638")];
  grad.locations=[0,1];
  widget.backgroundGradient=grad;
 }catch(e){/* Solid fallback is intentional for older Scriptable versions. */}
@@ -319,26 +323,15 @@ function glyph(parent,name,size=13,tint=C.wave){
  }catch(e){return label(parent,"≈",size,tint,"bold");}
 }
 function brandRow(parent,small=false){
- const row=hstack(parent,4);row.centerAlignContent();
+ const row=hstack(parent,7);row.centerAlignContent();
  if(ORIGINAL_FARO_IMAGE){
-  // With AUTO a neutral dark plate keeps the white+yellow official
-  // logo legible in both light and dark iOS appearances.
-  const holder=row.addStack();holder.layoutHorizontally();
-  holder.centerAlignContent();
-  if(THEME==="AUTO"){
-   holder.backgroundColor=new Color("#102427");
-   holder.cornerRadius=7;
-   holder.setPadding(3,5,3,5);
-  }
-  const picture=holder.addImage(ORIGINAL_FARO_IMAGE);
-  const h=small?20:25;
+  const picture=row.addImage(ORIGINAL_FARO_IMAGE);
+  const h=small?22:27;
   picture.imageSize=new Size(Math.round(h*128.81/43.63),h);
   picture.resizable=true;
   picture.tintColor=null;
  }else{
-  // Always preserve FARO's name in a rare WebView failure.
-  // Do not recreate the original ring using a generic character.
-  label(row,"FARO",small?16:19,C.ink,"black");
+  label(row,"FARO",small?17:20,C.ink,"black");
  }
  row.addSpacer();
  label(row,"ZEELAND",small?8:9,C.quiet,"bold");
@@ -348,6 +341,11 @@ function scoreRow(parent,best,size){
  label(row,best.score.toFixed(1),size,scoreInk(best.score),"black");
  label(row,"/10",Math.max(11,Math.floor(size*.28)),C.quiet,"semi");
 }
+function qualityStepInk(i){
+ const light=["#C46639","#BA7C31","#9C8431","#6E9E43","#547642"];
+ const dark=["#F0A46D","#F0BF69","#E3D471","#B0DB75","#96C67A"];
+ return new Color((EFFECTIVE_THEME==="LIGHT"?light:dark)[i]||dark[4]);
+}
 function meter(parent,score,width=23,height=5,gap=5){
  const row=hstack(parent,gap);row.centerAlignContent();
  const active=Math.max(1,Math.min(5,Math.ceil(score/2)));
@@ -355,7 +353,7 @@ function meter(parent,score,width=23,height=5,gap=5){
   const cell=row.addStack();
   cell.size=new Size(width,height);
   cell.cornerRadius=height/2;
-  cell.backgroundColor=i<active?scoreInk(score):C.line;
+  cell.backgroundColor=i<active?qualityStepInk(i):C.line;
  }
  return row;
 }
