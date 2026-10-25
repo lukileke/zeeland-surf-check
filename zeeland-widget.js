@@ -328,7 +328,11 @@ function renderSmall(best,data,hazard,sessions){
  widget.addSpacer();
  titleBlock(widget,best,true);
  widget.addSpacer(6);
- if(STYLE==="DATA"){
+ const flagged=hazard?.level==="danger"||hazard?.level==="caution";
+ if(flagged){
+  // Safety takes the limited bottom row; decorative wave copy is suppressed.
+  hazardLine(widget,hazard);
+ }else if(STYLE==="DATA"){
   label(widget,"🌊 "+best.x.h.toFixed(1)+" m · "+best.x.period.toFixed(1)+" s",10,C.wave,"semi");
  }else if(STYLE==="WEEK"){
   const other=sessions.find(x=>x!==best&&x.day!==best.day);
@@ -336,7 +340,6 @@ function renderSmall(best,data,hazard,sessions){
  }else if(STYLE==="FLOW"){
   waveFeeling(widget,best,true);
  }
- if(hazardLine(widget,hazard))widget.addSpacer(2);
  if(data.stale)label(widget,T.stale,8,C.quiet,"semi");
 }
 function renderMedium(best,data,hazard,sessions){
