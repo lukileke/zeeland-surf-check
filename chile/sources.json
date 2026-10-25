@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "0.1.0",
+  "asOf": "2026-10-25",
+  "sources": {
+    "travel-arica": {
+      "name": "Chile Travel · Arica and local surf beaches",
+      "url": "https://chile.travel/blog/surf-en-chile-7-destinos-con-olas-perfectas/",
+      "type": "official-tourism",
+      "reviewed": "2026-10-25"
+    },
+    "travel-iquique": {
+      "name": "Chile Travel · Iquique / Cavancha",
+      "url": "https://chile.travel/destinos/iquique/",
+      "type": "official-tourism",
+      "reviewed": "2026-10-25"
+    },
+    "travel-arica-fica": {
+      "name": "Chile Travel · Lorena Fica / Arica breaks",
+      "url": "https://chile.travel/blog/lorena-fica-multicampeona-de-surf-arica-tiene-un-potencial-tremendo/",
+      "type": "official-tourism-interview",
+      "reviewed": "2026-10-25"
+    },
+    "travel-atacama": {
+      "name": "Chile Travel · Portofino and Flamenco",
+      "url": "https://chile.travel/en/blog/surfing-in-chile-7-perfect-wave-destinations/",
+      "type": "official-tourism",
+      "reviewed": "2026-10-25"
+    },
+    "surfline-tarapaca": {
+      "name": "Surfline · Tarapacá spot listing",
+      "url": "https://www.surfline.com/surf-reports-forecasts-cams/chile/tarapac/3870116",
+      "type": "surf-directory",
+      "reviewed": "2026-10-25"
+    },
+    "surfline-antofagasta": {
+      "name": "Surfline · Antofagasta spot listing",
+      "url": "https://www.surfline.com/travel/chile/antofagasta-surfing-and-beaches/3899537",
+      "type": "surf-directory",
+      "reviewed": "2026-10-25"
+    },
+    "surfline-atacama": {
+      "name": "Surfline · Atacama spot listing",
+      "url": "https://www.surfline.com/travel/chile/atacama-surfing-and-beaches/3899191",
+      "type": "surf-directory",
+      "reviewed": "2026-10-25"
+    },
+    "surfline-national": {
+      "name": "Surfline · Chile directory",
+      "url": "https://www.surfline.com/travel/chile-surfing-and-beaches/3895114",
+      "type": "surf-directory",
+      "reviewed": "2026-10-25"
+    },
+    "surfline-punta-lobos": {
+      "name": "Surfline · Punta de Lobos spot guide",
+      "url": "https://www.surfline.com/surf-report/punta-de-lobos/5842041f4e65fad6a7708cba/spot-guide",
+      "type": "surf-spot-guide",
+      "reviewed": "2026-10-25"
+    },
+    "travel-pichilemu": {
+      "name": "Chile Travel · Pichilemu local breaks",
+      "url": "https://chile.travel/blog/los-mejores-lugares-para-hacer-surf-en-pichilemu-y-sus-alrededores/",
+      "type": "official-tourism",
+      "reviewed": "2026-10-25"
+    },
+    "travel-matanzas": {
+      "name": "Chile Travel · Matanzas",
+      "url": "https://chile.travel/destinos/matanzas/",
+      "type": "official-tourism",
+      "reviewed": "2026-10-25"
+    },
+    "surfline-maule": {
+      "name": "Surfline · Maule surf spots",
+      "url": "https://www.surfline.com/travel/chile/maule-surfing-and-beaches/3880306",
+      "type": "surf-directory",
+      "reviewed": "2026-10-25"
+    },
+    "sernatur-nuble": {
+      "name": "Sernatur · Región de Ñuble",
+      "url": "https://www.sernatur.cl/region/nuble/",
+      "type": "official-tourism",
+      "reviewed": "2026-10-25"
+    },
+    "gob-buchupureo": {
+      "name": "Gobierno de Chile · Buchupureo surf coast",
+      "url": "https://www.gob.cl/noticias/playas-visitar-verano-2025-regiones-chile/",
+      "type": "official",
+      "reviewed": "2026-10-25"
+    },
+    "surfline-biobio": {
+      "name": "Surfline · Biobío surf spots",
+      "url": "https://www.surfline.com/travel/chile/regi-n-del-biob-o-surfing-and-beaches/3898380",
+      "type": "surf-directory",
+      "reviewed": "2026-10-25"
+    },
+    "surfline-loslagos": {
+      "name": "Surfline · Los Lagos surf spots",
+      "url": "https://www.surfline.com/travel/chile/los-lagos-region-surfing-and-beaches/3881974",
+      "type": "surf-directory",
+      "reviewed": "2026-10-25"
+    },
+    "travel-surf-general": {
+      "name": "VisitChile · National surf regions",
+      "url": "https://www.visitchile.com/es/guias-chile/turismo-aventura/surf/",
+      "type": "regional-overview",
+      "reviewed": "2026-10-25"
+    },
+    "shoa-tides": {
+      "name": "SHOA · Chilean official tide predictions",
+      "url": "https://www.directemar.cl/directemar/site/edic/base/port/preg_frec_shoa.html",
+      "type": "maritime-authority",
+      "reviewed": "2026-10-25"
+    },
+    "shoa-time": {
+      "name": "DIRECTEMAR · Official mainland and insular time",
+      "url": "https://www.directemar.cl/cambio-de-hora-en-chile-continental-e-insular-occidental-0",
+      "type": "maritime-authority",
+      "reviewed": "2026-10-25"
+    },
+    "shoa-marejadas": {
+      "name": "DIRECTEMAR · Armada sea conditions",
+      "url": "https://web.directemar.cl/met/jturno/indice/index.htm",
+      "type": "maritime-authority",
+      "reviewed": "2026-10-25"
+    },
+    "tzdb-aysen": {
+      "name": "IANA tzdata 2025b · America/Coyhaique",
+      "url": "https://sources.debian.org/src/tzdata/2025b-0%2Bdeb12u1/NEWS",
+      "type": "timezone-record",
+      "reviewed": "2026-10-25"
+    }
+  }
+}
