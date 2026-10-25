@@ -17,6 +17,7 @@ input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{ou
 .read{font-size:20px;line-height:1.25;letter-spacing:-.03em;font-weight:800;margin-top:17px;margin-bottom:17px}
 .signals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.signal{padding:11px;border:1px solid var(--line);border-radius:12px;background:#f9fbfa;min-height:61px;display:flex;flex-direction:column;gap:6px}.signal strong{font-size:12px;line-height:1.3}.signal small{font-size:10px;color:var(--muted);font-weight:750;letter-spacing:.05em;text-transform:uppercase}.positive{border-left:4px solid #54884e}.mixed{border-left:4px solid #ad872f}.negative{border-left:4px solid #c36e50}.unknown{border-left:4px solid #8c9a9b}
 .caveat{padding:12px 13px;border-radius:10px;background:#f2f3f0;font-size:12px;line-height:1.5;color:var(--muted);margin-top:15px}.source{font-size:12px;line-height:1.55;padding:15px 0 0;color:var(--muted)}.alert{border-left:3px solid #d76957;padding:9px 12px;background:#fcf6f2;border-radius:4px 9px 9px 4px;font-size:12px;margin-top:14px}
+.compare{margin-top:18px}.compare>p{font-size:12px;color:var(--muted);margin-bottom:16px}.compare-row{display:grid;grid-template-columns:minmax(0,1fr) 48px 110px;align-items:center;gap:10px;border-top:1px solid var(--line);padding:10px 3px;min-width:0}.compare-name{font-size:13px;font-weight:750;min-width:0}.compare-name small{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-top:3px}.compare-num{font-weight:850;font-size:20px;line-height:1;font-variant-numeric:tabular-nums}.compare-track{height:8px;background:#dce5e2;border-radius:8px;overflow:hidden}.compare-fill{height:100%;border-radius:8px}.compare-row.current{background:color-mix(in srgb,var(--blue) 6%,transparent);border-radius:8px;padding-inline:9px}@media(max-width:380px){.compare-row{grid-template-columns:minmax(0,1fr) 44px 75px;gap:7px}.compare-name{font-size:12px}}
 .footer{margin-top:25px;font-size:12px;color:var(--muted)}.footer a{display:inline-block;margin-right:13px;margin-top:8px}
 @media(max-width:700px){.layout{grid-template-columns:1fr}main{width:min(100% - 24px,680px)}.panel{padding:19px}.signals{gap:8px}.fields{gap:0 12px}}
 @media(prefers-color-scheme:dark){:root{color-scheme:dark;--paper:#102427;--card:#1c3538;--ink:#eff4ef;--muted:#bdcdd0;--line:#496368;--blue:#a1afff}select,input{background:#294348}.signal{background:#253f42}.vibe{background:#2b4032;border-color:#688b54}.caveat{background:#2c4041}.alert{background:#393330}.slices span{background:#425458}.score{color:#a9d376}a{color:#b6c7ff}}
@@ -51,6 +52,7 @@ input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{ou
 <p id="warning" class="caveat"></p>
 <p class="source" id="sources"></p>
 </section></div>
+<section class="panel compare" aria-label="Comparación de spots con los mismos datos"><h2>Una condición, cinco spots.</h2><p>Comparación experimental con los mismos datos manuales de arriba. Las diferencias provienen de las referencias de viento y swell de cada playa, no de observaciones actuales ni de un pronóstico en vivo.</p><div id="comparisons"></div></section>
 <div class="footer"><strong>Investigación FARO Chile</strong> · Los resultados no representan un pronóstico del momento ni una recomendación de entrada al agua.
 <div><a href="README.md">Catálogo de Chile</a><a href="valparaiso-score.config.json">Parámetros editables</a><a href="IMPLEMENTATION_ROADMAP.md">Plan de calibración</a><a href="../">FARO Zeeland</a></div></div>
 </main>
@@ -79,6 +81,25 @@ const item=document.createElement("div");item.className="signal "+tag.state;
 const caption=document.createElement("small");caption.textContent=tag.criterion||"Estado";
 const desc=document.createElement("strong");desc.textContent=tag.label;
 item.append(caption,desc);target.append(item);
+}
+const ranked=Object.entries(cfg.profiles).map(([spotId,profile])=>({
+ spotId,name:profile.name,assessment:window.FaroChileScoreLab.evaluate(cfg,spotId,values,{locale:"es"})
+})).sort((a,b)=>(b.assessment.score??-1)-(a.assessment.score??-1));
+const comparison=$("comparisons");comparison.replaceChildren();
+for(const item of ranked){
+ const row=document.createElement("div");
+ row.className="compare-row"+(item.spotId===$("spot").value?" current":"");
+ const identity=document.createElement("div");identity.className="compare-name";
+ identity.textContent=item.name;
+ const sub=document.createElement("small");sub.textContent=item.assessment.vibe?.label||"Sin datos";
+ identity.append(sub);
+ const scoreCell=document.createElement("div");scoreCell.className="compare-num";
+ scoreCell.textContent=item.assessment.score===null?"—":item.assessment.score.toFixed(1);
+ const track=document.createElement("div");track.className="compare-track";
+ const fill=document.createElement("div");fill.className="compare-fill";
+ fill.style.width=item.assessment.score===null?"0%":(item.assessment.score*10)+"%";
+ fill.style.background=(window.matchMedia("(prefers-color-scheme: dark)").matches?darkColors:colors)[item.assessment.band]||"var(--line)";
+ track.append(fill);row.append(identity,scoreCell,track);comparison.append(row);
 }
 $("warning").textContent=result.warning||"Prototipo sin datos suficientes.";
 const warning=$("caution");warning.textContent=result.caution||"";
