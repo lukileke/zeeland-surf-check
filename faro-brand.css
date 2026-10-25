@@ -1,4 +1,4 @@
-/* FARO / official visual identity v27
+/* FARO / official visual identity v28
  * Brand source: user-provided colores_marca.pdf (25 Oct 2026).
  * Layout source: user-provided iPhone reference screenshot.
  * Scores: numeric intervals, independent from existing Poor/Fair/Good wording.
@@ -367,4 +367,138 @@ html[data-theme="light"] #forecastPage .day-chip.score-tint.selected {
 }
 html[data-theme="light"] #forecastPage .day-chip:not(.selected){
  border-color:var(--faro-choice-stroke)!important;
+}
+
+/* FARO v28 · READ × MATCH: one clear interpretation, one meaningful next step.
+ * Secondary explanations stay behind disclosures. The shared scoring engine
+ * does not change Surf Quality or imply that these are observed breaking waves. */
+#forecastPage .forecast-overview .faro-read{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto;
+ align-items:center!important;gap:12px 19px;
+ margin:12px 0 4px!important;padding:15px 0 14px!important;
+ background:transparent!important;border:0!important;
+ border-top:1px solid var(--faro-line)!important;
+ border-bottom:1px solid var(--faro-line)!important;
+ box-shadow:none!important;min-width:0!important
+}
+#forecastPage .faro-read-main{min-width:0;display:grid;gap:5px}
+#forecastPage .faro-read-kicker{display:flex;align-items:center;gap:7px;
+ font:800 10px/1.4 var(--faro-text);letter-spacing:.11em;color:var(--fg)}
+#forecastPage .faro-read-mark{
+ display:inline-grid;place-items:center;width:19px;height:19px;
+ border-radius:50%;background:var(--brand-sun);color:var(--brand-ink);
+ font-size:15px;letter-spacing:0;line-height:1
+}
+#forecastPage .faro-read-source{
+ color:var(--faro-quiet);font-weight:650;
+ letter-spacing:.075em;padding-left:8px;
+ border-left:1px solid var(--faro-line)
+}
+#forecastPage .faro-read-title{
+ display:block;color:var(--fg)!important;
+ font:800 clamp(16px,4.2vw,20px)/1.24 var(--faro-text)!important;
+ letter-spacing:-.026em!important;overflow-wrap:break-word
+}
+#forecastPage .faro-read .daily-verdict{
+ background:transparent!important;border:0!important;
+ margin:0!important;padding:0!important;
+ color:var(--faro-quiet)!important;
+ font:550 12.5px/1.47 var(--faro-text)!important;
+ text-transform:none!important;letter-spacing:0!important;
+ max-width:62ch;box-shadow:none!important
+}
+#forecastPage .faro-read.faro-read-risk .faro-read-mark{
+ background:color-mix(in srgb,var(--brand-danger) 13%,var(--panel));
+ color:var(--brand-danger)
+}
+#forecastPage .faro-read.faro-read-risk .faro-read-title{
+ color:var(--brand-danger)!important
+}
+#forecastPage .faro-read-match{
+ display:flex!important;flex-direction:column;align-items:flex-end!important;
+ justify-content:center;gap:3px;
+ background:transparent!important;border:0!important;
+ border-left:1px solid var(--faro-line)!important;
+ padding:7px 0 7px 16px!important;margin:0!important;
+ text-align:right!important;min-width:120px;
+ border-radius:0!important;box-shadow:none!important;
+ color:var(--fg)!important
+}
+#forecastPage .faro-read-match>span:first-child{
+ font:800 11px/1.3 var(--faro-text)!important;letter-spacing:.08em!important;
+ color:var(--brand-deep-blue)!important
+}
+html:not([data-theme="light"]) #forecastPage .faro-read-match>span:first-child{color:#a5baff!important}
+#forecastPage .faro-read-match>span:last-child{
+ font:700 12px/1.35 var(--faro-text)!important;text-decoration:underline;
+ text-decoration-thickness:1px;text-underline-offset:3px
+}
+#forecastPage .faro-read-match:focus-visible{
+ outline:2px solid var(--faro-selection)!important;outline-offset:3px!important;
+ border-radius:5px!important
+}
+@media(hover:hover){#forecastPage .faro-read-match:hover>span:last-child{
+ text-decoration-thickness:2px
+}}
+/* MATCH's personality is a usable product function, not a decoration.
+   Same logo-derived yellow and brand ink; no second saturated blue card. */
+#boardPage>.faro-guide{
+ position:relative!important;isolation:isolate;overflow:hidden;
+ background:color-mix(in srgb,var(--brand-mist) 13%,var(--panel))!important;
+ border:1px solid var(--faro-line)!important;
+ box-shadow:none!important
+}
+#boardPage>.faro-guide:after{
+ content:"";position:absolute;right:-18px;top:10px;
+ width:min(42%,175px);height:92px;pointer-events:none;opacity:.07;
+ background:url("assets/faro-logo.svg") center / contain no-repeat;
+ z-index:-1
+}
+#boardPage .faro-match-kicker{
+ display:inline-flex!important;align-items:center;gap:7px;
+ color:var(--fg)!important;font:800 10px/1.3 var(--faro-text)!important;
+ letter-spacing:.105em!important;
+}
+#boardPage .faro-match-kicker>span{
+ display:grid;place-items:center;border-radius:50%;
+ background:var(--brand-sun);color:var(--brand-ink);
+ width:22px;height:22px;font:850 15px/1 var(--faro-text);letter-spacing:0
+}
+#boardPage>.faro-guide h2{
+ color:var(--fg)!important;max-width:19ch!important;
+ margin:12px 0 8px!important;
+ font-size:clamp(27px,6.5vw,40px)!important;
+ line-height:1.1!important;letter-spacing:-.018em!important;
+}
+#boardPage>.faro-guide>p.muted{
+ max-width:54ch!important;
+ color:var(--faro-quiet)!important;
+ font:550 13px/1.55 var(--faro-text)!important
+}
+#boardPage .faro-match-logic{
+ display:flex;gap:6px 18px;flex-wrap:wrap;
+ padding:13px 0 3px;margin-bottom:9px;
+ border-top:1px solid var(--faro-line);
+ color:var(--faro-quiet);
+ font:800 10px/1.4 var(--faro-text);letter-spacing:.06em
+}
+#boardPage .faro-match-logic b{
+ color:var(--brand-deep-blue);font-weight:900;font-size:15px;
+ line-height:.7;vertical-align:baseline
+}
+html:not([data-theme="light"]) #boardPage .faro-match-logic b{color:#a5baff}
+@media(max-width:430px){
+ #forecastPage .forecast-overview .faro-read{
+  grid-template-columns:1fr;gap:9px!important;
+  margin-top:9px!important;padding-block:12px!important
+ }
+ #forecastPage .faro-read-match{
+  flex-direction:row;justify-content:flex-start!important;align-items:center!important;
+  gap:9px;min-width:0;padding:6px 0 1px!important;
+  text-align:left!important;border-left:0!important
+ }
+ #forecastPage .faro-read-match>span:first-child{
+  background:color-mix(in srgb,var(--brand-sun) 32%,transparent);
+  color:var(--fg)!important;border-radius:4px;padding:3px 5px
+ }
 }
