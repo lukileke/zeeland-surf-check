@@ -559,3 +559,51 @@ html:not([data-theme="light"]) .brand-band-high{--tone:var(--brand-score-ink);--
 #dayview .hourly-section .slots button[class*="brand-band-"] b{
  color:var(--brand-score-ink)!important;
 }
+
+/* FARO v33 — Wave Wizard is a concise, clickable interpretation, not a
+ * new score or another card. Coloured independently from quality bands. */
+#waveWizardStrip[hidden]{display:none!important}
+#forecastPage .wave-wizard-strip{
+ display:flex!important;align-items:center!important;flex-wrap:wrap!important;
+ gap:7px 11px!important;
+ margin:12px 0 4px!important;padding:10px 0!important;
+ border-top:1px solid var(--faro-line)!important;
+ background:transparent!important;
+ min-width:0!important;
+}
+#forecastPage .wave-wizard-kicker{
+ flex:0 0 auto!important;
+ color:var(--faro-quiet)!important;
+ font:850 10px/1.3 var(--faro-text)!important;
+ letter-spacing:.11em!important;
+ white-space:nowrap!important;
+}
+#forecastPage .wave-wizard-tag{
+ display:inline-flex!important;align-items:center!important;
+ justify-content:center!important;
+ flex:0 1 auto!important;min-height:42px!important;
+ max-width:100%!important;width:auto!important;
+ margin:0!important;padding:8px 12px!important;
+ background:var(--wave-bg,var(--tile))!important;
+ color:var(--wave-text,var(--fg))!important;
+ border:1px solid var(--wave-border,var(--faro-line))!important;
+ border-radius:10px!important;
+ box-shadow:none!important;
+ font:800 12.5px/1.3 var(--faro-text)!important;
+ text-align:left!important;white-space:normal!important;
+}
+#forecastPage .wave-wizard-note{
+ flex:1 1 150px!important;min-width:0!important;
+ color:var(--muted)!important;
+ font:600 12px/1.45 var(--faro-text)!important;
+}
+#dayview .glance-model-note{
+ color:var(--faro-quiet)!important;
+ font:750 10px/1.3 var(--faro-text)!important;
+ letter-spacing:.07em!important;
+}
+@media(max-width:440px){
+ #forecastPage .wave-wizard-kicker{flex-basis:100%!important}
+ #forecastPage .wave-wizard-tag{min-height:40px!important}
+ #forecastPage .wave-wizard-note{flex-basis:130px!important}
+}
