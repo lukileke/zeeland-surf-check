@@ -304,6 +304,21 @@ function gradeRow(parent,best){
  row.addSpacer();
  label(row,T.model.includes("·")?word("ESTIMACIÓN","MODEL"):"MODEL",8,C.quiet,"semi");
 }
+function localizedWave(ch,short=false){
+ if(LANG!=="es")return ch.name;
+ const names={
+ "Wild & Windy":short?"WINDY":"WINDY · Viento fuerte",
+ "Choppy & Messy":short?"CHOPPY":"CHOPPY · Mar picado",
+ "Tiny & Tricky":short?"TINY":"TINY · Pequeñas",
+ "Clean Lines":short?"CLEAN":"CLEAN · Ordenadas",
+ "Mellow & Cruisy":short?"MELLOW":"MELLOW · Suaves",
+ "Punchy & Powerful":short?"PUNCHY":"PUNCHY · Potentes",
+ "Easygoing Sessions":short?"EASYGOING":"EASYGOING · Tranquilo",
+ "Short & Soft":short?"SHORT":"SHORT · Período corto",
+ "Mixed Bag":short?"MIXED":"MIXED · Variable"
+ };
+ return names[ch.name]||ch.name;
+}
 function waveText(best,short=false){
  const ch=globalThis.ZeelandEngine.waveCharacter(best.x);
  return localizedWave(ch,short);
@@ -482,7 +497,7 @@ function emptyWidget(message){
   label(widget,"FARO · "+message,12,Color.white(),"semi",1);
   return;
  }
- topBar(widget,"ZEELAND");
+ brandRow(widget,true);
  widget.addSpacer(11);
  label(widget,message,14,C.ink,"bold",2);
  widget.addSpacer(5);
