@@ -54,6 +54,10 @@ function render(target,input){
   el('span','spot-profile-more-arrow','⌄'));
  extra.append(heading);
  const body=el('div','spot-profile-more-body');
+ if(guide?.surfCulture){
+  body.append(el('small','spot-profile-section-title',tr('LOCAL SURF SCENE','ENTORNO SURF LOCAL')));
+  body.append(el('p','spot-profile-copy',guide.surfCulture[es?'es':'en']));
+ }
  if(guide){
   const area=el('div','spot-profile-guide');
   area.append(el('small','spot-profile-section-title',tr('BEACH-LEVEL GUIDES','GUÍAS DE LA PLAYA')));
