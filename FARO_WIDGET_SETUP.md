@@ -14,7 +14,9 @@ The same **`zeeland-widget.js`** script adapts to the widget size chosen in iOS.
 
 The size comes from iOS; a parameter cannot make a small iOS widget physically large.
 
-The redesigned layout uses a narrow coloured quality rail, larger score typography, a five-step quality meter, and SF Symbols for marine metrics. **The original FARO SVG logo is embedded in the widget script**, preserving the custom wordmark and rescue-ring 'O'. Scriptable renders the SVG to a high-resolution PNG on first run and caches it for future updates. For `THEME=AUTO` the official white-and-yellow logo sits on a small fixed dark backing so it remains legible across light/dark appearances; `THEME=LIGHT` uses the original dark-ink logo and `THEME=DARK` uses the original white logo.
+The redesigned layout uses an unobtrusive quality rail, larger score typography, a five-step copper→olive quality meter, model-wave bearings (direction FROM) where space permits, and SF Symbols for marine metrics. **The original FARO SVG logo is embedded in the widget script**, preserving the custom wordmark and rescue-ring 'O'. Scriptable renders the SVG to a high-resolution PNG on first run and caches it for future updates. For `THEME=AUTO` and default `DARK`, the widget uses a cohesive dark FARO background with the original white/yellow transparent logo directly on it — **no backing box**. Use `THEME=LIGHT` to show the original charcoal/yellow logo on a light widget. Scriptable's device appearance query does not work inside widgets, so AUTO intentionally does not attempt unreliable automatic colour switching.
+
+**Preview recommendation:** compare `BEST|ES|STYLE=FLOW|THEME=DARK|SIZE=MEDIUM` and `BEST|ES|STYLE=WEEK|THEME=DARK|SIZE=LARGE`. iOS will ultimately decide its actual widget size and refresh timing. The preview is indicative, not a pixel-perfect final Home Screen render. Real forecasts remain model estimates, not live surf reports.
 
 ## Styles
 
@@ -40,8 +42,8 @@ Parameters use `|` to combine choices; order does not matter except that the fir
 | `STYLE=MINIMAL` | Simplified appearance |
 | `STYLE=DATA` | More forecast metrics |
 | `STYLE=WEEK` | Next available windows |
-| `THEME=AUTO` | Follow iOS Light/Dark |
-| `THEME=LIGHT` / `THEME=DARK` | Force light/dark appearance |
+| `THEME=AUTO` | FARO's fixed dark coastal appearance, without a logo capsule (Scriptable cannot detect system appearance inside widgets) |
+| `THEME=LIGHT` / `THEME=DARK` | Use the official transparent dark-ink / white FARO logo on matching light/dark backgrounds |
 | `SIZE=SMALL` / `SIZE=MEDIUM` / `SIZE=LARGE` | Preview only when running inside Scriptable |
 
 ### Ready-made widget configurations
