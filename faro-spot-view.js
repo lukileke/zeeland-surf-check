@@ -62,7 +62,7 @@ function render(target,input){
   fact(tr('Wind','Viento'),guide.windsFrom);
   fact(tr('Swell','Oleaje'),guide.swellFrom);
   area.append(simple);
-  area.append(el('p','spot-profile-copy',tr('Tide evidence: ','Referencias de marea: ')+guide.tide));
+  area.append(el('p','spot-profile-copy',tr('Tide evidence: ','Referencias de marea: ')+(es?(guide.tideEs||guide.tide):guide.tide)));
   body.append(area);
   if(input.forecast&&Number.isFinite(input.orientation)){
    const signal=root.FaroSpotEvidence?.signal({
