@@ -84,6 +84,32 @@ async function swipe(session,x0,y0,x1,y1){
      await page.evaluate(t=>{
       if(document.documentElement.getAttribute('data-theme')!==t)toggleTheme();
      },theme);
+     const brandCheck=await page.evaluate(async()=>{
+      const el=document.querySelector('.faro-logo-art');
+      await el.decode().catch(()=>{});
+      const root=getComputedStyle(document.documentElement);
+      const danger=document.querySelector('.faro-safety-center.danger .faro-safety-summary');
+      const watermark=danger?getComputedStyle(danger,'::before').backgroundImage:'';
+      return {
+       logoLoaded:el.complete&&el.naturalWidth>0,
+       logoSrc:el.getAttribute('src'),
+       bandColors:['--brand-score-low','--brand-score-mid','--brand-score-regular','--brand-score-high']
+        .map(key=>root.getPropertyValue(key).trim()),
+       selection:root.getPropertyValue('--brand-blue').trim(),
+       scoreBands:[2.4,2.5,4.9,5,7.49,7.5,10].map(scoreTone),
+       watermark
+      };
+     });
+     if(!brandCheck.logoLoaded||brandCheck.logoSrc!=='assets/faro-logo.svg'||
+        brandCheck.bandColors.join(',')!=='#ce762e,#efbc62,#6b9347,#a4d156'||
+        brandCheck.selection!=='#5878e0'||
+        !brandCheck.watermark.includes('faro-salva-red.svg')||
+        !brandCheck.scoreBands[0].includes('brand-band-low')||
+        !brandCheck.scoreBands[1].includes('brand-band-mid')||
+        !brandCheck.scoreBands[3].includes('brand-band-regular')||
+        !brandCheck.scoreBands[5].includes('brand-band-high')){
+       failures.push({width,locale,theme,brandCheck});
+     }
      for(const [tab,nav] of [['forecast','forecastPage'],['best','bestPage'],['board','boardPage']]){
       await page.evaluate(t=>switchTab(t),tab);
       await sleep(100);
