@@ -201,6 +201,41 @@ async function swipe(session,x0,y0,x1,y1){
        if(await page.locator('#faroSafetyCenter details').evaluate(d=>d.open)){
         failures.push({width,locale,theme,issue:'Warning failed to collapse'});
        }
+       if((width===320||width===375)&&theme==='light'){
+        // A chosen day triggers FARO's recommendation, not 'your session'.
+        // Only a deliberate time-slot tap should switch to a selected window.
+        const windowCopy=await page.evaluate(()=>{
+         const heading=()=>document.querySelector('#sessionAtGlance .glance-title');
+         chooseForecastDay(1);
+         applyLanguage();
+         const suggested=heading()?.textContent?.trim();
+         const suggestionAuto=!forecastWindowChosenByUser;
+         const alternative=[...document.querySelectorAll('#slots button:not(:disabled)')]
+           .find(el=>!el.classList.contains('active'));
+         if(alternative)alternative.click();
+         applyLanguage();
+         const selected=heading()?.textContent?.trim();
+         const explicit=forecastWindowChosenByUser;
+         chooseForecastDay(2);
+         applyLanguage();
+         const restored=heading()?.textContent?.trim();
+         const restoredAuto=!forecastWindowChosenByUser;
+         const rect=heading()?.getBoundingClientRect();
+         const screenWidth=document.documentElement.clientWidth;
+         const fits=Boolean(rect&&rect.right<=screenWidth+2&&rect.left>=-2);
+         return {suggested,selected,restored,suggestionAuto,explicit,restoredAuto,
+           alternativeFound:!!alternative,fits,screenWidth,rectRight:rect?.right};
+        });
+        const expectedAuto=locale==='es'?'HORARIO RECOMENDADO':'SUGGESTED WINDOW';
+        const expectedSelected=locale==='es'?'HORARIO SELECCIONADO':'SELECTED WINDOW';
+        if(!windowCopy.alternativeFound||!windowCopy.suggestionAuto||
+           !windowCopy.explicit||!windowCopy.restoredAuto||!windowCopy.fits||
+           windowCopy.suggested!==expectedAuto||
+           windowCopy.selected!==expectedSelected||
+           windowCopy.restored!==expectedAuto){
+         failures.push({width,locale,theme,issue:'Forecast copy must distinguish automatic suggestion and user time choice',windowCopy,expectedAuto,expectedSelected});
+        }
+       }
       }
 
       const info=await page.evaluate(horizontalIssues);
