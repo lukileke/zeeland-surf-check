@@ -56,8 +56,9 @@
   }
   if(valid(waveFrom)&&configWave?.length){
    if(match(waveFrom,configWave)){
-    wave=valid(period)&&period<wh.veryShortPeriodSeconds?'mixed':'favourable';
-    waveContext=wave==='mixed'?'short-period':'direction-in-range';
+    wave=!valid(period)||period<wh.veryShortPeriodSeconds?'mixed':'favourable';
+    waveContext=!valid(period)?'period-unavailable':
+     (wave==='mixed'?'short-period':'direction-in-range');
    }else if(near(waveFrom,configWave,wh.nearSectorMarginDegrees)){
     wave='mixed';waveContext='sector-edge';
    }else{wave='unfavourable';waveContext='outside-reported-window';}
