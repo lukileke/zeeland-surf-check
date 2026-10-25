@@ -20,7 +20,7 @@ const brand=fs.readFileSync(path.join(root,'faro-brand.css'),'utf8');
 const logo=fs.readFileSync(path.join(root,'assets/faro-logo.svg'),'utf8');
 const salva=fs.readFileSync(path.join(root,'assets/faro-salva-red.svg'),'utf8');
 assert.ok(html.includes('src="assets/faro-logo.svg"'),'Official vector logo is used as the live wordmark');
-assert.match(html,/href="faro-brand\\.css\\?v=\\d+"/,'Official brand layer remains versioned');
+assert.ok(html.includes('href="faro-brand.css?v='),'Official brand layer remains versioned');
 assert.ok(brand.includes('Selected = paper. Alternatives = open canvas.'),'FARO distinguishes chosen day from unselected options');
 assert.ok(brand.includes('background:transparent!important'),'Unselected surfaces stay transparent');
 assert.ok(brand.includes('border:2px solid var(--brand-blue)!important'),'Blue stroke belongs to active selection');
