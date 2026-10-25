@@ -59,6 +59,12 @@ assert.ok(cssAsset&&Number(cssAsset[1])>0,'Local stylesheet has a versioned cach
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
 assert.ok(html.includes("['Soft-top','Soft']"),'Spanish Board Wizard calls soft boards Soft');
 assert.ok(!html.includes('Tabla blanda'),'Avoid literal non-surf Spanish for soft boards');
+assert.ok(!html.includes('<span class="glance-title">YOUR SESSION</span>'), 'Forecast must not imply the reader already booked or chose a surf session');
+assert.ok(html.includes("forecastWindowChosenByUser?'SELECTED WINDOW':'SUGGESTED WINDOW'"),'Forecast headline explains user choice versus auto-suggested time');
+assert.ok(html.includes("['SUGGESTED WINDOW','HORARIO RECOMENDADO']"),'Automatic time is clearly labelled in Spanish');
+assert.ok(html.includes("['SELECTED WINDOW','HORARIO SELECCIONADO']"),'Explicitly chosen time is clearly labelled in Spanish');
+assert.ok(html.includes("forecastWindowChosenByUser=true;render()"),'Hour-window buttons explicitly set reader-choice state');
+assert.ok(html.includes("forecastWindowChosenByUser=false;slotIndex=marine&&weather?recommendedSlotIndex(i):0"),'Choosing a new day returns the headline to automatic suggestion');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
 assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
 assert.ok(html.includes('function scrollForecastDays(')&&html.includes('function updateDayStripControls('),'Forecast rail remains keyboard/button reachable');
