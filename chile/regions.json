@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "0.1.0",
+  "country": "CL",
+  "generatedOn": "2026-10-25",
+  "active": false,
+  "reason": "Research catalogue only. No Chile wave scoring, warnings, spot ranking, routes, or widget switch until validated.",
+  "regions": [
+    {
+      "code": "CL-AP",
+      "name": "Arica y Parinacota",
+      "macroArea": "Norte Grande",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-AP.json",
+      "spotCount": 5,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-TA",
+      "name": "Tarapacá",
+      "macroArea": "Norte Grande",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-TA.json",
+      "spotCount": 5,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-AN",
+      "name": "Antofagasta",
+      "macroArea": "Norte Grande",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-AN.json",
+      "spotCount": 6,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-AT",
+      "name": "Atacama",
+      "macroArea": "Norte Chico",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-AT.json",
+      "spotCount": 6,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-CO",
+      "name": "Coquimbo",
+      "macroArea": "Norte Chico",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-CO.json",
+      "spotCount": 4,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-VS",
+      "name": "Valparaíso",
+      "macroArea": "Centro e insular",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-VS.json",
+      "spotCount": 5,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-RM",
+      "name": "Metropolitana de Santiago",
+      "macroArea": "Centro interior",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-RM.json",
+      "spotCount": 0,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-LI",
+      "name": "Libertador General Bernardo O’Higgins",
+      "macroArea": "Centro",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-LI.json",
+      "spotCount": 7,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-ML",
+      "name": "Maule",
+      "macroArea": "Centro sur",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-ML.json",
+      "spotCount": 6,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-NB",
+      "name": "Ñuble",
+      "macroArea": "Centro sur",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-NB.json",
+      "spotCount": 3,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-BI",
+      "name": "Biobío",
+      "macroArea": "Sur",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-BI.json",
+      "spotCount": 6,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-AR",
+      "name": "La Araucanía",
+      "macroArea": "Sur",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-AR.json",
+      "spotCount": 0,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-LR",
+      "name": "Los Ríos",
+      "macroArea": "Sur",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-LR.json",
+      "spotCount": 2,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-LL",
+      "name": "Los Lagos",
+      "macroArea": "Sur austral",
+      "timeZone": "America/Santiago",
+      "file": "regions/CL-LL.json",
+      "spotCount": 2,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-AI",
+      "name": "Aysén del General Carlos Ibáñez del Campo",
+      "macroArea": "Patagonia",
+      "timeZone": "America/Coyhaique",
+      "file": "regions/CL-AI.json",
+      "spotCount": 0,
+      "forecastEnabled": false
+    },
+    {
+      "code": "CL-MA",
+      "name": "Magallanes y de la Antártica Chilena",
+      "macroArea": "Patagonia austral",
+      "timeZone": "America/Punta_Arenas",
+      "file": "regions/CL-MA.json",
+      "spotCount": 0,
+      "forecastEnabled": false
+    }
+  ],
+  "sourceRegistry": "sources.json",
+  "validationGuide": "README.md"
+}
