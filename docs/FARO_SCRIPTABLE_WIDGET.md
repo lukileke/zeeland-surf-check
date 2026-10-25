@@ -1,4 +1,4 @@
-# FARO · Scriptable iPhone widget (Coastal Editorial v2)
+# FARO · Scriptable iPhone widget (Coastal Editorial v3)
 
 **Updated:** 24 October 2026
 
@@ -57,3 +57,23 @@ Automated GitHub Actions `tests/faro-widget.cjs` executes the actual script in a
 **Neither test is a native Scriptable/iOS screenshot test.** Actual widget dimensions, clipping, Home Screen light/dark/tint effects, Dynamic Type and Lock Screen accessory previews must be checked on an iPhone in Scriptable. On iOS the refresh schedule is not guaranteed by `refreshAfterDate`.
 
 Research used: [Scriptable ListWidget docs](https://docs.scriptable.app/listwidget/), [WidgetStack docs](https://docs.scriptable.app/widgetstack/), [Apple Widgets HIG](https://developer.apple.com/design/human-interface-guidelines/widgets), [Open-Meteo Marine API](https://open-meteo.com/en/docs/marine-weather-api).
+
+
+## v3 · Brand identity and FARO READ (25 October 2026)
+
+The widget now adopts **the actual user-supplied FARO vector logotype**, not a fabricated `FARO ≈` text mark. Because Scriptable cannot depend on displaying an SVG directly, the original `Logo_mientras 2.svg` is converted into a compact, transparent PNG (180 px width; 64-colour optimized) and embedded as base64 in the self-contained `zeeland-widget.js` script. It is decoded locally through documented `Data.fromBase64String` and `Image.fromData`. In dark mode, a restrained pale logo backing preserves the original dark-green/yellow artwork instead of altering the authentic vector colours. If image decoding fails, plain FARO text is the fallback. This is a raster adaptation, not a new logo design.
+
+Widget foreground and background tokens now derive from the same **official PDF colours** as the website, including deep brand green `#1F3B3D`, golden mark `#FFDA71`, petrol dark canvas, ocean-blue waves, and real `#E55845` model danger accent. Score-number ink follows the **four numerical colour bands** (0–2.5, 2.5–5, 5–7.5, 7.5–10), rather than attaching arbitrary colours to the text grades Excellent/Good/Fair/Poor.
+
+The widget calls the same `ZeelandEngine.quickRead(...,locale)` that powers **FARO READ** in the web app:
+
+- **Medium:** score and wave height stay foremost; footer shows a compact FARO READ character or the independent, higher-priority regional wind risk.
+- **Small:** score, selected beach, upcoming window and a short read (or severe wind notice) without attempting to reproduce the full website.
+- **Large:** includes the FARO READ headline and short cautious model explanation, plus the next two alternatives.
+- **Lock Screen:** retains compact, monochrome/tinted number and time because larger editorial assets would not fit.
+
+If the shared scoring engine changes, Scriptable refreshes its local `faro-widget-engine-v3.js` cache according to its own age policy. The widget script itself must still be copied into Scriptable manually after GitHub changes. **The website and widget have not become one auto-updating native app.**
+
+Safety, light window, no live KNMI, refresh timing, offline 12-hour expiry and original spot parameterisation remain subject to the preceding limitations. For v3 regression checks, a mock Scriptable environment verifies actual PNG decoding, brand dimensions, model hazard precedence and Spanish/English interpretation; an image render on an actual iPhone remains the final required device QA.
+
+Sources: [Apple widget guidance](https://developer.apple.com/design/human-interface-guidelines/widgets), [Scriptable Image.fromData](https://docs.scriptable.app/image/#fromdata), [Scriptable Data.fromBase64String](https://docs.scriptable.app/data/#frombase64string).
