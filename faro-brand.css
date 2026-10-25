@@ -562,7 +562,7 @@ html:not([data-theme="light"]) .brand-band-high{--tone:var(--brand-score-ink);--
 
 /* FARO v33 — Wave Wizard is a concise, clickable interpretation, not a
  * new score or another card. Coloured independently from quality bands. */
-#waveWizardStrip[hidden]{display:none!important}
+#forecastPage #waveWizardStrip[hidden]{display:none!important}
 #forecastPage .wave-wizard-strip{
  display:flex!important;align-items:center!important;flex-wrap:wrap!important;
  gap:7px 11px!important;
