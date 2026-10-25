@@ -27,6 +27,13 @@
    node('span','spot-profile-chip',choose('Local context','Contexto local')),
    node('span','spot-profile-chip spot-profile-chip--muted',choose('Break not calibrated','Rompiente no calibrada'))
   );
+  try{
+   const summary=root.FaroSpotDNA?.summary(id);
+   if(summary&&Number.isInteger(summary.count)){
+    chips.append(node('span','spot-profile-chip spot-profile-chip--muted',
+     es?summary.count+' notas locales en este dispositivo':summary.count+' field notes on this device'));
+   }
+  }catch(e){/* Local storage may be disabled; sector profile remains usable. */}
   head.append(chips);
   target.append(head);
   function row(icon,title,value){
