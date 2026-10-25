@@ -405,25 +405,27 @@ function renderSmall(best,data,hazard,sessions){
  if(data.stale)label(widget,T.stale,8,C.quiet,"semi");
 }
 function renderMedium(best,data,hazard,sessions){
- widget.setPadding(12,15,10,15);
- accentLine(widget,64,4,scoreInk(best.score));widget.addSpacer(8);
- brandRow(widget,false);widget.addSpacer(6);
+ widget.setPadding(9,13,8,13);
+ accentLine(widget,58,3,scoreInk(best.score));widget.addSpacer(4);
+ brandRow(widget,true);widget.addSpacer(3);
  const main=hstack(widget,7);main.centerAlignContent();
  const quality=vstack(main,1);
- scoreRow(quality,best,48);
- label(quality,T[gradeOf(best.score)].toUpperCase(),10,scoreInk(best.score),"bold");
+ scoreRow(quality,best,40);
+ label(quality,T[gradeOf(best.score)].toUpperCase(),9,scoreInk(best.score),"bold");
  main.addSpacer();
  const waves=vstack(main,3);
  heroWave(waves,best);
  label(waves,best.x.period.toFixed(1)+" s · "+best.x.wind+" km/h",9,C.quiet,"semi");
- widget.addSpacer(6);
- meter(widget,best.score,27,4,5);
- sectionRule(widget);
+ widget.addSpacer(4);
+ meter(widget,best.score,25,3,4);
+ widget.addSpacer(4);
+ const rule=widget.addStack();rule.size=new Size(0,1);rule.backgroundColor=C.line;
+ widget.addSpacer(4);
  const row=hstack(widget,5);row.centerAlignContent();
  label(row,best.spot[0]+" · "+best.spot[1],11,C.ink,"bold",1);
  row.addSpacer();
  label(row,dayLabel(best.day)+" "+windowLabel(best.h),9,C.quiet,"semi",1);
- widget.addSpacer(5);
+ widget.addSpacer(3);
  if(!hazardLine(widget,hazard,true)){
   if(STYLE==="WEEK"){
    const next=sessions.find(x=>x.day!==best.day);
@@ -467,8 +469,7 @@ function renderLarge(best,data,hazard,sessions){
   vibePanel(widget,best);widget.addSpacer(11);
   const insight=globalThis.ZeelandEngine.quickRead(best.x,LANG);
   label(widget,insight.headline,15,C.ink,"bold",2);
-  widget.addSpacer(5);
-  label(widget,insight.detail,11,C.quiet,"regular",2);
+  /* Expanded interpretation remains available on the FARO website. */
  }
  widget.addSpacer();
  freshness(widget,data);
