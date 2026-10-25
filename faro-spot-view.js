@@ -80,12 +80,13 @@ function render(target,input){
    'cross-or-variable':tr('Cross-shore or variable angle','Viento lateral o ángulo variable')
   };
   const waveText={
+   'period-unavailable':tr('Period data unavailable','No hay datos de período'),
    'direction-in-range':tr('Modelled direction in guide range','Dirección modelada dentro del rango'),
    'sector-edge':tr('Near the reported angle range','Cerca del límite de orientación'),
    'short-period':tr('Short-period modelled waves','Oleaje modelado de período corto'),
    'outside-reported-window':tr('Outside the guide angle range','Fuera del rango indicado por la guía')
   };
-  tile('wind',tr('WIND / VIENTO','VIENTO'),fit.wind,windText[fit.windContext]||
+  tile('wind',tr('WIND','VIENTO'),fit.wind,windText[fit.windContext]||
     tr('Direction or speed missing','Falta dirección o velocidad'));
   tile('wave',tr('MODEL WAVES','OLEAJE DEL MODELO'),fit.wave,waveText[fit.waveContext]||
     tr('Direction unavailable','Dirección no disponible'));
