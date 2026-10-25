@@ -2,6 +2,14 @@
 
 **Research only, NOT an active Chile forecast.** FARO's live forecasts, risk notices, board matching and widgets remain scoped to Zeeland. The Chile atlas is a separately maintained, source-attributed foundation.
 
+## Valparaíso research pilot
+
+The first priority is **La Boca de Concón**, the Aconcagua river-mouth beach. The [Valparaíso Spot DNA reference](VALPARAISO_SPOT_DNA.md) now describes 5 sourced wind/swell pilot profiles within **21 named places**, out of **73 research candidates across 16 Chilean regions**.
+
+**[Open the interactive FARO Lab: Valparaíso](lab.html)** to enter hypothetical wave/wind parameters and compare La Boca, Ritoque, Reñaca, Maitencillo and Papagayo. It is **not a live forecast** and does not change Zeeland's model. It produces experimental, visibly capped /10 compatibility values, FARO VIBE, tags, and source-attributed local readings. Changing [`valparaiso-score.config.json`](valparaiso-score.config.json) will change the model rules without rewriting the UI; `valparaiso-score-lab.js` holds the independent interpreter.
+
+Before release, validate all regional parameters against observed surf at the named bank, check local legal restrictions and coastal warning sources, and only then assess a true forecast score. Run the [regression tests](test-valparaiso-score.js) with `node chile/test-valparaiso-score.js`.
+
 ## Structure
 - [`regions.json`](regions.json) — all **16 Chilean regions**, including empty or inland ones
 - [`regions/`](regions/) — **one JSON record per region**, with documented/candidate surf areas
