@@ -28,6 +28,12 @@ You must replace the code of an existing Scriptable widget script with the curre
 
 All widgets and website score calculations use `surf-engine.js`. Scores, spot orientation and guide-derived signals are estimates; tidal response, the shape of specific sandbars, permitted access, rip currents and breaking-wave height are **not calibrated at individual FARO sectors**. Local coastal advice must be verified on site.
 
+## Valparaíso surf research pilot
+
+[Interactive FARO Lab — La Boca, Ritoque, Reñaca, Maitencillo, Papagayo](chile/lab.html) · [local Spot DNA and scientific limitations](chile/VALPARAISO_SPOT_DNA.md) · [editable local scoring profiles](chile/valparaiso-score.config.json).
+
+This experiment deliberately does **not** publish live Chile forecasts or use Zeeland's scoring coefficients. It displays source-backed directional compatibility and a capped provisional index until field validation.
+
 ## Chile research atlas (not live)
 
 [Chile regional catalog](chile/README.md) — **16 regions and an initial source-traced surf spot inventory**, with cautious fields for break type, wind/swell, tide, risks, timezone, confidence and later calibration. Chile forecasting and Chile-specific alerts are deliberately **disabled** until independently checked. [Implementation roadmap](chile/IMPLEMENTATION_ROADMAP.md).
