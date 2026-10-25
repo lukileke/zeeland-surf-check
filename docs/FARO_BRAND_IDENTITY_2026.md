@@ -75,3 +75,18 @@ Official-brand tokens avoid arbitrary new colours:
 The **blue `#5878E0`** still highlights the active **top navigation tab** and interactive focus states; it is *not* the stroke around a chosen surf score or forecast time. Numeric score hues and warning hues remain independent of selection. This distinction is required by the comparison and branding brief.
 
 Implementation lives in `faro-brand.css?v=26`; the mobile Chromium regression asserts actual rendered border colours for light/dark, EN/ES and mobile viewport widths. Original SVG assets, score physics, forecasts and warning logic are untouched.
+
+
+## v27 · Clean dark-mode logo (25 October 2026)
+
+The user's paired iPhone screenshots showed that the original petrol-ink FARO logo on an opaque white rounded rectangle looked like a pasted-on sticker in the otherwise coherent dark theme.
+
+**Approved correction:** keep the logo's geometry and yellow `#FFDA71` central circle precisely unchanged, but replace only the original lettering and dark-ring fill `#1F3B3D` with white `#FFFFFF` on dark backgrounds. Remove the white rounded rectangle, padding, shadow and badge styling entirely. Light mode continues to use the original supplied SVG without modification.
+
+Assets:
+- `assets/faro-logo.svg` (original ink / light mode)
+- `assets/faro-logo-dark.svg` (same paths, white ink / dark mode)
+
+Both have transparent canvases, are swapped using `html[data-theme]` in `faro-brand.css?v=27`, and share the accessible `h1 aria-label="FARO"`. Keep the original brand palette, safety watermark, surf-score thresholds and v26 grey day/time card borders unchanged.
+
+Browser QA asserts exactly one visible vector per theme, transparent image background and zero padding; source QA ensures only the ink fill and SVG accessibility label vary. Native Safari iOS appearance still requires user screenshot verification.
