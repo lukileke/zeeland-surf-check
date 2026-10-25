@@ -1,98 +1,101 @@
-/* FARO sector profile UI, v1. Sources and editorial claims are kept in
- * faro-spot-evidence.js; never infer a local sandbar optimum or legal entry
- * merely from a forecast coordinate. */
+/* FARO Spot Insight — compact, source-labelled sector profile.
+ * This is local context, NOT observed bathymetry or safe-entry clearance.
+ * Guide evidence is available on demand rather than dominating the forecast. */
 (function(root){
- 'use strict';
- const document=root.document;
- function node(tag,className,text){
-  const el=document.createElement(tag);
-  if(className)el.className=className;
-  if(text!==undefined)el.textContent=String(text);
-  return el;
+'use strict';
+const doc=root.document;
+function el(tag,cls,value){
+ const result=doc.createElement(tag);
+ if(cls)result.className=cls;
+ if(value!==undefined)result.textContent=String(value);
+ return result;
+}
+function render(target,input){
+ if(!target)return;
+ target.replaceChildren();
+ const es=input.locale==='es',tr=(en,spa)=>es?spa:en;
+ const id=input.beach+'::'+input.sector;
+ const evidence=root.FaroSpotEvidence?.locateSector(id);
+ const guide=root.FaroSpotEvidence?.locate(id);
+ const sector=evidence?.sector;
+ const textFor=o=>o?.[es?'es':'en']||'';
+ const intro=el('header','spot-profile-intro');
+ intro.append(
+  el('small','spot-profile-eyebrow',tr('LOCAL SPOT / RESEARCH','SPOT LOCAL / INVESTIGACIÓN')),
+  el('h3','spot-profile-title',input.beach+' · '+input.sector)
+ );
+ intro.append(el('p','spot-profile-lead',sector?textFor(sector.setting):
+  input.fallback?.type||tr('The local surf break is not calibrated.','Esta rompiente no está calibrada.')));
+ const trust=el('div','spot-profile-trust');
+ trust.append(el('span','spot-profile-trust-dot','◌'),
+  el('span',null,tr('Guide-based context · individual sandbars unverified',
+   'Contexto de guías · bancos sin validar')));
+ try{
+  const notes=root.FaroSpotDNA?.summary(id);
+  if(notes?.count>0)trust.append(el('span','spot-profile-notes',
+   tr(notes.count+' personal field notes',notes.count+' notas personales')));
+ }catch(e){/* User may have disabled local storage. */}
+ intro.append(trust);target.append(intro);
+ function highlight(icon,title,value){
+  if(!value)return;
+  const item=el('div','spot-profile-highlight');
+  const titleRow=el('div','spot-profile-highlight-title');
+  titleRow.append(el('span','spot-profile-highlight-icon',icon),el('strong',null,title));
+  item.append(titleRow,el('p','spot-profile-copy',value));
+  target.append(item);
  }
- function render(target,input){
-  if(!target)return;
-  target.replaceChildren();
-  const es=input.locale==='es',choose=(a,b)=>es?b:a;
-  const id=input.beach+'::'+input.sector;
-  const evidence=root.FaroSpotEvidence?.locateSector(id);
-  const guide=root.FaroSpotEvidence?.locate(id);
-  const head=node('header','spot-profile-header');
-  head.append(
-   node('small','spot-profile-eyebrow',choose('SECTOR PROFILE / RESEARCH','PERFIL DEL SECTOR / INVESTIGACIÓN')),
-   node('h3','spot-profile-title',input.beach+' · '+input.sector)
-  );
-  const chips=node('div','spot-profile-chips');
-  chips.append(
-   node('span','spot-profile-chip',choose('Local context','Contexto local')),
-   node('span','spot-profile-chip spot-profile-chip--muted',choose('Break not calibrated','Rompiente no calibrada'))
-  );
-  try{
-   const summary=root.FaroSpotDNA?.summary(id);
-   if(summary&&Number.isInteger(summary.count)){
-    chips.append(node('span','spot-profile-chip spot-profile-chip--muted',
-     es?summary.count+' notas locales en este dispositivo':summary.count+' field notes on this device'));
-   }
-  }catch(e){/* Local storage may be disabled; sector profile remains usable. */}
-  head.append(chips);
-  target.append(head);
-  function row(icon,title,value){
-   const el=node('section','spot-profile-row');
-   const label=node('div','spot-profile-row-label');
-   label.append(node('span','spot-profile-icon',icon),node('strong',null,title));
-   el.append(label,node('p','spot-profile-copy',value));
-   target.append(el);
-  }
-  if(evidence){
-   const p=evidence.sector;
-   row('🏖',choose('Sector character','Características del sector'),p.setting[es?'es':'en']);
-   row('⚠',choose('What to watch','Qué observar'),p.watch[es?'es':'en']);
-   row('📍',choose('Access and local use','Acceso y usos de playa'),p.access[es?'es':'en']);
-  }else{
-   row('🏖',choose('Beach environment','Entorno de la playa'),input.fallback?.type||choose('Coastal beach','Playa costera'));
-   row('⚠',choose('What to watch','Qué observar'),input.fallback?.risks||choose('Check local beach conditions.','Revisa las condiciones locales.'));
-  }
-  if(guide){
-   const refs=node('section','spot-profile-guide');
-   refs.append(node('strong','spot-profile-section-title',choose('BEACH-LEVEL GUIDE SIGNALS','REFERENCIAS GENERALES DE LA PLAYA')));
-   refs.append(node('p','spot-profile-copy',choose('Reported wind: ','Viento orientativo: ')+guide.windsFrom+
-    ' · '+choose('Swell: ','Oleaje: ')+guide.swellFrom));
-   refs.append(node('p','spot-profile-copy',choose('Tide evidence: ','Marea según guías: ')+guide.tide));
-   target.append(refs);
-   const x=input.forecast,orientation=input.orientation;
-   if(x&&Number.isFinite(orientation)){
-    const signal=root.FaroSpotEvidence?.signal({
-     windDirection:x.dir,windSpeed:x.wind,waveDirection:x.wd,orientation
-    },id);
-    if(signal){
-     const values={
-      'offshore-influenced':choose('offshore-influenced','con componente offshore'),
-      'onshore-influenced':choose('onshore-influenced','con componente onshore'),
-      'cross-shore':choose('cross-shore','lateral'),
-      unknown:choose('unknown','sin datos')
-     };
-     target.append(node('p','spot-profile-model-note',
-      choose('Selected model wind: ','Viento modelado seleccionado: ')+
-      (values[signal.windRole]||values.unknown)+
-      choose(' (indicative coastline orientation, not an observed breaking wave).',
-       ' (orientación aproximada de la costa; no es una observación de olas rompientes).')));
-    }
+ highlight('⚠',tr('Keep in mind','Ten en cuenta'),
+  sector?textFor(sector.watch):input.fallback?.risks);
+ highlight('↗',tr('Access & local use','Acceso y usos'),
+  sector?textFor(sector.access):input.fallback?.extra);
+ const extra=el('details','spot-profile-more');
+ const heading=el('summary','spot-profile-more-summary');
+ heading.append(el('span',null,tr('Wind, swell, tides & sources','Viento, oleaje, mareas y fuentes')),
+  el('span','spot-profile-more-arrow','⌄'));
+ extra.append(heading);
+ const body=el('div','spot-profile-more-body');
+ if(guide){
+  const area=el('div','spot-profile-guide');
+  area.append(el('small','spot-profile-section-title',tr('BEACH-LEVEL GUIDES','GUÍAS DE LA PLAYA')));
+  const simple=el('div','spot-profile-facts');
+  function fact(name,value){const d=el('div','spot-profile-fact');d.append(el('strong',null,name),el('span',null,value));simple.append(d)}
+  fact(tr('Wind','Viento'),guide.windsFrom);
+  fact(tr('Swell','Oleaje'),guide.swellFrom);
+  area.append(simple);
+  area.append(el('p','spot-profile-copy',tr('Tide evidence: ','Referencias de marea: ')+guide.tide));
+  body.append(area);
+  if(input.forecast&&Number.isFinite(input.orientation)){
+   const signal=root.FaroSpotEvidence?.signal({
+    windDirection:input.forecast.dir,windSpeed:input.forecast.wind,
+    waveDirection:input.forecast.wd,orientation:input.orientation
+   },id);
+   if(signal){
+    const windRole={
+     'offshore-influenced':tr('offshore influence','componente offshore'),
+     'onshore-influenced':tr('onshore influence','componente onshore'),
+     'cross-shore':tr('cross-shore','lateral'),
+     unknown:tr('undetermined','sin determinar')
+    }[signal.windRole];
+    body.append(el('p','spot-profile-model-note',
+     tr('Selected window: modelled wind suggests ','Ventana seleccionada: el viento modelado sugiere ')+windRole+
+     tr('. This does not verify the shape of breaking waves.','. No permite verificar cómo rompen las olas.')));
    }
   }
-  target.append(node('p','spot-profile-caveat',
-   choose('Evidence boundary: bank shape, ideal tide, currents and activity permissions are not mapped to this exact coordinate. Always verify signs and the shore before entering.',
-    'Límite de la evidencia: los bancos, la marea óptima, las corrientes y las zonas autorizadas no están cartografiados para esta coordenada. Comprueba siempre la señalización y la playa.')));
-  const refs=node('footer','spot-profile-sources');
-  refs.append(node('strong','spot-profile-section-title',choose('SOURCES / LOCAL GUIDES','FUENTES / GUÍAS LOCALES')));
-  const found=new Set();
-  for(const source of [evidence?.sector?.source,...(guide?.sources||[])]){
-   if(!source?.url||found.has(source.url))continue;
-   found.add(source.url);
-   const a=node('a','spot-profile-link',source.name+' ↗');
-   a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';
-   refs.append(a);
-  }
-  target.append(refs);
  }
- root.FaroSpotView=Object.freeze({render});
+ body.append(el('p','spot-profile-disclaimer',
+  tr('Local bank shape, ideal tide, currents and permitted activities are not verified for this point. Check beach signs, actual water and official notices before entering.',
+   'La forma de los bancos, marea óptima, corrientes y actividades permitidas no están verificadas para este punto. Comprueba la playa y los avisos oficiales antes de entrar.')));
+ const links=el('div','spot-profile-links');
+ const seen=new Set();
+ for(const source of [sector?.source,...(guide?.sources||[])]){
+  if(!source?.url||seen.has(source.url))continue;
+  seen.add(source.url);
+  const a=el('a','spot-profile-link',source.name+' ↗');
+  a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';
+  links.append(a);
+ }
+ if(seen.size)body.append(el('small','spot-profile-section-title',tr('REFERENCES','REFERENCIAS')),links);
+ extra.append(body);target.append(extra);
+}
+root.FaroSpotView=Object.freeze({render});
 })(typeof globalThis!=='undefined'?globalThis:this);
