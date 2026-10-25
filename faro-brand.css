@@ -788,89 +788,207 @@ html:not([data-theme="light"]) .wave-character--short{
  #forecastPage .faro-read-chevron{transition:none!important}
 }
 
-/* FARO v38 — a calmer reference library and contextual, sourced spot cards. */
-#dayview>.forecast-expand{
- background:transparent!important;
+/* FARO v39 — compact decision-first library.
+ * Reinstate the same left-aligned 52px disclosure everywhere on mobile.
+ * Overrides older #dayview>details.forecast-expand grid rules. */
+#forecastPage #dayview > details.forecast-expand{
+ display:block!important;position:relative!important;
+ margin:0!important;padding:0!important;min-height:0!important;
  border:0!important;border-top:1px solid var(--faro-line)!important;
- border-radius:0!important;margin:0!important;
+ border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;min-width:0!important;
 }
-#dayview>.forecast-expand>summary{
- background:transparent!important;
- min-height:56px!important;padding:11px 2px!important;
- border:0!important;display:flex!important;
+#forecastPage #dayview > details.forecast-expand:last-child{
+ border-bottom:1px solid var(--faro-line)!important;
+}
+#forecastPage #dayview > details.forecast-expand > summary{
+ display:flex!important;flex-direction:row!important;
  align-items:center!important;justify-content:space-between!important;
- gap:12px!important;
+ box-sizing:border-box!important;
+ grid-template-columns:none!important;
+ min-height:52px!important;width:100%!important;
+ margin:0!important;padding:10px 2px!important;
+ gap:8px!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--fg)!important;text-align:left!important;
+ font:700 13px/1.35 var(--faro-text)!important;
+ list-style:none!important;cursor:pointer!important;
 }
-#dayview>.forecast-expand>summary span:last-child{
- max-width:52%!important;font-size:11px!important;
- text-align:right!important;line-height:1.35!important;
- overflow-wrap:break-word!important;
- color:var(--faro-quiet)!important;
+#forecastPage #dayview > details.forecast-expand > summary::-webkit-details-marker{display:none}
+#forecastPage #dayview > details.forecast-expand > summary::marker{content:""}
+#forecastPage #dayview > details.forecast-expand > summary > .forecast-accordion-title{
+ display:block!important;flex:0 1 auto!important;min-width:0!important;
+ max-width:none!important;
+ color:var(--fg)!important;text-align:left!important;
+ font:800 13.5px/1.3 var(--faro-text)!important;
+ letter-spacing:-.015em!important;white-space:nowrap!important;
 }
-#dayview #spotInsightExpand .spot-summary-heading{
- color:var(--fg)!important;font-size:15px!important;
- font-weight:800!important;
+#forecastPage #dayview > details.forecast-expand > summary > .forecast-accordion-meta{
+ display:block!important;flex:0 1 auto!important;min-width:0!important;
+ max-width:43%!important;
+ color:var(--faro-quiet)!important;text-align:right!important;
+ font:550 11px/1.3 var(--faro-text)!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
 }
-#dayview #spotInsightExpand #spotinsight{
- background:transparent!important;border:0!important;
- border-radius:0!important;box-shadow:none!important;
- margin:0 0 12px!important;padding:3px 0 10px!important;
- display:grid!important;gap:11px!important;
+#forecastPage #dayview > details.forecast-expand > summary::after{
+ content:"⌄"!important;display:block!important;
+ flex:0 0 15px!important;width:15px!important;
+ font:700 18px/1 var(--faro-text)!important;
+ color:var(--faro-quiet)!important;text-align:right!important;
+ transition:transform .18s ease!important;
 }
-#dayview .spot-profile-header{display:grid!important;gap:6px!important}
-#dayview .spot-profile-eyebrow,
-#dayview .spot-profile-section-title{
- font:800 10px/1.4 var(--faro-text)!important;
- letter-spacing:.085em!important;color:var(--faro-quiet)!important
+#forecastPage #dayview > details.forecast-expand[open] > summary::after{
+ transform:rotate(180deg)!important;
 }
-#dayview .spot-profile-title{
- margin:0!important;font:800 clamp(18px,4.4vw,23px)/1.2 var(--faro-text)!important;
- letter-spacing:-.02em!important;color:var(--fg)!important
+#forecastPage #dayview > details.forecast-expand > summary:focus-visible{
+ outline:2px solid var(--faro-selection)!important;
+ outline-offset:-1px!important;border-radius:5px!important;
 }
-#dayview .spot-profile-chips{display:flex!important;flex-wrap:wrap!important;gap:7px!important}
-#dayview .spot-profile-chip{
- display:inline-flex!important;padding:4px 7px!important;
- font:750 10px/1.3 var(--faro-text)!important;
- border:1px solid var(--faro-line)!important;border-radius:7px!important;
- background:var(--tile)!important;color:var(--fg)!important
+#forecastPage #dayview > #spotInsightExpand > #spotinsight.insight-panel{
+ display:grid!important;gap:0!important;
+ width:100%!important;box-sizing:border-box!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;overflow:visible!important;
+ margin:0!important;padding:0 2px 16px!important;
+ color:var(--fg)!important;
 }
-#dayview .spot-profile-chip--muted{background:transparent!important;color:var(--faro-quiet)!important}
-#dayview .spot-profile-row{padding:10px 0 0!important;border-top:1px solid var(--faro-line)!important;display:grid;gap:4px}
-#dayview .spot-profile-row-label{display:flex;gap:8px;align-items:center;color:var(--fg);font:800 12px/1.4 var(--faro-text)}
-#dayview .spot-profile-copy{
- font:550 12px/1.55 var(--faro-text)!important;
- color:var(--faro-quiet)!important;margin:0!important;
- overflow-wrap:break-word!important
+#dayview #spotinsight .spot-profile-intro{
+ display:flex!important;flex-direction:column!important;
+ align-items:flex-start!important;gap:5px!important;
+ margin:0!important;padding:4px 0 12px!important;
+ background:transparent!important;
 }
-#dayview .spot-profile-guide{border-top:1px solid var(--faro-line)!important;padding-top:10px!important;display:grid;gap:6px}
-#dayview .spot-profile-model-note{
- padding:8px 10px!important;border-left:2px solid var(--faro-ocean)!important;
- background:color-mix(in srgb,var(--faro-ocean) 5%,transparent)!important;
- color:var(--faro-quiet)!important;font:550 12px/1.5 var(--faro-text)!important;margin:0!important
+#dayview #spotinsight .spot-profile-eyebrow{
+ display:block!important;color:var(--faro-quiet)!important;
+ font:800 10px/1.3 var(--faro-text)!important;
+ letter-spacing:.075em!important;
 }
-#dayview .spot-profile-caveat{
- border-radius:9px!important;
- background:color-mix(in srgb,var(--brand-sun) 9%,var(--tile))!important;
- font:550 11px/1.5 var(--faro-text)!important;
- color:var(--faro-quiet)!important;padding:9px 10px!important;margin:0!important
+#dayview #spotinsight .spot-profile-title{
+ color:var(--fg)!important;margin:0!important;
+ font:800 clamp(17px,4.4vw,21px)/1.22 var(--faro-text)!important;
+ letter-spacing:-.025em!important;text-align:left!important;
 }
-#dayview .spot-profile-sources{display:flex;flex-wrap:wrap;gap:5px 14px;align-items:baseline}
-#dayview .spot-profile-sources .spot-profile-section-title{width:100%}
-#dayview .spot-profile-link{
- color:var(--faro-ocean)!important;font:700 11px/1.5 var(--faro-text)!important;
- text-decoration:underline!important;text-underline-offset:2px!important
+#dayview #spotinsight .spot-profile-lead{
+ color:var(--muted)!important;
+ font:550 12.5px/1.48 var(--faro-text)!important;
+ margin:3px 0 0!important;padding:0!important;
+ text-align:left!important;overflow-wrap:break-word!important;
 }
-#dayview #faroTechnicalExpand .faro-technical-inner{margin:0 0 10px!important}
-#dayview #faroTechnicalExpand #detail{
+#dayview #spotinsight .spot-profile-trust{
+ display:flex!important;align-items:center!important;flex-wrap:wrap!important;
+ gap:5px!important;margin-top:5px!important;
+ color:var(--faro-quiet)!important;font:650 10px/1.4 var(--faro-text)!important;
+}
+#dayview #spotinsight .spot-profile-trust-dot{color:var(--faro-ocean)!important;font-size:15px!important}
+#dayview #spotinsight .spot-profile-notes{
+ color:var(--fg)!important;border-left:1px solid var(--faro-line)!important;
+ padding-left:7px!important;
+}
+#dayview #spotinsight .spot-profile-highlight{
+ display:grid!important;grid-template-columns:1fr!important;
+ gap:4px!important;
+ padding:10px 0!important;
+ border-top:1px solid var(--faro-line)!important;
+ background:transparent!important;margin:0!important;
+}
+#dayview #spotinsight .spot-profile-highlight-title{
+ display:flex!important;align-items:center!important;gap:7px!important;
+ font:800 11.5px/1.35 var(--faro-text)!important;color:var(--fg)!important;
+}
+#dayview #spotinsight .spot-profile-highlight-icon{color:var(--faro-ocean)!important;font-size:14px!important}
+#dayview #spotinsight .spot-profile-copy{
+ margin:0!important;padding:0!important;
+ color:var(--muted)!important;
+ font:550 12px/1.48 var(--faro-text)!important;
+ text-align:left!important;overflow-wrap:break-word!important;
+}
+#dayview #spotinsight .spot-profile-more{
  margin:0!important;padding:0!important;border:0!important;
- background:transparent!important;box-shadow:none!important
+ border-top:1px solid var(--faro-line)!important;
+ background:transparent!important;border-radius:0!important;
 }
-#dayview #faroTechnicalExpand #detail>.forecast-method-note:first-child{border-top:0!important}
-#dayview>.forecast-expand:last-child{border-bottom:1px solid var(--faro-line)!important}
+#dayview #spotinsight .spot-profile-more > summary{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-height:47px!important;padding:9px 0!important;margin:0!important;
+ color:var(--fg)!important;background:transparent!important;border:0!important;
+ text-align:left!important;list-style:none!important;
+ font:750 12px/1.4 var(--faro-text)!important;
+ cursor:pointer!important;
+}
+#dayview #spotinsight .spot-profile-more > summary::-webkit-details-marker{display:none}
+#dayview #spotinsight .spot-profile-more-arrow{
+ color:var(--faro-quiet)!important;font-size:18px!important;transition:transform .18s ease!important;
+}
+#dayview #spotinsight .spot-profile-more[open] .spot-profile-more-arrow{transform:rotate(180deg)!important}
+#dayview #spotinsight .spot-profile-more-body{
+ display:grid!important;gap:12px!important;
+ padding:1px 0 15px!important;background:transparent!important;
+}
+#dayview #spotinsight .spot-profile-guide{display:grid!important;gap:9px!important}
+#dayview #spotinsight .spot-profile-section-title{
+ display:block!important;color:var(--faro-quiet)!important;
+ font:800 10px/1.4 var(--faro-text)!important;letter-spacing:.08em!important;
+}
+#dayview #spotinsight .spot-profile-facts{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:8px!important;
+}
+#dayview #spotinsight .spot-profile-fact{
+ min-width:0!important;display:grid!important;gap:4px!important;
+ padding:9px 10px!important;border:1px solid var(--faro-line)!important;
+ border-radius:9px!important;background:var(--tile)!important;
+}
+#dayview #spotinsight .spot-profile-fact strong{
+ color:var(--fg)!important;font:800 10px/1.3 var(--faro-text)!important;
+}
+#dayview #spotinsight .spot-profile-fact span{
+ color:var(--muted)!important;
+ font:550 11.5px/1.4 var(--faro-text)!important;
+ overflow-wrap:break-word!important;
+}
+#dayview #spotinsight .spot-profile-model-note,
+#dayview #spotinsight .spot-profile-disclaimer{
+ margin:0!important;padding:0!important;
+ font:550 11px/1.5 var(--faro-text)!important;color:var(--faro-quiet)!important;
+}
+#dayview #spotinsight .spot-profile-model-note{
+ border-left:2px solid var(--faro-ocean)!important;padding-left:9px!important;
+}
+#dayview #spotinsight .spot-profile-disclaimer{
+ border-top:1px solid var(--faro-line)!important;padding-top:10px!important;
+}
+#dayview #spotinsight .spot-profile-links{
+ display:flex!important;flex-wrap:wrap!important;gap:5px 14px!important;
+}
+#dayview #spotinsight .spot-profile-link{
+ color:var(--faro-ocean)!important;font:700 11px/1.5 var(--faro-text)!important;
+ text-decoration:underline!important;text-underline-offset:2px!important;
+}
+#forecastPage #dayview > #faroTechnicalExpand #detail{
+ padding:0!important;margin:0!important;border:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+#forecastPage #dayview > #faroTechnicalExpand #detail>.forecast-method-note:first-child{
+ border-top:0!important;
+}
+@media(max-width:420px){
+ #forecastPage #dayview > details.forecast-expand > summary > .forecast-accordion-title{
+  font-size:12.5px!important;
+ }
+ #forecastPage #dayview > details.forecast-expand > summary > .forecast-accordion-meta{
+  font-size:10px!important;max-width:37%!important;
+ }
+}
 @media(min-width:1101px){
  #dayview>#spotInsightExpand{grid-column:1/-1!important;grid-row:3!important}
  #dayview>#waveInsightExpand{grid-column:1!important;grid-row:4!important}
  #dayview>#faroTechnicalExpand{grid-column:2!important;grid-row:4!important}
  #dayview>#wearExpand{grid-column:1!important;grid-row:5!important}
  #dayview>#fieldNotesExpand{grid-column:2!important;grid-row:5!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #dayview #spotinsight .spot-profile-more-arrow,
+ #forecastPage #dayview > details.forecast-expand > summary::after{
+  transition:none!important;
+ }
 }
