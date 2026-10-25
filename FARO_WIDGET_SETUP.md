@@ -14,16 +14,18 @@ The same **`zeeland-widget.js`** script adapts to the widget size chosen in iOS.
 
 The size comes from iOS; a parameter cannot make a small iOS widget physically large.
 
+The redesigned layout uses a narrow coloured quality rail, larger score typography, a five-step quality meter, and SF Symbols for marine metrics. The background supports iOS light and dark appearances; no embedded logo raster is required.
+
 ## Styles
 
-- **FLOW** (default): editorial surf identity, Wave Wizard and a concise interpretation
-- **MINIMAL**: pared-back score and essentials
-- **DATA**: focus on wave height, period and wind
-- **WEEK**: upcoming surf opportunities, most useful in the large square
+- **FLOW** (default): FARO VIBE, bold numeric score, five-stage quality meter, an expressive coastal look
+- **MINIMAL**: strong score and essentials with minimal commentary
+- **DATA**: wave height, period and wind with marine SF Symbols
+- **WEEK**: next daylight surf opportunities, best in the large square
 
 ## Configure
 
-In Scriptable, create a new script and paste the latest `zeeland-widget.js` source. Add a Scriptable widget to the Home Screen, long-press it, choose **Edit Widget**, set **Script** to your FARO script and enter a **Parameter**.
+In Scriptable, **replace the complete content of your existing FARO script** with the latest `zeeland-widget.js` source (or create a new script). Changes on GitHub do not overwrite scripts already saved in Scriptable. Add a Scriptable widget to the Home Screen, long-press it, choose **Edit Widget**, set **Script** to your FARO script and enter a **Parameter**.
 
 Parameters use `|` to combine choices; order does not matter except that the first non-option term specifies the target.
 
@@ -61,7 +63,7 @@ When running the script from within Scriptable, append `SIZE=SMALL`, `SIZE=MEDIU
 ## Data and limitations
 
 - Forecasts come from Open-Meteo. Wave, period and wind values are **model predictions, not beach observations**.
-- Score colours use FARO's four numerical bands: orange (0–<2.5), yellow (2.5–<5), lime (5–<7.5) and olive (7.5–10).
+- Score colours now use five quality bands shared with the website: copper (0–<2), amber (2–<4), golden sand (4–<6), lime (6–<8), and olive (8–10). The numerical score calculation is unchanged. Large numerals use brighter matching tints in dark mode and legible ink tints in light mode.
 - The user-facing Poor / Fair / Good labels follow their own verbal thresholds.
 - Weather safety warnings take priority over stylistic commentary, but do **not** substitute for official alerts and visual checks at the spot.
 - iOS controls when widgets refresh. A 30-minute requested refresh does **not** guarantee 30-minute updates.
