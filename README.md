@@ -20,6 +20,8 @@ The `zeeland-widget.js` Scriptable source supports **small square, medium rectan
 
 **[Setup and ready-made widget parameters](FARO_WIDGET_SETUP.md)**
 
+**[Forecast 2.0: evidence-based Surfline comparison, swell partitions and tides](FARO_FORECAST_V2_RESEARCH.md)**
+
 You must replace the code of an existing Scriptable widget script with the current version for the changes to appear on your iPhone; updating this GitHub repository alone does not overwrite a script stored in Scriptable.
 
 ## Data integrity
