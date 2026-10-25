@@ -24,59 +24,52 @@ const SPOTS=[
 // FARO web's source of truth for the numbers is surf-engine.js.
 // Spot coordinates and daylight cutoffs match index.html as of October 2026.
 const nowMs=Date.now();
+// Scriptable parameters: BEST|ES|STYLE=FLOW|THEME=AUTO
+// STYLE=FLOW, MINIMAL, DATA, WEEK  · THEME=AUTO, LIGHT, DARK
+// SIZE=SMALL/MEDIUM/LARGE controls in-app preview, never the real widget size.
 const param=String((typeof args!=="undefined"&&args.widgetParameter)||"BEST").trim();
-const tokens=param.split("|").map(s=>s.trim()).filter(Boolean);
-const LANG=tokens.some(t=>t.toUpperCase()==="ES")?"es":"en";
-const requestTarget=tokens.find(t=>!/^(ES|EN)$/i.test(t))||"BEST";
+const tokens=param.split("|").map(v=>v.trim()).filter(Boolean);
+const opt=k=>{const v=tokens.find(t=>t.toUpperCase().startsWith(k+"="));return v?v.slice(k.length+1).toUpperCase().trim():null};
+const LANG=opt("LANG")==="ES"||tokens.some(t=>t.toUpperCase()==="ES")?"es":"en";
+const STYLE=["FLOW","MINIMAL","DATA","WEEK"].includes(opt("STYLE"))?opt("STYLE"):
+ (tokens.find(t=>["FLOW","MINIMAL","DATA","WEEK"].includes(t.toUpperCase()))||"FLOW").toUpperCase();
+const THEME=["AUTO","LIGHT","DARK"].includes(opt("THEME"))?opt("THEME"):"AUTO";
+const PREVIEW=["SMALL","MEDIUM","LARGE"].includes(opt("SIZE"))?opt("SIZE").toLowerCase():null;
+const requestTarget=tokens.find(t=>!/^(ES|EN|FLOW|MINIMAL|DATA|WEEK)$/i.test(t)&&!t.includes("="))||"BEST";
 const isBest=requestTarget.toUpperCase()==="BEST";
 const targetParts=requestTarget.split(":").map(t=>t.trim());
 let chosen=SPOTS.filter(x=>isBest||x[0].toLowerCase()===targetParts[0].toLowerCase());
 if(targetParts.length>1)chosen=chosen.filter(x=>x[1].toLowerCase()===targetParts[1].toLowerCase());
 const invalidTarget=!chosen.length;
 if(invalidTarget)chosen=SPOTS.slice();
-const family=(typeof config!=="undefined"&&config.widgetFamily)||"medium";
+const detectedFamily=(typeof config!=="undefined"&&config.widgetFamily)||"medium";
+const family=(typeof config!=="undefined"&&config.runsInApp&&PREVIEW)?PREVIEW:detectedFamily;
 const lockFamily=family.startsWith("accessory");
 const fm=FileManager.local();
-const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v3.js");
+const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v4.js");
 const cacheName=isBest?"all":chosen.map(x=>x[0]+"-"+x[1]).join("_").replace(/[^a-zA-Z0-9_-]/g,"-").slice(0,80);
-const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v2-"+cacheName+".json");
+const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v3-"+cacheName+".json");
+function palette(light,dark){return THEME==="LIGHT"?new Color(light):THEME==="DARK"?new Color(dark):Color.dynamic(new Color(light),new Color(dark))}
 const C={
- bg:Color.dynamic(new Color("#F7FAFA"),new Color("#102427")),
- ink:Color.dynamic(new Color("#1F3B3D"),new Color("#F3F8F7")),
- quiet:Color.dynamic(new Color("#526A74"),new Color("#BBCBCD")),
- brandYellow:new Color("#FFDA71"),
- wave:Color.dynamic(new Color("#355BAF"),new Color("#A5BAFF")),
- line:Color.dynamic(new Color("#C9D8DA"),new Color("#507074")),
- panel:Color.dynamic(new Color("#FFFFFF"),new Color("#234347")),
- alert:Color.dynamic(new Color("#E55845"),new Color("#FF9A87")),
- caution:Color.dynamic(new Color("#9D541C"),new Color("#EFBC62"))
+ bg:palette("#F7FAFA","#102427"),ink:palette("#1F3B3D","#F3F8F7"),
+ quiet:palette("#526A74","#BBCBCD"),sun:new Color("#FFDA71"),
+ wave:palette("#355BAF","#A5BAFF"),line:palette("#C9D8DA","#507074"),
+ panel:palette("#FFFFFF","#234347"),subtle:palette("#EFF5F5","#193337"),
+ alert:palette("#D85B48","#FF9A87"),caution:palette("#CE762E","#EFBC62")
 };
 /* Compact PNG converted from the user-provided genuine Logo_mientras 2.svg.
    Data URI embedding makes the iOS Scriptable script self-contained/offline. */
 const FARO_LOGO_PNG_B64="iVBORw0KGgoAAAANSUhEUgAAALQAAAA9CAMAAAAzrLMQAAAAwFBMVEUAAAAeOz3+2XAeOzweOj0eOzwcOTkhOzseOzweOjweOzwmODggOz0hQkISQUEgOj0gOz0gOzwiPT1IWEZ2eVGNiVbKtWTszGwbNkKwol7/2nEAVVUgOzwgOEAnQT82TEJYY0r/2XD/2XE9UERhaky2pmD/2nL/2nHBrmPdwWn/2XH//wArKysiM0QxSUREU0taZkqVj1ijmlyrnl2llWDYvmXVu2f/2nH/34D//1UAAAAAAAAAAAAAAAAAAAAAAAAs/zx6AAAAQHRSTlMA/v510ScNKJOzThKQDAtOb7D+//7///4W/9ADyyH///8RdP///zBY//+SAQYPYiJxtpD/ME5trggDAAAAAAAAqyUtiQAABBhJREFUeNrtmml7oyAQgKOggiSaO22atundbve+9///sdU0TThmBtTus1+cL30qiC8Dc0EGg1566aWXXv6rFCeqCOlXMkpyu3uGtuwlAccps5GHIxlLHu2ES5Z45hbRoqyhjy1jcLwzdKRJjlMoxs3OnKUEdOaBtuYstSZwIVNirA2CXQyh3sP0jaBHelPZFLoCUcArOdabvQ00M9a7OXTETxw1S7y3TN8C2tx5aXPoiFsGmXCye9YdOjHbxi2gI9Ho81HSGVpYWmsDbZhC4e0dqY7Q7wMWzw/NNQzlh05bQJ/rccgxFA+0rIXbu1bfVSPpmWHm3R7ckSHmpF9kREK/vpwyYqqmJi4ujH9zv/dgdPAE1nIcBG1b8AfjjR/z6cvj2WIZV7JczPb95j8HnaGBuMUDoc0AYkSlqwqzprz8Fh/k7rJ+8BjH952hg/woAm14eP07z+uacjHdrmJNVrfTRf13/bsjdOn3ugS0QL7zEJNy3RF6ctwUQ9wjhUBrM/2zpqHjq07QJ5r5JXjWhEFP4O94FI2oOhia6drFXTUCXTiOTO3C1i8f9Ho36KglNNddhkCTAwRaOEGuUoIcf4q98j0X3DadUOjE6JagpghDM9dPvkSqm/npiiCufPYUcK14RJykSK6kTPd3hkLLfCflmAO5/eHZdHaKEG+P4TE49yhhFm7NIW+YMO0djjaRGQw9194Jhs7hkohZu0U2hGZOqNr6oVUbaGlbHpY1eaHloA102gI6cdINgdivD3qTunEd2R63HbeHi5ghWdMotEQ8Qk/nMPTiohP0GVAVcNhV09CTws4ZK59HebztFAphQdCaGW4A5YtQ6LEVYcXHlS+2rD5XsYUKLii0tEuoSjawbaehlXhR1gu09kbE5yrilyoYWgWXnyzUEJ3S+trH/M6XMIlUFwUHYdC84O2xi4iCTL+vfND3bbM87g0YGajpHaLi5NnLXtV3T9ZWviMUHQKd+COzwKHN8tA5dLiqd/XTLLownMjyMrpZojVACLTwQx+jogs9oFV9X1eIdcvt8qDmXX0+na/ih7aFbcDRleZpAOicrt+/zg6RcXH6uDzdZ6N1Pf6l9RECC4GWBLR5yGPVZ2pIDqtaQvMQ6IMzg6ATXNV5A2/aAPo8iPnwLgRtqjofNDqAzNpAC+LoTroFDAidYKemRpEOh4CiBXSBHAk4i5sT0Kaq9c+kvlPTtM32KKmVKlxThKHP8SPnf2GIE/LgXzg3dDC06etZqC2yopXLG9HN7tsjGFoRp/vYFtlkIVdywMXPWGs+of0hp6BNVdsfygB75HnYNXNJrr8YeC4unWkwrHYU3nvmIX07XiSvAmnyjGytNXvosPeH6vz1gWlE6tAxga1L5WIy4VzKYZ70v8fopZdeevkLMhM2p2t8R/4AAAAASUVORK5CYII=";
-function addBrandLogo(parent){
- try{
-  if(typeof Data!=="undefined"&&typeof Image!=="undefined"){
-   const data=Data.fromBase64String(FARO_LOGO_PNG_B64);
-   const image=data&&Image.fromData(data);
-   if(image){
-    const shell=parent.addStack();shell.setPadding(2,3,2,3);
-    shell.backgroundColor=Color.dynamic(new Color("#F7FAFA"),new Color("#E9F1F2"));
-    shell.cornerRadius=5;
-    const mark=shell.addImage(image);mark.imageSize=new Size(63,22);
-    return;
-   }
-  }
- }catch(e){}
- // Graceful fallback on unsupported Scriptable versions.
- label(parent,"FARO",16,C.ink,"black");
+function addBrandLogo(parent,compact=false){
+ const row=hstack(parent,3);row.centerAlignContent();
+ label(row,"FARO",compact?15:18,C.ink,"black");
+ label(row,"◉",compact?12:15,C.sun,"black");
 }
-
 function scoreInk(v){
- if(v<2.5)return Color.dynamic(new Color("#9D541C"),new Color("#CE762E"));
- if(v<5)return Color.dynamic(new Color("#93600F"),new Color("#EFBC62"));
- if(v<7.5)return Color.dynamic(new Color("#527530"),new Color("#A9D07B"));
- return Color.dynamic(new Color("#49771A"),new Color("#A4D156"));
+ if(v<2.5)return palette("#CE762E","#F2AE70");
+ if(v<5)return palette("#EFBC62","#EFBC62");
+ if(v<7.5)return palette("#A4D156","#A4D156");
+ return palette("#6B9347","#A9D07B");
 }
 const widget=new ListWidget();
 widget.backgroundColor=C.bg;
@@ -136,7 +129,7 @@ async function engine(){
  if(exists&&age<6*3600000)src=fm.readString(enginePath);
  if(!src){
   try{
-   const req=new Request(SITE+"surf-engine.js");
+   const req=new Request(SITE+"surf-engine.js?v=2");
    req.timeoutInterval=12;src=await req.loadString();
    if(!src.includes("root.ZeelandEngine=")||src.length>30000)throw Error("Invalid shared engine");
    fm.writeString(enginePath,src);
@@ -261,148 +254,170 @@ function locationLabel(best,brief=false){
 function timestampLabel(epoch){return new Intl.DateTimeFormat(LANG==="es"?"es-ES":"en-GB",{
  timeZone:TZ,hour:"2-digit",minute:"2-digit",hour12:false
  }).format(new Date(epoch));}
-function topBar(parent,subtitle){
- const top=hstack(parent,6);top.centerAlignContent();
- addBrandLogo(top);
- top.addSpacer();
- label(top,subtitle,9,C.quiet,"bold");
- return top;
+// Native Scriptable layouts: size-specific compositions, not scaled HTML.
+function topBar(parent,sub,small=false){
+ const row=hstack(parent,4);row.centerAlignContent();
+ addBrandLogo(row,small);row.addSpacer();
+ label(row,sub,small?8:9,C.quiet,"semi");
 }
-function scoreRow(parent,best,compact=false){
- const grade=gradeOf(best.score),row=hstack(parent,3);row.bottomAlignContent();
- label(row,best.score.toFixed(1),compact?38:45,scoreInk(best.score),"black");
+function scoreRow(parent,best,size){
+ const row=hstack(parent,3);row.bottomAlignContent();
+ label(row,best.score.toFixed(1),size,scoreInk(best.score),"black");
  label(row,"/10",12,C.quiet,"semi");
  return row;
 }
 function scoreChip(parent,best){
- const g=gradeOf(best.score);
- const group=hstack(parent);group.setPadding(2,0,2,0);
- label(group,T[g],11,scoreInk(best.score),"bold");
- return group;
+ label(parent,T[gradeOf(best.score)],11,scoreInk(best.score),"bold");
 }
 function hazardLine(parent,hazard){
- if(hazard?.level!=="danger"&&hazard?.level!=="caution")return false;
+ if(!["danger","caution"].includes(hazard?.level))return false;
  const row=hstack(parent,5);row.centerAlignContent();
- const hue=hazard.level==="danger"?C.alert:C.caution;
- label(row,hazard.level==="danger"?"!":"·",12,hue,"black");
- const msg=hazard.thunder?T.storm:
-  T.risk+" · "+Math.max(hazard.gust||0,hazard.mean||0)+" km/h";
- label(row,msg,10,hue,"bold");
+ const tone=hazard.level==="danger"?C.alert:C.caution;
+ label(row,hazard.thunder?"⚡":"!",12,tone,"black");
+ label(row,hazard.thunder?T.storm:T.risk+" "+Math.max(hazard.gust||0,hazard.mean||0)+" km/h",10,tone,"bold");
  return true;
 }
 function freshness(parent,data){
- const foot=hstack(parent,3);foot.centerAlignContent();
- label(foot,data.stale?T.stale:T.model,9,C.quiet,"semi");
- foot.addSpacer();
- label(foot,timestampLabel(data.saved),9,C.quiet);
+ const row=hstack(parent,3);row.centerAlignContent();
+ label(row,data.stale?T.stale:T.model,9,C.quiet,"semi");
+ row.addSpacer();label(row,timestampLabel(data.saved),9,C.quiet);
 }
-function renderMedium(best,data,hazard){
- widget.setPadding(13,14,11,14);
- topBar(widget,isBest?T.best:T.spot);
- widget.addSpacer(8);
- const main=hstack(widget,10);main.centerAlignContent();
- const left=vstack(main,2);
- scoreRow(left,best,false);
- scoreChip(left,best);
- main.addSpacer();
- const right=vstack(main,3);
- const wave=hstack(right,3);wave.bottomAlignContent();
- label(wave,best.x.h.toFixed(1),27,C.wave,"black");
- label(wave,"m",13,C.wave,"semi");
- label(right,best.x.period.toFixed(1)+" s · "+best.x.wind+" km/h",10,C.quiet,"semi");
- widget.addSpacer(8);
- thinLine(widget);
- widget.addSpacer(7);
- const site=hstack(widget,5);site.centerAlignContent();
- label(site,locationLabel(best),11,C.ink,"bold");
- site.addSpacer();
- label(site,dayLabel(best.day)+" "+windowLabel(best.h),10,C.quiet,"semi");
- widget.addSpacer(4);
- const warned=hazardLine(widget,hazard);
- if(!warned){
-  const foot=hstack(widget,4);foot.centerAlignContent();
-  const read=globalThis.ZeelandEngine.quickRead(best.x,LANG);
-  label(foot,"FARO READ · "+read.short,10,C.ink,"semi");
-  foot.addSpacer();
-  label(foot,data.stale?T.stale:(LANG==="es"?"MODELO":"MODEL")+" "+timestampLabel(data.saved),9,C.quiet);
- }else if(data.stale){
-  label(widget,T.stale,9,C.quiet,"semi");
+function topScore(parent,best,size=44){
+ scoreRow(parent,best,size);parent.addSpacer(2);scoreChip(parent,best);
+}
+function titleBlock(parent,best,small=false){
+ label(parent,small?locationLabel(best,true):locationLabel(best),small?11:13,C.ink,"bold");
+ label(parent,dayLabel(best.day)+" · "+windowLabel(best.h),small?10:11,C.quiet,"semi");
+}
+function waveFeeling(parent,best,small=false){
+ const ch=globalThis.ZeelandEngine.waveCharacter(best.x);
+ const row=hstack(parent,4);row.centerAlignContent();
+ label(row,ch.emoji,small?10:12,C.ink);
+ label(row,ch.name,small?10:12,C.ink,"bold");
+}
+function futureRows(parent,best,sessions,max=2){
+ const used=new Set([best.day]);let count=0;
+ for(const item of sessions){
+  if(item===best||used.has(item.day))continue;
+  used.add(item.day);
+  const row=hstack(parent,4);row.centerAlignContent();
+  label(row,(isBest?item.spot[0]+" · ":"")+dayLabel(item.day)+" "+windowLabel(item.h),10,C.quiet,"semi",1);
+  row.addSpacer();label(row,item.score.toFixed(1),12,scoreInk(item.score),"bold");
+  parent.addSpacer(5);
+  if(++count>=max)break;
  }
+ if(count===0)label(parent,LANG==="es"?"No hay más ventanas":"No more windows",10,C.quiet);
 }
-function renderSmall(best,data,hazard){
- widget.setPadding(12,12,11,12);
- topBar(widget,"ZEELAND");
- widget.addSpacer(9);
- scoreRow(widget,best,true);
- widget.addSpacer(3);
- scoreChip(widget,best);
+function renderSmall(best,data,hazard,sessions){
+ widget.setPadding(11,12,10,12);
+ topBar(widget,STYLE==="WEEK"?"WEEK":"ZEELAND",true);
+ widget.addSpacer(STYLE==="MINIMAL"?17:8);
+ topScore(widget,best,STYLE==="MINIMAL"?46:41);
  widget.addSpacer();
- label(widget,locationLabel(best,true),12,C.ink,"bold");
- label(widget,dayLabel(best.day)+" · "+windowLabel(best.h),10,C.quiet,"semi");
- widget.addSpacer(3);
- if(!hazardLine(widget,hazard)){
-  const read=globalThis.ZeelandEngine.quickRead(best.x,LANG);
-  label(widget,best.x.h.toFixed(1)+" m · "+read.short,9,C.wave,"semi");
+ titleBlock(widget,best,true);
+ widget.addSpacer(6);
+ if(STYLE==="DATA"){
+  label(widget,"🌊 "+best.x.h.toFixed(1)+" m · "+best.x.period.toFixed(1)+" s",10,C.wave,"semi");
+ }else if(STYLE==="WEEK"){
+  const other=sessions.find(x=>x!==best&&x.day!==best.day);
+  label(widget,other?dayLabel(other.day)+" · "+other.score.toFixed(1)+"/10":T.model,9,C.quiet,"semi");
+ }else if(STYLE==="FLOW"){
+  waveFeeling(widget,best,true);
  }
+ if(hazardLine(widget,hazard))widget.addSpacer(2);
  if(data.stale)label(widget,T.stale,8,C.quiet,"semi");
 }
+function renderMedium(best,data,hazard,sessions){
+ widget.setPadding(12,14,11,14);
+ topBar(widget,isBest?T.best:T.spot);
+ widget.addSpacer(8);
+ const main=hstack(widget,9);main.centerAlignContent();
+ const left=vstack(main,3);topScore(left,best,43);
+ main.addSpacer();
+ const right=vstack(main,3);
+ label(right,best.x.h.toFixed(1)+" m",26,C.wave,"black");
+ label(right,best.x.period.toFixed(1)+" s · "+best.x.wind+" km/h",10,C.quiet,"semi");
+ widget.addSpacer(8);
+ const rule=widget.addStack();rule.size=new Size(0,1);rule.backgroundColor=C.line;
+ widget.addSpacer(7);
+ const row=hstack(widget,5);row.centerAlignContent();
+ label(row,locationLabel(best),11,C.ink,"bold");
+ row.addSpacer();label(row,dayLabel(best.day)+" "+windowLabel(best.h),10,C.quiet,"semi");
+ widget.addSpacer(6);
+ if(!hazardLine(widget,hazard)){
+  if(STYLE==="WEEK"){
+   const other=sessions.find(x=>x!==best&&x.day!==best.day);
+   label(widget,other?dayLabel(other.day)+" "+other.score.toFixed(1)+"/10":T.model,10,C.quiet,"semi");
+  }else if(STYLE==="DATA"){
+   label(widget,"💨 "+best.x.wind+" km/h · "+T.period+" "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi");
+  }else if(STYLE==="MINIMAL"){
+   freshness(widget,data);
+  }else{
+   const line=hstack(widget,4);line.centerAlignContent();
+   const ch=globalThis.ZeelandEngine.waveCharacter(best.x);
+   label(line,ch.emoji+" "+ch.name,10,C.ink,"semi");
+   line.addSpacer();label(line,data.stale?T.stale:timestampLabel(data.saved),9,C.quiet);
+  }
+ }
+}
 function renderLarge(best,data,hazard,sessions){
- widget.setPadding(16,16,14,16);
+ widget.setPadding(17,17,15,17);
  topBar(widget,isBest?T.best:T.spot);
  widget.addSpacer(13);
- const row=hstack(widget,15);row.centerAlignContent();
- const left=vstack(row,5);scoreRow(left,best,false);scoreChip(left,best);
- row.addSpacer();
- const wave=vstack(row,3);label(wave,best.x.h.toFixed(1)+" m",26,C.wave,"black");
- label(wave,T.wave+" · "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi");
+ titleBlock(widget,best);
  widget.addSpacer(13);
- thinLine(widget);widget.addSpacer(9);
- label(widget,locationLabel(best),13,C.ink,"bold");
- label(widget,dayLabel(best.day)+" · "+windowLabel(best.h),11,C.quiet);
- widget.addSpacer(10);
- const read=globalThis.ZeelandEngine.quickRead(best.x,LANG);
- label(widget,"FARO READ · "+(LANG==="es"?"PRONÓSTICO MODELADO":"MODEL OUTLOOK"),9,C.quiet,"bold");
- widget.addSpacer(4);
- label(widget,read.headline,15,C.ink,"bold",2);
- label(widget,read.detail,11,C.quiet,"regular",2);
- widget.addSpacer(10);
- label(widget,LANG==="es"?"PRÓXIMAS OPORTUNIDADES":"NEXT SURF WINDOWS",10,C.quiet,"bold");
- widget.addSpacer(5);
- const shortlist=[];
- for(const s of sessions){
-  if(s===best)continue;
-  if(shortlist.some(item=>item.day===s.day))continue;
-  shortlist.push(s);
-  if(shortlist.length===2)break;
- }
- for(const next of shortlist){
-  const r=hstack(widget,6);r.centerAlignContent();
-  label(r,dayLabel(next.day)+" "+windowLabel(next.h),10,C.quiet,"semi");
-  r.addSpacer();
-  label(r,next.score.toFixed(1)+"/10",11,scoreInk(next.score),"bold");
-  widget.addSpacer(5);
+ const r=hstack(widget,15);r.centerAlignContent();
+ const left=vstack(r,4);topScore(left,best,51);
+ r.addSpacer();
+ const right=vstack(r,3);
+ label(right,best.x.h.toFixed(1)+" m",32,C.wave,"black");
+ label(right,T.wave+" · "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi");
+ widget.addSpacer(14);
+ const rule=widget.addStack();rule.size=new Size(0,1);rule.backgroundColor=C.line;
+ widget.addSpacer(12);
+ if(hazardLine(widget,hazard))widget.addSpacer(12);
+ if(STYLE==="WEEK"){
+  label(widget,LANG==="es"?"PRÓXIMAS VENTANAS":"NEXT SURF WINDOWS",10,C.quiet,"bold");
+  widget.addSpacer(10);futureRows(widget,best,sessions,3);
+ }else if(STYLE==="DATA"){
+  label(widget,LANG==="es"?"MÉTRICAS DEL MODELO":"MODEL METRICS",10,C.quiet,"bold");
+  widget.addSpacer(9);
+  label(widget,"🌊 "+best.x.h.toFixed(1)+" m  ·  "+best.x.period.toFixed(1)+" s",14,C.wave,"bold");
+  widget.addSpacer(7);
+  label(widget,"💨 "+best.x.wind+" km/h · "+best.x.gust+" km/h gust",12,C.ink,"semi");
+  widget.addSpacer(11);waveFeeling(widget,best);
+ }else if(STYLE==="MINIMAL"){
+  waveFeeling(widget,best);widget.addSpacer(9);
+  label(widget,best.x.period.toFixed(1)+" s  ·  "+best.x.wind+" km/h",11,C.quiet,"semi");
+ }else{
+  label(widget,"WAVE WIZARD",10,C.quiet,"bold");
+  widget.addSpacer(7);waveFeeling(widget,best);
+  widget.addSpacer(10);
+  const read=globalThis.ZeelandEngine.quickRead(best.x,LANG);
+  label(widget,read.headline,15,C.ink,"bold",2);
+  widget.addSpacer(4);label(widget,read.detail,11,C.quiet,"regular",2);
+  widget.addSpacer(10);
+  label(widget,LANG==="es"?"OTRAS OPORTUNIDADES":"ALSO WORTH CHECKING",10,C.quiet,"bold");
+  widget.addSpacer(7);futureRows(widget,best,sessions,2);
  }
  widget.addSpacer();
- thinLine(widget);widget.addSpacer(7);
- if(!hazardLine(widget,hazard))freshness(widget,data);
- else label(widget,data.stale?T.stale:T.model,9,C.quiet);
+ const foot=widget.addStack();foot.size=new Size(0,1);foot.backgroundColor=C.line;
+ widget.addSpacer(7);freshness(widget,data);
 }
 function renderAccessory(best,hazard){
- widget.backgroundColor=new Color("#000000",0);
- widget.setPadding(0,0,0,0);
+ widget.backgroundColor=new Color("#000000",0);widget.setPadding(0,0,0,0);
  if(family==="accessoryInline"){
   label(widget,"FARO "+best.score.toFixed(1)+" · "+dayLabel(best.day)+" "+windowLabel(best.h),11,Color.white(),"semi");
  }else if(family==="accessoryCircular"){
-  const stack=vstack(widget,1);
-  label(stack,"FARO",10,Color.white(),"bold");
-  label(stack,best.score.toFixed(1),28,Color.white(),"black");
+  const c=vstack(widget,1);label(c,"FARO",10,Color.white(),"bold");
+  label(c,best.score.toFixed(1),27,Color.white(),"black");
  }else{
-  const c=vstack(widget,2);
-  label(c,"FARO · "+best.spot[0],12,Color.white(),"semi");
-  const r=hstack(c,6);r.centerAlignContent();
-  label(r,best.score.toFixed(1),27,Color.white(),"black");
-  label(r,hazard?.level==="danger"?"!":T[gradeOf(best.score)].toUpperCase(),11,Color.white(),"semi");
-  label(c,dayLabel(best.day)+" "+windowLabel(best.h),10,Color.white());
+  const col=vstack(widget,2);
+  label(col,"FARO · "+best.spot[0],12,Color.white(),"semi");
+  const row=hstack(col,6);row.centerAlignContent();
+  label(row,best.score.toFixed(1),27,Color.white(),"black");
+  label(row,hazard?.level==="danger"?"!":T[gradeOf(best.score)].toUpperCase(),11,Color.white(),"semi");
+  label(col,dayLabel(best.day)+" "+windowLabel(best.h),10,Color.white());
  }
 }
 function emptyWidget(message){
@@ -424,9 +439,9 @@ try{
  if(!sessions.length)throw Error(T.noDay);
  const best=sessions[0],hazard=modelHazard(data);
  if(lockFamily)renderAccessory(best,hazard);
- else if(family==="small")renderSmall(best,data,hazard);
+ else if(family==="small")renderSmall(best,data,hazard,sessions);
  else if(family==="large"||family==="extraLarge")renderLarge(best,data,hazard,sessions);
- else renderMedium(best,data,hazard);
+ else renderMedium(best,data,hazard,sessions);
  // Only model-derived information; tapping opens Faro website.
  widget.url=SITE+"?faroSpot="+encodeURIComponent(best.spot[0]+":"+best.spot[1])+
   "&day="+encodeURIComponent(best.day)+"&hour="+best.h;
