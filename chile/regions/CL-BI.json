@@ -1,0 +1,239 @@
+{
+  "schemaVersion": "0.1.0",
+  "country": "CL",
+  "regionCode": "CL-BI",
+  "region": "Biobío",
+  "timeZone": "America/Santiago",
+  "geography": "Sur",
+  "forecastEnabled": false,
+  "spots": [
+    {
+      "id": "CL-BI:tirua",
+      "name": "Tirúa",
+      "locality": "Tirúa",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-biobio"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-BI:punta-quidico",
+      "name": "Punta Quidico",
+      "locality": "Tirúa",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-biobio"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-BI:playa-sector-el-piure",
+      "name": "Playa Sector El Piure",
+      "locality": "Arauco",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-biobio"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-BI:el-faro-biobio",
+      "name": "El Faro (Biobío)",
+      "locality": "Área de Concepción",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-biobio"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-BI:la-rinconada",
+      "name": "La Rinconada",
+      "locality": "Arauco",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-biobio"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-BI:huachipato",
+      "name": "Huachipato",
+      "locality": "Talcahuano",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-biobio"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    }
+  ]
+}
