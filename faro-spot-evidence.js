@@ -13,7 +13,8 @@ const E={
   sources:[
    {name:'Surfline — Domburg',url:'https://www.surfline.com/surf-report/domburg/584204204e65fad6a77095f9/spot-guide'},
    {name:'Goede Golven — Domburg',url:'https://goedegolven.nl/surfspots/domburg'},
-   {name:'SurfInfo — Domburg',url:'https://www.surfinfo.nl/spots/domburg/'}
+   {name:'SurfInfo — Domburg',url:'https://www.surfinfo.nl/spots/domburg/'},
+   {name:'Surfzeeland — Domburg currents and groynes',url:'https://www.surfzeeland.nl/spot/domburg'}
   ]
  },
  Westkapelle:{
@@ -34,16 +35,23 @@ const E={
   evidence:'indirect local/regional guides; no validated sector-specific optima',
   sources:[
    {name:'StrandAlert — Duinweg beach orientation (not a breaking-wave survey)',url:'https://strandalert.nl/nl/strand/oostkapelle-duinweg-veere'},
-   {name:'Surfzeeland — Berkenbosch (windsurf/foil context)',url:'https://www.surfzeeland.nl/spot/oostkapelle-berkenbosch'}
+   {name:'Surfzeeland — Berkenbosch (windsurf/foil context)',url:'https://www.surfzeeland.nl/spot/oostkapelle-berkenbosch'},
+   {name:'Surfschool Domburg — Regional surf spots (2026)',url:'https://surfschooldomburg.nl/blog/beste-surfspots-zeeland/'}
   ]
  },
  Cadzand:{
   windsFrom:'E–SE',swellFrom:'NW / some SW events',tide:'Mid–high tide reported in a Zeeland surf directory; insufficient local validation for a definitive rule.',tideEs:'Un directorio de surf de Zeeland menciona marea media a alta, sin validación local suficiente para considerarlo una regla.',
   sector:[[280,360],[0,10]],windSector:[[65,150]],conditions:'Forecast direction is not enough to establish the breaking height at every bank.',
   caveat:'Check local tide, banks and currents. The two Faro sectors still lack separate field evidence.',
-  evidence:'regional surf directory, low-to-moderate location specificity',
+  evidence:'local surf guides and municipal zoning, beach-level only',
+  surfCulture:{
+   en:'Cadzand has an active North Sea surf scene. Local guides emphasise timing; Moio Beach and De Zeemeeuw are practical reference points, not validated surf breaks at FARO coordinates.',
+   es:'Cadzand tiene actividad surfista en el mar del Norte. Las guías locales destacan la importancia del horario; Moio Beach y De Zeemeeuw son referencias prácticas, no rompientes validadas en las coordenadas de FARO.'
+  },
   sources:[
-   {name:'Boardshortz surf map',url:'https://www.boardshortz.nl/surfen/nederland/surfspots/'},
+   {name:'Cadzand.org — Surfing and surf schools',url:'https://cadzand.org/nl/surfen.php#map'},
+   {name:'Gemeente Sluis — Official beach zoning',url:'https://www.gemeentesluis.nl/onze-stranden/'},
+   {name:'De Zeemeeuw — Local surf lessons',url:'https://www.catamaranschooldezeemeeuw.nl/golfsurfen.html'},
    {name:'WaveSpot — Cadzand forecast (not validated spot optimum)',url:'https://wavespot.nl/surf/cadzand'}
   ]
  },
@@ -204,8 +212,8 @@ const SECTOR_CONTEXT={
    "es": "Comprueba las zonas de baño, kite y playa deportiva; un punto de pronóstico no determina las restricciones municipales."
   },
   "access": {
-   "en": "Follow municipal access boards; the published sport-beach section around Moio Beach is conditional on crowding.",
-   "es": "Sigue los carteles municipales; la zona deportiva publicada cerca de Moio Beach depende de la afluencia."
+   "en": "Follow marked beach access. The designated sport-beach area near Moio Beach towards Strand Ruig is conditional on crowding; verify the permitted activities locally.",
+   "es": "Usa los accesos señalizados. La zona deportiva cerca de Moio Beach hacia Strand Ruig depende de la afluencia; verifica las actividades permitidas en los carteles."
   },
   "source": {
    "name": "Gemeente Sluis · Beach zoning",
@@ -222,8 +230,8 @@ const SECTOR_CONTEXT={
    "es": "Aléjate del canal mareal Zwingeul y revisa las zonas autorizadas para surf y kite; importan las corrientes y la protección ambiental."
   },
   "access": {
-   "en": "Municipal information identifies specific 't Zwin sport-beach sections; verify the entry point and signs on site.",
-   "es": "La información municipal identifica tramos deportivos específicos en 't Zwin; verifica el acceso y los carteles en el lugar."
+   "en": "The municipality identifies two sport-beach sections west of De Strandloper near 't Zwin. This does not establish that this exact forecast coordinate is an authorised surf entry.",
+   "es": "El municipio identifica dos tramos deportivos al oeste de De Strandloper cerca de 't Zwin. Esto no demuestra que la coordenada de FARO sea un acceso autorizado para surf."
   },
   "source": {
    "name": "Gemeente Sluis · Beach zoning",
