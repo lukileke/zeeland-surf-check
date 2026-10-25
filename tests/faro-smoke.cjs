@@ -18,8 +18,16 @@ const safetySource=fs.readFileSync(path.join(root,'faro-safety.js'),'utf8');
 const scripts=Array.from(html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi),m=>m[1]);
 const brand=fs.readFileSync(path.join(root,'faro-brand.css'),'utf8');
 const logo=fs.readFileSync(path.join(root,'assets/faro-logo.svg'),'utf8');
+const darkLogo=fs.readFileSync(path.join(root,'assets/faro-logo-dark.svg'),'utf8');
 const salva=fs.readFileSync(path.join(root,'assets/faro-salva-red.svg'),'utf8');
-assert.ok(html.includes('src="assets/faro-logo.svg"'),'Official vector logo is used as the live wordmark');
+assert.ok(html.includes('src="assets/faro-logo.svg"'),'Official vector logo is used in light theme');
+assert.ok(html.includes('src="assets/faro-logo-dark.svg"'),'Dark theme loads white-ink wordmark');
+assert.ok(darkLogo.includes('fill="#ffffff"')&&darkLogo.includes('fill="#ffda71"'),
+ 'Dark FARO wordmark has white text and the exact original yellow symbol');
+assert.equal(darkLogo.replace('fill="#ffffff"','fill="#1f3b3d"').replace('aria-label="FARO, versión para fondo oscuro"','aria-label="FARO"'),logo,
+ 'Dark variant changes only ink fill and accessible label; geometry is unmodified');
+assert.ok(!brand.includes('background:#eef5f1;border-radius:8px;padding:4px'),
+ 'Dark FARO logo never uses a paper-coloured badge');
 assert.ok(html.includes('href="faro-brand.css?v='),'Official brand layer remains versioned');
 assert.ok(brand.includes('Selected = paper. Alternatives = open canvas.'),'FARO distinguishes chosen day from unselected options');
 assert.ok(brand.includes('background:transparent!important'),'Unselected surfaces stay transparent');
