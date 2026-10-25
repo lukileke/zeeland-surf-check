@@ -127,6 +127,12 @@
       "url": "https://sources.debian.org/src/tzdata/2025b-0%2Bdeb12u1/NEWS",
       "type": "timezone-record",
       "reviewed": "2026-10-25"
+    },
+    "surfline-elgringo": {
+      "name": "Surfline · El Gringo spot guide, reef and safety",
+      "url": "https://www.surfline.com/surf-report/el-gringo/5842041f4e65fad6a7708cc7",
+      "type": "surf-spot-guide",
+      "reviewed": "2026-10-25"
     }
   }
 }
