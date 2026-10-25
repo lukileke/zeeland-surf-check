@@ -1,4 +1,4 @@
-// FARO Widget · Coastal Punch v7 · unboxed official logo · Scriptable iOS
+// FARO Widget · Coastal Punch v8 · marine bearings + identity · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -33,7 +33,7 @@ const opt=k=>{const v=tokens.find(t=>t.toUpperCase().startsWith(k+"="));return v
 const LANG=opt("LANG")==="ES"||tokens.some(t=>t.toUpperCase()==="ES")?"es":"en";
 const STYLE=["FLOW","MINIMAL","DATA","WEEK"].includes(opt("STYLE"))?opt("STYLE"):
  (tokens.find(t=>["FLOW","MINIMAL","DATA","WEEK"].includes(t.toUpperCase()))||"FLOW").toUpperCase();
-const THEME=["AUTO","LIGHT","DARK"].includes(opt("THEME"))?opt("THEME"):"AUTO";
+const THEME=["AUTO","LIGHT","DARK"].includes(opt("THEME"))?opt("THEME"):"DARK";
 // AUTO deliberately uses a dark coastal widget, avoiding an artificial logo capsule.
 // Scriptable cannot inspect system light/dark appearance from a widget reliably.
 const EFFECTIVE_THEME=THEME==="AUTO"?"DARK":THEME;
@@ -334,7 +334,7 @@ function brandRow(parent,small=false){
   label(row,"FARO",small?17:20,C.ink,"black");
  }
  row.addSpacer();
- label(row,"ZEELAND",small?8:9,C.quiet,"bold");
+ label(row,isBest?word("LO MEJOR · 7D","BEST · 7D"):"ZEELAND",small?8:9,C.quiet,"bold");
 }
 function scoreRow(parent,best,size){
  const row=hstack(parent,3);row.bottomAlignContent();
@@ -400,6 +400,13 @@ function freshness(parent,data){
 function spotHeading(parent,best,small=false){
  label(parent,small?best.spot[0]:locationLabel(best),small?11:13,C.ink,"bold",1);
  label(parent,dayLabel(best.day)+" · "+windowLabel(best.h),small?10:11,C.quiet,"semi",1);
+}
+// This is a model direction FROM, not a proven direction at the break.
+function compassFrom(degrees){
+ if(!Number.isFinite(degrees))return "—";
+ const names=["N","NNE","NE","ENE","E","ESE","SE","SSE",
+ "S","SSW","SW","WSW","W","WNW","NW","NNW"];
+ return names[Math.round(((degrees%360)+360)%360/22.5)%16];
 }
 function compactMetric(parent,symbol,title,val,tone=C.ink){
  const unit=hstack(parent,5);unit.centerAlignContent();
@@ -489,7 +496,7 @@ function renderMedium(best,data,hazard,sessions){
   if(STYLE==="WEEK"){
    const next=sessions.find(x=>x.day!==best.day);
    label(widget,next?word("PRÓXIMA ","NEXT ")+dayLabel(next.day)+"  "+next.score.toFixed(1):T.model,9,C.quiet,"semi",1);
-  }else if(STYLE==="DATA")compactMetric(widget,"wind",T.wind,best.x.wind+" km/h",C.wave);
+  }else if(STYLE==="DATA")label(widget,word("OLAS DE ","WAVES FROM ")+compassFrom(best.x.wd)+" · "+Math.round(best.x.wd)+"°",9,C.quiet,"semi",1);
   else if(STYLE==="FLOW")label(widget,"FARO VIBE  ·  "+waveText(best,true),10,C.ink,"semi",1);
   else label(widget,data.stale?T.stale:T.model,9,C.quiet,"semi",1);
  }
@@ -520,7 +527,9 @@ function renderLarge(best,data,hazard,sessions){
   const metrics=hstack(widget,16);
   compactMetric(metrics,"wind",T.wind,best.x.wind+" km/h",C.wave);
   compactMetric(metrics,"clock",T.period,best.x.period.toFixed(1)+" s",C.wave);
-  widget.addSpacer(10);vibePanel(widget,best);
+  widget.addSpacer(8);
+  label(widget,word("OLAS MODELADAS DE ","MODEL WAVES FROM ")+compassFrom(best.x.wd)+" · "+Math.round(best.x.wd)+"°",10,C.quiet,"semi",1);
+  widget.addSpacer(9);vibePanel(widget,best);
  }else if(STYLE==="MINIMAL"){
   vibePanel(widget,best);widget.addSpacer(12);
   label(widget,best.x.period.toFixed(1)+" s  ·  "+best.x.wind+" km/h",12,C.quiet,"semi");
@@ -528,6 +537,8 @@ function renderLarge(best,data,hazard,sessions){
   vibePanel(widget,best);widget.addSpacer(11);
   const insight=globalThis.ZeelandEngine.quickRead(best.x,LANG);
   label(widget,insight.headline,15,C.ink,"bold",2);
+  widget.addSpacer(8);
+  label(widget,word("OLEAJE MODELO: ","MODEL WAVES: ")+compassFrom(best.x.wd)+" · "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi",1);
   /* Expanded interpretation remains available on the FARO website. */
  }
  widget.addSpacer();
