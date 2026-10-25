@@ -204,7 +204,7 @@ async function swipe(session,x0,y0,x1,y1){
        if(width===375&&theme==='light'){
         const editorial=await page.evaluate(()=>{
          const hero=document.querySelector('#faroRead');
-         const expected=window.ZeelandEngine.quickRead(blocks(day)[slotIndex].s,'en');
+         const expected=window.ZeelandEngine.quickRead(blocks(day)[slotIndex].s,document.documentElement.lang);
          const headline=hero.querySelector('#faroReadTitle')?.textContent?.trim();
          const detail=hero.querySelector('#summary')?.textContent?.trim();
          const copy=hero.querySelector('.faro-read-match')?.textContent?.trim();
@@ -212,7 +212,7 @@ async function swipe(session,x0,y0,x1,y1){
          const branded=document.querySelector('#faroGuide .faro-match-kicker')?.textContent?.trim();
          return {headline,detail,expected,copy,nav,branded};
         });
-        const expectedHeadline=locale==='es'?'Potencial para surf fluido':'Mellow, flowing potential';
+        const expectedHeadline=editorial.expected.headline;
         if(editorial.headline!==expectedHeadline||
            !editorial.copy.includes(locale==='es'?'Buscar mi surf match':'Find my surf fit')||
            editorial.nav!=='FARO Match'||!editorial.branded.includes('FARO MATCH')){
