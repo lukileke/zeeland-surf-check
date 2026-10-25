@@ -787,3 +787,90 @@ html:not([data-theme="light"]) .wave-character--short{
 @media(prefers-reduced-motion:reduce){
  #forecastPage .faro-read-chevron{transition:none!important}
 }
+
+/* FARO v38 — a calmer reference library and contextual, sourced spot cards. */
+#dayview>.forecast-expand{
+ background:transparent!important;
+ border:0!important;border-top:1px solid var(--faro-line)!important;
+ border-radius:0!important;margin:0!important;
+}
+#dayview>.forecast-expand>summary{
+ background:transparent!important;
+ min-height:56px!important;padding:11px 2px!important;
+ border:0!important;display:flex!important;
+ align-items:center!important;justify-content:space-between!important;
+ gap:12px!important;
+}
+#dayview>.forecast-expand>summary span:last-child{
+ max-width:52%!important;font-size:11px!important;
+ text-align:right!important;line-height:1.35!important;
+ overflow-wrap:break-word!important;
+ color:var(--faro-quiet)!important;
+}
+#dayview #spotInsightExpand .spot-summary-heading{
+ color:var(--fg)!important;font-size:15px!important;
+ font-weight:800!important;
+}
+#dayview #spotInsightExpand #spotinsight{
+ background:transparent!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;
+ margin:0 0 12px!important;padding:3px 0 10px!important;
+ display:grid!important;gap:11px!important;
+}
+#dayview .spot-profile-header{display:grid!important;gap:6px!important}
+#dayview .spot-profile-eyebrow,
+#dayview .spot-profile-section-title{
+ font:800 10px/1.4 var(--faro-text)!important;
+ letter-spacing:.085em!important;color:var(--faro-quiet)!important
+}
+#dayview .spot-profile-title{
+ margin:0!important;font:800 clamp(18px,4.4vw,23px)/1.2 var(--faro-text)!important;
+ letter-spacing:-.02em!important;color:var(--fg)!important
+}
+#dayview .spot-profile-chips{display:flex!important;flex-wrap:wrap!important;gap:7px!important}
+#dayview .spot-profile-chip{
+ display:inline-flex!important;padding:4px 7px!important;
+ font:750 10px/1.3 var(--faro-text)!important;
+ border:1px solid var(--faro-line)!important;border-radius:7px!important;
+ background:var(--tile)!important;color:var(--fg)!important
+}
+#dayview .spot-profile-chip--muted{background:transparent!important;color:var(--faro-quiet)!important}
+#dayview .spot-profile-row{padding:10px 0 0!important;border-top:1px solid var(--faro-line)!important;display:grid;gap:4px}
+#dayview .spot-profile-row-label{display:flex;gap:8px;align-items:center;color:var(--fg);font:800 12px/1.4 var(--faro-text)}
+#dayview .spot-profile-copy{
+ font:550 12px/1.55 var(--faro-text)!important;
+ color:var(--faro-quiet)!important;margin:0!important;
+ overflow-wrap:break-word!important
+}
+#dayview .spot-profile-guide{border-top:1px solid var(--faro-line)!important;padding-top:10px!important;display:grid;gap:6px}
+#dayview .spot-profile-model-note{
+ padding:8px 10px!important;border-left:2px solid var(--faro-ocean)!important;
+ background:color-mix(in srgb,var(--faro-ocean) 5%,transparent)!important;
+ color:var(--faro-quiet)!important;font:550 12px/1.5 var(--faro-text)!important;margin:0!important
+}
+#dayview .spot-profile-caveat{
+ border-radius:9px!important;
+ background:color-mix(in srgb,var(--brand-sun) 9%,var(--tile))!important;
+ font:550 11px/1.5 var(--faro-text)!important;
+ color:var(--faro-quiet)!important;padding:9px 10px!important;margin:0!important
+}
+#dayview .spot-profile-sources{display:flex;flex-wrap:wrap;gap:5px 14px;align-items:baseline}
+#dayview .spot-profile-sources .spot-profile-section-title{width:100%}
+#dayview .spot-profile-link{
+ color:var(--faro-ocean)!important;font:700 11px/1.5 var(--faro-text)!important;
+ text-decoration:underline!important;text-underline-offset:2px!important
+}
+#dayview #faroTechnicalExpand .faro-technical-inner{margin:0 0 10px!important}
+#dayview #faroTechnicalExpand #detail{
+ margin:0!important;padding:0!important;border:0!important;
+ background:transparent!important;box-shadow:none!important
+}
+#dayview #faroTechnicalExpand #detail>.forecast-method-note:first-child{border-top:0!important}
+#dayview>.forecast-expand:last-child{border-bottom:1px solid var(--faro-line)!important}
+@media(min-width:1101px){
+ #dayview>#spotInsightExpand{grid-column:1/-1!important;grid-row:3!important}
+ #dayview>#waveInsightExpand{grid-column:1!important;grid-row:4!important}
+ #dayview>#faroTechnicalExpand{grid-column:2!important;grid-row:4!important}
+ #dayview>#wearExpand{grid-column:1!important;grid-row:5!important}
+ #dayview>#fieldNotesExpand{grid-column:2!important;grid-row:5!important}
+}
