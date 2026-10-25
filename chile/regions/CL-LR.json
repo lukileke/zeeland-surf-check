@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "0.1.0",
+  "country": "CL",
+  "regionCode": "CL-LR",
+  "region": "Los Ríos",
+  "timeZone": "America/Santiago",
+  "geography": "Sur",
+  "forecastEnabled": false,
+  "spots": [
+    {
+      "id": "CL-LR:mehuin",
+      "name": "Mehuín",
+      "locality": "Mariquina",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-national"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-LR:calfuco",
+      "name": "Calfuco",
+      "locality": "Valdivia",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-national"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    }
+  ]
+}
