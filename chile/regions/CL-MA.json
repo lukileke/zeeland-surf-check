@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "0.1.0",
+  "country": "CL",
+  "regionCode": "CL-MA",
+  "region": "Magallanes y de la Antártica Chilena",
+  "timeZone": "America/Punta_Arenas",
+  "geography": "Patagonia austral",
+  "forecastEnabled": false,
+  "spots": []
+}
