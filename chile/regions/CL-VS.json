@@ -113,7 +113,9 @@
       "abilityReference": "variable",
       "sources": [
         "waves-maitencillo",
-        "surf-valpo-region"
+        "surf-valpo-region",
+        "surf-forecast-maitencillo",
+        "surfnerd-maitencillo"
       ],
       "conditions": {
         "favourableWindDegrees": null,
@@ -122,10 +124,13 @@
         "periodResponse": null,
         "breakingHeightCalibration": null,
         "publishedReference": {
-          "scope": "generic beach-level, source does not establish per-bank ideal wind/swell",
-          "attribution": "waves-maitencillo"
+          "windFrom": "E",
+          "swellFrom": "SW",
+          "tide": "mid or rising suggested; not validated",
+          "attribution": "surfnerd-maitencillo",
+          "scope": "Maitencillo beach-level; reports differ over river/shore classification"
         },
-        "regionSpecificNoteEs": "Hay distintos sectores y bancos. La guía consultada confirma playa de arena e izquierdas/derechas, pero no valida ángulos ideales específicos: no se activa score hasta reunir evidencia.",
+        "regionSpecificNoteEs": "Varias secciones/bancos: guías coinciden en viento E y swell SW; discrepan respecto de describirlo como desembocadura o beachbreak. Mantener perfil de playa general, pendiente de verificar cada sector; marea media/subiendo solo como referencia de guía.",
         "fieldVerification": "required"
       },
       "hazards": {
@@ -378,7 +383,8 @@
       "waveHand": "left",
       "abilityReference": "experienced",
       "sources": [
-        "surf-papagayo"
+        "surf-papagayo",
+        "surf-forecast-papagayo"
       ],
       "conditions": {
         "favourableWindDegrees": null,
@@ -387,14 +393,12 @@
         "periodResponse": null,
         "breakingHeightCalibration": null,
         "publishedReference": {
-          "swellFrom": "W, SW",
           "windFrom": "E",
-          "tide": "medium-low",
-          "idealSurfSize": "waist to head high",
-          "scope": "northern beach peaks, not entire Reñaca",
-          "attribution": "surf-renaca"
+          "swellFrom": "SW",
+          "attribution": "surf-forecast-papagayo",
+          "scope": "reef/point classification differs across guides; not locally calibrated"
         },
-        "regionSpecificNoteEs": "Surfline describe ola izquierda sobre arrecife en la bahía de Quintero; sensible al viento, con secciones rápidas y posibles tubos. Sin datos confiables de viento y swell óptimos por dirección: score pendiente.",
+        "regionSpecificNoteEs": "Surfline describe izquierda sobre arrecife; Surf-Forecast lo llama pointbreak. Ambos describen una izquierda exigente. Surf-Forecast propone swell SW y viento E. Se mantiene pendiente delimitar el fondo y la orientación exacta.",
         "fieldVerification": "required"
       },
       "hazards": {
