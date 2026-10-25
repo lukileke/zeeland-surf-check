@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "0.1.0",
+  "country": "CL",
+  "regionCode": "CL-CO",
+  "region": "Coquimbo",
+  "timeZone": "America/Santiago",
+  "geography": "Norte Chico",
+  "forecastEnabled": false,
+  "spots": [
+    {
+      "id": "CL-CO:totoralillo",
+      "name": "Totoralillo",
+      "locality": "Coquimbo",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-national"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-CO:las-tacas",
+      "name": "Las Tacas",
+      "locality": "Coquimbo",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-national"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-CO:punta-teatinos",
+      "name": "Punta Teatinos",
+      "locality": "La Serena",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surfline-national"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-CO:pichidangui",
+      "name": "Pichidangui",
+      "locality": "Los Vilos",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "travel-surf-general"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    }
+  ]
+}
