@@ -57,6 +57,8 @@ assert.ok(css.includes('html:not([data-theme="light"])'),'Dark theme present');
 const cssAsset=html.match(/<link\s+rel="stylesheet"\s+href="faro-ui\.css\?v=(\d+)"\s*\/?\s*>/);
 assert.ok(cssAsset&&Number(cssAsset[1])>0,'Local stylesheet has a versioned cache key');
 assert.match(css,/#bestPage \.hero-footer \.wizard-pick\s*\{[^}]*border:1px solid/s,'Best character retains badge');
+assert.ok(html.includes("['Soft-top','Soft']"),'Spanish Board Wizard calls soft boards Soft');
+assert.ok(!html.includes('Tabla blanda'),'Avoid literal non-surf Spanish for soft boards');
 assert.ok(html.includes('id="legacyBoard"'),'Original board wizard kept under details');
 assert.ok(html.includes('id="dayPrev"')&&html.includes('id="dayNext"'),'Forecast rail exposes accessible navigation');
 assert.ok(html.includes('function scrollForecastDays(')&&html.includes('function updateDayStripControls('),'Forecast rail remains keyboard/button reachable');
