@@ -85,14 +85,22 @@ async function swipe(session,x0,y0,x1,y1){
       if(document.documentElement.getAttribute('data-theme')!==t)toggleTheme();
      },theme);
      const brandCheck=await page.evaluate(async()=>{
-      const el=document.querySelector('.faro-logo-art');
-      await el.decode().catch(()=>{});
+      const el=document.querySelector('.faro-logo-art--light');
+      const darkLogo=document.querySelector('.faro-logo-art--dark');
+      await Promise.all([el.decode().catch(()=>{}),darkLogo.decode().catch(()=>{})]);
       const root=getComputedStyle(document.documentElement);
+      const lightStyle=getComputedStyle(el),darkStyle=getComputedStyle(darkLogo);
+      const visibleLogo=document.documentElement.dataset.theme==='light'?el:darkLogo;
       const danger=document.querySelector('.faro-safety-center.danger .faro-safety-summary');
       const watermark=danger?getComputedStyle(danger,'::before').backgroundImage:'';
       return {
        logoLoaded:el.complete&&el.naturalWidth>0,
        logoSrc:el.getAttribute('src'),
+       darkLogoLoaded:darkLogo.complete&&darkLogo.naturalWidth>0,
+       darkLogoSrc:darkLogo.getAttribute('src'),
+       lightLogoDisplay:lightStyle.display,darkLogoDisplay:darkStyle.display,
+       visibleLogoBackground:getComputedStyle(visibleLogo).backgroundColor,
+       visibleLogoPadding:getComputedStyle(visibleLogo).paddingLeft,
        bandColors:['--brand-score-low','--brand-score-mid','--brand-score-regular','--brand-score-high']
         .map(key=>root.getPropertyValue(key).trim()),
        selection:root.getPropertyValue('--brand-blue').trim(),
@@ -101,6 +109,11 @@ async function swipe(session,x0,y0,x1,y1){
       };
      });
      if(!brandCheck.logoLoaded||brandCheck.logoSrc!=='assets/faro-logo.svg'||
+        !brandCheck.darkLogoLoaded||brandCheck.darkLogoSrc!=='assets/faro-logo-dark.svg'||
+        brandCheck.lightLogoDisplay!==(theme==='light'?'block':'none')||
+        brandCheck.darkLogoDisplay!==(theme==='dark'?'block':'none')||
+        brandCheck.visibleLogoBackground!=='rgba(0, 0, 0, 0)'||
+        brandCheck.visibleLogoPadding!=='0px'||
         brandCheck.bandColors.join(',')!=='#ce762e,#efbc62,#6b9347,#a4d156'||
         brandCheck.selection!=='#5878e0'||
         !brandCheck.watermark.includes('faro-salva-red.svg')||
