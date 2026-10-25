@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102427"><title>FARO LAB · Valparaíso</title>
+<style>
+:root{color-scheme:light;--ink:#1f3b3d;--muted:#50666f;--line:#cbd8d7;--paper:#f5f8f6;--card:#fff;--blue:#5875d8;--copper:#c46639;--amber:#ba7c31;--sand:#9c8431;--lime:#6e9e43;--olive:#547642}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,-apple-system,sans-serif}main{width:min(900px,calc(100% - 32px));margin:0 auto;padding:24px 0 72px}a{color:#3b65a6}header{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:24px}header img{display:block;width:137px;max-width:100%;height:auto}.overline{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--muted)}.lab{color:#a27635;font-weight:850;letter-spacing:.1em;font-size:12px}
+h1{font-size:clamp(26px,6vw,40px);line-height:1.06;letter-spacing:-.04em;margin:7px 0 12px}p{margin:0}.intro{font-size:15px;color:var(--muted);max-width:65ch}.layout{display:grid;grid-template-columns:1fr 1.05fr;gap:18px;align-items:start;margin-top:26px}
+.panel{background:var(--card);border:1px solid var(--line);padding:23px;border-radius:21px;min-width:0}h2{font-size:19px;letter-spacing:-.025em;margin:0 0 17px}label{display:block;font-weight:750;font-size:13px;margin-bottom:12px}label span{display:block;font-size:11px;color:var(--muted);font-weight:550;margin-top:3px}
+select,input{width:100%;border:1px solid var(--line);background:#f9fbfa;border-radius:10px;color:var(--ink);font:650 16px system-ui;padding:12px;margin-top:6px;min-height:44px}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #8ea5f0;outline-offset:2px}
+.fields{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}.fields label:last-child{grid-column:1/-1}
+.fine{color:var(--muted);font-size:11px;line-height:1.5;padding-top:12px;border-top:1px solid var(--line)}
+.range{display:flex;justify-content:space-between;align-items:center;gap:8px}.score{font-size:clamp(60px,14vw,85px);line-height:1;letter-spacing:-.065em;font-weight:850;font-variant-numeric:tabular-nums}.slash{font-size:20px;color:var(--muted);font-weight:650;letter-spacing:0}.score-sub{font-size:12px;text-transform:uppercase;font-weight:800;letter-spacing:.09em;color:var(--muted)}
+.slices{display:flex;gap:5px;margin:16px 0 20px}.slices span{height:7px;border-radius:12px;background:#dee6e3;flex:1}.slices span.on:nth-child(1){background:var(--copper)}.slices span.on:nth-child(2){background:var(--amber)}.slices span.on:nth-child(3){background:var(--sand)}.slices span.on:nth-child(4){background:var(--lime)}.slices span.on:nth-child(5){background:var(--olive)}
+.vibe{display:inline-flex;padding:9px 12px;border:1px solid #cbdcae;background:#f2f6eb;border-radius:10px;font-size:13px;font-weight:850;max-width:100%}
+.read{font-size:20px;line-height:1.25;letter-spacing:-.03em;font-weight:800;margin-top:17px;margin-bottom:17px}
+.signals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.signal{padding:11px;border:1px solid var(--line);border-radius:12px;background:#f9fbfa;min-height:61px;display:flex;flex-direction:column;gap:6px}.signal strong{font-size:12px;line-height:1.3}.signal small{font-size:10px;color:var(--muted);font-weight:750;letter-spacing:.05em;text-transform:uppercase}.positive{border-left:4px solid #54884e}.mixed{border-left:4px solid #ad872f}.negative{border-left:4px solid #c36e50}.unknown{border-left:4px solid #8c9a9b}
+.caveat{padding:12px 13px;border-radius:10px;background:#f2f3f0;font-size:12px;line-height:1.5;color:var(--muted);margin-top:15px}.source{font-size:12px;line-height:1.55;padding:15px 0 0;color:var(--muted)}.alert{border-left:3px solid #d76957;padding:9px 12px;background:#fcf6f2;border-radius:4px 9px 9px 4px;font-size:12px;margin-top:14px}
+.footer{margin-top:25px;font-size:12px;color:var(--muted)}.footer a{display:inline-block;margin-right:13px;margin-top:8px}
+@media(max-width:700px){.layout{grid-template-columns:1fr}main{width:min(100% - 24px,680px)}.panel{padding:19px}.signals{gap:8px}.fields{gap:0 12px}}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--paper:#102427;--card:#1c3538;--ink:#eff4ef;--muted:#bdcdd0;--line:#496368;--blue:#a1afff}header img{filter:brightness(0) invert(1)}select,input{background:#294348}.signal{background:#253f42}.vibe{background:#2b4032;border-color:#688b54}.caveat{background:#2c4041}.alert{background:#393330}.slices span{background:#425458}.score{color:#a9d376}a{color:#b6c7ff}}
+</style></head>
+<body><main>
+<header><div><img src="../assets/faro-logo.svg" alt="FARO"><div class="overline">VALPARAÍSO · LABORATORIO DE SPOTS</div></div><span class="lab">EXPERIMENTAL / NO LIVE</span></header>
+<h1>El mismo swell.<br>Distintas olas.</h1>
+<p class="intro">Compara cómo una misma situación meteorológica podría encajar con las guías de cada playa. Son <strong>datos introducidos manualmente</strong>, no un pronóstico en tiempo real. La calidad real de la rompiente sigue sin calibrar.</p>
+<div class="layout">
+<section class="panel" aria-label="Parámetros de modelo">
+<h2>Simula condiciones</h2>
+<label for="spot">Spot
+<select id="spot"><option value="CL-VS:la-boca-concon">La Boca · Concón</option><option value="CL-VS:ritoque">Ritoque · picos norte</option><option value="CL-VS:renaca">Reñaca · picos norte</option></select>
+<span>Perfiles independientes editables en el repositorio</span></label>
+<div class="fields">
+<label for="windFromDeg">Viento desde (°)<input id="windFromDeg" type="number" min="0" max="360" value="140" step="1"><span>Dirección FROM · SE ≈ 135°</span></label>
+<label for="windKmh">Viento (km/h)<input id="windKmh" type="number" min="0" max="150" value="12" step="1"><span>Viento a 10 m</span></label>
+<label for="swellFromDeg">Swell desde (°)<input id="swellFromDeg" type="number" min="0" max="360" value="305" step="1"><span>Dirección FROM · NW ≈ 315°</span></label>
+<label for="swellPeriodS">Período (s)<input id="swellPeriodS" type="number" min="1" max="30" value="12" step=".5"><span>Período del swell de prueba</span></label>
+<label for="swellHeightM">Swell offshore (m)<input id="swellHeightM" type="number" min="0" max="12" value="1.2" step=".1"><span>NO es la ola rompiente</span></label>
+<label for="gustKmh">Rachas (km/h)<input id="gustKmh" type="number" min="0" max="180" value="19" step="1"><span>Indicador orientativo de intensidad</span></label>
+</div><p class="fine">En esta primera versión, el motor no evalúa la marea ni la altura rompiente. Sus bandas angulares provienen de guías publicadas y no sustituyen una calibración en terreno.</p>
+</section>
+<section class="panel" aria-live="polite" aria-label="Lectura simulada FARO">
+<div class="score-sub">FARO LAB · COMPATIBILIDAD EXPERIMENTAL</div>
+<div class="range"><div><div class="score"><span id="score">—</span><span class="slash"> /10</span></div><strong id="grade">Datos de prueba</strong></div><div style="text-align:right"><span class="overline">NO LIVE<br>SIN VALIDAR</span></div></div>
+<div class="slices" id="meter"><span></span><span></span><span></span><span></span><span></span></div>
+<div id="vibe" class="vibe">FARO VIBE</div>
+<p id="read" class="read">Interpretando condiciones…</p>
+<div id="signals" class="signals"></div>
+<p id="caution" class="alert" hidden></p>
+<p id="warning" class="caveat"></p>
+<p class="source" id="sources"></p>
+</section></div>
+<div class="footer"><strong>Investigación FARO Chile</strong> · Los resultados no representan un pronóstico del momento ni una recomendación de entrada al agua.
+<div><a href="README.md">Catálogo de Chile</a><a href="valparaiso-score.config.json">Parámetros editables</a><a href="IMPLEMENTATION_ROADMAP.md">Plan de calibración</a><a href="../">FARO Zeeland</a></div></div>
+</main>
+<script src="valparaiso-score-lab.js"></script>
+<script>
+(async()=>{
+const refs=await Promise.all([fetch("valparaiso-score.config.json"),fetch("sources.json")]);
+if(refs.some(x=>!x.ok))throw Error("No se encontraron los datos del laboratorio");
+const cfg=await refs[0].json(),sourceRegistry=await refs[1].json();
+const $=id=>document.getElementById(id);
+const colors={copper:"#C46639",amber:"#BA7C31",sand:"#9C8431",lime:"#6E9E43",olive:"#547642"};
+function render(){
+const ids=["windFromDeg","windKmh","swellFromDeg","swellPeriodS","swellHeightM","gustKmh"];
+const values=Object.fromEntries(ids.map(id=>[id,Number($(id).value)]));
+const result=window.FaroChileScoreLab.evaluate(cfg,$("spot").value,values,{locale:"es"});
+$("score").textContent=result.score===null?"—":result.score.toFixed(1);
+$("score").style.color=colors[result.band]||"var(--ink)";
+$("grade").textContent=result.scoreLabel||"Datos insuficientes";
+[...$("meter").children].forEach((el,i)=>el.classList.toggle("on",result.score!==null&&i<Math.max(1,Math.ceil(result.score/2))));
+$("vibe").textContent="FARO VIBE · "+(result.vibe?.label||"Sin datos");
+$("read").textContent=result.read;
+const target=$("signals");target.replaceChildren();
+for(const tag of result.tags||[]){
+const item=document.createElement("div");item.className="signal "+tag.state;
+const caption=document.createElement("small");caption.textContent=tag.criterion||"Estado";
+const desc=document.createElement("strong");desc.textContent=tag.label;
+item.append(caption,desc);target.append(item);
+}
+$("warning").textContent=result.warning||"Prototipo sin datos suficientes.";
+const warning=$("caution");warning.textContent=result.caution||"";
+warning.hidden=!result.caution;
+const refs=result.sourceIds?.map(id=>sourceRegistry.sources[id]).filter(Boolean)||[];
+$("sources").replaceChildren(document.createTextNode("EVIDENCIA DEL SPOT · "));
+refs.forEach((ref,i)=>{
+ if(i)$("sources").append(document.createTextNode(" · "));
+ const anchor=document.createElement("a");anchor.href=ref.url;anchor.target="_blank";anchor.rel="noopener noreferrer";anchor.textContent=ref.name;$("sources").append(anchor);
+});
+}
+document.querySelectorAll("input,select").forEach(x=>x.addEventListener("input",render));
+render();
+})().catch(error=>{document.getElementById("read").textContent="No fue posible cargar el laboratorio: "+error.message;});
+</script>
+</body></html>
