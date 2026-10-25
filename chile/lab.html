@@ -62,12 +62,13 @@ if(refs.some(x=>!x.ok))throw Error("No se encontraron los datos del laboratorio"
 const cfg=await refs[0].json(),sourceRegistry=await refs[1].json();
 const $=id=>document.getElementById(id);
 const colors={copper:"#C46639",amber:"#BA7C31",sand:"#9C8431",lime:"#6E9E43",olive:"#547642"};
+const darkColors={copper:"#F0A46D",amber:"#F0BF69",sand:"#E3D471",lime:"#B0DB75",olive:"#96C67A"};
 function render(){
 const ids=["windFromDeg","windKmh","swellFromDeg","swellPeriodS","swellHeightM","gustKmh"];
 const values=Object.fromEntries(ids.map(id=>[id,$(id).value.trim()===""?null:Number($(id).value)]));
 const result=window.FaroChileScoreLab.evaluate(cfg,$("spot").value,values,{locale:"es"});
 $("score").textContent=result.score===null?"—":result.score.toFixed(1);
-$("score").style.color=colors[result.band]||"var(--ink)";
+$("score").style.color=(window.matchMedia("(prefers-color-scheme: dark)").matches?darkColors:colors)[result.band]||"var(--ink)";
 $("grade").textContent=result.scoreLabel||"Datos insuficientes";
 [...$("meter").children].forEach((el,i)=>el.classList.toggle("on",result.score!==null&&i<Math.max(1,Math.ceil(result.score/2))));
 $("vibe").textContent="FARO VIBE · "+(result.vibe?.label||"Sin datos");
