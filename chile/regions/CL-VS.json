@@ -14,14 +14,14 @@
       "subarea": null,
       "timeZone": "America/Santiago",
       "precision": "named_area_not_breaking_coordinate",
-      "evidenceStatus": "directory_listed",
+      "evidenceStatus": "guide_described",
       "forecastEnabled": false,
       "coordinates": null,
-      "breakType": "unverified",
-      "waveHand": "unverified",
-      "abilityReference": "unverified",
+      "breakType": "beach",
+      "waveHand": "both",
+      "abilityReference": "variable",
       "sources": [
-        "surfline-national"
+        "surf-renaca"
       ],
       "conditions": {
         "favourableWindDegrees": null,
@@ -29,14 +29,21 @@
         "idealTide": null,
         "periodResponse": null,
         "breakingHeightCalibration": null,
-        "publishedReference": null,
-        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Surfline: picos tipo A-frame hacia el norte, moldeados por rocas y bancos de arena; más al sur predominan cierres. Referencias: swell W–SW, viento E, marea media-baja. Puede aumentar la fuerza y las corrientes con swell.",
         "fieldVerification": "required"
       },
       "hazards": {
-        "ripCurrents": "unassessed",
+        "ripCurrents": "documented_when_swell",
         "rocks": "unassessed",
-        "access": "unverified"
+        "access": "beach_sector_access_verify"
       },
       "confidence": {
         "existence": "documented_in_source",
@@ -52,14 +59,15 @@
       "subarea": null,
       "timeZone": "America/Santiago",
       "precision": "named_area_not_breaking_coordinate",
-      "evidenceStatus": "directory_listed",
+      "evidenceStatus": "guide_described",
       "forecastEnabled": false,
       "coordinates": null,
-      "breakType": "unverified",
-      "waveHand": "unverified",
-      "abilityReference": "unverified",
+      "breakType": "beach",
+      "waveHand": "both",
+      "abilityReference": "variable",
       "sources": [
-        "surfline-national"
+        "surf-ritoque",
+        "waves-ritoque"
       ],
       "conditions": {
         "favourableWindDegrees": null,
@@ -67,14 +75,21 @@
         "idealTide": null,
         "periodResponse": null,
         "breakingHeightCalibration": null,
-        "publishedReference": null,
-        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "publishedReference": {
+          "swellFrom": "SW",
+          "windFrom": "N",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to slightly overhead",
+          "scope": "north end beach peaks; guide, not calibrated model",
+          "attribution": "surf-ritoque"
+        },
+        "regionSpecificNoteEs": "Guía Surfline: banco de arena al norte, izquierda suave y derecha; hacia el sur puede crecer el tamaño sin canales sencillos. Referencias: swell SW, viento N, marea media-baja. No aplicar esto sin revisar los bancos actuales.",
         "fieldVerification": "required"
       },
       "hazards": {
-        "ripCurrents": "unassessed",
+        "ripCurrents": "possible",
         "rocks": "unassessed",
-        "access": "unverified"
+        "access": "northern_peaks_and_channel_documented"
       },
       "confidence": {
         "existence": "documented_in_source",
@@ -90,14 +105,15 @@
       "subarea": null,
       "timeZone": "America/Santiago",
       "precision": "named_area_not_breaking_coordinate",
-      "evidenceStatus": "directory_listed",
+      "evidenceStatus": "guide_described",
       "forecastEnabled": false,
       "coordinates": null,
-      "breakType": "unverified",
-      "waveHand": "unverified",
-      "abilityReference": "unverified",
+      "breakType": "beach",
+      "waveHand": "both",
+      "abilityReference": "variable",
       "sources": [
-        "travel-surf-general"
+        "waves-maitencillo",
+        "surf-valpo-region"
       ],
       "conditions": {
         "favourableWindDegrees": null,
@@ -105,8 +121,11 @@
         "idealTide": null,
         "periodResponse": null,
         "breakingHeightCalibration": null,
-        "publishedReference": null,
-        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "publishedReference": {
+          "scope": "generic beach-level, source does not establish per-bank ideal wind/swell",
+          "attribution": "waves-maitencillo"
+        },
+        "regionSpecificNoteEs": "Hay distintos sectores y bancos. La guía consultada confirma playa de arena e izquierdas/derechas, pero no valida ángulos ideales específicos: no se activa score hasta reunir evidencia.",
         "fieldVerification": "required"
       },
       "hazards": {
@@ -183,6 +202,739 @@
         "breakingHeightCalibration": null,
         "publishedReference": null,
         "regionSpecificNoteEs": "Territorio insular: no convertir una costa completa en un spot exacto.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:la-boca-concon",
+      "name": "La Boca de Concón",
+      "locality": "Concón",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "guide_described",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "river-mouth",
+      "waveHand": "both",
+      "abilityReference": "variable",
+      "sources": [
+        "surf-la-boca",
+        "concon-pladetur",
+        "concon-wetland",
+        "mma-aconcagua",
+        "uv-concon"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "windFrom": "E / SE / S",
+          "swellFrom": "W / NW",
+          "reportedWindDirectionDegrees": [
+            82,
+            199
+          ],
+          "reportedSwellDirectionDegrees": [
+            226,
+            355
+          ],
+          "tide": "all tides reported; variable sandbanks and local response unverified",
+          "idealSize": "from about 0.8 m per guide; ambiguous surf vs offshore height",
+          "attribution": "surf-la-boca",
+          "scope": "beach-level, not each river-mouth sandbank"
+        },
+        "regionSpecificNoteEs": "Bancos de arena modificados por sedimentos del Aconcagua. Guía: W–NW y viento E–SE–S; ambas direcciones necesitan validación por banco. Municipalidad advierte corrientes y no aptitud para baño. No confundir zona de playa surfista con humedal protegido donde existen restricciones a deportes náuticos. Revisar calidad del agua tras lluvias.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "municipal_documented",
+        "rocks": "mixed_sand_rocks_guide",
+        "access": "beach_and_wetland_regulation_verify",
+        "waterQuality": "rain_river_discharge_review"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:playa-amarilla-concon",
+      "name": "Playa Amarilla · Concón",
+      "locality": "Concón",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "beach-concon"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:playa-negra-concon",
+      "name": "Playa Negra · Concón",
+      "locality": "Concón",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "lineup-valpo"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:papagayo-quintero",
+      "name": "Papagayo · Quintero",
+      "locality": "Quintero",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "guide_described",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "reef",
+      "waveHand": "left",
+      "abilityReference": "experienced",
+      "sources": [
+        "surf-papagayo"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Surfline describe ola izquierda sobre arrecife en la bahía de Quintero; sensible al viento, con secciones rápidas y posibles tubos. Sin datos confiables de viento y swell óptimos por dirección: score pendiente.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "reef_documented",
+        "access": "local_entry_required"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:punta-piedra-quintero",
+      "name": "Punta Piedra · Quintero",
+      "locality": "Quintero",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surf-valpo-region"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:abanico-maitencillo",
+      "name": "Abanico · Maitencillo",
+      "locality": "Puchuncaví",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "lineup-valpo"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:aguas-blancas-maitencillo",
+      "name": "Aguas Blancas · Maitencillo",
+      "locality": "Puchuncaví",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "lineup-valpo"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:las-salinas-vina",
+      "name": "Las Salinas · Viña del Mar",
+      "locality": "Viña del Mar",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "lineup-valpo"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:cochoa",
+      "name": "Cochoa",
+      "locality": "Viña del Mar",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "uv-concon"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "La UV tiene modelo de oleaje 20 m para sectores de la bahía de Valparaíso; no constituye calibración de la rompiente de Cochoa.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:playa-cachagua",
+      "name": "Playa Cachagua",
+      "locality": "Zapallar",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surf-valpo-region"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:pichidangui",
+      "name": "Pichidangui",
+      "locality": "Los Vilos",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surf-valpo-region"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:salinas-de-pullally",
+      "name": "Salinas de Pullally",
+      "locality": "La Ligua",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "lineup-valpo"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:algarrobo",
+      "name": "Algarrobo",
+      "locality": "Algarrobo",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surf-valpo-region"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:tunquen",
+      "name": "Tunquén",
+      "locality": "Casablanca",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surf-valpo-region"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:santo-domingo",
+      "name": "Santo Domingo",
+      "locality": "Santo Domingo",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surf-valpo-region"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-VS:la-boquilla",
+      "name": "La Boquilla",
+      "locality": "El Tabo",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "surf-valpo-region"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": "W, SW",
+          "windFrom": "E",
+          "tide": "medium-low",
+          "idealSurfSize": "waist to head high",
+          "scope": "northern beach peaks, not entire Reñaca",
+          "attribution": "surf-renaca"
+        },
+        "regionSpecificNoteEs": "Lugar identificado en guía regional. Falta delimitar los bancos, exposición y accesos antes de estimar calidad por sector.",
         "fieldVerification": "required"
       },
       "hazards": {
