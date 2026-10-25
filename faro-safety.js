@@ -176,58 +176,73 @@
   summary.append(top,title,chevron);
   detail.append(summary);
 
-  const expanded=document.createElement('div');expanded.className='faro-safety-expanded';
-  const explainer=document.createElement('strong');explainer.className='faro-safety-detail-heading';
-  explainer.textContent=es?'Por qué aparece este aviso':'Why this notice appears';
-  expanded.append(sourceNote,explainer);
-  if(fullSignal){const overview=document.createElement('p');overview.className='faro-safety-snapshot';overview.textContent=beachName+' · '+fullSignal;expanded.append(overview);}
-  const description=document.createElement('p');description.className='faro-safety-detail-description';
-  description.textContent=dangerous||caution?
-   (es?'Faro detecta condiciones potencialmente peligrosas en los modelos meteorológicos para las próximas 48 horas cerca de '+beachName+'. No significa que exista una alerta oficial activa.':
-       'Faro detects potentially hazardous model conditions for the next 48 hours near '+beachName+'. This does not mean an official warning is currently active.'):
-   hasBulletin?(es?'KNMI publicó un boletín para Zeeland. Es una referencia fechada, no un estado oficial en directo.':
-       'KNMI published a bulletin for Zeeland. This is a dated reference, not a live official status.'):
-   (es?'Faro no consulta automáticamente las alertas oficiales. No detectar riesgos en el modelo no equivale a condiciones seguras.':
-       'Faro does not automatically read official warnings. No model hazard detected does not mean conditions are safe.');
-  expanded.append(description);
-  if(report.reasons.length){
-   const list=document.createElement('ul');list.className='faro-safety-reasons';
-   report.reasons.forEach(reason=>{
-    const li=document.createElement('li');
-    li.textContent=translatedReason(reason,es);
-    list.append(li);
-   });
-   expanded.append(list);
+  // A compact risk explanation: no duplication of the summary values or
+  // repeated caveat paragraphs. Full methodology belongs to the linked guide.
+  const expanded=document.createElement('div');
+  expanded.className='faro-safety-expanded';
+  const meta=document.createElement('p');
+  meta.className='faro-safety-inline-source';
+  meta.textContent=dangerous||caution?
+   (es?'PRÓXIMAS 48 H · ESTIMACIÓN DEL MODELO, NO AVISO OFICIAL':'NEXT 48 H · MODEL ESTIMATE, NOT OFFICIAL ALERT'):
+   hasBulletin?(es?'BOLETÍN ANTERIOR · SIN VERIFICACIÓN EN DIRECTO':'DATED BULLETIN · NOT LIVE'):
+   (es?'CONSULTA DE AVISOS OFICIALES · SIN SINCRONIZACIÓN':'OFFICIAL WARNINGS · NOT SYNCED');
+  expanded.append(meta);
+  if(dangerous||caution){
+   const heading=document.createElement('strong');
+   heading.className='faro-safety-detail-heading';
+   heading.textContent=es?'Por qué destaca FARO este riesgo':'Why FARO flagged this risk';
+   expanded.append(heading);
+   if(report.reasons.length){
+    const list=document.createElement('ul');list.className='faro-safety-reasons';
+    report.reasons.forEach(reason=>{
+     const li=document.createElement('li');
+     li.textContent=translatedReason(reason,es);
+     list.append(li);
+    });
+    expanded.append(list);
+   }
+  }else{
+   const explainer=document.createElement('p');
+   explainer.className='faro-safety-detail-description';
+   explainer.textContent=hasBulletin?
+    (es?'Hay un boletín KNMI fechado; comprueba el estado actual en la fuente oficial.':
+        'A dated KNMI bulletin is on record; verify current status with the official source.'):
+    (es?'FARO no consulta automáticamente los avisos oficiales. La ausencia de riesgo en el modelo no garantiza condiciones seguras.':
+        'FARO does not automatically check official warnings. No model hazard does not guarantee safe conditions.');
+   expanded.append(explainer);
   }
   if(hasBulletin){
-   const bulletinNote=document.createElement('p');bulletinNote.className='faro-safety-source';
-   bulletinNote.textContent=es?
-    'Boletín KNMI: 24 oct 2026, 07:43 (NL). Periodo previsto: 24 oct 22:00–25 oct 23:00. No se actualiza en directo.':
-    'KNMI bulletin: 24 Oct 2026, 07:43 NL. Expected: 24 Oct 22:00–25 Oct 23:00. Not updated live.';
-   expanded.append(bulletinNote);
+   const published=document.createElement('p');published.className='faro-safety-bulletin';
+   published.textContent=es?
+    'KNMI · 24 oct 2026, 07:43 · Previsto hasta el 25 oct a las 23:00 · No en directo.':
+    'KNMI · 24 Oct 2026, 07:43 · Forecast until 25 Oct 23:00 · Not live.';
+   expanded.append(published);
   }
-  const caveat=document.createElement('p');caveat.className='faro-safety-source';
-  caveat.textContent=es?
-   'Los modelos no evalúan corrientes de resaca, mareas, prohibiciones locales ni olas rompiendo. Confirma los avisos y señales en la playa.':
-   'Models do not assess rip currents, tides, local restrictions or breaking waves. Check official warnings and beach notices.';
-  expanded.append(caveat);
-  const action=document.createElement('a');action.className='faro-safety-link';
-  action.href=KNMI_URL;action.target='_blank';action.rel='noopener noreferrer';
-  action.textContent=es?'Ver avisos oficiales KNMI ↗':'View official KNMI warnings ↗';
-  expanded.append(action);
+  const note=document.createElement('p');note.className='faro-safety-source';
+  note.textContent=es?
+   'No incluye corrientes, mareas ni restricciones locales. Revisa las condiciones en la playa.':
+   'Currents, tides and local restrictions are not assessed. Check conditions on the beach.';
+  expanded.append(note);
+  const actions=document.createElement('div');actions.className='faro-safety-actions';
+  const official=document.createElement('a');
+  official.className='faro-safety-link';
+  official.href=KNMI_URL;official.target='_blank';official.rel='noopener noreferrer';
+  official.textContent=es?'Avisos oficiales KNMI ↗':'Official KNMI warnings ↗';
   const more=document.createElement('a');
-  more.className='faro-safety-more';
-  more.href='#faroSafetyGuide';
+  more.className='faro-safety-more';more.href='#faroSafetyGuide';
   more.addEventListener('click',event=>{
    event.preventDefault();
    if(typeof root.openFaroSafetyGuide==='function')root.openFaroSafetyGuide();
    else{
     const destination=document.getElementById('faroSafetyGuide');
-    if(destination){destination.open=true;destination.scrollIntoView({block:'start',behavior:'smooth'});}
+    if(destination){
+     destination.open=true;
+     destination.scrollIntoView({block:'start',behavior:'smooth'});
+    }
    }
   });
-  more.textContent=es?'Cómo interpretar estas alertas ↓':'How to interpret these warnings ↓';
-  expanded.append(more);
+  more.textContent=es?'Más información ↓':'How it works ↓';
+  actions.append(official,more);expanded.append(actions);
   detail.append(expanded);
   rootEl.append(detail);
   rootEl.setAttribute('aria-label',es?'Avisos y riesgos meteorológicos de Zeeland':'Zeeland weather notices and model risks');
