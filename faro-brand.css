@@ -1,4 +1,4 @@
-/* FARO / official visual identity v25
+/* FARO / official visual identity v26
  * Brand source: user-provided colores_marca.pdf (25 Oct 2026).
  * Layout source: user-provided iPhone reference screenshot.
  * Scores: numeric intervals, independent from existing Poor/Fair/Good wording.
@@ -87,14 +87,14 @@ html:not([data-theme="light"]) #forecastPage .picker summary b{
  * not an interaction colour. Only the selected day earns the blue stroke. */
 html[data-theme="light"] #forecastPage .day-chip{
  background:transparent!important;
- border:1px solid #b9cace!important;
+ border:1px solid var(--faro-choice-stroke,#c9d8da)!important;
  border-radius:15px!important;box-shadow:none!important;
  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease!important
 }
 html[data-theme="light"] #forecastPage .day-chip.selected,
 html[data-theme="light"] #forecastPage .day-chip.score-tint.selected{
  background:#fff!important;
- border:2px solid var(--brand-blue)!important;
+ border:2px solid var(--brand-slate)!important;
  box-shadow:0 5px 17px rgba(31,59,61,.07)!important
 }
 html[data-theme="light"] #forecastPage .day-strip-arrow{
@@ -194,16 +194,19 @@ html:not([data-theme="light"]) .faro-safety-center.danger .faro-safety-kicker{
 }
 
 /* FARO v25 — hierarchy pass after actual iPhone comparison (25 October).
- * Calm non-selected cards, a single white selected surface and one blue
- * selection language. Do not tint every tappable control as selected. */
+ * Calm non-selected cards, a single white selected surface and differentiated
+ * strokes: dark slate for selected score/time cards, pale mist for passive cards;
+ * blue remains reserved for navigation and keyboard focus. */
 html[data-theme="light"]{
  --faro-canvas-choice:#f7fafa;
- --faro-choice-stroke:#b9cace;
+ --faro-choice-stroke:#c9d8da;
+ --faro-choice-selected-stroke:#526a74;
  --faro-choice-paper:#fff;
 }
 html:not([data-theme="light"]){
  --faro-canvas-choice:#102427;
  --faro-choice-stroke:#507074;
+ --faro-choice-selected-stroke:#c9d8da;
  --faro-choice-paper:#234347;
 }
 /* Do not animate a colour wash across tab switches: the white active
@@ -234,7 +237,7 @@ html:not([data-theme="light"]) #forecastPage .day-chip:not(.selected){
 }
 html:not([data-theme="light"]) #forecastPage .day-chip.selected{
  background:var(--faro-choice-paper)!important;
- border:2px solid var(--faro-selection)!important;
+ border:2px solid var(--faro-choice-selected-stroke)!important;
  box-shadow:0 5px 18px rgba(0,0,0,.12)!important;
 }
 /* Keep the quality word readable, but the passive badge should not be
@@ -278,8 +281,8 @@ html[data-theme="light"] #dayview .hourly-section .slots button[class*="tone-"]{
 }
 html[data-theme="light"] #dayview .hourly-section .slots button.active,
 html[data-theme="light"] #dayview .hourly-section .slots button.active[class*="tone-"]{
- background:#fff!important;border:2px solid var(--brand-blue)!important;
- border-top:2px solid var(--brand-blue)!important;outline:none!important;
+ background:#fff!important;border:2px solid var(--faro-choice-selected-stroke)!important;
+ border-top:2px solid var(--faro-choice-selected-stroke)!important;outline:none!important;
  box-shadow:0 4px 15px rgba(31,59,61,.06)!important;
 }
 html:not([data-theme="light"]) #dayview .hourly-section .slots button,
@@ -291,7 +294,7 @@ html:not([data-theme="light"]) #dayview .hourly-section .slots button[class*="to
 html:not([data-theme="light"]) #dayview .hourly-section .slots button.active,
 html:not([data-theme="light"]) #dayview .hourly-section .slots button.active[class*="tone-"]{
  background:var(--faro-choice-paper)!important;
- border:2px solid var(--faro-selection)!important;outline:none!important;
+ border:2px solid var(--faro-choice-selected-stroke)!important;outline:none!important;
  box-shadow:0 5px 18px rgba(0,0,0,.1)!important;
 }
 #forecastPage .day-chip:focus-visible,
@@ -344,4 +347,15 @@ html[data-theme="light"] #boardPage .faro-result-scores>div{
 }
 @media(prefers-reduced-motion:reduce){
  #forecastPage .day-chip{transition:none!important}
+}
+
+/* FARO v26 — precise score-card strokes from screenshot feedback.
+ * Paper makes selection obvious; dark slate is its outline. The blue
+ * navigation highlight is a DIFFERENT control, not the score-card border. */
+html[data-theme="light"] #forecastPage .day-chip.selected,
+html[data-theme="light"] #forecastPage .day-chip.score-tint.selected {
+ border-color:var(--faro-choice-selected-stroke)!important;
+}
+html[data-theme="light"] #forecastPage .day-chip:not(.selected){
+ border-color:var(--faro-choice-stroke)!important;
 }
