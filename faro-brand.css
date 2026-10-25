@@ -1,4 +1,4 @@
-/* FARO / official visual identity v24
+/* FARO / official visual identity v25
  * Brand source: user-provided colores_marca.pdf (25 Oct 2026).
  * Layout source: user-provided iPhone reference screenshot.
  * Scores: numeric intervals, independent from existing Poor/Fair/Good wording.
@@ -57,18 +57,24 @@ main>.app-nav{max-width:none!important;width:100%!important;
  padding:3px!important;border:1px solid var(--faro-line)!important;
  border-radius:15px!important;background:transparent!important;box-shadow:none!important}
 main>.app-nav button{font-weight:750!important;border-radius:11px!important;
- color:var(--fg)!important;background:transparent!important;box-shadow:none!important}
+ color:var(--brand-slate)!important;background:transparent!important;
+ border:1px solid transparent!important;box-shadow:none!important}
 main>.app-nav button.active,main>.app-nav button[aria-pressed="true"]{
- color:var(--brand-blue)!important;border:1px solid var(--brand-blue)!important;
- background:color-mix(in srgb,var(--brand-blue) 4%,transparent)!important
+ color:var(--brand-blue)!important;border:1.5px solid var(--brand-blue)!important;
+ background:#fff!important;box-shadow:0 2px 10px rgba(31,59,61,.045)!important
 }
 html:not([data-theme="light"]) main>.app-nav button.active,
 html:not([data-theme="light"]) main>.app-nav button[aria-pressed="true"]{
  color:#a5baff!important;border-color:#a5baff!important
 }
 #forecastPage .picker summary{
- border:1.5px solid var(--brand-ink)!important;border-radius:12px!important;
- background:var(--panel)!important
+ border:1px solid var(--brand-mist)!important;border-radius:12px!important;
+ background:var(--panel)!important;box-shadow:none!important
+}
+#forecastPage .picker[open] summary,
+#forecastPage .picker summary:focus-visible{
+ border-color:var(--brand-blue)!important;
+ outline:2px solid var(--brand-blue)!important;outline-offset:1px!important
 }
 #forecastPage .picker summary b{color:var(--brand-blue)!important}
 html:not([data-theme="light"]) #forecastPage .picker summary{
@@ -77,15 +83,19 @@ html:not([data-theme="light"]) #forecastPage .picker summary{
 html:not([data-theme="light"]) #forecastPage .picker summary b{
  color:#a5baff!important
 }
+/* Selected = paper. Alternatives = open canvas. The score colour is data,
+ * not an interaction colour. Only the selected day earns the blue stroke. */
 html[data-theme="light"] #forecastPage .day-chip{
- background:#fff!important;border:1.5px solid var(--brand-ink)!important;
- border-radius:15px!important;box-shadow:none!important
+ background:transparent!important;
+ border:1px solid #b9cace!important;
+ border-radius:15px!important;box-shadow:none!important;
+ transition:background .16s ease,border-color .16s ease,box-shadow .16s ease!important
 }
 html[data-theme="light"] #forecastPage .day-chip.selected,
 html[data-theme="light"] #forecastPage .day-chip.score-tint.selected{
+ background:#fff!important;
  border:2px solid var(--brand-blue)!important;
- background:color-mix(in srgb,var(--brand-blue) 3%,#fff)!important;
- box-shadow:none!important
+ box-shadow:0 5px 17px rgba(31,59,61,.07)!important
 }
 html[data-theme="light"] #forecastPage .day-strip-arrow{
  border-color:var(--brand-slate)!important;color:var(--brand-slate)!important
@@ -181,4 +191,154 @@ html:not([data-theme="light"]) .faro-safety-center.danger .faro-safety-kicker{
 }
 @media(prefers-reduced-motion:reduce){
  main>.app-nav button{transition:none!important}
+}
+
+/* FARO v25 — hierarchy pass after actual iPhone comparison (25 October).
+ * Calm non-selected cards, a single white selected surface and one blue
+ * selection language. Do not tint every tappable control as selected. */
+html[data-theme="light"]{
+ --faro-canvas-choice:#f7fafa;
+ --faro-choice-stroke:#b9cace;
+ --faro-choice-paper:#fff;
+}
+html:not([data-theme="light"]){
+ --faro-canvas-choice:#102427;
+ --faro-choice-stroke:#507074;
+ --faro-choice-paper:#234347;
+}
+html[data-theme="light"] main>.app-nav button:not(.active){
+ background:transparent!important;color:var(--brand-ink)!important;
+ border-color:transparent!important;box-shadow:none!important;
+}
+html:not([data-theme="light"]) main>.app-nav button{
+ color:#c4d4d5!important;border-color:transparent!important;
+ background:transparent!important;box-shadow:none!important
+}
+html:not([data-theme="light"]) main>.app-nav button.active,
+html:not([data-theme="light"]) main>.app-nav button[aria-pressed="true"]{
+ background:var(--faro-choice-paper)!important;
+ color:#a5baff!important;border-color:#a5baff!important;
+}
+html[data-theme="light"] #forecastPage .day-chip:not(.selected){
+ background:transparent!important;
+ border:1px solid var(--faro-choice-stroke)!important;
+ box-shadow:none!important;
+}
+html:not([data-theme="light"]) #forecastPage .day-chip:not(.selected){
+ background:transparent!important;
+ border:1px solid var(--faro-choice-stroke)!important;
+ box-shadow:none!important;
+}
+html:not([data-theme="light"]) #forecastPage .day-chip.selected{
+ background:var(--faro-choice-paper)!important;
+ border:2px solid var(--faro-selection)!important;
+ box-shadow:0 5px 18px rgba(0,0,0,.12)!important;
+}
+/* Keep the quality word readable, but the passive badge should not be
+ * another coloured box. Only the chosen day gets the tinted grade plaque. */
+#forecastPage .day-chip:not(.selected) .day-chip-grade,
+#forecastPage .day-chip:not(.selected)[class*="brand-band-"] .day-chip-grade{
+ background:transparent!important;border:1px solid transparent!important;
+ padding:3px 0!important;box-shadow:none!important;
+}
+#forecastPage .day-chip.selected[class*="brand-band-"] .day-chip-grade{
+ background:color-mix(in srgb,var(--brand-score-color) 12%,transparent)!important;
+ border:1px solid var(--brand-score-color)!important;
+ padding:3px 8px!important;
+}
+#forecastPage .day-chip:not(.selected)>span:first-child,
+#forecastPage .day-chip:not(.selected)>small{
+ color:var(--faro-quiet)!important;
+}
+#forecastPage .day-chip.selected>span:first-child{
+ color:var(--fg)!important;font-weight:800!important;
+}
+#forecastPage .day-chip:not(.selected) strong{
+ font-weight:800!important;
+}
+/* Forecast selector chrome is neutral. The chosen values can retain
+ * brand blue; the surrounding strokes should not compete with the rail. */
+html[data-theme="light"] #forecastPage .picker summary{
+ border-color:var(--faro-choice-stroke)!important;
+}
+html[data-theme="light"] #forecastPage .picker[open] summary{
+ border-color:var(--brand-blue)!important;
+}
+/* Time slots follow the same selected = white, alternative = unfilled rule.
+ * Data-driven score ink is still visible in all slots. */
+html[data-theme="light"] #dayview .hourly-section .slots button,
+html[data-theme="light"] #dayview .hourly-section .slots button[class*="tone-"]{
+ background:transparent!important;
+ border:1px solid var(--faro-choice-stroke)!important;
+ border-top:1px solid var(--faro-choice-stroke)!important;
+ outline:none!important;box-shadow:none!important;
+}
+html[data-theme="light"] #dayview .hourly-section .slots button.active,
+html[data-theme="light"] #dayview .hourly-section .slots button.active[class*="tone-"]{
+ background:#fff!important;border:2px solid var(--brand-blue)!important;
+ border-top:2px solid var(--brand-blue)!important;outline:none!important;
+ box-shadow:0 4px 15px rgba(31,59,61,.06)!important;
+}
+html:not([data-theme="light"]) #dayview .hourly-section .slots button,
+html:not([data-theme="light"]) #dayview .hourly-section .slots button[class*="tone-"]{
+ background:transparent!important;border:1px solid var(--faro-choice-stroke)!important;
+ border-top:1px solid var(--faro-choice-stroke)!important;outline:none!important;
+ box-shadow:none!important;
+}
+html:not([data-theme="light"]) #dayview .hourly-section .slots button.active,
+html:not([data-theme="light"]) #dayview .hourly-section .slots button.active[class*="tone-"]{
+ background:var(--faro-choice-paper)!important;
+ border:2px solid var(--faro-selection)!important;outline:none!important;
+ box-shadow:0 5px 18px rgba(0,0,0,.1)!important;
+}
+#forecastPage .day-chip:focus-visible,
+#dayview .hourly-section .slots button:focus-visible,
+main>.app-nav button:focus-visible{
+ outline:2px solid var(--faro-selection)!important;
+ outline-offset:3px!important;
+}
+/* The session you've chosen is the hero; secondary explanations remain
+ * quiet and do not compete with a second bright blue box. */
+html[data-theme="light"] #dayview .session-glance{
+ background:#fff!important;
+ border:1px solid var(--faro-choice-stroke)!important;
+ box-shadow:0 5px 20px rgba(31,59,61,.035)!important;
+}
+html[data-theme="light"] #dayview .session-glance::before{
+ background:var(--brand-blue)!important;
+}
+html[data-theme="light"] #bestPage .highlight.hero-rank{
+ background:#fff!important;border:1px solid var(--faro-choice-stroke)!important;
+ box-shadow:0 5px 20px rgba(31,59,61,.035)!important;
+}
+html[data-theme="light"] #bestPage .highlight.hero-rank::before{
+ background:var(--brand-blue)!important
+}
+html[data-theme="light"] #bestPage .highlight.wide:not(.hero-rank){
+ background:transparent!important;
+ border:1px solid var(--faro-choice-stroke)!important;
+ box-shadow:none!important;
+}
+html[data-theme="light"] #bestPage .rank-list button{
+ background:transparent!important;border-color:var(--faro-line)!important;
+ box-shadow:none!important;
+}
+html[data-theme="light"] #boardPage .faro-result-card{
+ background:transparent!important;
+ border:1px solid var(--faro-choice-stroke)!important;
+ box-shadow:none!important;
+}
+html[data-theme="light"] #boardPage .faro-result-scores>div{
+ background:color-mix(in srgb,var(--brand-mist) 12%,transparent)!important;
+ border-color:transparent!important;box-shadow:none!important;
+}
+@media(hover:hover){
+ html[data-theme="light"] #forecastPage .day-chip:not(.selected):hover,
+ html[data-theme="light"] #dayview .hourly-section .slots button:not(.active):hover{
+  background:color-mix(in srgb,var(--brand-mist) 15%,transparent)!important;
+  border-color:var(--brand-slate)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #forecastPage .day-chip{transition:none!important}
 }
