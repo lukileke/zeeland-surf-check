@@ -1,0 +1,88 @@
+/* FARO Spot Fit v1. The four states are guidance, not a second score
+ * or a traffic-light safety system. Keep typography legible in both themes.
+ */
+#dayview #spotinsight .spot-fit-panel{
+ display:grid!important;gap:11px!important;
+ margin:5px 0 12px!important;
+ padding:15px!important;
+ border:1px solid var(--faro-line)!important;
+ border-radius:14px!important;
+ background:var(--tile)!important;
+ box-shadow:none!important;
+}
+#dayview #spotinsight .spot-fit-eyebrow{
+ display:flex!important;flex-wrap:wrap!important;
+ align-items:center!important;justify-content:space-between!important;
+ gap:4px 10px!important;
+}
+#dayview #spotinsight .spot-fit-kicker{
+ color:var(--fg)!important;
+ font:850 11px/1.3 var(--faro-text)!important;
+ letter-spacing:.065em!important;
+}
+#dayview #spotinsight .spot-fit-scope{
+ color:var(--faro-quiet)!important;
+ font:650 10px/1.3 var(--faro-text)!important;
+}
+#dayview #spotinsight .spot-fit-verdict{
+ margin:0!important;padding:0!important;
+ color:var(--fg)!important;
+ font:800 clamp(15px,4vw,18px)/1.28 var(--faro-text)!important;
+ letter-spacing:-.02em!important;text-wrap:pretty!important;
+}
+#dayview #spotinsight .spot-fit-grid{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:9px!important;
+}
+#dayview #spotinsight .spot-fit-item{
+ --fit-accent:var(--faro-quiet);
+ --fit-fill:color-mix(in srgb,var(--fit-accent) 6%,var(--faro-raised));
+ min-width:0!important;
+ display:flex!important;flex-direction:column!important;
+ justify-content:flex-start!important;
+ gap:5px!important;
+ padding:11px 10px!important;
+ border:1px solid color-mix(in srgb,var(--fit-accent) 33%,var(--faro-line))!important;
+ border-radius:10px!important;
+ background:var(--fit-fill)!important;
+}
+#dayview #spotinsight .spot-fit--positive{--fit-accent:#5E8C54}
+#dayview #spotinsight .spot-fit--mixed{--fit-accent:#AA8234}
+#dayview #spotinsight .spot-fit--negative{--fit-accent:#986B54}
+#dayview #spotinsight .spot-fit--unknown{--fit-accent:var(--faro-quiet)}
+html:not([data-theme="light"]) #dayview #spotinsight .spot-fit--positive{--fit-accent:#A8D28B}
+html:not([data-theme="light"]) #dayview #spotinsight .spot-fit--mixed{--fit-accent:#E6CA78}
+html:not([data-theme="light"]) #dayview #spotinsight .spot-fit--negative{--fit-accent:#DCB29A}
+#dayview #spotinsight .spot-fit-label{
+ font:800 10px/1.3 var(--faro-text)!important;
+ letter-spacing:.08em!important;
+ color:var(--faro-quiet)!important;
+}
+#dayview #spotinsight .spot-fit-state{
+ font:800 12px/1.32 var(--faro-text)!important;
+ color:var(--fit-accent)!important;
+ overflow-wrap:break-word!important;
+}
+#dayview #spotinsight .spot-fit-detail{
+ color:var(--muted)!important;
+ font:550 10.5px/1.4 var(--faro-text)!important;
+ overflow-wrap:break-word!important;
+}
+#dayview #spotinsight .spot-fit-method{
+ padding:8px 0 0!important;margin:0!important;
+ border-top:1px solid var(--faro-line)!important;
+ color:var(--faro-quiet)!important;
+ font:550 10.5px/1.5 var(--faro-text)!important;
+}
+@media(min-width:750px){
+ #dayview #spotinsight .spot-fit-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ }
+}
+@media(max-width:380px){
+ #dayview #spotinsight .spot-fit-panel{padding:12px!important}
+ #dayview #spotinsight .spot-fit-item{padding:10px 8px!important}
+ #dayview #spotinsight .spot-fit-state{font-size:11.5px!important}
+ #dayview #spotinsight .spot-fit-grid{gap:7px!important}
+}
