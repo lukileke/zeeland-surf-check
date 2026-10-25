@@ -206,6 +206,9 @@ html:not([data-theme="light"]){
  --faro-choice-stroke:#507074;
  --faro-choice-paper:#234347;
 }
+/* Do not animate a colour wash across tab switches: the white active
+ * surface should register immediately and stay distinct from passive tabs. */
+main>.app-nav button{transition:none!important}
 html[data-theme="light"] main>.app-nav button:not(.active){
  background:transparent!important;color:var(--brand-ink)!important;
  border-color:transparent!important;box-shadow:none!important;
