@@ -259,3 +259,18 @@ New user-facing states:
 - A manually selected interval never represents a reservation, live observed wave, or safety clearance; it is merely the forecast window being examined. Existing model-origin and safety qualifications stay visible.
 
 No buttons, new panels, additional scores or numerical methods were added. The time range remains beside the headline, and the Chilean Spanish translation is maintained alongside the English copy. Automated smoke and mobile-browser tests check both state transitions and their localisation.
+
+
+### FARO READ × FARO MATCH — 25 October 2026 (v28)
+
+**Problem addressed:** Forecast looked too much like a conventional weather dashboard. Generic "Wizard" naming hid FARO's real differentiation (spot-oriented surf quality plus optional personal board and riding-style compatibility). Numerical metrics arrived before a simple, truthful reading of likely surf characteristics.
+
+**FARO READ** is a compact editorial interpretation inserted below the date / best-window row in Forecast. It reuses the modelled wave height, period, wind speed, gusts and weather code from the *selected* two-hour window, so changing the day or manually comparing hours changes the read appropriately. The code lives in `surf-engine.js::quickRead(x,locale)` and is shared with the Scriptable widget. The interpretation is deliberately cautious: "could", "may", "model suggests"; it never claims on-beach observation, exact breaking-wave shape or safety clearance. Modelled thunderstorms and 75+ km/h gusts take precedence over an otherwise favourable wave-character description. The independent 48-hour safety warning remains untouched and remains above the forecast.
+
+The READ module has (a) a small gold FARO symbol, (b) one headline, (c) one restrained supporting sentence, and (d) a compact **FARO MATCH** link. It introduces **zero additional numeric scores** or decorative weather data panels. The existing more technical score breakdown and safety context still live behind their appropriate disclosures. English and Chilean Spanish translations are provided for all READ states.
+
+**FARO MATCH** is the primary navigation replacement for the generic "Wizard" tab. Its top-of-page editorial identity explains why it differs from ordinary surf forecasts: **Spot Quality ≠ Board Fit**, with the existing experimental-estimate caveat. The existing guided three-step search and original advanced tools remain functional; this is a product/visual rebrand, not a redesigned scoring algorithm. Clicking MATCH from within a forecast carries beach, spot and selected day into the guided form, preselects "Which board?", and leaves all choices editable. Clicking the navigation tab starts from the wizard's existing state. The result headline uses "FARO matches" instead of implying actual sessions were arranged.
+
+**Design:** Keep supplied vector logo and official PDF colours. Use a quiet hairline above and below FARO READ rather than a bright coloured card nested inside the date summary. The MATCH hero uses its existing editorial weight and an ultra-faint copy of the real FARO logo, a gold signpost and careful model provenance; it never puts competing saturated colours beside safety alerts. Blue remains a control/focus colour; day and time selections retain the corrected dark-grey / pale-grey strokes.
+
+**QA:** Live Chromium mobile tests check READ headline and English/Spanish copy, MATCH tab naming and handoff of beach/day/goal/scope. Smoke tests cover the shared interpretation's calm, strong-gust and thunderstorm branches. These tests do not prove visual rendering in a physical iPhone Safari.
