@@ -101,7 +101,13 @@
   const swellPresence={value:presenceFit(input.swellHeightM,H)};
   if(!windDirection||!swellDirection)throw Error('Profile direction bands not defined');
   const components={windDirection,swellDirection,windStrength,period,swellPresence};
-  const unrounded=10*Object.entries(config.weights).reduce((sum,[key,weight])=>sum+weight*components[key].value,0);
+  const directionalIndex=10*Object.entries(config.weights).reduce((sum,[key,weight])=>sum+weight*components[key].value,0);
+  // Wind and directions alone cannot imply rideable surf when the input swell
+  // is tiny or missing. A deliberately uncalibrated *offshore presence* gate
+  // reduces the prototype index in such cases. It does NOT convert offshore
+  // swell height into breaking wave height or incorporate secondary windsea.
+  const swellAvailability=clamp(input.swellHeightM/H.presenceModerateM,0,1);
+  const unrounded=directionalIndex*swellAvailability;
   const score=+Math.min(H.provisionalScoreCap,unrounded).toFixed(1);
   const band=bands.find(b=>score<b.max);
   const label=t(locale,band.es,band.en);
@@ -131,11 +137,11 @@
     label:modelRisk?t(locale,'Rachas/viento potencialmente peligrosos (criterio FARO)','Potentially hazardous wind (FARO screen)'):null,
     official:false
    },
-   evidence:'published_guide_not_calibrated',tideEvaluated:false,nearshoreWaveHeightEstimated:false,
+   swellAvailability:+swellAvailability.toFixed(2),evidence:'published_guide_not_calibrated',tideEvaluated:false,nearshoreWaveHeightEstimated:false,
    safetyAssessed:false,confidence:'low',scoreCap:H.provisionalScoreCap,
    warning:t(locale,
-    'Índice experimental: compara compatibilidad direccional y energía offshore; no estima ola rompiente, marea óptima ni seguridad.',
-    'Experimental index: directional fit and offshore wave-energy proxies, not breaking height, optimal tide or safety.')
+    'Índice experimental con corrección por presencia de swell offshore; no estima ola rompiente, marea óptima ni seguridad.',
+    'Experimental index with an offshore swell-presence adjustment, not breaking height, optimal tide or safety.')
   };
  }
  root.FaroChileScoreLab=Object.freeze({evaluate,directionalFit,distanceToRange,periodFit,strength});
