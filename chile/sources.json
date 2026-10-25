@@ -211,6 +211,24 @@
       "url": "https://www.playasdechile.com/playas-en-concon/",
       "type": "local-place-guide",
       "reviewed": "2026-10-25"
+    },
+    "surf-forecast-maitencillo": {
+      "name": "Surf-Forecast · Maitencillo wind E and swell SW (break-type description disputed)",
+      "url": "https://www.surf-forecast.com/breaks/Maitencillo",
+      "type": "surf-spot-guide",
+      "reviewed": "2026-10-25"
+    },
+    "surfnerd-maitencillo": {
+      "name": "Surfnerd · Maitencillo shore, SW swell and E wind",
+      "url": "https://www.surfnerd.com/surf-forecast/maitencillo",
+      "type": "surf-spot-guide",
+      "reviewed": "2026-10-25"
+    },
+    "surf-forecast-papagayo": {
+      "name": "Surf-Forecast · Papagayo SW swell and E wind",
+      "url": "https://it.surf-forecast.com/breaks/Papagayo",
+      "type": "surf-spot-guide",
+      "reviewed": "2026-10-25"
     }
   }
 }
