@@ -42,3 +42,20 @@ Accessibility: pale yellow and lime swatches have weak contrast on white backgro
 GitHub smoke tests assert the presence of both actual vector assets, source codes, score thresholds, and CSS integration. Mobile Chromium QA checks image loading, actual computed colour tokens, watermarked danger disclosure, responsive widths 320/375/390/430 px, theme and language combinations, and horizontal overflow. These do not replace native Safari testing on the user's phone.
 
 Next visual review: ask for an actual phone screenshot after the deployed stylesheet clears cache, and adjust spacing, weight, background and mark positioning against the user's screenshot before treating visual parity as final.
+
+
+## v25 · Visual hierarchy after comparing the two iPhone screenshots
+
+The user supplied an updated reference shot and an actual Safari shot on 25 October 2026, highlighting that all seven-day options appeared as equally prominent white cards. The correction is a **state hierarchy**, not a new palette:
+
+- A selected forecast-day chip is the **only white paper surface** in the seven-day rail. Its thin blue `#5878e0` border communicates selected state, independently of green/yellow/orange *forecast quality*. A very faint shadow increases separation without creating another dashboard card.
+- All unselected forecast-day chips are transparent against FARO's light canvas, use quiet blue-grey hairline strokes, and retain the numeric score's brand colour. Their quality words are text-only, not another outlined badge.
+- The selected day still includes a faint tinted quality-grade label; the numerical quality and verbal label remain semantic data, not selection.
+- The active tab uses white paper and one blue stroke, with inactive tabs transparent. Eliminate background-colour animation to avoid transient mixed states during light/dark switching.
+- The hourly two-hour selector uses the identical pattern: **selected white and blue, others transparent**. Selection state must remain obvious without depending only on a hue change.
+- Beach / Surf Spot pickers are legitimate editable-input surfaces so they may stay white, but their passive strokes are muted. Blue values indicate the selected choice. An *open or keyboard-focused* picker gains an explicit blue focus outline.
+- The chosen session summary remains a principal white surface; explanatory modules and comparison rows are quieter. Best of Week's winner is white while the top-three alternatives are not; the Wizard's alternatives also avoid repeated white panels.
+- The red/coral `salva` remains exclusive to actual modelled hazard summaries; do not use it as decoration in ordinary score cards.
+- Apply each visual state to **both themes**, with a raised petrol surface replacing white in dark mode. Preserve colour contrast, keyboard focus, full seven-day horizontal swipe, mobile 320–430 px layout, labels, physics, and source disclaimers.
+
+Implementation: `faro-brand.css?v=25` after `faro-ui.css`; update rules in the brand layer rather than changing forecast JS or overwriting the user-provided SVG art. Automated mobile Chromium QA now examines the computed backgrounds, borders, badge fills and tab/slot selection styles for EN/ES and light/dark across all supported mobile widths. As always, a Chromium result is not an iPhone Safari screenshot.
