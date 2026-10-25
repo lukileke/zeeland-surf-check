@@ -1,0 +1,283 @@
+{
+  "schemaVersion": "0.1.0",
+  "country": "CL",
+  "regionCode": "CL-LI",
+  "region": "Libertador General Bernardo O’Higgins",
+  "timeZone": "America/Santiago",
+  "geography": "Centro",
+  "forecastEnabled": false,
+  "spots": [
+    {
+      "id": "CL-LI:punta-de-lobos",
+      "name": "Punta de Lobos",
+      "locality": "Pichilemu",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "guide_described",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "point",
+      "waveHand": "left",
+      "abilityReference": "variable",
+      "sources": [
+        "surfline-punta-lobos"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "windFrom": "SE",
+          "waveFrom": "SW",
+          "tide": "low",
+          "attribution": "surfline-punta-lobos",
+          "scope": "published-guide-not-calibration"
+        },
+        "regionSpecificNoteEs": "Pointbreak de izquierdas con sectores exigentes. La talla real y la seguridad dependen de la sección.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "known_in_area",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-LI:la-puntilla-pichilemu",
+      "name": "La Puntilla (Pichilemu)",
+      "locality": "Pichilemu",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "guide_described",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "point",
+      "waveHand": "left",
+      "abilityReference": "variable",
+      "sources": [
+        "travel-pichilemu"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Ola larga descrita por guía turística; la dificultad depende del tamaño.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-LI:infiernillo",
+      "name": "Infiernillo",
+      "locality": "Pichilemu",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "guide_described",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "experienced",
+      "sources": [
+        "travel-pichilemu"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Rompiente con roqueríos y mayor exigencia que La Puntilla.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-LI:pichilemu-playa-principal",
+      "name": "Pichilemu · playa principal",
+      "locality": "Pichilemu",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "guide_described",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "variable",
+      "sources": [
+        "travel-pichilemu"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Playa amplia: requiere definir subsectores antes de evaluar la orientación.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-LI:matanzas",
+      "name": "Matanzas",
+      "locality": "Navidad",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "directory_listed",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "travel-matanzas"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Referencia general de deportes náuticos. No inferir que olas de kite y surf se comportan igual.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-LI:puertecillo",
+      "name": "Puertecillo",
+      "locality": "Navidad",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "guide_described",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "travel-pichilemu"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    },
+    {
+      "id": "CL-LI:punta-topocalma",
+      "name": "Punta Topocalma",
+      "locality": "Litueche",
+      "subarea": null,
+      "timeZone": "America/Santiago",
+      "precision": "named_area_not_breaking_coordinate",
+      "evidenceStatus": "guide_described",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "breakType": "unverified",
+      "waveHand": "unverified",
+      "abilityReference": "unverified",
+      "sources": [
+        "travel-pichilemu"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": null,
+        "regionSpecificNoteEs": "Spot identificado para investigación. Falta contrastar orientación, fondo, acceso y condiciones con fuentes locales.",
+        "fieldVerification": "required"
+      },
+      "hazards": {
+        "ripCurrents": "unassessed",
+        "rocks": "unassessed",
+        "access": "unverified"
+      },
+      "confidence": {
+        "existence": "documented_in_source",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
+    }
+  ]
+}
