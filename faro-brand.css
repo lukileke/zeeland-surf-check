@@ -503,10 +503,9 @@ html:not([data-theme="light"]) #boardPage .faro-match-logic b{color:#a5baff}
  }
 }
 
-/* FARO v29 — shared vivid score colours across dark and light.
- * Keep the exact dark-mode grade palette on light surfaces. Contrast comes
- * from a compact ink backing, not from muddying the brand accents.
- * Applies to quality only; wave height and safety remain independent. */
+/* FARO v30 — vibrant quality colours without dark score plates.
+ * Identical accent inks to dark mode, while the light canvas and
+ * score numerals remain transparent. Selection remains a neutral stroke. */
 html[data-theme="light"]{
  --surf-great:#60c69e;--surf-good:#78cba0;--surf-fair:#ead17a;
  --surf-poor:#e9937f;--surf-low:#e68b95;
@@ -515,38 +514,29 @@ html[data-theme="light"] .brand-band-low{--brand-score-ink:#f2ae70}
 html[data-theme="light"] .brand-band-mid{--brand-score-ink:#efbc62}
 html[data-theme="light"] .brand-band-regular{--brand-score-ink:#a9d07b}
 html[data-theme="light"] .brand-band-high{--brand-score-ink:#a4d156}
-/* The day-strip numerals are large, vivid and legible on light canvas. */
-html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"] strong{
- display:inline-flex!important;align-items:baseline;align-self:flex-start!important;
- width:fit-content;max-width:100%;
- color:var(--brand-score-ink)!important;
- background:var(--brand-ink)!important;
- padding:4px 8px!important;border-radius:8px!important;
- margin:4px 0 1px!important;
-}
-/* Passive grade words stay readable; selected grades gain the same vivid ink. */
-html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"] .day-chip-grade{
- color:var(--brand-ink)!important;
-}
-html[data-theme="light"] #forecastPage .day-chip.selected[class*="brand-band-"] .day-chip-grade{
- color:var(--brand-score-ink)!important;
- background:var(--brand-ink)!important;
- border-color:var(--brand-ink)!important;
-}
-/* Use restrained ink plates for hero, hourly, rank and board-match scores. */
+/* Numerals are colour on paper, never dark tiles. */
+html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"] strong,
 html[data-theme="light"] #dayview .session-glance .hero-score[class*="brand-band-"] .hero-score-value,
 html[data-theme="light"] #bestPage .hero-rank .hero-score[class*="brand-band-"] .hero-score-value,
 html[data-theme="light"] #bestPage .rank-list .score-tint[class*="brand-band-"],
 html[data-theme="light"] #boardPage .faro-result-scores .score-tint[class*="brand-band-"],
 html[data-theme="light"] #dayview .hourly-section .slots button[class*="brand-band-"] b{
- display:inline-block!important;width:fit-content;max-width:100%;
  color:var(--brand-score-ink)!important;
- background:var(--brand-ink)!important;
- border-radius:7px!important;padding:3px 6px!important;
+ background:transparent!important;
+ border-radius:0!important;
+ padding:0!important;
+ box-shadow:none!important;
 }
+/* The selected day's quality tag gets a gentle tint, not a dark block. */
+html[data-theme="light"] #forecastPage .day-chip.selected[class*="brand-band-"] .day-chip-grade,
 html[data-theme="light"] #dayview .session-glance .hero-score[class*="brand-band-"] .quality-pill,
 html[data-theme="light"] #bestPage .hero-rank .hero-score[class*="brand-band-"] .quality-pill{
- color:var(--brand-score-ink)!important;
- background:var(--brand-ink)!important;
- border-color:var(--brand-ink)!important;
+ color:var(--brand-ink)!important;
+ background:color-mix(in srgb,var(--brand-score-color) 13%,#fff)!important;
+ border:1px solid color-mix(in srgb,var(--brand-score-color) 80%,#fff)!important;
+}
+html[data-theme="light"] #forecastPage .day-chip:not(.selected)[class*="brand-band-"] .day-chip-grade{
+ background:transparent!important;
+ border-color:transparent!important;
+ color:var(--brand-ink)!important;
 }
