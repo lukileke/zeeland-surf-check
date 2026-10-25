@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "0.1.0",
+  "status": "experimental",
+  "region": "CL-VS",
+  "active": false,
+  "statement": "FARO Lab scores are speculative directional compatibility prototypes, NOT a live surf-quality forecast or a safe-entry determination.",
+  "calibration": {
+    "fieldSessions": 0,
+    "requiredBeforeLaunch": true
+  },
+  "weights": {
+    "windDirection": 0.28,
+    "swellDirection": 0.28,
+    "windStrength": 0.19,
+    "period": 0.17,
+    "swellPresence": 0.08
+  },
+  "heuristics": {
+    "angleFalloffDegrees": 50,
+    "windLowKmh": 8,
+    "windMediumKmh": 18,
+    "windHighKmh": 32,
+    "gustWarningKmh": 55,
+    "periodTooShortS": 5,
+    "periodModerateS": 8,
+    "periodGoodS": 12,
+    "presenceWeakM": 0.35,
+    "presenceModerateM": 0.9,
+    "presenceLargeM": 3,
+    "provisionalScoreCap": 7.9
+  },
+  "profiles": {
+    "CL-VS:la-boca-concon": {
+      "name": "La Boca · Concón",
+      "kind": "river-mouth beachbreak",
+      "windFromDeg": [
+        [
+          82,
+          199
+        ]
+      ],
+      "waveFromDeg": [
+        [
+          226,
+          355
+        ]
+      ],
+      "origins": {
+        "wind": "surf-la-boca",
+        "swell": "surf-la-boca",
+        "tide": "surf-la-boca"
+      },
+      "tideReference": "All tides reported by a guide; response of individual sandbanks remains uncalibrated.",
+      "personality": {
+        "es": "Suave y variable por bancos",
+        "en": "Mellow and sandbank-dependent"
+      },
+      "hazardContextEs": "Desembocadura con corrientes, cambios de bancos y restricciones ambientales en el humedal. No interpretar el score como autorización de acceso.",
+      "hazardContextEn": "River mouth with currents, changing sandbanks and wetland restrictions. A score is not an access clearance.",
+      "status": "guide_only",
+      "observations": 0
+    },
+    "CL-VS:ritoque": {
+      "name": "Ritoque · picos norte",
+      "kind": "beachbreak",
+      "windFromDeg": [
+        [
+          337.5,
+          22.5
+        ]
+      ],
+      "waveFromDeg": [
+        [
+          210,
+          255
+        ]
+      ],
+      "origins": {
+        "wind": "surf-ritoque",
+        "swell": "surf-ritoque",
+        "tide": "surf-ritoque"
+      },
+      "tideReference": "Medium–low reported; not applied without measured local tide/bank response.",
+      "personality": {
+        "es": "Izquierdas suaves; secciones variables",
+        "en": "Soft lefts; variable sections"
+      },
+      "hazardContextEs": "La zona norte tiene canales de entrada; hacia el sur la exposición y remada cambian. Revisar bancos y corrientes.",
+      "hazardContextEn": "The northern zone has channels; exposure and paddling change towards the south. Check sandbanks and currents.",
+      "status": "guide_only",
+      "observations": 0
+    },
+    "CL-VS:renaca": {
+      "name": "Reñaca · picos norte",
+      "kind": "beachbreak",
+      "windFromDeg": [
+        [
+          67.5,
+          112.5
+        ]
+      ],
+      "waveFromDeg": [
+        [
+          225,
+          292.5
+        ]
+      ],
+      "origins": {
+        "wind": "surf-renaca",
+        "swell": "surf-renaca",
+        "tide": "surf-renaca"
+      },
+      "tideReference": "Medium–low reported for northern peaks, not an entire-beach validated tide response.",
+      "personality": {
+        "es": "Picos marcados; posibilidad de cierres",
+        "en": "Peaky waves; possible closeouts"
+      },
+      "hazardContextEs": "Las secciones norte y sur difieren; el swell puede intensificar corrientes. Verificar la rompiente.",
+      "hazardContextEn": "Northern and southern sections differ; swell can strengthen currents. Verify the surf locally.",
+      "status": "guide_only",
+      "observations": 0
+    }
+  }
+}
