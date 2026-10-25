@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "0.1.0",
+  "country": "CL",
+  "regionCode": "CL-AR",
+  "region": "La Araucanía",
+  "timeZone": "America/Santiago",
+  "geography": "Sur",
+  "forecastEnabled": false,
+  "spots": []
+}
