@@ -22,6 +22,10 @@ The `zeeland-widget.js` Scriptable source supports **small square, medium rectan
 
 **[Forecast 2.0: evidence-based Surfline comparison, swell partitions and tides](FARO_FORECAST_V2_RESEARCH.md)**
 
+**[FARO Swell Compass: next-stage visualisation spec](FARO_SWELL_COMPASS_SPEC.md)** — direction FROM, verified coastline geometry, swell partition semantics and eventual geolocated map. Not yet implemented.
+
+**Desktop layout:** at 1120 px and wider, all seven days show together; the daily take and two-hour windows share a decision-first row. Tablet/mobile remain stacked. Styles live in [`faro-desktop.css`](faro-desktop.css).
+
 You must replace the code of an existing Scriptable widget script with the current version for the changes to appear on your iPhone; updating this GitHub repository alone does not overwrite a script stored in Scriptable.
 
 ## Data integrity
@@ -36,4 +40,4 @@ This experiment deliberately does **not** publish live Chile forecasts or use Ze
 
 ## Chile research atlas (not live)
 
-[Chile regional catalog](chile/README.md) — **16 regions and an initial source-traced surf spot inventory**, with cautious fields for break type, wind/swell, tide, risks, timezone, confidence and later calibration. Chile forecasting and Chile-specific alerts are deliberately **disabled** until independently checked. [Implementation roadmap](chile/IMPLEMENTATION_ROADMAP.md).
+[Chile regional catalog](chile/README.md) · [**La Boca pilot: activation gates and observation plan**](chile/LA_BOCA_PILOT_PLAN.md) — **16 regions and an initial source-traced surf spot inventory**, with cautious fields for break type, wind/swell, tide, risks, timezone, confidence and later calibration. Chile forecasting and Chile-specific alerts are deliberately **disabled** until independently checked. [Implementation roadmap](chile/IMPLEMENTATION_ROADMAP.md).
