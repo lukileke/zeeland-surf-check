@@ -1,6 +1,6 @@
-/* FARO / Tide-to-Olive palette v2 (26 October 2026).
+/* FARO / Tide-to-Olive palette v3 (26 October 2026).
  * One coherent 5-band quality scale across web and widget.
- * DAY inks are more chromatic (gold and surf lime, not grey-mustard);
+ * DAY scores use a vibrant editorial palette, never mudded with slate or grey;
  * NIGHT inks are IDENTICAL to the previous approved dark theme.
  * The continuous /10 rating and the separate label vocabulary are unchanged.
  * Risk warnings keep their own coral / hazard styling.
@@ -12,12 +12,13 @@
  --score-sand:#9C8431;
  --score-lime:#6E9E43;
  --score-olive:#547642;
- /* New daylight inks: visual similarity to dark palette, >=3:1 on #F7FAFA. */
- --score-copper-day:#C26436;
- --score-amber-day:#BB7820;
- --score-sand-day:#B68900;
- --score-lime-day:#689D22;
- --score-olive-day:#4E7F28;
+ /* Bright daylight hues reflect the original dark aesthetic.
+  * Score numbers are large display text; grade text remains neutral dark ink. */
+ --score-copper-day:#C96C49;
+ --score-amber-day:#C7852F;
+ --score-sand-day:#C6A134;
+ --score-lime-day:#9DBA4A;
+ --score-olive-day:#6F8C3A;
  --score-copper-night:#F0A46D;
  --score-amber-night:#F0BF69;
  --score-sand-night:#E3D471;
