@@ -1,0 +1,701 @@
+{
+  "schemaVersion": "1.0.0",
+  "owner": "María · FARO product icon family",
+  "updatedAt": "2026-10-26",
+  "rules": {
+    "sizeGridPx": 24,
+    "strokePx": 1.75,
+    "strokeCap": "round",
+    "strokeJoin": "round",
+    "fills": "none unless solid alert variant",
+    "preferredFormat": "optimised SVG",
+    "rendering": "one-colour SVG inherits currentColor via CSS mask",
+    "preserveViewBox": "0 0 24 24",
+    "naming": "assets/icons/{id}.svg",
+    "languageIndependent": true,
+    "textLabelsAlwaysVisible": true,
+    "doNotUseEmoji": true
+  },
+  "icons": [
+    {
+      "id": "wave-height",
+      "priority": "P0",
+      "group": "Oleaje",
+      "location": "Resumen diario, sesión, tarjetas, widget",
+      "objective": "Altura total prevista del oleaje; cresta con 2 líneas de mar, no un emoji",
+      "file": "assets/icons/wave-height.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "swell-direction",
+      "priority": "P0",
+      "group": "Oleaje",
+      "location": "Coastal Lens, brújula, detalle",
+      "objective": "Procedencia del swell; línea ondulada con vector FROM, reutilizable rotando",
+      "file": "assets/icons/swell-direction.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "swell-period",
+      "priority": "P0",
+      "group": "Oleaje",
+      "location": "Resumen diario, detalle horario",
+      "objective": "Segundos entre crestas; dos crestas sucesivas y marca de intervalo",
+      "file": "assets/icons/swell-period.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "swell-energy",
+      "priority": "P1",
+      "group": "Oleaje",
+      "location": "Detalles técnicos, Spot DNA",
+      "objective": "Comparación de potencia proxy sin parecer altura de rompiente",
+      "file": "assets/icons/swell-energy.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "secondary-swell",
+      "priority": "P1",
+      "group": "Oleaje",
+      "location": "Swell Compass, datos espectrales",
+      "objective": "Segundo tren de swell; dos ondas con trama secundaria",
+      "file": "assets/icons/secondary-swell.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "wave-set",
+      "priority": "P1",
+      "group": "Oleaje",
+      "location": "FARO READ, observaciones",
+      "objective": "Grupo de olas de una serie, no frecuencia continua",
+      "file": "assets/icons/wave-set.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "breaking-wave",
+      "priority": "P0",
+      "group": "Oleaje",
+      "location": "Observación de cámara, Spot DNA",
+      "objective": "Fase de rompiente, borde de espuma, sin afirmar surfabilidad",
+      "file": "assets/icons/breaking-wave.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "clean-lines",
+      "priority": "P0",
+      "group": "FARO VIBE",
+      "location": "Tag de calidad percibida",
+      "objective": "Pared de ola larga y abierta, limpio ≠ ausencia de riesgo",
+      "file": "assets/icons/clean-lines.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "small-swell",
+      "priority": "P0",
+      "group": "FARO VIBE",
+      "location": "Tag de swell chico",
+      "objective": "Onda corta de baja amplitud sin connotación de peligro",
+      "file": "assets/icons/small-swell.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "mushy",
+      "priority": "P1",
+      "group": "FARO VIBE",
+      "location": "Tag suave / baja potencia",
+      "objective": "Cresta blanda, volumen redondeado, sin forma de cartoon",
+      "file": "assets/icons/mushy.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "choppy",
+      "priority": "P0",
+      "group": "FARO VIBE",
+      "location": "Tag de picadas",
+      "objective": "Líneas cortas quebradas por viento; distinto de marejada peligrosa",
+      "file": "assets/icons/choppy.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "glassy",
+      "priority": "P0",
+      "group": "FARO VIBE",
+      "location": "Tag de superficie lisa",
+      "objective": "Una cresta suave con reflejo discreto",
+      "file": "assets/icons/glassy.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "punchy",
+      "priority": "P1",
+      "group": "FARO VIBE",
+      "location": "Tag de swell potente",
+      "objective": "Cresta marcada con pared más vertical, no rayos ni explosiones",
+      "file": "assets/icons/punchy.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "mixed-bag",
+      "priority": "P1",
+      "group": "FARO VIBE",
+      "location": "Tag de señales mixtas",
+      "objective": "Dos ondas de carácter opuesto; no bolsa literal",
+      "file": "assets/icons/mixed-bag.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "windy",
+      "priority": "P1",
+      "group": "FARO VIBE",
+      "location": "Tag ventoso",
+      "objective": "Tres estelas de viento sobre superficie",
+      "file": "assets/icons/windy.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "closeout",
+      "priority": "P1",
+      "group": "Observación real",
+      "location": "Registro de campanas",
+      "objective": "Frente de espuma que cierra al mismo tiempo; no usar sin observación",
+      "file": "assets/icons/closeout.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "rideable-wall",
+      "priority": "P1",
+      "group": "Observación real",
+      "location": "Marcado manual de pared",
+      "objective": "Pared abierta y línea de recorrido, sin surfista identifiable",
+      "file": "assets/icons/rideable-wall.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "wind-speed",
+      "priority": "P0",
+      "group": "Atmósfera",
+      "location": "Resumen, before you go, slots",
+      "objective": "Velocidad media 10 m; 3 líneas de flujo abstractas",
+      "file": "assets/icons/wind-speed.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "wind-direction",
+      "priority": "P0",
+      "group": "Atmósfera",
+      "location": "Brújula, Coastal Lens",
+      "objective": "Vector naranja viento DESDE, independiente de swell",
+      "file": "assets/icons/wind-direction.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "wind-gust",
+      "priority": "P1",
+      "group": "Atmósfera",
+      "location": "Rachas, riesgos",
+      "objective": "Flujo con pequeña acentuación, no tornado",
+      "file": "assets/icons/wind-gust.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "offshore-wind",
+      "priority": "P1",
+      "group": "Atmósfera",
+      "location": "Spot DNA, orientación",
+      "objective": "Dirección mar afuera con costa; solo si exposición está sustentada",
+      "file": "assets/icons/offshore-wind.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "onshore-wind",
+      "priority": "P1",
+      "group": "Atmósfera",
+      "location": "Spot DNA, orientación",
+      "objective": "Dirección tierra adentro; solo si exposición está sustentada",
+      "file": "assets/icons/onshore-wind.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "cross-shore-wind",
+      "priority": "P1",
+      "group": "Atmósfera",
+      "location": "Spot DNA, orientación",
+      "objective": "Dirección lateral respecto a costa; distinguir viento cruzado",
+      "file": "assets/icons/cross-shore-wind.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "rain",
+      "priority": "P0",
+      "group": "Meteorología",
+      "location": "Pronóstico y warnings",
+      "objective": "Gotas bajo nube esquemática, una forma de familia",
+      "file": "assets/icons/rain.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "fog",
+      "priority": "P1",
+      "group": "Meteorología",
+      "location": "FARO READ, visibilidad",
+      "objective": "Estratos horizontales que ocultan costa, sin emoji nube",
+      "file": "assets/icons/fog.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "cloud",
+      "priority": "P1",
+      "group": "Meteorología",
+      "location": "Forecast del día",
+      "objective": "Nube monoline simple, sin cara",
+      "file": "assets/icons/cloud.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "thunderstorm",
+      "priority": "P0",
+      "group": "Seguridad",
+      "location": "Alertas de tormenta",
+      "objective": "Nube con evento eléctrico y alto contraste",
+      "file": "assets/icons/thunderstorm.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "sun",
+      "priority": "P0",
+      "group": "Luz y UV",
+      "location": "Tema, UV, luz solar",
+      "objective": "Disco sobrio y rayos cortos",
+      "file": "assets/icons/sun.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "moon",
+      "priority": "P0",
+      "group": "Luz y UV",
+      "location": "Tema oscuro, noche",
+      "objective": "Luna creciente monoline geométrica",
+      "file": "assets/icons/moon.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "sunrise",
+      "priority": "P1",
+      "group": "Luz y UV",
+      "location": "Amanecer",
+      "objective": "Sol emergiendo sobre horizonte",
+      "file": "assets/icons/sunrise.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "sunset",
+      "priority": "P1",
+      "group": "Luz y UV",
+      "location": "Atardecer",
+      "objective": "Sol descendiendo sobre horizonte",
+      "file": "assets/icons/sunset.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "daylight",
+      "priority": "P1",
+      "group": "Luz y UV",
+      "location": "Ventana navegable",
+      "objective": "Disco con segmento temporal útil",
+      "file": "assets/icons/daylight.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "uv-index",
+      "priority": "P0",
+      "group": "Luz y UV",
+      "location": "UV elevado / extremo",
+      "objective": "Disco y aro de radiación; intensidad la comunica el color del badge",
+      "file": "assets/icons/uv-index.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "air-temperature",
+      "priority": "P0",
+      "group": "Temperaturas",
+      "location": "Before you go",
+      "objective": "Termómetro con marca de aire",
+      "file": "assets/icons/air-temperature.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "water-temperature",
+      "priority": "P0",
+      "group": "Temperaturas",
+      "location": "Before you go",
+      "objective": "Termómetro con onda de agua distintiva",
+      "file": "assets/icons/water-temperature.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "sea-current",
+      "priority": "P1",
+      "group": "Seguridad",
+      "location": "Datos costeros y avisos",
+      "objective": "Vector de corriente de agua; distinguir del swell",
+      "file": "assets/icons/sea-current.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "rip-current",
+      "priority": "P1",
+      "group": "Seguridad",
+      "location": "Advertencias verificadas",
+      "objective": "Canal de retorno entre olas; solo evidencia fiable",
+      "file": "assets/icons/rip-current.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "marine-alert",
+      "priority": "P0",
+      "group": "Seguridad",
+      "location": "Marejadas y alerta oficial",
+      "objective": "Escudo/triángulo marino distinto de riesgo modelado",
+      "file": "assets/icons/marine-alert.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "weather-caution",
+      "priority": "P0",
+      "group": "Seguridad",
+      "location": "Precaución por modelo",
+      "objective": "Triángulo alerta sencillo para precaución",
+      "file": "assets/icons/weather-caution.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "weather-danger",
+      "priority": "P0",
+      "group": "Seguridad",
+      "location": "Riesgo severo",
+      "objective": "Triángulo alerta sólido de alta prioridad",
+      "file": "assets/icons/weather-danger.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "unknown-data",
+      "priority": "P0",
+      "group": "Datos",
+      "location": "Sin pronóstico / sin confirmar",
+      "objective": "Círculo abierto con interrogación simple",
+      "file": "assets/icons/unknown-data.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "tide",
+      "priority": "P1",
+      "group": "Mareas",
+      "location": "Tide / Spot DNA",
+      "objective": "Nivel de agua sobre marcas de referencia, no confundir con energía",
+      "file": "assets/icons/tide.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "map",
+      "priority": "P0",
+      "group": "Navegación",
+      "location": "Mapa de spots",
+      "objective": "Costa geográfica abstracta, no emoji mapa plegado",
+      "file": "assets/icons/map.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "location-pin",
+      "priority": "P0",
+      "group": "Navegación",
+      "location": "Selector de spot",
+      "objective": "Pin con centro neutro legible a 16 px",
+      "file": "assets/icons/location-pin.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "compass",
+      "priority": "P0",
+      "group": "Navegación",
+      "location": "Coastal Lens, Swell Compass",
+      "objective": "Aguja direccional, no duplicar brújula de datos dinámica",
+      "file": "assets/icons/compass.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "spot-dna",
+      "priority": "P0",
+      "group": "Navegación",
+      "location": "Ficha específica playa",
+      "objective": "Capas de costa y arena: no ADN biológico literal",
+      "file": "assets/icons/spot-dna.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "sandbank",
+      "priority": "P1",
+      "group": "Spot DNA",
+      "location": "Banco / fondo arenoso",
+      "objective": "Contorno de curva de nivel bajo ola, sin afirmar banco exacto",
+      "file": "assets/icons/sandbank.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "river-mouth",
+      "priority": "P1",
+      "group": "Spot DNA",
+      "location": "La Boca y dinámica río-mar",
+      "objective": "Río que desemboca en costa; icono informativo",
+      "file": "assets/icons/river-mouth.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "camera",
+      "priority": "P0",
+      "group": "Observación",
+      "location": "Ver webcam",
+      "objective": "Cámara frontal minimal de lente",
+      "file": "assets/icons/camera.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "video-play",
+      "priority": "P1",
+      "group": "Observación",
+      "location": "Reproductor video local",
+      "objective": "Triángulo playback dentro de marco",
+      "file": "assets/icons/video-play.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "field-notes",
+      "priority": "P0",
+      "group": "Observación",
+      "location": "FARO Lab, notas",
+      "objective": "Cuaderno sencillo con marcas, no lápiz de texto",
+      "file": "assets/icons/field-notes.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "wave-count",
+      "priority": "P1",
+      "group": "Observación",
+      "location": "Olas por 10 minutos",
+      "objective": "Crestas repetidas con conteo",
+      "file": "assets/icons/wave-count.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "prediction-history",
+      "priority": "P1",
+      "group": "Datos",
+      "location": "Archivo de pronóstico",
+      "objective": "Reloj temporal y onda, sin simular observación",
+      "file": "assets/icons/prediction-history.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "faro-read",
+      "priority": "P0",
+      "group": "FARO",
+      "location": "Explicación del porqué",
+      "objective": "Documento/onda con líneas interpretativas",
+      "file": "assets/icons/faro-read.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "faro-match",
+      "priority": "P0",
+      "group": "FARO",
+      "location": "Recomendación tabla/persona",
+      "objective": "Tabla que coincide con onda, no surfista de emoji",
+      "file": "assets/icons/faro-match.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "board-short",
+      "priority": "P1",
+      "group": "Tablas",
+      "location": "Shortboard",
+      "objective": "Outline shortboard distinguible",
+      "file": "assets/icons/board-short.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "board-mid",
+      "priority": "P1",
+      "group": "Tablas",
+      "location": "Midlength 6–8 ft",
+      "objective": "Outline midlength con punta y cola proporcionales",
+      "file": "assets/icons/board-mid.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "board-long",
+      "priority": "P1",
+      "group": "Tablas",
+      "location": "Longboard",
+      "objective": "Outline longboard claramente largo",
+      "file": "assets/icons/board-long.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "board-soft",
+      "priority": "P1",
+      "group": "Tablas",
+      "location": "Softtop / principiantes",
+      "objective": "Outline tabla soft con canto ancho",
+      "file": "assets/icons/board-soft.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "wetsuit",
+      "priority": "P0",
+      "group": "Equipo",
+      "location": "Qué usar, before you go",
+      "objective": "Silueta de traje de neopreno sin detalles de persona",
+      "file": "assets/icons/wetsuit.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "water-safety",
+      "priority": "P0",
+      "group": "Seguridad",
+      "location": "Safety guide / instrucciones",
+      "objective": "Salvavidas circular monoline",
+      "file": "assets/icons/water-safety.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "calendar",
+      "priority": "P1",
+      "group": "Acciones",
+      "location": "Calendario, mejor semana",
+      "objective": "Cuadrícula de calendario",
+      "file": "assets/icons/calendar.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "refresh",
+      "priority": "P0",
+      "group": "Acciones",
+      "location": "Actualizar forecast",
+      "objective": "Flecha circular única, sin flechas doble decorativas",
+      "file": "assets/icons/refresh.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "chevron",
+      "priority": "P0",
+      "group": "Acciones",
+      "location": "Desplegables, select",
+      "objective": "Ángulo 90 grados neutral",
+      "file": "assets/icons/chevron.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "external-link",
+      "priority": "P0",
+      "group": "Acciones",
+      "location": "Cámaras y fuentes",
+      "objective": "Flecha de enlace externo legible",
+      "file": "assets/icons/external-link.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "download",
+      "priority": "P1",
+      "group": "Acciones",
+      "location": "Exportar Field Notes JSONL",
+      "objective": "Archivo con flecha de salida",
+      "file": "assets/icons/download.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "check",
+      "priority": "P0",
+      "group": "Estados",
+      "location": "Confirmación y observación",
+      "objective": "Marca de verificación limpia",
+      "file": "assets/icons/check.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    },
+    {
+      "id": "info",
+      "priority": "P0",
+      "group": "Estados",
+      "location": "Detalles del modelo / ayuda",
+      "objective": "Letra i en círculo con buen contraste",
+      "file": "assets/icons/info.svg",
+      "status": "design_pending",
+      "variant": "outline"
+    }
+  ]
+}
