@@ -86,6 +86,11 @@ assert.equal(withGap.days[0].slots[0].modelComplete,false);
 assert.equal(withGap.days[0].slots[0].score,null,'One good hour must not produce a two-hour spot score');
 assert.equal(withGap.days[0].slots[0].coverage.marineHours,2);
 assert.equal(withGap.model.coverage.completeSlots,55);
+const ambiguousMarine=JSON.parse(JSON.stringify(marine));
+ambiguousMarine.hourly.time[hourIndex]=ambiguousMarine.hourly.time[hourIndex-1];
+const withDSTCollision=L.extract(config,config.pilots[0],ambiguousMarine,weather,profile,'es');
+assert.equal(withDSTCollision.days[0].slots[0].score,null,
+ 'Repeated local clock times must not be silently merged into an apparently complete window');
 const noThunderCodes=JSON.parse(JSON.stringify(weather));
 noThunderCodes.hourly.weather_code=repeat(null);
 const screened=L.screenRisk(config,noThunderCodes,'es');
