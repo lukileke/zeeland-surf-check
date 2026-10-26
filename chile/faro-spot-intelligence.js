@@ -38,14 +38,21 @@ function evaluate(slot,spotId,catalog,locale="es",options={}){
  const spot=catalog?.spots?.[spotId];
  if(!spot)return {status:"unconfigured",read:null,vibe:null,sourceIds:[],safetyAssessed:false};
  const say=(es,en)=>message(locale,es,en);
- const sourceIds=[...new Set(Object.values(spot.guideHypotheses||{}).flat().map(x=>x.source))];
+ const sourceIds=[...new Set([
+  ...Object.values(spot.guideHypotheses||{}).flat().map(x=>x.source),
+  ...(spot.guideWaveShapeHypotheses||[]).map(x=>x.source)
+ ])];
  const tide=tideAgreement(spot.guideHypotheses?.tide);
+ const shapeGuide=finite(slot?.swellDirection)?(spot.guideWaveShapeHypotheses||[]).find(p=>
+  p.directionFromRanges?.some(range=>angularDistance(slot.swellDirection,range)===0))||null:null;
  const wind=assessDirection(slot?.windDirection,spot.guideHypotheses?.wind);
  const swell=assessDirection(slot?.swellDirection,spot.guideHypotheses?.swell);
  const physics=root.FaroChilePhysicsLab?.evaluate(slot)||null;
  const valid=slot?.modelComplete&&finite(slot.swellPeriodS)&&finite(slot.swellHeightM)&&finite(slot.windKmh);
  const neutral={spotId,sector:spot.area,sourceIds,wind,swell,tide,physics,
-  status:valid?"guide_compared":"model_unavailable",safetyAssessed:false,
+  status:valid?"guide_compared":"model_unavailable",waveShapeGuide:shapeGuide?
+   {id:shapeGuide.id,sourceId:shapeGuide.source,hypothesis:locale==="es"?shapeGuide.es:shapeGuide.en,
+    verifiedByCamera:false}:null,safetyAssessed:false,
   observedWaveShape:false,coastalModelIntegrated:false,tideCalibrated:false};
  if(!valid)return {...neutral,vibe:{id:"unknown",label:say("Sin lectura","No read")},
   headline:say("Falta información","Insufficient inputs"),
@@ -196,6 +203,10 @@ function evaluate(slot,spotId,catalog,locale="es",options={}){
  const local=spotLogic[spotId]||spotLogic["CL-VS:la-boca-concon"];
  const low=["hazard","unassessed","no_daylight","caution","skip_wind","skip_swell","skip_direction","wait_wind"].includes(decision);
  const spotAction=low?local.low:(strongSwell?local.power:local.watch);
+ // A local forecaster's SW/NW shape hypothesis is useful for what to LOOK
+ // FOR on the camera, not evidence that the wave currently forms that shape.
+ const visualCheck=shapeGuide&&priority>=3?
+  " "+say("En la cámara busca: ","On the camera, look for: ")+(locale==="es"?shapeGuide.es:shapeGuide.en)+".": "";
  const action=decision==="hazard"?say("No recomendar entrada; verifica las advertencias oficiales y las condiciones del lugar.",
    "Do not recommend entry; check official notices and site conditions."):
   decision==="unassessed"?say("Consulta datos meteorológicos y avisos oficiales antes de decidir.",
@@ -220,7 +231,7 @@ function evaluate(slot,spotId,catalog,locale="es",options={}){
  // a verified sandbank or a safe session. Numeric values are offshore input.
  const read=measurement+" "+mainReason;
  const opportunity={id:decision,priority,driver,verdict,shortLabel:shortNames[decision],reason:mainReason,
-  action,modelEvidence:measurement,scope:spot.area,
+  action:action+visualCheck,modelEvidence:measurement,scope:spot.area,
   basedOn:"offshore_model_and_unvalidated_guide",isObserved:false,
   validated:false,safetyAssessed:false};
  return {...neutral,headline:verdict,read,vibe,decision:opportunity,
