@@ -493,7 +493,7 @@ async function rankings(){
  for(const item of list.slice(0,12)){
   const b=el("button",null,"highlight chile-ranking "+band(item.s.score));b.type="button";
   const line=el("div",null,"chile-rank-layout"),data=el("div");
-  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",Live.vibe(item.s,state.lang).label));
+  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",(window.FaroChileSpotIntelligence?.evaluate(item.s,item.model.spot.id,state.intelligence,state.lang)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
   line.append(data,el("strong",num(item.s.score)));b.append(line);
   b.addEventListener("click",()=>{
    state.selected=state.config.pilots.findIndex(s=>s.id===item.model.spot.id);
