@@ -4,7 +4,8 @@
  * a monetised FARO service without a commercial agreement.
  */
 import {readFile,writeFile,mkdir} from "node:fs/promises";
-import {join,dirname} from "node:path";
+import {join,dirname,resolve} from "node:path";
+import {fileURLToPath} from "node:url";
 import {createHash} from "node:crypto";
 const REQUIRED={
  marine:["wave_height","wave_direction","wave_period","swell_wave_height","swell_wave_direction","swell_wave_period"],
@@ -75,7 +76,6 @@ function combine(marine,weather,spot,stamp){
  const records=[];
  for(const t of times){
   const v={...m.get(t),...w.get(t)};
-  if(!Object.values(REQUIRED.marine).every((k,i)=>true))throw Error("unreachable");
   if(!["swellHeightM","swellPeriodS","swellFromDeg","windKmh","windFromDeg"].every(k=>finite(v[k])))continue;
   records.push({forecastId:spot.id+"|"+stamp+"|"+t,
    spotId:spot.id,source:"Open-Meteo",model:null,modelIssueAtUtc:null,issuedAtUtc:null,
@@ -133,6 +133,6 @@ async function main(){
   result.data.spots.map(s=>s.spotId+":"+s.records.length).join(",")+
   "; issue date NOT known; no camera data.");
 }
-if(process.argv[1]&&import.meta.url===new URL("file://"+process.argv[1]).href)
+if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1]))
  main().catch(e=>{console.error(e.message);process.exitCode=1});
 export {collect,outputPath,urls,combine};
