@@ -1,5 +1,5 @@
 # FARO Swell Compass · visual specification v0.1 (deferred)
-Date: 2026-10-26 · Status: **concept / data contract**, NOT deployed in live forecast.
+Date: 2026-10-26 · Status: **Stage A vector prototype implemented for Valparaíso Chile** with offshore modelled primary swell and wind. The geolocated coastline/satellite map (Stage B) and nearshore transformation remain unimplemented.
 
 ## Goal
 Surface one instantly readable answer: **from where are waves arriving relative to the selected coastline?** This is more useful than a decorative satellite thumbnail. Aim for a coastal-navigation identity distinctive to FARO.
