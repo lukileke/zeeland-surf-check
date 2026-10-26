@@ -1,18 +1,24 @@
-# FARO · Chile surf spot atlas (research scaffold, October 2026)
+# FARO Chile · Valparaíso y atlas nacional
 
-**Research beta visible at [FARO Chile](index.html), NOT an active Chile forecast.** Users can switch between the Zeeland live forecast and the Chile regional atlas. FARO's operational forecasts, risk notices, board matching and widgets remain scoped to Zeeland. The Chile atlas is a separately maintained, source-attributed foundation.
+**[FARO Chile · Pronóstico modelado de Valparaíso](index.html)** comparte la interfaz de Zeeland; [atlas nacional de investigación](atlas.html) conserva las 16 regiones y 73 lugares candidatos.
 
-The [country explorer](index.html) loads one regional JSON file on demand and explicitly shows source evidence vs missing calibration. It exposes **five experimental Valparaíso profiles** but no live Chile score, tide, warnings or surf-height predictions.
+La primera versión de Valparaíso ofrece cuatro spots con datos de Open-Meteo solicitados en cada actualización: **La Boca, Reñaca, Ritoque y Maitencillo**. Se muestran oleaje total modelado, swell primario, viento, UV, siete días, ventanas de 2 h, FARO VIBE + READ integrados, Spot DNA, Best of Week y Match. **No** presenta altura de la ola rompiente observada, una tabla de marea local verificada ni un score de calidad de surf calibrado.
 
-## Valparaíso research pilot
+Las puntuaciones /10 utilizan un perfil distinto de viento y dirección de swell por spot, basado en guías, y están limitadas a 7.9 como advertencia de su carácter provisional. Este techo no equivale a una validación estadística. La vista no comprueba en automático el estado de marejadas o alertas de la Armada, DMC ni SENAPRED. Sí muestra riesgos heurísticos del modelo y los enlaces oficiales. [Protocolo de alertas y UV](ALERTAS_UV.md).
 
-The first priority is **La Boca de Concón**, the Aconcagua river-mouth beach. The [Valparaíso Spot DNA reference](VALPARAISO_SPOT_DNA.md) now describes 5 sourced wind/swell pilot profiles within **21 named places**, out of **73 research candidates across 16 Chilean regions**.
+**Quinto perfil solo de laboratorio:** Papagayo. Todavía no hay una coordenada comprobada de la rompiente para incorporarlo al pronóstico principal.
 
-**[Open the interactive FARO Lab: Valparaíso](lab.html)** to enter hypothetical wave/wind parameters and compare La Boca, Ritoque, Reñaca, Maitencillo and Papagayo. It is **not a live forecast** and does not change Zeeland's model. It produces experimental, visibly capped /10 compatibility values, FARO VIBE, tags, and source-attributed local readings. Changing [`valparaiso-score.config.json`](valparaiso-score.config.json) will change the model rules without rewriting the UI; `valparaiso-score-lab.js` holds the independent interpreter.
+Archivos clave:
+- [`index.html`](index.html), [`chile-forecast.js`](chile-forecast.js), [`chile-forecast.css`](chile-forecast.css): modo Chile con la base CSS compartida de Zeeland
+- [`valparaiso-live.config.json`](valparaiso-live.config.json): coordenadas costeras *aproximadas*, referencias, fuentes, umbrales heurísticos, UV y proveedores de modelos
+- [`faro-chile-live.js`](faro-chile-live.js): consulta Open-Meteo y organiza ventanas, daylight, Spot Fit, riesgos modelados y Match
+- [`valparaiso-score.config.json`](valparaiso-score.config.json), [`valparaiso-score-lab.js`](valparaiso-score-lab.js): hipótesis y motor experimental por playa
+- [`lab.html`](lab.html): simulador con variables manuales; no confundir con la información modelada actualizada
+- [`VALPARAISO_SPOT_DNA.md`](VALPARAISO_SPOT_DNA.md): investigación respaldada por fuentes
+- [`LA_BOCA_PILOT_PLAN.md`](LA_BOCA_PILOT_PLAN.md): próximos pasos y validación
+- [`field-observations-template.csv`](field-observations-template.csv): registro vacío para evaluar la precisión
 
-**Next operational document:** [La Boca controlled pilot, observations and Chile launch gates](LA_BOCA_PILOT_PLAN.md) · [empty field observation template](field-observations-template.csv). The UV provides nearshore model outlooks around 20 m in the bay of Concón and around Reñaca, but not observed surf height at the breaking peak.
-
-Before release, validate all regional parameters against observed surf at the named bank, check local legal restrictions and coastal warning sources, and only then assess a true forecast score. Run the [regression tests](test-valparaiso-score.js) with `node chile/test-valparaiso-score.js`.
+**Pruebas de regresión (sin red):** `node chile/test-valparaiso-score.js` y `node chile/test-live-forecast.js`.
 
 ## Structure
 - [`regions.json`](regions.json) — all **16 Chilean regions**, including empty or inland ones
@@ -43,7 +49,7 @@ Candidate locations are grouped in Arica y Parinacota, Tarapacá, Antofagasta, A
 - Magallanes: `America/Punta_Arenas` (permanent UTC−3).
 - Compute daylight and arrival windows in the **spot's** timezone, not a single hard-coded Chile timezone. Validate the IANA timezone library before launch.
 
-## Readiness barriers before publishing any Chile spot
+## Calibration barriers before presenting Chile spot fit as validated surf quality
 1. Verify coordinates **at the exact break**, rather than a town centroid.
 2. Verify wind exposure, bathymetry / banks, wave approach and coastline orientation with at least one reliable local source; distinguish total model waves from directional swell systems.
 3. Determine offshore wave model geographical coverage/resolution and choose a nearshore transformation model or documented conservative limitations.
