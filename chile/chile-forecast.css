@@ -202,3 +202,13 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 #bestPage .chile-ranking.tone-fair{--tone:var(--surf-fair)}
 #bestPage .chile-ranking.tone-poor{--tone:var(--surf-poor)}
 #bestPage .chile-ranking.tone-low{--tone:var(--surf-low)}
+
+/* Camera discovery is link-only; no licensed third-party streaming media embedded. */
+#chileCameraSources{display:grid;gap:9px;min-width:0}
+.chile-camera-row{display:flex;align-items:center;flex-wrap:wrap;gap:7px 15px;border-bottom:1px solid var(--faro-line);padding:8px 0}
+.chile-camera-row strong{font-size:13px;color:var(--fg);font-weight:750;flex:1 1 200px}
+.chile-camera-row small{font-size:11px;color:var(--faro-quiet);font-weight:650}
+.chile-camera-row a{font-size:12px;font-weight:750;color:var(--brand-blue);text-decoration:underline;text-underline-offset:3px}
+.chile-method-disclaimer{margin:24px 0 8px;padding:10px 1px 0;border-top:1px solid var(--faro-line);color:var(--faro-quiet)}
+.chile-method-disclaimer summary{font-size:11px;letter-spacing:.02em;cursor:pointer;font-weight:750;display:list-item;list-style-position:inside}
+.chile-method-disclaimer p{font-size:11px;line-height:1.65;max-width:95ch;padding:8px 0;margin:0}
