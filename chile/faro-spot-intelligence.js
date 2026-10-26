@@ -156,9 +156,9 @@ function evaluate(slot,spotId,catalog,locale="es",options={}){
  }[decision];
  const spotLogic={
   "CL-VS:la-boca-concon":{
-   low:say("En La Boca priorizaría otra hora antes que hacer un viaje por este pronóstico.",
+   low:say("En La Boca no priorizaría un desplazamiento por este pronóstico; compararía otra hora.",
     "At La Boca I would look for another window rather than travel on this forecast alone."),
-   watch:say("Para una sesión suave, revisaría la zona surfeable de La Boca desde la orilla antes de entrar; verifica corriente y acceso.",
+   watch:say("Para una sesión suave en La Boca, revisaría el sector permitido desde la orilla y comprobaría corriente y acceso.",
     "For mellow surf, check the permitted surf section from shore before entering; assess current and access."),
    power:say("Con este swell, empezaría observando la corriente y la forma de las series antes de elegir una tabla o entrar.",
     "With this swell, check currents and how the sets break before choosing a board or entering.")
@@ -166,18 +166,18 @@ function evaluate(slot,spotId,catalog,locale="es",options={}){
   "CL-VS:renaca":{
    low:say("No contaría con paredes consistentes en los picos norte; buscaría una ventana con mejor combinación.",
     "Do not count on consistent walls at the northern peaks; look for a better window."),
-   watch:say("Revisaría los picos norte: si hay pared, es el sector donde las guías describen secciones para giros.",
+   watch:say("En Reñaca Norte revisaría los picos: ahí las guías describen paredes para giros cuando el banco acompaña.",
     "Check the northern peaks: when there is a wall, guides describe sections suited to turns."),
-   power:say("Miraría la proporción de olas que cierran desde la orilla antes de entrar a Reñaca Norte.",
+   power:say("En Reñaca Norte miraría desde la orilla cuántas olas cierran antes de entrar.",
     "Watch how many waves close out from shore before paddling out at Reñaca Norte.")
   },
   "CL-VS:ritoque":{
    low:say("Para Ritoque Norte no haría el viaje basándome solo en este swell; buscaría otra franja.",
     "I would not make the trip to Ritoque North based on this swell alone; look for another window."),
-   watch:say("Miraría primero los picos norte si buscas olas más suaves y recorrido.",
+   watch:say("En Ritoque Norte miraría primero los picos si buscas olas más suaves y recorrido.",
     "Check the northern peaks first if you prefer softer waves with room to cruise."),
-   power:say("Si quieres algo suave, revisa primero el norte; hacia el south la playa se describe más expuesta.",
-    "For softer surf, check the north first; the beach is described as more exposed towards the south.")
+   power:say("En Ritoque, si quieres algo suave, revisa primero el norte; hacia el sur las guías describen más exposición.",
+    "At Ritoque, for softer surf, check the north first; the beach is described as more exposed towards the south.")
   }
  };
  const local=spotLogic[spotId]||spotLogic["CL-VS:la-boca-concon"];
