@@ -28,7 +28,10 @@ function reviewable(record,approval){
  if(t===null||epoch(f?.ingestedAtUtc)===null||epoch(f?.ingestedAtUtc)>t||
     epoch(f?.validAtUtc)===null||Math.abs(epoch(f?.validAtUtc)-t)>65*60*1000)
     reasons.push('not_temporally_matched_prior_forecast');
- if(!record.spotId||!f?.forecastId)reasons.push('missing_spot_or_forecast_identity');
+ if(!record.spotId||!f?.forecastId||!f?.spotId)reasons.push('missing_spot_or_forecast_identity');
+ else if(record.spotId!==f.spotId)reasons.push('forecast_spot_mismatch');
+ if(epoch(f?.issuedAtUtc)!==null&&t!==null&&epoch(f.issuedAtUtc)>t)
+  reasons.push('forecast_issued_after_observation');
  const l=record.labels;
  if(!Number.isInteger(l?.waveCount)||l.waveCount<3||
     !Number.isInteger(l?.rideability1to5)||l.rideability1to5<1||l.rideability1to5>5||
