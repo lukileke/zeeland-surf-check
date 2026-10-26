@@ -44,6 +44,15 @@ const fetchedTooLate=pair([observations[0]],[{...forecasts[0],ingestedAtUtc:stam
 assert.equal(fetchedTooLate.summary.paired,0,'No training with forecast obtained only after camera observation');
 const missingIssue=pair([observations[0]],[{...forecasts[0],issuedAtUtc:null}],catalog);
 assert.equal(missingIssue.summary.paired,0,'Unknown issue time cannot be assumed prior to image');
+const unknownIssueSnapshot={...forecasts[0],issuedAtUtc:null};
+const strictUnknownIssue=pair([observations[0]],[unknownIssueSnapshot],catalog);
+assert.equal(strictUnknownIssue.summary.paired,0,'Unknown issue time rejected by default');
+const preObservedRetrieval=pair([observations[0]],[unknownIssueSnapshot],catalog,{allowUnknownIssueTime:true});
+assert.equal(preObservedRetrieval.summary.paired,1);
+assert.equal(preObservedRetrieval.records[0].forecastVintageStatus,'retrieved_pre_observation_issue_unknown');
+const lateUnknownIssue=pair([observations[0]],[{...unknownIssueSnapshot,ingestedAtUtc:stamp(start+3600000)}],
+ catalog,{allowUnknownIssueTime:true});
+assert.equal(lateUnknownIssue.summary.paired,0,'Opt-in issue-unknown cannot access post-observation forecasts');
 const badLabels=pair([{...observations[0],labels:{...observations[0].labels,closeoutFraction:1.5}}],forecasts,catalog);
 assert.equal(badLabels.summary.paired,0);
 assert.equal(badLabels.summary.excluded.invalid_labels,1);
