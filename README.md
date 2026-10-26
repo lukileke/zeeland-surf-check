@@ -1,8 +1,14 @@
-# FARO · Zeeland Surf Forecast
+# FARO · Surf Forecast and Chile Research Atlas
 
 FARO helps decide **where and when to surf**, and what kind of session the model suggests. Forecasts are modelled estimates, not measured breaking-wave conditions or a safety clearance.
 
-**Live site:** https://lukileke.github.io/zeeland-surf-check/
+**Zeeland live forecast:** https://lukileke.github.io/zeeland-surf-check/  
+**Chile research beta:** https://lukileke.github.io/zeeland-surf-check/chile/  
+**Chile test lab:** https://lukileke.github.io/zeeland-surf-check/chile/lab.html
+
+## Two geographic modes
+
+The main website now has a **ZEELAND · LIVE / CHILE · BETA** region switch. Zeeland continues to fetch real-time *model updates* from Open-Meteo (not measured beach waves) with its own KNMI warning links. Chile is a **separate browseable research atlas** for 16 regions and 73 candidate spots, with five source-derived Valparaíso experimental profiles. Chile does **not** issue current model forecasts, real-time ranks, official alerts or public safety clearance. The country selection is available without mixing countries' data and caches.
 
 ## Key features
 
@@ -15,6 +21,8 @@ FARO helps decide **where and when to surf**, and what kind of session the model
 - Weather-model risk screening and external official-warning references
 
 ## iPhone and iPad widgets
+
+**Coastal Editorial v13:** the visual hierarchy is now genuinely different, with a large isolated quality score, a separate blue offshore-model height tile, a segmented five-tone meter, clearer location/time and a dedicated FARO VIBE ribbon. The large WEEK option emphasises alternative daylight sessions.
 
 The `zeeland-widget.js` Scriptable source supports **small square, medium rectangle, large square, iPad extra large, and Lock Screen accessory** layouts with four styles: FLOW, MINIMAL, DATA, and WEEK.
 
