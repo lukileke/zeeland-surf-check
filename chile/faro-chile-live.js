@@ -10,6 +10,14 @@ const clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
 const finite=v=>typeof v==="number"&&Number.isFinite(v);
 const mean=a=>{const f=a.filter(finite);return f.length?f.reduce((x,y)=>x+y,0)/f.length:null};
 const max=a=>{const f=a.filter(finite);return f.length?Math.max(...f):null};
+// Distance from a documented coastal reference point to the actual model grid.
+// It is NOT the distance to a confirmed breaking-wave location.
+function gridDistanceKm(aLat,aLon,bLat,bLon){
+ if(![aLat,aLon,bLat,bLon].every(finite))return null;
+ const rad=Math.PI/180,dl=(bLat-aLat)*rad,dLon=(bLon-aLon)*rad;
+ const z=Math.sin(dl/2)**2+Math.cos(aLat*rad)*Math.cos(bLat*rad)*Math.sin(dLon/2)**2;
+ return 6371*2*Math.atan2(Math.sqrt(z),Math.sqrt(Math.max(0,1-z)));
+}
 const circleMean=a=>{
  const f=a.filter(finite);if(!f.length)return null;
  const sin=f.reduce((z,n)=>z+Math.sin(n*Math.PI/180),0),cos=f.reduce((z,n)=>z+Math.cos(n*Math.PI/180),0);
@@ -52,11 +60,17 @@ async function fetchJSON(url,fetcher){
 }
 function hourMap(data,fields){
  const timestamps=data?.hourly?.time||[];
- const out=new Map();
+ const out=new Map(),ambiguous=new Set();
  for(let i=0;i<timestamps.length;i++){
-  const row={time:timestamps[i]};
+  const stamp=timestamps[i];
+  // On a fall-back DST transition the same wall-clock hour may occur twice.
+  // Without an absolute UTC offset we cannot match these hours safely across
+  // providers, so exclude both occurrences rather than silently overwrite.
+  if(ambiguous.has(stamp))continue;
+  if(out.has(stamp)){out.delete(stamp);ambiguous.add(stamp);continue}
+  const row={time:stamp};
   for(const key of fields)row[key]=finite(data?.hourly?.[key]?.[i])?data.hourly[key][i]:null;
-  out.set(timestamps[i],row);
+  out.set(stamp,row);
  }
  return out;
 }
@@ -64,6 +78,16 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const date=slotHours[0].slice(0,10),startHour=hh(slotHours[0]);
  const mar=slotHours.map(t=>marineHours.get(t)).filter(Boolean);
  const met=slotHours.map(t=>weatherHours.get(t)).filter(Boolean);
+ // Do not average 1 valid hour into a 2-hour session and present it as complete.
+ // Every hourly input required for the experimental fit must exist at BOTH
+ // matching local timestamps; weather and marine hours must overlap exactly.
+ const requiredMarine=["wave_height","wave_direction","wave_period","swell_wave_height","swell_wave_direction","swell_wave_period"];
+ const requiredWeather=["wind_speed_10m","wind_direction_10m"];
+ const complete=slotHours.every(t=>{
+  const m=marineHours.get(t),w=weatherHours.get(t);
+  return m&&w&&requiredMarine.every(k=>finite(m[k]))&&requiredWeather.every(k=>finite(w[k]));
+ });
+ const coverage={expectedHours:slotHours.length,marineHours:mar.length,weatherHours:met.length,complete};
  const vals=(rows,key)=>rows.map(x=>x[key]);
  const height=mean(vals(mar,"wave_height")),swellHeight=mean(vals(mar,"swell_wave_height"));
  const swellDirection=circleMean(vals(mar,"swell_wave_direction"));
@@ -83,11 +107,11 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const precipMissing=vals(met,"precipitation").every(v=>!finite(v));
  const weatherCode=max(vals(met,"weather_code"));
  const fields={windFromDeg:windDirection,windKmh:wind,gustKmh:gust,swellFromDeg:swellDirection,swellPeriodS:swellPeriod,swellHeightM:swellHeight};
- const score=root.FaroChileScoreLab?.evaluate(profileConfig,spot.id,fields,{locale})||{score:null,status:"unavailable",tags:[]};
- const modelComplete=[height,totalDirection,totalPeriod,wind].every(finite);
+ const score=root.FaroChileScoreLab?.evaluate(profileConfig,spot.id,complete?fields:{},{locale})||{score:null,status:"unavailable",tags:[]};
+ const modelComplete=complete&&[height,totalDirection,totalPeriod,wind].every(finite);
  return {
   spotId:spot.id,date,hour:startHour,label:String(startHour).padStart(2,"0")+":00–"+String(startHour+2).padStart(2,"0")+":00",
-  modelComplete,score:score.score,scoreMeta:score,
+  modelComplete,coverage,score:score.score,scoreMeta:score,
   totalWaveHeightM:height,totalWaveDirection:totalDirection,totalWavePeriodS:totalPeriod,
   windSeaHeightM:windSeaHeight,windSeaDirection,
   swellHeightM:swellHeight,swellDirection,swellPeriodS:swellPeriod,
@@ -129,9 +153,13 @@ function extract(config,spot,marine,weather,profileConfig,locale="es"){
  if(!days.length)throw Error("No model days");
  const windows=days.flatMap(d=>d.slots);
  const fetchedAt=new Date().toISOString();
- return {spot,region:config.region,timezone:config.timezone,model:{fetchedAt,marineGrid:{lat:marine.latitude,lon:marine.longitude},
-  weatherGrid:{lat:weather.latitude,lon:weather.longitude},issueAt:null,validFrom:weatherTimes[0],source:"Open-Meteo",
-  offshoreApproximation:true},days,windows,hazard:screenRisk(config,weather,locale),fitExperimental:true};
+ const completeSlots=windows.filter(w=>w.modelComplete).length;
+ return {spot,region:config.region,timezone:config.timezone,model:{fetchedAt,
+  marineGrid:{lat:marine.latitude,lon:marine.longitude,distanceKm:gridDistanceKm(spot.latitude,spot.longitude,marine.latitude,marine.longitude)},
+  weatherGrid:{lat:weather.latitude,lon:weather.longitude,distanceKm:gridDistanceKm(spot.latitude,spot.longitude,weather.latitude,weather.longitude)},
+  issueAt:null,validFrom:weatherTimes[0],source:"Open-Meteo",
+  coverage:{completeSlots,totalSlots:windows.length},
+  offshoreApproximation:true,referencePointStatus:spot.coordinateStatus||"unverified"},days,windows,hazard:screenRisk(config,weather,locale),fitExperimental:true};
 }
 function screenRisk(config,weather,locale="es"){
  const tr=(es,en)=>locale==="es"?es:en;
@@ -162,19 +190,23 @@ function screenRisk(config,weather,locale="es"){
   if(risk==="none")risk="caution";
   reasons.push(tr("Lluvia intensa modelada","Modelled heavy rain"));
  }
- const unknown=!samples.length||[maxGust,maxWind,maxRain].every(x=>!finite(x));
+ const windEvaluated=samples.some(x=>finite(x.gust)||finite(x.wind));
+ const rainEvaluated=samples.some(x=>finite(x.rain));
+ const thunderEvaluated=samples.some(x=>finite(x.code));
+ // A silent provider omission must NEVER become "no hazards detected".
+ const unknown=!samples.length||!windEvaluated||!rainEvaluated||!thunderEvaluated;
  const signals=[
-  {id:"wind",detected:finite(maxGust)&&maxGust>=h.cautionGustKmh||finite(maxWind)&&maxWind>=h.dangerMeanWindKmh,
+  {id:"wind",evaluated:windEvaluated,detected:finite(maxGust)&&maxGust>=h.cautionGustKmh||finite(maxWind)&&maxWind>=h.dangerMeanWindKmh,
    severity:finite(maxGust)&&maxGust>=h.dangerGustKmh||finite(maxWind)&&maxWind>=h.dangerMeanWindKmh?"danger":"caution",
    value:finite(maxGust)?Math.round(maxGust)+" km/h":null,
    es:"Viento y rachas",en:"Wind and gusts",source:"open_meteo_model"},
-  {id:"thunder",detected:thunder,severity:"danger",
+  {id:"thunder",evaluated:thunderEvaluated,detected:thunder,severity:"danger",
    value:null,es:"Tormentas eléctricas",en:"Thunderstorms",source:"open_meteo_model"},
-  {id:"rain",detected:finite(maxRain)&&maxRain>=h.cautionRainHourlyMm||finite(rainDaily)&&rainDaily>=h.cautionRain24hMm,
+  {id:"rain",evaluated:rainEvaluated,detected:finite(maxRain)&&maxRain>=h.cautionRainHourlyMm||finite(rainDaily)&&rainDaily>=h.cautionRain24hMm,
    severity:"caution",value:finite(maxRain)?maxRain.toFixed(1)+" mm/h":null,
    es:"Lluvia intensa",en:"Heavy rainfall",source:"open_meteo_model"}
  ];
- return {level:unknown?"unknown":risk,reasons,maxGust,maxWind,maxRain,thunder,signals,
+ return {level:unknown&&risk==="none"?"unknown":risk,incomplete:unknown,reasons,maxGust,maxWind,maxRain,thunder,signals,
   coastalSwell:{officialStatus:"not_checked",autoChecked:false,source:"armada"},
   uv:{officialStatus:"not_checked",autoChecked:false,source:"dmc"},
   type:"model_risk_screen",officialStatus:"not_checked",issuedAt:null,forecastHours:hours,
@@ -189,6 +221,7 @@ function slotRisk(slot,config){
     finite(slot.weatherCode)&&slot.weatherCode>=95&&slot.weatherCode<=99)return "danger";
  if(finite(slot.gustKmh)&&slot.gustKmh>=h.cautionGustKmh||
     finite(slot.precipitationMm)&&slot.precipitationMm>=h.cautionRainHourlyMm)return "caution";
+ if(!finite(slot.windKmh)||!finite(slot.gustKmh)||!finite(slot.weatherCode)||!finite(slot.precipitationMm))return "unknown";
  return "none";
 }
 function vibe(slot,locale="es"){

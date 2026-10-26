@@ -1,0 +1,28 @@
+name: FARO Chile model integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'chile/**'
+      - '.github/workflows/faro-chile.yml'
+  pull_request:
+    paths:
+      - 'chile/**'
+      - '.github/workflows/faro-chile.yml'
+jobs:
+  chile-model:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Chile JavaScript syntax
+        run: |
+          node --check chile/faro-chile-live.js
+          node --check chile/chile-forecast.js
+          node --check chile/valparaiso-score-lab.js
+      - name: Confirm regional model and score invariants
+        run: |
+          node chile/test-valparaiso-score.js
+          node chile/test-live-forecast.js
