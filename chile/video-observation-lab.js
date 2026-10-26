@@ -28,11 +28,12 @@ function localToUtc(s){
 function deriveEvents(events){
  const count=events.length,usable=events.filter(x=>x.type==="wall").length;
  const closeouts=events.filter(x=>x.type==="closeout").length;
+ const classified=usable+closeouts;
  const seconds=events.filter(x=>x.type==="wall"&&finite(x.wallSeconds)&&x.wallSeconds>0)
   .map(x=>x.wallSeconds).sort((a,b)=>a-b);
  const mid=Math.floor(seconds.length/2),median=seconds.length?
   seconds.length%2?seconds[mid]:(seconds[mid-1]+seconds[mid])/2:null;
- return {waveCount:count,surfableWaveCount:usable,closeoutFraction:count?closeouts/count:null,
+ return {waveCount:count,surfableWaveCount:usable,closeoutFraction:classified?closeouts/classified:null,
   medianWaveFaceSeconds:median,unclassifiedWaveCount:count-usable-closeouts};
 }
 function validateObservation(o){
@@ -40,6 +41,7 @@ function validateObservation(o){
  if(!o.labels||!Number.isInteger(o.labels.waveCount)||o.labels.waveCount<1)return false;
  if(o.labels.surfableWaveCount>o.labels.waveCount)return false;
  if(!finite(o.labels.closeoutFraction)||o.labels.closeoutFraction<0||o.labels.closeoutFraction>1)return false;
+ if(o.observationWindowSeconds!==undefined&&(!finite(o.observationWindowSeconds)||o.observationWindowSeconds<30))return false;
  if(!Number.isInteger(o.labels.rideability1to5)||o.labels.rideability1to5<1||o.labels.rideability1to5>5)return false;
  return true;
 }
@@ -134,9 +136,11 @@ function init(options={}){
  const buttonRow=make("div",controls,{className:"chile-lab-buttons"});
  const addButton=(txt,kind)=>{const b=make("button",buttonRow,{type:"button","data-type":kind},txt);return b};
  const wall=addButton(t("✓ Pared","✓ Rideable wall"),"wall");
- const closeout=addButton(t("× Cerrón","× Closeout"),"closeout");
+ const closeout=addButton(t("× Campana","× Closeout"),"closeout");
  const other=addButton(t("~ Otra ola","~ Other wave"),"other");
  const undo=addButton(t("↶ Deshacer","↶ Undo"),"undo");
+ const windowLabel=make("label",controls,{},t("Ventana observada (minutos)","Observation window (minutes)"));
+ const windowMinutes=make("input",windowLabel,{type:"number",step:"0.5",min:"1",max:"180",value:"10"});
  const secondsLabel=make("label",controls,{},t("Duración de pared (s) · opcional","Wall duration (s) · optional"));
  const seconds=make("input",secondsLabel,{type:"number",step:"0.5",min:"0",max:"120",placeholder:"0"});
  const counts=make("p",controls,{className:"chile-lab-count"}, "0 olas");
@@ -287,13 +291,19 @@ function init(options={}){
    if(!consent.checked)throw Error(t("Confirma tus derechos para analizar este material y la privacidad.","Confirm permission and privacy review first."));
    if(c.waveCount<1)throw Error(t("Marca al menos una ola antes de registrar.","Tag at least one wave."));
    const clipDuration=source.value==="authorised_clip"&&finite(video.duration)?video.duration:null;
+   const windowSeconds=clipDuration!==null&&clipDuration>0?clipDuration:Number(windowMinutes.value)*60;
+   if(!finite(windowSeconds)||windowSeconds<30||windowSeconds>10800)
+    throw Error(t("Indica una ventana observada válida (0,5–180 min).","Enter a valid observation window (0.5–180 min)."));
    const record={
     schemaVersion:"1.0.0",observationId:"faro-"+crypto.randomUUID(),spotId:spot(),
     observedAtUtc:at,observedAtLocalChile:date.value,timezone:ZONE,
     observationType:source.value==="authorised_clip"?"manual_video_annotation":"manual_external_camera_observation",
     cameraId:null,cameraRightsNotVerified:true,permissionClaimByAnnotator:true,
     privacyReviewedByAnnotator:true,mediaConsentScope:"research_review_only",trainingEligible:false,
-    captureAssetId:null,clipDurationSeconds:clipDuration,events:events.map(x=>({...x})),
+    captureAssetId:null,clipDurationSeconds:clipDuration,observationWindowSeconds:windowSeconds,
+    waveCountPer10Min:Math.round(c.waveCount*600/windowSeconds*10)/10,
+    surfableCountPer10Min:Math.round(c.surfableWaveCount*600/windowSeconds*10)/10,
+    events:events.map(x=>({...x})),
     labels:{rideability1to5:Number(rating.value),waveCount:c.waveCount,surfableWaveCount:c.surfableWaveCount,
      closeoutFraction:c.closeoutFraction,medianWaveFaceSeconds:c.medianWaveFaceSeconds,
      surface:"unknown",visibility:"manual_observed",bankNotes:notes.value.slice(0,750)},
