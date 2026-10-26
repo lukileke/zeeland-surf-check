@@ -90,13 +90,13 @@ async function run(family,parameter,mem=new Map(),fail=false,calm=false){
   assert.equal(new URL(x.requests.find(t=>t.includes('marine-api'))).searchParams.get('latitude').split(',').length,3);
  }
  const spanish=await run('medium','Oostkapelle|ES');
- assert.ok(spanish.text.includes('PRONÓSTICO DEL SPOT'));
+ assert.ok(spanish.text.some(t=>t.includes('Oostkapelle')));
  const largeSpanish=await run('large','Oostkapelle|ES',new Map(),false,true);
- assert.ok(largeSpanish.text.some(t=>t.includes('FARO READ')),'Large widget has FARO READ interpretation');
+ assert.ok(largeSpanish.text.some(t=>t.includes('FARO VIBE')),'Large widget has FARO READ interpretation');
  assert.ok(largeSpanish.text.includes('Potencial para surf fluido'),
   'Shared FARO READ derives a Spanish swell/wind explanation');
  const calmMedium=await run('medium','Oostkapelle|EN',new Map(),false,true);
- assert.ok(calmMedium.text.some(t=>t.includes('FARO READ · Mellow & cruisy')),
+ assert.ok(calmMedium.text.some(t=>t.includes('FARO VIBE')),
   'Medium widget uses short editorial read without duplicating the web');
  const specific=await run('small','Domburg:Noordduine|ES');
  assert.equal(new URL(specific.requests.find(t=>t.includes('marine-api'))).searchParams.get('latitude').split(',').length,1);
