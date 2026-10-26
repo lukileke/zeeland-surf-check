@@ -35,7 +35,8 @@ function fixture(){
   tertiary_swell_wave_period:fixed(null),tertiary_swell_wave_direction:fixed(null)
  }};
  const weather={latitude:-32.92,longitude:-71.51,hourly:{
-  time:times,wind_speed_10m:fixed(10),wind_direction_10m:fixed(125),wind_gusts_10m:fixed(15),
+  time:times,wind_speed_10m:times.map(t=>['06','07'].includes(clock(t).slice(11,13))?32:10),wind_direction_10m:fixed(125),
+  wind_gusts_10m:times.map(t=>['06','07'].includes(clock(t).slice(11,13))?40:15),
   precipitation:fixed(0),weather_code:fixed(1),uv_index:times.map(t=>Number(clock(t).slice(11,13))>=10?5:0),
   temperature_2m:fixed(21),cloud_cover:fixed(25),precipitation_probability:fixed(0)
  },daily:{time:dates.map(d=>fromLocal(d)),sunrise:dates.map(d=>fromLocal(d,7,15)),
@@ -76,6 +77,14 @@ function fixture(){
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
    await page.locator('#dayStripItems .day-chip').nth(1).click();
+   // The 06:00 window has stronger wind than 08:00: FARO must say what to
+   // do and name the better future slot instead of only mentioning sandbanks.
+   await page.locator('#slots button').first().click();
+   assert.match(await page.locator('#chileDecisionHeadline').textContent(),/viento|wind/i,
+    'A windy slot must lead with a wind-based verdict');
+   assert.match(await page.locator('#chileVibeAction').textContent(),/Mejor candidata|Better option/i,
+    'A poor slot must point to a grounded better upcoming forecast window');
+   await page.locator('#slots button').nth(1).click();
    await page.waitForFunction(()=>document.getElementById('detail')?.textContent?.includes('UTC'),{timeout:6000});
    // The technical drawer is intentionally collapsed; innerText is empty
    // for hidden elements, while textContent still exposes populated content.
