@@ -1,4 +1,4 @@
-// FARO Widget · Coastal Punch v9 · coordinated daylight score inks · Scriptable iOS
+// FARO Widget · Coastal Punch v10 · vivid daylight score inks · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -110,11 +110,11 @@ async function officialFaroLogo(){
 }
 let ORIGINAL_FARO_IMAGE=null;
 function scoreInk(v){
- if(v<2)return palette("#C26436","#F0A46D");
- if(v<4)return palette("#BB7820","#F0BF69");
- if(v<6)return palette("#B68900","#E3D471");
- if(v<8)return palette("#689D22","#B0DB75");
- return palette("#4E7F28","#96C67A");
+ if(v<2)return palette("#C96C49","#F0A46D");
+ if(v<4)return palette("#C7852F","#F0BF69");
+ if(v<6)return palette("#C6A134","#E3D471");
+ if(v<8)return palette("#9DBA4A","#B0DB75");
+ return palette("#6F8C3A","#96C67A");
 }
 const widget=new ListWidget();
 widget.backgroundColor=C.bg;
@@ -342,7 +342,7 @@ function scoreRow(parent,best,size){
  label(row,"/10",Math.max(11,Math.floor(size*.28)),C.quiet,"semi");
 }
 function qualityStepInk(i){
- const light=["#C26436","#BB7820","#B68900","#689D22","#4E7F28"];
+ const light=["#C96C49","#C7852F","#C6A134","#9DBA4A","#6F8C3A"];
  const dark=["#F0A46D","#F0BF69","#E3D471","#B0DB75","#96C67A"];
  return new Color((EFFECTIVE_THEME==="LIGHT"?light:dark)[i]||dark[4]);
 }
