@@ -207,7 +207,8 @@ function renderDNA(){
  ),"faro-dna-method"));
  const detail=el("details",null,"faro-dna-source-disclosure");
  const references=new Set([...(rec?.sources||[]),...Object.values(p?.origins||{}),...(state.intelligence?.spots?.[current.id]?
-  Object.values(state.intelligence.spots[current.id].guideHypotheses||{}).flat().map(x=>x.source):[])]);
+  [...Object.values(state.intelligence.spots[current.id].guideHypotheses||{}).flat().map(x=>x.source),
+   ...(state.intelligence.spots[current.id].guideWaveShapeHypotheses||[]).map(x=>x.source)]:[])]);
  detail.append(el("summary",tr("Fuentes y alcance de la investigación","Research sources and limitations")));
  if(state.lang==="es"&&rec?.conditions?.regionSpecificNoteEs){
   detail.append(el("p",rec.conditions.regionSpecificNoteEs,"faro-dna-method"));
@@ -225,6 +226,12 @@ function renderDNA(){
  if(urls.children.length)detail.append(urls);
  if(state.intelligence?.spots?.[current.id]){
   const g=state.intelligence.spots[current.id].guideHypotheses;
+  for(const hypothesis of state.intelligence.spots[current.id].guideWaveShapeHypotheses||[]){
+   const source=state.sources?.sources?.[hypothesis.source];
+   detail.append(el("p",(state.lang==="es"?hypothesis.es:hypothesis.en)+" · "+
+    tr("Hipótesis de pronosticador local, pendiente de comprobar con cámara. Fuente: ","Local forecaster hypothesis, requires camera verification. Source: ")+(source?.name||hypothesis.source),
+    "faro-dna-method"));
+  }
   detail.append(el("p",tr("CONTRASTE DE GUÍAS · NO CALIBRADO","GUIDE COMPARISON · UNCALIBRATED"),"faro-dna-below-title"));
   for(const [type,key]of [[tr("Swell","Swell"),"swell"],[tr("Viento","Wind"),"wind"],[tr("Marea","Tide"),"tide"]]){
    for(const h of g[key]||[]){
