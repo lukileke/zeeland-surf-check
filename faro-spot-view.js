@@ -115,14 +115,14 @@ function render(target,input){
   item.append(titleRow,el('p','spot-profile-copy',value));
   target.append(item);
  }
- highlight('⚠',tr('Keep in mind','Ten en cuenta'),
+ highlight('',tr('Keep in mind','Ten en cuenta'),
   sector?textFor(sector.watch):input.fallback?.risks);
- highlight('↗',tr('Access & local use','Acceso y usos'),
+ highlight('',tr('Access & local use','Acceso y usos'),
   sector?textFor(sector.access):input.fallback?.extra);
  const extra=el('details','spot-profile-more');
  const heading=el('summary','spot-profile-more-summary');
  heading.append(el('span',null,tr('Wind, swell, tides & sources','Viento, oleaje, mareas y fuentes')),
-  el('span','spot-profile-more-arrow','⌄'));
+  el('span','spot-profile-more-arrow',''));
  extra.append(heading);
  const body=el('div','spot-profile-more-body');
  if(guide?.surfCulture){
@@ -165,7 +165,7 @@ function render(target,input){
  for(const source of [sector?.source,...(guide?.sources||[])]){
   if(!source?.url||seen.has(source.url))continue;
   seen.add(source.url);
-  const a=el('a','spot-profile-link',source.name+' ↗');
+  const a=el('a','spot-profile-link',source.name+' ');
   a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';
   links.append(a);
  }
