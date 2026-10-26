@@ -20,6 +20,22 @@ Archivos clave:
 
 **Pruebas de regresión (sin red):** `node chile/test-valparaiso-score.js` y `node chile/test-live-forecast.js`.
 
+## Prioridades de producto · Zeeland es la referencia
+
+**P0 — Base unificada (implementado en código):** FARO Chile reutiliza las hojas de estilo, navegación, tarjetas de siete días, selector de horario, pestañas Pronóstico/Lo mejor/FARO Match y logotipo oficiales de Zeeland. No se traslada el antiguo diseño del atlas a Zeeland. El icono O original aparece como favicon en ambos países.
+
+**P0 — FARO VIBE + READ (implementado):** el tag de carácter de ola abre una lectura sencilla y señales de respaldo. En el resumen queda solo la etiqueta y la invitación a desplegar. Terminología chilena: Glassy, Picadas, Suavecitas, Líneas limpias, Potentes y Mixed Bag. «Campana» queda reservada para condiciones de cierre locales verificadas; no se predice a partir de altura de ola offshore.
+
+**P0 — Datos y seguridad (parcial):** Open-Meteo aporta pronóstico actualizado de oleaje, swell, período, viento, nubosidad y UV. El bloque expandible de riesgos diferencia viento, lluvia y tormentas del modelo; el aviso oficial de marejadas sigue sin sincronizar. El resumen muestra el UV máximo diario y la sesión elegida contiene UV horario. Véase [Alertas y UV](ALERTAS_UV.md).
+
+**P1 — Score específico y evidencia (pendiente de calibración):** establecer geometría exacta de los cuatro breaks, resolver exposición y shadowing, marea y tamaño rompiente. Los pesos actuales son hipótesis basadas en guías; 7.9 es un límite precautorio arbitrario, no precisión validada. Se necesitan observaciones prospectivas y resultados fuera de muestra antes de calificarlo como score de calidad.
+
+**P1 — Alertas oficiales automáticas (pendiente de autorización y pruebas):** integrar feeds oficiales con timestamp, periodo de vigencia y geolocalización. Sin fuente válida, declarar «estado no comprobado» y ofrecer enlace oficial; nunca inventar ausencia de avisos.
+
+**P2 — FARO Swell Compass + mareas:** la brújula ya muestra dirección del swell y viento; después añadir los sistemas secundario/terciario y un mapa de referencia geográfico, solo con coordenadas/shoreline contrastadas. Marea local a partir de SHOA con datum y estación, nunca extrapolar un óptimo para todos los spots.
+
+**P2 — FARO Match calibrado por spot:** cruzar tipo de tabla y nivel con una calidad física objetiva y exposiciones locales, manteniendo la evaluación de seguridad independiente. Validar en La Boca y Reñaca antes de expandir hacia otras regiones.
+
 ## Structure
 - [`regions.json`](regions.json) — all **16 Chilean regions**, including empty or inland ones
 - [`regions/`](regions/) — **one JSON record per region**, with documented/candidate surf areas
