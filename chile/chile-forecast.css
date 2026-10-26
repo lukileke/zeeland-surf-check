@@ -453,3 +453,67 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 }
 .faro-map-shortcuts .faro-map-shortcut.secondary{background:var(--tile)}
 .faro-map-shortcuts .faro-map-shortcut:hover{border-color:var(--faro-ocean)}
+
+/* FARO Coastal Lens V3 · denser editorial composition, visible directional intelligence. */
+#forecastPage #faroHourlyPreview{
+ display:grid;gap:8px;align-content:start;margin-top:16px;padding:17px 19px;
+ background:color-mix(in srgb,var(--faro-ocean) 5%,var(--tile));
+ border:1px solid var(--faro-line);border-left:3px solid var(--faro-ocean);
+ border-radius:13px;min-width:0;
+}
+#faroHourlyPreview>small{color:var(--faro-ocean);font-size:10px;font-weight:850;letter-spacing:.07em}
+#faroHourlyPreview>strong{color:var(--fg);font-family:var(--faro-display);font-size:clamp(19px,2.2vw,27px);letter-spacing:-.035em;line-height:1.2}
+#faroHourlyPreview>span{font:550 13px/1.55 var(--faro-text);color:var(--fg);max-width:65ch}
+#faroHourlyPreview>button{font:850 11px/1.2 var(--faro-text);justify-self:start;border:0;border-bottom:1px solid currentColor;
+ background:transparent;color:var(--faro-ocean);padding:7px 0;cursor:pointer}
+#coastMapExpand .faro-map-spot{font-family:var(--faro-display);font-weight:850}
+#coastMapExpand .faro-map-brief{gap:9px!important}
+#coastMapExpand .faro-lens-module{
+ border:1px solid var(--faro-line);border-radius:12px;padding:12px;
+ background:color-mix(in srgb,var(--faro-ocean) 4%,var(--tile));display:grid;gap:6px;
+ min-width:0;
+}
+#coastMapExpand .faro-lens-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#coastMapExpand .faro-lens-title strong{font:900 11px/1.3 var(--faro-text);letter-spacing:.075em;color:var(--fg)}
+#coastMapExpand .faro-lens-title span{font:650 10px/1.3 var(--faro-text);color:var(--faro-quiet)}
+#coastMapExpand .faro-lens-inner{display:grid;grid-template-columns:minmax(0,145px) minmax(0,1fr);align-items:center;gap:10px;min-width:0}
+#coastMapExpand .faro-lens-compass-svg{display:block;width:100%;max-width:170px;max-height:170px;aspect-ratio:1;min-width:0;color:var(--fg)}
+#coastMapExpand .faro-lens-detail{display:grid;gap:7px;min-width:0}
+#coastMapExpand .faro-lens-legend{display:grid;gap:3px;padding-left:9px;border-left:3px solid #2088c5;min-width:0}
+#coastMapExpand .faro-lens-legend.wind{border-color:#e5a43d}
+#coastMapExpand .faro-lens-legend small{font:800 9px/1.35 var(--faro-text);letter-spacing:.045em;color:var(--faro-quiet)}
+#coastMapExpand .faro-lens-legend strong{font:850 13px/1.3 var(--faro-text);color:var(--fg);white-space:normal}
+#coastMapExpand .faro-lens-legend span{font:650 11px/1.4 var(--faro-text);color:var(--faro-quiet)}
+#coastMapExpand .faro-lens-caption{margin:0;font:500 10px/1.55 var(--faro-text);color:var(--faro-quiet)}
+#coastMapExpand .faro-map-insight{font:650 11px/1.5 var(--faro-text)}
+/* Keep the map legible but make the reading's FROM directions the interpretive hero. */
+@media(min-width:1120px){
+ #forecastPage #dayview>#coastMapExpand .faro-map-wrap{gap:10px!important;padding:12px!important}
+ #forecastPage #dayview>#coastMapExpand .faro-map-viewport{
+  height:265px!important;min-height:265px!important;
+ }
+ #forecastPage #dayview>#coastMapExpand .faro-lens-inner{
+  grid-template-columns:minmax(0,132px) minmax(0,1fr)!important;gap:8px
+ }
+ #forecastPage #dayview>#coastMapExpand .faro-lens-compass-svg{max-width:132px;max-height:132px}
+ #forecastPage #dayview>#coastMapExpand .faro-map-readings{display:none!important}
+ #forecastPage #dayview>#coastMapExpand .faro-map-spot{font-size:16px!important}
+ #forecastPage #dayview>#coastMapExpand .faro-lens-module{padding:11px}
+ #forecastPage #dayview>#coastMapExpand .faro-map-note{margin:0;font-size:9px}
+ #forecastPage .day-outlook-section .forecast-overview{min-width:0}
+}
+@media(min-width:1440px){
+ #forecastPage #dayview>#coastMapExpand .faro-map-viewport{height:315px!important;min-height:315px!important}
+ #forecastPage #dayview>#coastMapExpand .faro-lens-inner{grid-template-columns:145px minmax(0,1fr)!important}
+ #forecastPage #dayview>#coastMapExpand .faro-lens-compass-svg{max-width:145px;max-height:145px}
+}
+@media(max-width:600px){
+ #coastMapExpand .faro-lens-inner{grid-template-columns:130px minmax(0,1fr)!important}
+ #coastMapExpand .faro-lens-compass-svg{max-width:130px;max-height:130px}
+ #forecastPage #faroHourlyPreview{padding:14px 15px}
+}
+@media(max-width:355px){
+ #coastMapExpand .faro-lens-inner{grid-template-columns:110px minmax(0,1fr)!important}
+ #coastMapExpand .faro-lens-compass-svg{max-width:110px;max-height:110px}
+ #coastMapExpand .faro-lens-legend strong{font-size:11px}
+}
