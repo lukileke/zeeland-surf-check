@@ -52,7 +52,7 @@ Archivos clave:
 - La franja 2 h exige datos marinos y meteorológicos coincidentes **también en UTC**. Las horas repetidas o ambiguas no se fusionan; sin entradas completas no se calcula un score experimental.
 - El detalle técnico conserva las horas válidas UTC. Cuando el modelo entrega swell secundario y terciario, se presentan separados de swell primario y oleaje total. Son **opcionales**: en ausencia de soporte (HTTP 400) se vuelve al pronóstico base; no se imputan como cero.
 - Se enlazaron las páginas UV para [Nodo Costero Playa La Boca](https://marejadas.uv.cl/CL15CCN01) y [Sector Costero Reñaca Norte](https://marejadas.uv.cl/CL15VAS04). Su pronóstico costero se describe a aproximadamente 20 m de profundidad; **no está integrado automáticamente** ni equivale a ola rompiente observada. El acceso estructurado y los derechos de reutilización se deben validar antes de extraer sus valores.
-- Los avisos de Armada/SERVIMET y de DMC/SENAPRED continúan sin sincronización oficial. La OMM registra un posible CAP para DMC (\`https://archivos.meteochile.gob.cl/portaldmc/rss/rss.php\`), pero no ha podido verificarse disponibilidad, formato ni licencia. No afirmar ninguna alerta como activa o descartada por este vínculo.
+- Los avisos de Armada/SERVIMET y de DMC/SENAPRED continúan sin sincronización oficial. La OMM registra un posible CAP para DMC (`https://archivos.meteochile.gob.cl/portaldmc/rss/rss.php`), pero no ha podido verificarse disponibilidad, formato ni licencia. No afirmar ninguna alerta como activa o descartada por este vínculo.
 - QA dedicado: `node chile/test-live-forecast.js`, `node chile/test-valparaiso-score.js`, y `node chile/test-browser.cjs` (Playwright requerido). No altera el pipeline visual de Zeeland.
 
 ## Structure
