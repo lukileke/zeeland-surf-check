@@ -45,6 +45,16 @@ Archivos clave:
 - Se añade una prueba de regresión de Chile al flujo de GitHub Actions; sigue pendiente **verificación en dispositivo y datos de proveedor**, calibración con observaciones y conexión legal y técnica a alertas vigentes.
 - **Fuentes:** las variables de Open-Meteo representan predicciones de grilla marina de resolución limitada; el punto de 20 m de la Universidad de Valparaíso no está integrado ni equivale a altura rompiente. La OMM identifica un posible feed CAP de DMC, pero no se ha verificado disponibilidad/CORS ni licencias. Por tanto el estado oficial permanece «no comprobado».
 
+
+## P1 · Hora UTC, swell opcional y fuente costera (26/10/2026)
+
+- Open-Meteo Chile se consulta con `timeformat=unixtime`; sus instantes se convierten mediante `Intl.DateTimeFormat` y la zona IANA `America/Santiago`. El `utc_offset_seconds` fijo del proveedor **no** es una conversión válida para todos los días si existe un cambio horario.
+- La franja 2 h exige datos marinos y meteorológicos coincidentes **también en UTC**. Las horas repetidas o ambiguas no se fusionan; sin entradas completas no se calcula un score experimental.
+- El detalle técnico conserva las horas válidas UTC. Cuando el modelo entrega swell secundario y terciario, se presentan separados de swell primario y oleaje total. Son **opcionales**: en ausencia de soporte (HTTP 400) se vuelve al pronóstico base; no se imputan como cero.
+- Se enlazaron las páginas UV para [Nodo Costero Playa La Boca](https://marejadas.uv.cl/CL15CCN01) y [Sector Costero Reñaca Norte](https://marejadas.uv.cl/CL15VAS04). Su pronóstico costero se describe a aproximadamente 20 m de profundidad; **no está integrado automáticamente** ni equivale a ola rompiente observada. El acceso estructurado y los derechos de reutilización se deben validar antes de extraer sus valores.
+- Los avisos de Armada/SERVIMET y de DMC/SENAPRED continúan sin sincronización oficial. La OMM registra un posible CAP para DMC (\`https://archivos.meteochile.gob.cl/portaldmc/rss/rss.php\`), pero no ha podido verificarse disponibilidad, formato ni licencia. No afirmar ninguna alerta como activa o descartada por este vínculo.
+- QA dedicado: `node chile/test-live-forecast.js`, `node chile/test-valparaiso-score.js`, y `node chile/test-browser.cjs` (Playwright requerido). No altera el pipeline visual de Zeeland.
+
 ## Structure
 - [`regions.json`](regions.json) — all **16 Chilean regions**, including empty or inland ones
 - [`regions/`](regions/) — **one JSON record per region**, with documented/candidate surf areas
