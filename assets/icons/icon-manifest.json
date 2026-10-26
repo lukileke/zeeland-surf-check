@@ -494,7 +494,7 @@
       "filename": "rain.svg",
       "group": "Condiciones",
       "name": "Lluvia",
-      "goal": "Precipitación",
+      "goal": "Identificar lluvia y precipitación durante la sesión",
       "priority": "P1",
       "sizes": "16/20/24",
       "notes": "Sobria, sin carita",
