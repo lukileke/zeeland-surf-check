@@ -120,11 +120,11 @@
   else if(windDirection.value>=.8&&swellDirection.value>=.8)
    vibe=profile.kind==='river-mouth beachbreak'?'mellow':'clean';
   const vibes={
-   mixed:['🌊 MIXED · Variable','🌊 MIXED · Variable'],
-   choppy:['💨 CHOPPY · Picadas','💨 CHOPPY · Bumpy'],
-   short:['🌊 SHORT · Cortas','🌊 SHORT · Short period'],
-   mellow:['☀️ EASYGOING · Bancos variables','☀️ EASYGOING · Shifting banks'],
-   clean:['🌊 CLEAN LINES · Potenciales','🌊 CLEAN LINES · Potential']
+   mixed:[' MIXED · Variable',' MIXED · Variable'],
+   choppy:[' CHOPPY · Picadas',' CHOPPY · Bumpy'],
+   short:[' SHORT · Cortas',' SHORT · Short period'],
+   mellow:[' EASYGOING · Bancos variables',' EASYGOING · Shifting banks'],
+   clean:[' CLEAN LINES · Potenciales',' CLEAN LINES · Potential']
   };
   const modelRisk=finite(input.gustKmh)&&input.gustKmh>=75||input.windKmh>=55;
   return {

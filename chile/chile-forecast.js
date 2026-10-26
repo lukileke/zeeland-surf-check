@@ -76,7 +76,7 @@ function setTheme(toggle){
   state.theme=["light","dark"].includes(val)?val:(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark");
  }
  document.documentElement.dataset.theme=state.theme;
- txt("themeToggle",state.theme==="dark"?tr("☀ Claro","☀ Light"):tr("☾ Oscuro","☾ Dark"));
+ txt("themeToggle",state.theme==="dark"?tr(" Claro"," Light"):tr(" Oscuro"," Dark"));
  if(toggle)try{localStorage.setItem("zeeland-theme",state.theme)}catch(e){}
 }
 function tab(name){
@@ -421,6 +421,13 @@ function vibeUI(s){
  txt("chileDecisionDriver",actionable?local.decision.reason:
   tr("Selecciona una ventana con datos suficientes.","Select a window with complete forecast data."));
  txt("chileVibeTag",actionable?local.vibe.label:info.label);
+ const vibeIconNames={windy:"windy",glassy:"glassy",choppy:"choppy",mushy:"mushy",
+  punchy:"punchy",clean:"clean-lines",mixed:"mixed-bag",short:"small-swell",
+  small:"small-swell",unassessed:"unknown-data"};
+ const vibeId=(actionable?local.vibe.id:info.id)||"unassessed";
+ const tagIcon=el("span",null,"faro-icon-slot");
+ tagIcon.setAttribute("data-faro-icon",vibeIconNames[vibeId]||"wave-height");
+ $("chileVibeTag").prepend(tagIcon);
  txt("chileVibeHeadline",actionable?tr("Por qué y qué haría","Why it matters & next step"):
   meta?.read||tr("No hay información suficiente.","Not enough information."));
  txt("chileVibeRead",actionable?local.read:info.description);
@@ -463,7 +470,7 @@ function outlook(){
  txt("dayWind",s?num(s.windKmh,0)+" km/h":"—");
  const uvMax=ok(d.uvMax)?d.uvMax:null;
  const uv=Live.statusUV(uvMax,state.lang);
- txt("dayUVLabel","☀ UV "+num(uvMax,0)+" · "+uv.name);
+ txt("dayUVLabel"," UV "+num(uvMax,0)+" · "+uv.name);
  txt("dayUVAdvice",uvMax===null?tr("Sin dato UV","UV unavailable"):uv.protection);
  $("dayUVBadge").dataset.uv=uv.category;
  vibeUI(s);
@@ -480,7 +487,7 @@ function slots(){
   button.append(el("span",h(s.hour)+"–"+h(s.hour+2),"chile-slot-hour"));
   button.append(el("strong",eligible?num(s.score):"—","chile-slot-score"));
  if(eligible)button.append(el("span",grade(s.score),"chile-slot-quality"));
-  button.append(el("small",dangerous?tr("⚠ Riesgo modelo","⚠ Model risk"):unknownRisk?tr("⚠ Riesgo sin evaluar","⚠ Risk unassessed"):Live.slotRisk(s,state.config)==="caution"?tr("⚠ Precaución","⚠ Caution"):eligible?(localRead(s)?.decision?.shortLabel||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
+  button.append(el("small",dangerous?tr(" Riesgo modelo"," Model risk"):unknownRisk?tr(" Riesgo sin evaluar"," Risk unassessed"):Live.slotRisk(s,state.config)==="caution"?tr(" Precaución"," Caution"):eligible?(localRead(s)?.decision?.shortLabel||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
  session();
@@ -558,11 +565,18 @@ function session(){
  }
  main.append(meta);
  const essentials=[
-  "🧥 "+wetsuit(s),"🌊 "+num(s.waterTemperatureC)+" °C","🌡 "+num(s.temperatureC)+" °C",
-  "💨 "+num(s.windKmh,0)+" km/h"
+  ["wetsuit",wetsuit(s)],
+  ["water-temperature",num(s.waterTemperatureC)+" °C"],
+  ["air-temperature",num(s.temperatureC)+" °C"],
+  ["wind-speed",num(s.windKmh,0)+" km/h"],
+  ["uv-index","UV "+num(s.uvIndex)+" · "+s.uv.name]
  ];
- for(const label of essentials)ess.append(el("span",label,"essential-tag"));
- ess.append(el("span","☀ UV "+num(s.uvIndex)+" · "+s.uv.name,"essential-tag chile-uv-tag chile-uv-"+s.uv.category));
+ for(const [kind,label]of essentials){
+  const cls="essential-tag"+(kind==="uv-index"?" chile-uv-tag chile-uv-"+s.uv.category:"");
+  const tag=el("span",null,cls);
+  const icon=el("span",null,"faro-icon-slot");icon.setAttribute("data-faro-icon",kind);
+  tag.append(icon,document.createTextNode(label));ess.append(tag);
+ }
  txt("rise",d.sunrise?.slice(11,16)||"—");txt("set",d.sunset?.slice(11,16)||"—");
  const sunset=d.sunset?.slice(11,16).split(":").map(Number);
  const cut=sunset?.length===2?Math.max(0,sunset[0]*60+sunset[1]-35):null;

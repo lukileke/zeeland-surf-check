@@ -1,0 +1,5 @@
+/* Placeholders do not invent graphics; Maria's actual SVGs supply the visual. */
+.faro-icon-slot{display:inline-flex;align-items:center;justify-content:center;vertical-align:-.15em;width:1.1em;height:1.1em;flex:none}
+.faro-icon-slot[hidden]{display:none!important}
+.faro-icon-slot img{display:block;width:100%;height:100%;object-fit:contain}
+.faro-icon-slot:has(img){margin-inline-end:.25em}

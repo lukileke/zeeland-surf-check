@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#102427">
 <meta name="description" content="FARO Chile · Pronóstico modelado de surf para Valparaíso, FARO VIBE, Spot DNA, índice UV, alertas y ajuste por tabla. Score experimental en calibración.">
 <link rel="icon" type="image/svg+xml" href="../assets/faro-o-favicon.svg">
+<link rel="stylesheet" href="../assets/faro-icons.css?v=1"><link rel="stylesheet" href="../assets/faro-editorial-polish.css?v=1">
+<script src="../assets/faro-icons.js?v=1" defer></script>
 <title>FARO · Chile | Valparaíso</title>
 <script>try{const t=localStorage.getItem("zeeland-theme");document.documentElement.dataset.theme=(t==="light"||t==="dark")?t:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark")}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,7 +38,7 @@
   </div>
   <div class="top-actions">
    <button class="language-toggle" id="languageToggle" type="button" aria-label="Cambiar idioma">EN</button>
-   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">☀ Claro</button>
+   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema"> Claro</button>
    <span id="status" class="pill faro-cl-status" aria-live="polite">MODELO EXPERIMENTAL</span>
   </div>
  </div>
@@ -100,10 +102,10 @@
      <div class="day-identity"><h2 id="datehead">—</h2><div id="spotname">—</div></div>
      <div class="best-session-brief"><small id="bestTimeKicker">MEJOR VENTANA</small><div id="bestTime" class="best-time">—</div></div>
     </div>
-    <div class="chile-day-uv" id="dayUVBadge" role="note"><span id="dayUVLabel">☀ UV —</span><small id="dayUVAdvice">—</small></div>
+    <div class="chile-day-uv" id="dayUVBadge" role="note"><span id="dayUVLabel"> UV —</span><small id="dayUVAdvice">—</small></div>
     <div id="daySignalMetrics" class="day-signal-metrics">
      <div class="day-signal-metric chile-day-wave-feature">
-      <div class="chile-wave-feature-head"><span aria-hidden="true">〰</span><small data-es="OLAS · MODELO OCEÁNICO" data-en="WAVES · OFFSHORE MODEL">OLAS · MODELO OCEÁNICO</small></div>
+      <div class="chile-wave-feature-head"><span data-faro-icon="wave-height" aria-hidden="true"></span><small data-es="OLAS · MODELO OCEÁNICO" data-en="WAVES · OFFSHORE MODEL">OLAS · MODELO OCEÁNICO</small></div>
       <div class="chile-wave-feature-number"><strong id="dayWave">—</strong><span id="dayWaveLabel" class="chile-wave-size-tag">—</span></div>
       <div id="dayWaveMeter" class="chile-wave-bars" role="img" aria-label="Altura modelada">—</div>
       <details class="chile-wave-explain" id="chileWaveExplain">
@@ -111,8 +113,8 @@
        <div id="chileWaveHow" class="chile-wave-how">—</div>
       </details>
      </div>
-     <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">◷</span><div class="day-signal-figure"><small data-es="PERÍODO SWELL" data-en="SWELL PERIOD">PERÍODO SWELL</small><strong id="dayPeriod">—</strong></div></div>
-     <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">💨</span><div class="day-signal-figure"><small data-es="VIENTO" data-en="WIND">VIENTO</small><strong id="dayWind">—</strong></div></div>
+     <div class="day-signal-metric"><span class="day-signal-icon" data-faro-icon="swell-period" aria-hidden="true"></span><div class="day-signal-figure"><small data-es="PERÍODO SWELL" data-en="SWELL PERIOD">PERÍODO SWELL</small><strong id="dayPeriod">—</strong></div></div>
+     <div class="day-signal-metric"><span class="day-signal-icon" data-faro-icon="wind-speed" aria-hidden="true"></span><div class="day-signal-figure"><small data-es="VIENTO" data-en="WIND">VIENTO</small><strong id="dayWind">—</strong></div></div>
     </div>
     <!-- One immediate decision; expandable VIBE explains why and what next. -->
     <div class="chile-decision-brief" id="chileDecisionBrief" aria-live="polite">
@@ -120,14 +122,14 @@
      <span id="chileDecisionDriver">—</span>
     </div>
     <section class="faro-read chile-vibe" aria-label="FARO VIBE">
-     <div class="faro-vibe-top"><span class="faro-vibe-brand"><span class="faro-vibe-mark" aria-hidden="true">◎</span> FARO VIBE</span></div>
+     <div class="faro-vibe-top"><span class="faro-vibe-brand"><span class="faro-vibe-mark" data-faro-icon="faro-read" aria-hidden="true"></span> FARO VIBE</span></div>
      <details id="chileVibeDetails" class="chile-vibe-details">
-      <summary class="chile-vibe-summary"><span id="chileVibeTag" class="wave-wizard-tag">🌊 —</span><span class="chile-vibe-help" data-es="¿Cómo estarán las olas?" data-en="What will the waves feel like?">¿Cómo estarán las olas?</span><span class="chile-chevron">⌄</span></summary>
+      <summary class="chile-vibe-summary"><span id="chileVibeTag" class="wave-wizard-tag"> —</span><span class="chile-vibe-help" data-es="¿Cómo estarán las olas?" data-en="What will the waves feel like?">¿Cómo estarán las olas?</span><span class="chile-chevron">⌄</span></summary>
       <div class="chile-vibe-more"><strong id="chileVibeHeadline" class="faro-read-title">—</strong><p id="chileVibeRead" class="daily-verdict">—</p><p id="chileVibeAction" class="chile-vibe-action">—</p><div id="chileVibeEvidence" class="chile-signal-tags"></div><div id="chileVibeExplained" class="chile-vibe-explained">—</div></div>
      </details>
     </section>
     <button id="openSpotDNA" class="faro-dna-jump" type="button" aria-controls="spotInsightExpand" aria-expanded="false">
-     <span data-es="📍 Conoce este spot" data-en="📍 Get to know this break">📍 Conoce este spot</span>
+     <span data-es=" Conoce este spot" data-en=" Get to know this break"> Conoce este spot</span>
      <span class="faro-dna-jump-label">SPOT DNA ↓</span>
     </button>
    </div>
@@ -137,7 +139,7 @@
     <div class="forecast-section-heading"><div><h3 data-es="Elige tu horario" data-en="Find your time">Elige tu horario</h3><p data-es="Compara franjas de 2 horas" data-en="Compare 2-hour windows">Compara franjas de 2 horas</p></div></div>
     <div id="slots" class="slots"></div>
      <div id="faroHourlyPreview" class="faro-hourly-preview" aria-live="polite">
-      <small>◎ FARO · COASTAL READ</small>
+      <small>FARO · COASTAL READ</small>
       <strong id="faroHourlyHeadline">—</strong>
       <span id="faroHourlyExplanation">—</span>
       <button id="faroHourlyGoLens" type="button" data-es="Ver brújula y mapa ↗" data-en="See compass and map ↗">Ver brújula y mapa ↗</button>
@@ -156,36 +158,36 @@
       </div>
      </details>
     </div>
-    <details class="daylight-disclosure"><summary><span data-es="☀ Luz solar y horarios" data-en="☀ Daylight & timing">☀ Luz solar y horarios</span><span class="daylight-leave" id="daylightBrief">—</span><span class="daylight-arrow">⌄</span></summary>
-     <div class="metric"><div data-es="🌅 Amanecer" data-en="🌅 Sunrise">🌅 Amanecer<b id="rise">—</b></div><div data-es="🌇 Atardecer" data-en="🌇 Sunset">🌇 Atardecer<b id="set">—</b></div><div data-es="🏄 Salir antes de" data-en="🏄 Suggested cut-off">🏄 Salir antes de<b id="cutoff">—</b></div></div>
+    <details class="daylight-disclosure"><summary><span data-es=" Luz solar y horarios" data-en=" Daylight & timing"> Luz solar y horarios</span><span class="daylight-leave" id="daylightBrief">—</span><span class="daylight-arrow">⌄</span></summary>
+     <div class="metric"><div data-es=" Amanecer" data-en=" Sunrise"> Amanecer<b id="rise">—</b></div><div data-es=" Atardecer" data-en=" Sunset"> Atardecer<b id="set">—</b></div><div data-es=" Salir antes de" data-en=" Suggested cut-off"> Salir antes de<b id="cutoff">—</b></div></div>
     </details>
    </section>
    <details id="coastMapExpand" class="forecast-expand faro-map-disclosure">
-    <summary><span class="forecast-accordion-title" data-es="🗺 La costa en vivo · swell y viento" data-en="🗺 Coastal conditions · swell & wind">🗺 La costa en vivo · swell y viento</span><span class="forecast-accordion-meta" data-es="Mapa de los tres spots · cambia con el horario" data-en="Three surf spots · follows your selected window">Mapa de los tres spots · cambia con el horario</span></summary>
+    <summary><span data-faro-icon="map"></span><span class="forecast-accordion-title" data-es=" La costa en vivo · swell y viento" data-en=" Coastal conditions · swell & wind"> La costa en vivo · swell y viento</span><span class="forecast-accordion-meta" data-es="Mapa de los tres spots · cambia con el horario" data-en="Three surf spots · follows your selected window">Mapa de los tres spots · cambia con el horario</span></summary>
     <div id="chileCoastMap" class="chile-coast-map"></div>
    </details>
    <details id="spotInsightExpand" class="forecast-expand">
-    <summary><span class="forecast-accordion-title" data-es="📍 Spot DNA · Identidad del spot" data-en="📍 Spot DNA · Local break profile">📍 Spot DNA · Identidad del spot</span><span id="spotInsightContextTag" class="forecast-accordion-meta" data-es="Condiciones y carácter" data-en="Local character">Condiciones y carácter</span></summary>
+    <summary><span data-faro-icon="spot-dna"></span><span class="forecast-accordion-title" data-es=" Spot DNA · Identidad del spot" data-en=" Spot DNA · Local break profile"> Spot DNA · Identidad del spot</span><span id="spotInsightContextTag" class="forecast-accordion-meta" data-es="Condiciones y carácter" data-en="Local character">Condiciones y carácter</span></summary>
     <div id="spotinsight" class="insight-panel"><p class="muted">—</p></div>
    </details>
    <details id="waveInsightExpand" class="forecast-expand">
-    <summary><span class="forecast-accordion-title" data-es="🌊 Swell Compass" data-en="🌊 Swell Compass">🌊 Swell Compass</span><span class="forecast-accordion-meta" data-es="Direcciones y componentes" data-en="Directions & components">Direcciones y componentes</span></summary>
+    <summary><span data-faro-icon="compass"></span><span class="forecast-accordion-title" data-es=" Swell Compass" data-en=" Swell Compass"> Swell Compass</span><span class="forecast-accordion-meta" data-es="Direcciones y componentes" data-en="Directions & components">Direcciones y componentes</span></summary>
     <div id="waveinsight" class="insight-panel"><p class="muted">—</p></div>
    </details>
    <details id="cameraExpand" class="forecast-expand">
-    <summary><span class="forecast-accordion-title" data-es="📷 Mira el spot · cámaras" data-en="📷 See the surf · cameras">📷 Mira el spot · cámaras</span><span class="forecast-accordion-meta" data-es="Vistas externas · sin captura automática" data-en="External views · no auto capture">Vistas externas · sin captura automática</span></summary>
+    <summary><span data-faro-icon="camera"></span><span class="forecast-accordion-title" data-es=" Mira el spot · cámaras" data-en=" See the surf · cameras"> Mira el spot · cámaras</span><span class="forecast-accordion-meta" data-es="Vistas externas · sin captura automática" data-en="External views · no auto capture">Vistas externas · sin captura automática</span></summary>
     <div class="insight-panel" id="chileCameraSources">—</div>
    </details>
    <details id="faroTechnicalExpand" class="forecast-expand faro-technical">
-    <summary><span class="forecast-accordion-title" data-es="⚙ Detalles del pronóstico" data-en="⚙ Forecast details">⚙ Detalles del pronóstico</span><span class="forecast-accordion-meta" data-es="Modelo y UV" data-en="Model & UV">Modelo y UV</span></summary>
+    <summary><span data-faro-icon="info"></span><span class="forecast-accordion-title" data-es=" Detalles del pronóstico" data-en=" Forecast details"> Detalles del pronóstico</span><span class="forecast-accordion-meta" data-es="Modelo y UV" data-en="Model & UV">Modelo y UV</span></summary>
     <div class="faro-technical-inner"><div class="panel" id="detail">—</div></div>
    </details>
    <details id="wearExpand" class="forecast-expand">
-    <summary><span class="forecast-accordion-title" data-es="🧥 Qué usar" data-en="🧥 What to Wear">🧥 Qué usar</span><span class="forecast-accordion-meta" data-es="Traje y equipo" data-en="Wetsuit & gear">Traje y equipo</span></summary>
+    <summary><span data-faro-icon="wetsuit"></span><span class="forecast-accordion-title" data-es=" Qué usar" data-en=" What to Wear"> Qué usar</span><span class="forecast-accordion-meta" data-es="Traje y equipo" data-en="Wetsuit & gear">Traje y equipo</span></summary>
     <div id="wetsuit" class="panel">—</div>
    </details>
    <details id="fieldNotesExpand" class="forecast-expand">
-    <summary><span class="forecast-accordion-title" data-es="✎ FARO Field Notes" data-en="✎ FARO Field Notes">✎ FARO Field Notes</span><span class="forecast-accordion-meta" data-es="Observaciones reales" data-en="Observed surf">Observaciones reales</span></summary>
+    <summary><span class="forecast-accordion-title" data-es=" FARO Field Notes" data-en=" FARO Field Notes"> FARO Field Notes</span><span class="forecast-accordion-meta" data-es="Observaciones reales" data-en="Observed surf">Observaciones reales</span></summary>
     <div id="chileFieldNotes" class="insight-panel">
      <p data-es="FARO Lab cruza observaciones con pronósticos guardados antes de la sesión. Un video propio se reproduce solo en tu navegador; no se sube ni se guarda." data-en="FARO Lab pairs observations with forecasts archived before the session. Your authorised video plays only on your device; it is not uploaded or stored.">FARO Lab cruza observaciones con pronósticos guardados antes de la sesión. Un video propio se reproduce solo en tu navegador; no se sube ni se guarda.</p>
      <div id="faroVideoLab"></div>
@@ -205,7 +207,7 @@
  </section>
  <section id="boardPage" class="hide">
   <div class="panel faro-guide" id="faroGuide">
-   <small class="faro-match-kicker"><span aria-hidden="true">◎</span> FARO MATCH · PERSONAL SURF OUTLOOK</small>
+   <small class="faro-match-kicker"><span data-faro-icon="faro-match" aria-hidden="true"></span> FARO MATCH · PERSONAL SURF OUTLOOK</small>
    <h2 data-es="Encuentra olas para tu estilo." data-en="Find waves that fit your style.">Encuentra olas para tu estilo.</h2>
    <p class="muted" data-es="La calidad estimada del spot no es igual al ajuste de tabla. Esta recomendación es orientativa, sin evaluación de seguridad." data-en="Estimated spot quality differs from board fit. Guidance is experimental and does not assess safety.">La calidad estimada del spot no es igual al ajuste de tabla. Esta recomendación es orientativa, sin evaluación de seguridad.</p>
    <div class="faro-match-logic"><span data-es="COMPATIBILIDAD SPOT ≠ AJUSTE DE TABLA" data-en="SPOT FIT ≠ BOARD FIT">COMPATIBILIDAD SPOT ≠ AJUSTE DE TABLA</span><span data-es="HIPÓTESIS · SIN CALIBRAR" data-en="EXPERIMENTAL · UNCALIBRATED">HIPÓTESIS · SIN CALIBRAR</span></div>
@@ -224,12 +226,12 @@
  </footer>
 </main>
 <script src="valparaiso-score-lab.js"></script>
-<script src="faro-chile-live.js?v=3"></script>
+<script src="faro-chile-live.js?v=4"></script>
 <script src="faro-physics-lab.js?v=1"></script>
 <script src="faro-spot-intelligence.js?v=2"></script>
 <script src="video-observation-lab.js?v=1"></script>
 <script src="faro-coastal-lens.js?v=1"></script>
 <script src="coast-map.js?v=3"></script>
-<script src="chile-forecast.js?v=13"></script>
+<script src="chile-forecast.js?v=14"></script>
 </body>
 </html>

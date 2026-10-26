@@ -115,7 +115,7 @@ function render(target,input){
   item.append(titleRow,el('p','spot-profile-copy',value));
   target.append(item);
  }
- highlight('⚠',tr('Keep in mind','Ten en cuenta'),
+ highlight('',tr('Keep in mind','Ten en cuenta'),
   sector?textFor(sector.watch):input.fallback?.risks);
  highlight('↗',tr('Access & local use','Acceso y usos'),
   sector?textFor(sector.access):input.fallback?.extra);

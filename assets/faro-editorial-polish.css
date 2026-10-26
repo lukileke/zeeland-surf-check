@@ -1,0 +1,59 @@
+/* FARO editorial polish · stable across Chile and Zeeland, Oct 2026.
+   A clean type-first system while Maria delivers her icon family. */
+:root{--faro-ui-radius:13px;--faro-ui-type-scale:1.25}
+button,a,select,summary{touch-action:manipulation}
+button:focus-visible,a:focus-visible,summary:focus-visible,select:focus-visible,
+input:focus-visible,textarea:focus-visible,[role="button"]:focus-visible{
+ outline:2px solid var(--faro-ocean,#267ca1)!important;outline-offset:3px
+}
+/* Numeric surf metadata should have a consistent rhythm independent of icons. */
+.day-strip .chile-chip-number,.day-strip .score,
+.chile-session-score,#dayWave,#dayPeriod,#dayWind,.chile-session-wave strong,
+.faro-map-reading strong,.faro-lens-legend strong{
+ font-variant-numeric:tabular-nums lining-nums
+}
+#forecastPage .faro-vibe-brand,.faro-vibe-brand{
+ font-family:var(--faro-text,Manrope,system-ui);
+ font-size:11px;font-weight:850;letter-spacing:.065em
+}
+#forecastPage .day-editorial-overline{
+ font-family:var(--faro-text,Manrope,system-ui);font-weight:850;letter-spacing:.085em
+}
+#forecastPage .forecast-expand>summary{
+ column-gap:9px;min-width:0;line-height:1.4;align-items:center
+}
+#forecastPage .forecast-expand>summary .forecast-accordion-title{min-width:0;font-weight:800}
+#forecastPage .forecast-expand>summary .forecast-accordion-meta{
+ min-width:0;font-weight:650;line-height:1.45;text-overflow:ellipsis;
+}
+#forecastPage #chileVibeDetails .wave-wizard-tag,
+.wave-wizard-tag{letter-spacing:0!important;font-family:var(--faro-text,Manrope,system-ui);font-weight:800}
+#forecastPage .chile-vibe-summary{gap:12px!important}
+#forecastPage .day-signal-metrics strong{
+ font-family:var(--faro-text,Manrope,system-ui);
+ letter-spacing:-.04em
+}
+#forecastPage .chile-wave-size-tag{
+ font-size:10px;letter-spacing:.04em;font-weight:800
+}
+#forecastPage .chile-decision-brief strong{font-family:var(--faro-display,Manrope,system-ui)}
+#forecastPage .faro-hourly-preview strong{max-width:44ch}
+#forecastPage .chile-session-mini strong{font-variant-numeric:tabular-nums}
+@media(min-width:1120px){
+ #forecastPage .day-outlook-section{align-self:start!important}
+ #forecastPage .hourly-section{align-self:start!important}
+ #forecastPage #faroHourlyPreview{margin-top:18px;padding:clamp(17px,2vw,24px)}
+ #forecastPage #faroHourlyPreview>span{max-width:54ch}
+ #forecastPage #faroHourlyPreview>button{margin-top:5px}
+ #forecastPage .day-signal-metrics{grid-template-columns:minmax(0,1.3fr) repeat(2,minmax(0,1fr))!important}
+ #forecastPage #dayview>#coastMapExpand .faro-lens-title{padding-bottom:3px}
+ #forecastPage #dayview>#coastMapExpand .faro-lens-caption{max-width:60ch}
+}
+@media(max-width:700px){
+ #forecastPage .day-signal-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #forecastPage .chile-day-wave-feature{grid-column:1/-1}
+ #forecastPage #faroHourlyPreview{margin-top:11px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
