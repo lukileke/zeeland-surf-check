@@ -101,10 +101,10 @@ async function swipe(session,x0,y0,x1,y1){
        lightLogoDisplay:lightStyle.display,darkLogoDisplay:darkStyle.display,
        visibleLogoBackground:getComputedStyle(visibleLogo).backgroundColor,
        visibleLogoPadding:getComputedStyle(visibleLogo).paddingLeft,
-       bandColors:['--brand-score-low','--brand-score-mid','--brand-score-regular','--brand-score-high']
+       bandColors:['--brand-score-verylow','--brand-score-low','--brand-score-mid','--brand-score-regular','--brand-score-high']
         .map(key=>root.getPropertyValue(key).trim()),
        selection:root.getPropertyValue('--brand-blue').trim(),
-       scoreBands:[2.4,2.5,4.9,5,7.49,7.5,10].map(scoreTone),
+       scoreBands:[1.9,2,3.9,4,5.9,6,7.9,8,10].map(scoreTone),
        watermark
       };
      });
@@ -114,13 +114,14 @@ async function swipe(session,x0,y0,x1,y1){
         brandCheck.darkLogoDisplay!==(theme==='dark'?'block':'none')||
         brandCheck.visibleLogoBackground!=='rgba(0, 0, 0, 0)'||
         brandCheck.visibleLogoPadding!=='0px'||
-        brandCheck.bandColors.join(',')!=='#ce762e,#efbc62,#6b9347,#a4d156'||
+        brandCheck.bandColors.join(',').toLowerCase()!=='#c46639,#ba7c31,#9c8431,#6e9e43,#547642'||
         brandCheck.selection!=='#5878e0'||
         !brandCheck.watermark.includes('faro-salva-red.svg')||
-        !brandCheck.scoreBands[0].includes('brand-band-low')||
-        !brandCheck.scoreBands[1].includes('brand-band-mid')||
-        !brandCheck.scoreBands[3].includes('brand-band-regular')||
-        !brandCheck.scoreBands[5].includes('brand-band-high')){
+        !brandCheck.scoreBands[0].includes('brand-band-verylow')||
+        !brandCheck.scoreBands[1].includes('brand-band-low')||
+        !brandCheck.scoreBands[3].includes('brand-band-mid')||
+        !brandCheck.scoreBands[5].includes('brand-band-regular')||
+         !brandCheck.scoreBands[7].includes('brand-band-high')){
        failures.push({width,locale,theme,brandCheck});
      }
      for(const [tab,nav] of [['forecast','forecastPage'],['best','bestPage'],['board','boardPage']]){
