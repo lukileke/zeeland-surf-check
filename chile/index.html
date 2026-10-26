@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../faro-spot-signals.css?v=1">
 <link rel="stylesheet" href="../faro-desktop.css?v=1">
 <link rel="stylesheet" href="../faro-country.css?v=1">
-<link rel="stylesheet" href="chile-forecast.css?v=5">
+<link rel="stylesheet" href="chile-forecast.css?v=6">
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=2">
 </head>
 <body>
@@ -106,6 +106,10 @@
       <div class="chile-wave-feature-head"><span aria-hidden="true">〰</span><small data-es="OLAS · MODELO OCEÁNICO" data-en="WAVES · OFFSHORE MODEL">OLAS · MODELO OCEÁNICO</small></div>
       <div class="chile-wave-feature-number"><strong id="dayWave">—</strong><span id="dayWaveLabel" class="chile-wave-size-tag">—</span></div>
       <div id="dayWaveMeter" class="chile-wave-bars" role="img" aria-label="Altura modelada">—</div>
+      <details class="chile-wave-explain" id="chileWaveExplain">
+       <summary data-es="¿Qué significa este tamaño? ↗" data-en="What does this height mean? ↗">¿Qué significa este tamaño? ↗</summary>
+       <div id="chileWaveHow" class="chile-wave-how">—</div>
+      </details>
      </div>
      <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">◷</span><div class="day-signal-figure"><small data-es="PERÍODO SWELL" data-en="SWELL PERIOD">PERÍODO SWELL</small><strong id="dayPeriod">—</strong></div></div>
      <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">💨</span><div class="day-signal-figure"><small data-es="VIENTO" data-en="WIND">VIENTO</small><strong id="dayWind">—</strong></div></div>
@@ -119,7 +123,7 @@
      <div class="faro-vibe-top"><span class="faro-vibe-brand"><span class="faro-vibe-mark" aria-hidden="true">◎</span> FARO VIBE</span></div>
      <details id="chileVibeDetails" class="chile-vibe-details">
       <summary class="chile-vibe-summary"><span id="chileVibeTag" class="wave-wizard-tag">🌊 —</span><span class="chile-vibe-help" data-es="¿Cómo estarán las olas?" data-en="What will the waves feel like?">¿Cómo estarán las olas?</span><span class="chile-chevron">⌄</span></summary>
-      <div class="chile-vibe-more"><strong id="chileVibeHeadline" class="faro-read-title">—</strong><p id="chileVibeRead" class="daily-verdict">—</p><p id="chileVibeAction" class="chile-vibe-action">—</p><div id="chileVibeEvidence" class="chile-signal-tags"></div><p data-es="Interpretación modelada, no observación directa de la ola." data-en="Model interpretation, not an observed breaking wave.">Interpretación modelada, no observación directa de la ola.</p></div>
+      <div class="chile-vibe-more"><strong id="chileVibeHeadline" class="faro-read-title">—</strong><p id="chileVibeRead" class="daily-verdict">—</p><p id="chileVibeAction" class="chile-vibe-action">—</p><div id="chileVibeEvidence" class="chile-signal-tags"></div><div id="chileVibeExplained" class="chile-vibe-explained">—</div></div>
      </details>
     </section>
     <button id="openSpotDNA" class="faro-dna-jump" type="button" aria-controls="spotInsightExpand" aria-expanded="false">
@@ -150,6 +154,10 @@
      <div class="metric"><div data-es="🌅 Amanecer" data-en="🌅 Sunrise">🌅 Amanecer<b id="rise">—</b></div><div data-es="🌇 Atardecer" data-en="🌇 Sunset">🌇 Atardecer<b id="set">—</b></div><div data-es="🏄 Salir antes de" data-en="🏄 Suggested cut-off">🏄 Salir antes de<b id="cutoff">—</b></div></div>
     </details>
    </section>
+   <details id="coastMapExpand" class="forecast-expand faro-map-disclosure">
+    <summary><span class="forecast-accordion-title" data-es="🗺 Mapa costero · swell y viento" data-en="🗺 Coastal map · swell & wind">🗺 Mapa costero · swell y viento</span><span class="forecast-accordion-meta" data-es="Tres spots · direcciones de la franja" data-en="Three spots · selected-window bearings">Tres spots · direcciones de la franja</span></summary>
+    <div id="chileCoastMap" class="chile-coast-map"></div>
+   </details>
    <details id="spotInsightExpand" class="forecast-expand">
     <summary><span class="forecast-accordion-title" data-es="📍 Spot DNA · Identidad del spot" data-en="📍 Spot DNA · Local break profile">📍 Spot DNA · Identidad del spot</span><span id="spotInsightContextTag" class="forecast-accordion-meta" data-es="Condiciones y carácter" data-en="Local character">Condiciones y carácter</span></summary>
     <div id="spotinsight" class="insight-panel"><p class="muted">—</p></div>
@@ -214,6 +222,7 @@
 <script src="faro-physics-lab.js?v=1"></script>
 <script src="faro-spot-intelligence.js?v=2"></script>
 <script src="video-observation-lab.js?v=1"></script>
-<script src="chile-forecast.js?v=9"></script>
+<script src="coast-map.js?v=1"></script>
+<script src="chile-forecast.js?v=10"></script>
 </body>
 </html>
