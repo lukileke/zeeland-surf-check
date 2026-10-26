@@ -126,6 +126,18 @@ function create(opts){
   append("span","",es?"Viento: "+stateLabel(local?.wind?.state,lang):"Wind: "+stateLabel(local?.wind?.state,lang),evidence);
   const guide=local?.waveShapeGuide?.hypothesis;
   if(guide)append("p","faro-map-insight",guide+" · "+(es?"Hipótesis local por verificar.":"Unverified local hypothesis."));
+  const camera=(v.cameras||[]).find(cam=>cam.spotId===spot.id&&
+   cam.type==="surf_camera"&&cam.viewerAccess==="free_account_required");
+  const shortcuts=append("div","faro-map-shortcuts");
+  if(camera&&/^https:\/\//.test(camera.page)){
+   const view=append("a","faro-map-shortcut",es?"📷 Ver La Boca en Lineup ↗":"📷 See La Boca on Lineup ↗",shortcuts);
+   view.href=camera.page;view.target="_blank";view.rel="noopener noreferrer";
+  }
+  const note=append("button","faro-map-shortcut secondary",es?"✎ Registrar olas observadas":"✎ Log observed waves",shortcuts);
+  note.type="button";note.addEventListener("click",()=>{
+   const panel=document.getElementById("fieldNotesExpand");
+   if(panel){panel.open=true;panel.scrollIntoView({block:"start",behavior:"smooth"})}
+  });
   attr.textContent=es?
    "Puntos de referencia costera, no picos georreferenciados. Las flechas representan viaje modelado (180° respecto a DESDE), no refracción ni olas rompientes. © OpenStreetMap contributors.":
    "Coastal reference points, not surveyed peaks. Arrows show modelled travel (180° from the FROM bearings), not refraction or breaking direction. © OpenStreetMap contributors.";
