@@ -98,6 +98,26 @@ function fixture(){
    assert.ok(!chipText.includes('β')&&!chipText.includes('Promising'),
     'Model caveats belong in provenance, not duplicated after every score');
    await page.locator('#chileOfficialSources summary').click();
+   const firstRead=await page.locator('#chileVibeRead').textContent();
+   assert.match(firstRead,/La Boca|Aconcagua/i,'La Boca gets river-mouth-aware READ');
+   const hints=await page.locator('#chileVibeEvidence').textContent();
+   assert.match(hints,/guías divididas|guides disagree/i,'Sources do not silently collapse conflicting La Boca wind guidance');
+   await page.locator('#chileSpotSelect').selectOption('CL-VS:renaca');
+   await page.waitForFunction(()=>document.getElementById('chileVibeRead')?.textContent?.includes('Reñaca')||
+    document.getElementById('chileVibeRead')?.textContent?.includes('picos del norte'),{timeout:12000});
+   const renacaRead=await page.locator('#chileVibeRead').textContent();
+   assert.match(renacaRead,/Reñaca|picos del norte/i);
+   assert.notEqual(renacaRead,firstRead);
+   await page.locator('#chileSpotSelect').selectOption('CL-VS:ritoque');
+   await page.waitForFunction(()=>document.getElementById('chileVibeRead')?.textContent?.includes('Ritoque Norte'),{timeout:12000});
+   const ritoqueRead=await page.locator('#chileVibeRead').textContent();
+   assert.match(ritoqueRead,/Ritoque Norte/);
+   assert.notEqual(ritoqueRead,renacaRead);
+   await page.locator('#spotInsightExpand').evaluate(el=>el.open=true);
+   assert.match(await page.locator('#spotinsight').textContent(),/Guías difieren|GUIDES|guías/i);
+   assert.match(await page.locator('#spotinsight').textContent(),/surfnerd-ritoque|Surfnerd/i);
+   await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
+   await page.waitForFunction(()=>document.getElementById('chileVibeRead')?.textContent?.includes('La Boca'),{timeout:12000});
    for(const nav of ['#navForecast','#navBest','#navBoard']){
     await page.locator(nav).click();
     const sizes=await page.evaluate(()=>({client:document.documentElement.clientWidth,
