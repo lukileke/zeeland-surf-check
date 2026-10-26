@@ -182,8 +182,8 @@ function create(opts){
   if(camera&&/^https:\/\//.test(camera.page)){
    const independent=camera.viewerAccess==="public_youtube_no_account";
    const view=append("a","faro-map-shortcut",independent?
-    (es?" Ver Marejadas UV ↗":" View Marejadas UV ↗"):
-    (es?" Ver La Boca en Lineup ↗":" See La Boca on Lineup ↗"),shortcuts);
+    (es?" Ver Marejadas UV":" View Marejadas UV"):
+    (es?" Ver La Boca en Lineup":" See La Boca on Lineup"),shortcuts);
    view.href=camera.page;view.target="_blank";view.rel="noopener noreferrer";
   }
   const note=append("button","faro-map-shortcut secondary",es?" Registrar olas observadas":" Log observed waves",shortcuts);
