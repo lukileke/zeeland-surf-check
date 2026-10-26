@@ -1,5 +1,5 @@
-# FARO Swell Compass · visual specification v0.1 (deferred)
-Date: 2026-10-26 · Status: **Stage A vector prototype implemented for Valparaíso Chile** with offshore modelled primary swell and wind. The geolocated coastline/satellite map (Stage B) and nearshore transformation remain unimplemented.
+# FARO Swell Compass · implementation specification v0.2
+Date: 2026-10-26 · Status: **Stage A implemented; Stage B partially implemented in Valparaíso**. An optional Leaflet/OSM geolocated map plots documented beach references, real Open-Meteo marine-grid sample coordinates, primary swell travel direction, and typed swell/wind readings. Coastline orientation, camera-linked calibration, bathymetric refraction and surf-bank geometry remain unimplemented.
 
 ## Goal
 Surface one instantly readable answer: **from where are waves arriving relative to the selected coastline?** This is more useful than a decorative satellite thumbnail. Aim for a coastal-navigation identity distinctive to FARO.
@@ -13,14 +13,14 @@ Surface one instantly readable answer: **from where are waves arriving relative 
 - direction of travel is **FROM + 180°**, so a wave travelling toward the SE has a WNW source bearing. Never invert labels or confuse shore-facing with wind direction.
 - show selected **time window** and model update provenance, not a frozen generic picture.
 
-**Stage B · geolocated map** once verified exact coordinates and coast geometry exist:
-- MapLibre GL JS + OSM tiles from a provider with permitted tile usage, attribution and documented rate limits; alternatively an appropriately licensed static basemap;
+**Stage B · geolocated sample map** · partially implemented with Leaflet and OSM, while surveyed coastline geometry remains future work:
+- **Current:** Leaflet 1.9.4 and OSM tiles loaded only when the user expands the map; retain OSM attribution and respect tile usage policy. Later consider MapLibre and a licensed production tile provider.
 - modest zoom focused on the break (not a map of an arbitrary town centroid);
-- overlay a short wave-bearing arrow at the offshore sample point, a separate wind arrow, verified break pin, a shoreline line. Keep the arrow geometrically correct (true north in map coordinates).
-- if spatial data are not verified, FALL BACK to Stage A. Do not generate fictional bathymetry or nearshore rays.
+- **Current:** a swell travel vector at the API-returned offshore marine grid point, with numeric FROM bearing, height and period, not a decorative icon; wind direction read separately in the adjoining compass. Beach pins are documented approximate coastal references, NOT verified surf-bank markers; no shoreline polyline.
+- When the marine grid is unavailable use a labelled relative-coordinate schematic or Stage A. No fictional coastline, bathymetry or nearshore rays.
 - map is progressively revealed from the forecast; no autoplay animations, no huge heading/banners.
 
-**Stage C · swell partitions** when data support them:
+**Stage C · swell partitions** · implemented as numeric model-component readings where data exist; validation/coverage reporting remains incomplete:
 - total wave, windsea and primary/secondary/tertiary swells are displayed as individually labelled **model components** with distinct directional glyphs and numeric height/period;
 - do NOT sum component heights linearly or call the offshore component "surf height";
 - display component model coverage, issue and valid timestamps, missing components as unavailable.
@@ -59,7 +59,7 @@ Use distinct tokens: model waves `--faro-wave`, wind `--faro-quiet`, selected ti
 1. Define a framework-independent `wave-bearing.js` for consistent angle normalisation, FROM vs TO labels and test cases.
 2. Implement accessible compass SVG from canonical direction data. When no direction, show a null state (not "0° N").
 3. Audit marine API fields: Open-Meteo `wave_direction` is total wave FROM; `swell_wave_direction` is swell FROM. Keep variable labels explicit. Verify marine + atmospheric timestamps.
-4. Only later link a licensed map tile layer to VERIFIED shore geometry and sample location.
+4. Map tiles and offshore sample location are now wired on Chile; only later include VERIFIED shoreline geometry, productive/licensed tile infrastructure and actual breaking-bank surveys.
 5. Validate 0°, 90°, 180°, 270°, 359°, missing values; Spanish/English strings; light/dark and desktop/mobile rendering; reduced-motion and keyboard navigation.
 6. Do not compute shoreline sheltering or breaking wave angle purely by rotating the model offshore vector.
 
