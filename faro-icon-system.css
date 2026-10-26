@@ -1,0 +1,12 @@
+/* Neutral FARO before María's approved SVGs. No emoji, no replacement doodles.
+   Icons are optional decorative companions to complete visible text labels. */
+.faro-svg-icon{display:none!important;vertical-align:-.15em;flex:0 0 auto}
+.faro-svg-icon.is-approved{display:inline-block!important;width:1.1em;height:1.1em;
+ background-color:currentColor;-webkit-mask:var(--faro-icon-url) center/contain no-repeat;
+ mask:var(--faro-icon-url) center/contain no-repeat;margin-right:.28em}
+.faro-svg-icon[aria-hidden=true]{pointer-events:none}
+#daySignalMetrics .chile-wave-feature-head span:not(.faro-svg-icon):empty,
+#daySignalMetrics .day-signal-icon:empty{display:none!important}
+#forecastPage .forecast-accordion-title{font-family:var(--faro-text,Manrope,system-ui);font-weight:800}
+.faro-map-shortcuts a,.faro-map-shortcuts button{text-decoration:none}
+@media(prefers-reduced-motion:reduce){.faro-svg-icon{transition:none!important}}
