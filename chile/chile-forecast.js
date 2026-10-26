@@ -404,7 +404,7 @@ function updateCoastMap(){
  const s=selection();
  state.coastMap?.update({spot:spot(),spots:state.config?.pilots?.filter(p=>
   ["CL-VS:la-boca-concon","CL-VS:renaca","CL-VS:ritoque"].includes(p.id)),slot:s,
-  local:localRead(s),lang:state.lang});
+  local:localRead(s),lang:state.lang,cameras:state.cameras?.sources||[]});
 }
 function vibeUI(s){
  const info=Live.vibe(s,state.lang),meta=s?.scoreMeta,local=localRead(s);
@@ -726,7 +726,8 @@ async function initialize(){
    container:$("chileCoastMap"),disclosure:$("coastMapExpand"),
    getCurrent:()=>({spot:spot(),spots:state.config.pilots.filter(p=>
     ["CL-VS:la-boca-concon","CL-VS:renaca","CL-VS:ritoque"].includes(p.id)),
-    slot:selection(),local:localRead(selection()),lang:state.lang}),
+    slot:selection(),local:localRead(selection()),lang:state.lang,
+    cameras:state.cameras?.sources||[]}),
    onSelectSpot:id=>{
     if(spot()?.id===id)return;
     $("chileSpotSelect").value=id;
