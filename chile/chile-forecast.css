@@ -338,3 +338,6 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 .faro-map-viewport .leaflet-container,.faro-map-viewport .leaflet-pane{max-width:none}
 @media(max-width:880px){.faro-map-wrap{grid-template-columns:1fr}.faro-map-viewport{height:290px}}
 @media(max-width:430px){.faro-map-readings{grid-template-columns:repeat(2,minmax(0,1fr))}.faro-map-reading{padding:9px}.faro-map-reading strong{font-size:12px}.faro-map-viewport{height:265px}}
+
+/* Ensure external-camera annotation never displays a local video control. */
+.chile-video-lab [hidden]{display:none!important}
