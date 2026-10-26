@@ -107,3 +107,9 @@ Reference entry points:
 - [Sernatur · Ñuble](https://www.sernatur.cl/region/nuble/)
 - [DIRECMAR / SHOA · Tide predictions](https://www.directemar.cl/directemar/site/edic/base/port/preg_frec_shoa.html)
 - [DIRECTEMAR · Official time changes](https://www.directemar.cl/cambio-de-hora-en-chile-continental-e-insular-occidental-0)
+
+## Spot Intelligence v0.1 · La Boca, Reñaca Norte y Ritoque Norte (26/10/2026)
+
+FARO no trata la dirección ideal publicada como una verdad única. El archivo `spot-intelligence.json` representa hipótesis por **sector, fuente y tipo de evidencia**; `faro-spot-intelligence.js` las contrasta contra viento y swell horarios en la convención **DESDE**. Una dirección puede coincidir con todas las guías, solo algunas, ninguna o carecer de datos. Las contradicciones quedan visibles en **Spot DNA**, con vínculos a sus fuentes. `FARO VIBE / READ` ahora diferencia desembocadura móvil (La Boca), picos norte condicionados por bancos y rocas (Reñaca) y sector norte relativamente suave frente a sur más expuesto (Ritoque). No observa bancos, no estima altura rompiente, marea óptima ni seguridad.
+
+**Importante:** el score /10 anterior permanece como prototipo experimental orientado por una sola referencia de guía; el nuevo motor no recalibra automáticamente pesos ni acredita accuracy. Etiquetas de lectura más naturales como `Buena pinta / Looking good` no son observaciones. Ver [investigación detallada, contradicciones y requisitos de validación](SPOT_INTELLIGENCE_RESEARCH.md).

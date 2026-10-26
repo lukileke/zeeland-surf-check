@@ -2,16 +2,18 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id),Live=window.FaroChileLive;
-const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,cache:new Map(),serial:0,page:0};
+const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,cache:new Map(),serial:0,page:0};
 const tr=(es,en)=>state.lang==="es"?es:en,ok=x=>typeof x==="number"&&Number.isFinite(x),num=(x,d=1)=>ok(x)?x.toFixed(d):"—";
 const el=(tag,value,cls)=>{const x=document.createElement(tag);if(value!==undefined&&value!==null)x.textContent=String(value);if(cls)x.className=cls;return x};
 const txt=(id,value)=>{$(id).textContent=value},clear=id=>$(id).replaceChildren(),add=(x,...nodes)=>{x.append(...nodes);return x};
 const h=n=>String(n).padStart(2,"0");
 const band=n=>!ok(n)?"":n>=8?"brand-band-high":n>=6?"brand-band-regular":n>=4?"brand-band-mid":n>=2?"brand-band-low":"brand-band-verylow";
 // These are *relative model signals*, never validated observed surf quality.
-const grade=n=>!ok(n)?tr("Sin datos","No data"):n<2?tr("Señal muy baja","Very low signal"):n<4?tr("Señal baja","Low signal"):n<6?tr("Señal variable","Mixed signal"):n<8?tr("Señal favorable","Favourable signal"):tr("Señal alta","High signal");
+const grade=n=>!ok(n)?tr("Sin datos","No data"):n<2?tr("Muy flojo","Very slow"):n<4?tr("Flojo","Slow"):n<6?tr("Variable","Mixed"):n<8?tr("Buena pinta","Looking good"):tr("Con potencial","Good potential");
 const spot=()=>state.config?.pilots?.[state.selected], profile=()=>state.profiles?.profiles?.[spot()?.id];
 const regionRecord=()=>state.registry?.spots?.find(s=>s.id===spot()?.id);
+const localRead=s=>window.FaroChileSpotIntelligence&&state.intelligence&&spot()?
+ window.FaroChileSpotIntelligence.evaluate(s,spot().id,state.intelligence,state.lang):null;
 function now(){
  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"America/Santiago",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
  const obj=Object.fromEntries(parts.map(x=>[x.type,x.value]));
@@ -151,8 +153,22 @@ function renderDNA(){
  }
  card.append(portrait,facts);
  const lower=el("div",null,"faro-dna-below");
- const selected=selection();
- if(selected?.scoreMeta?.components){
+ const selected=selection(),local=localRead(selected);
+ if(local?.status==="guide_compared"){
+  lower.append(el("small",tr("SPOT INTELLIGENCE · MODELO VS. GUÍAS","SPOT INTELLIGENCE · MODEL VS. GUIDES"),"faro-dna-below-title"));
+  const indicators=el("div",null,"faro-dna-signals");
+  for(const key of ["wind","swell"]){
+   const comparison=local[key];
+   const label=key==="wind"?tr("Viento","Wind"):tr("Swell","Swell");
+   const message=comparison.state==="convergent"?tr("Guías coinciden","Guides agree"):
+    comparison.state==="disputed"?tr("Guías difieren","Guides differ"):
+    comparison.state==="outside"?tr("Fuera de referencias","Outside guide ranges"):tr("Sin evaluar","Not assessed");
+   indicators.append(el("span",label+" · "+message,"chile-signal-tag "+(comparison.state==="convergent"?"good":comparison.state==="disputed"?"mixed":"unknown")));
+  }
+  indicators.append(el("span",tr("Marea · pendiente","Tide · not calibrated"),"chile-signal-tag unknown"));
+  lower.append(indicators);
+  for(const note of local.notes||[])lower.append(el("p",note,"faro-dna-method"));
+ }else if(selected?.scoreMeta?.components){
   lower.append(el("small",tr(
     "CÓMO ENCAJA EL PRONÓSTICO SELECCIONADO",
     "HOW THE SELECTED MODEL WINDOW FITS THE GUIDE"),"faro-dna-below-title"));
@@ -183,7 +199,8 @@ function renderDNA(){
   "These guide directions do not establish breaking-wave height, optimal tide, permitted zones or water-entry safety."
  ),"faro-dna-method"));
  const detail=el("details",null,"faro-dna-source-disclosure");
- const references=new Set([...(rec?.sources||[]),...Object.values(p?.origins||{})]);
+ const references=new Set([...(rec?.sources||[]),...Object.values(p?.origins||{}),...(state.intelligence?.spots?.[current.id]?
+  Object.values(state.intelligence.spots[current.id].guideHypotheses||{}).flat().map(x=>x.source):[])]);
  detail.append(el("summary",tr("Fuentes y alcance de la investigación","Research sources and limitations")));
  if(state.lang==="es"&&rec?.conditions?.regionSpecificNoteEs){
   detail.append(el("p",rec.conditions.regionSpecificNoteEs,"faro-dna-method"));
@@ -199,6 +216,20 @@ function renderDNA(){
   if(source?.url)link(urls,source.name,source.url);
  }
  if(urls.children.length)detail.append(urls);
+ if(state.intelligence?.spots?.[current.id]){
+  const g=state.intelligence.spots[current.id].guideHypotheses;
+  detail.append(el("p",tr("CONTRASTE DE GUÍAS · NO CALIBRADO","GUIDE COMPARISON · UNCALIBRATED"),"faro-dna-below-title"));
+  for(const [type,key]of [[tr("Swell","Swell"),"swell"],[tr("Viento","Wind"),"wind"],[tr("Marea","Tide"),"tide"]]){
+   for(const h of g[key]||[]){
+    const source=state.sources?.sources?.[h.source];
+    const claim=key==="tide"?h.claim:h.meaning;
+    detail.append(el("p",type+" · "+(source?.name||h.source)+": "+claim,"faro-dna-method"));
+   }
+  }
+  detail.append(el("p",tr("Las diferencias pueden reflejar sectores, temporadas, errores o criterios distintos. FARO no las promedia ni calcula porcentajes de confianza sin observaciones.",
+   "Differences may reflect sectors, seasons, errors or different criteria. FARO neither averages them nor reports confidence percentages without observations."),"faro-dna-method"));
+ }
+
  const coastal=current.coastalReference;
  if(coastal?.autoIntegrated===false&&/^https:\/\//.test(coastal.url)){
   const label=tr("COMPARACIÓN COSTERA · FUENTE EXTERNA","COASTAL CROSS-CHECK · EXTERNAL SOURCE");
@@ -264,12 +295,18 @@ function strip(){
  $("dayStripProgress").style.width=((state.page+1)/Math.max(1,days.length)*100)+"%";
 }
 function vibeUI(s){
- const info=Live.vibe(s,state.lang),meta=s?.scoreMeta;
- txt("chileVibeTag",info.label);
- txt("chileVibeHeadline",meta?.read||tr("Selecciona una ventana con datos para interpretar las olas.","Choose a window with data to interpret surf."));
- txt("chileVibeRead",info.description+" "+(meta?.warning||""));
+ const info=Live.vibe(s,state.lang),meta=s?.scoreMeta,local=localRead(s);
+ txt("chileVibeTag",local?.status==="guide_compared"?local.vibe.label:info.label);
+ txt("chileVibeHeadline",local?.status==="guide_compared"?local.headline:meta?.read||
+  tr("Selecciona una ventana con datos para interpretar las olas.","Choose a window with data to interpret surf."));
+ txt("chileVibeRead",local?.status==="guide_compared"?local.read+" "+(local.notes?.[0]||""):info.description+" "+(meta?.warning||""));
  const tags=$("chileVibeEvidence");tags.replaceChildren();
- for(const t of meta?.tags||[])tags.append(el("span",t.label,"chile-signal-tag "+(t.state==="positive"?"good":t.state==="negative"?"bad":t.state==="mixed"?"mixed":"unknown")));
+ if(local?.status==="guide_compared"){
+  for(const e of local.evidenceLabels)tags.append(el("span",e.label,"chile-signal-tag "+(e.state==="supported"?"good":e.state==="disputed"?"mixed":"unknown")));
+  tags.append(el("span",tr("Lectura de guías · no observada","Guide interpretation · unobserved"),"chile-signal-tag unknown"));
+ }else{
+  for(const t of meta?.tags||[])tags.append(el("span",t.label,"chile-signal-tag "+(t.state==="positive"?"good":t.state==="negative"?"bad":t.state==="mixed"?"mixed":"unknown")));
+ }
 }
 function outlook(){
  const d=state.forecast?.days?.[state.day],s=selection();if(!d)return;
@@ -456,7 +493,7 @@ async function rankings(){
  for(const item of list.slice(0,12)){
   const b=el("button",null,"highlight chile-ranking "+band(item.s.score));b.type="button";
   const line=el("div",null,"chile-rank-layout"),data=el("div");
-  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",Live.vibe(item.s,state.lang).label));
+  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",(window.FaroChileSpotIntelligence?.evaluate(item.s,item.model.spot.id,state.intelligence,state.lang)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
   line.append(data,el("strong",num(item.s.score)));b.append(line);
   b.addEventListener("click",()=>{
    state.selected=state.config.pilots.findIndex(s=>s.id===item.model.spot.id);
@@ -504,10 +541,11 @@ async function initialize(){
  });
  for(const id of ["matchBoard","matchAbility","matchStyle"])$(id).addEventListener("change",match);
  try{
-  const files=await Promise.all(["valparaiso-live.config.json","valparaiso-score.config.json","regions/CL-VS.json","sources.json"].map(async path=>{
+  const files=await Promise.all(["valparaiso-live.config.json","valparaiso-score.config.json","regions/CL-VS.json","sources.json","spot-intelligence.json"].map(async path=>{
    const response=await fetch(path,{cache:"no-store"});if(!response.ok)throw Error(path+" HTTP "+response.status);return response.json();
   }));
-  [state.config,state.profiles,state.registry,state.sources]=files;
+  [state.config,state.profiles,state.registry,state.sources,state.intelligence]=files;
+   if(!window.FaroChileSpotIntelligence||state.intelligence?.region!=="CL-VS")throw Error("Spot Intelligence version missing");
   if(state.config.region!=="CL-VS"||state.profiles.active!==false||state.registry.forecastEnabled!==false||state.config.noOfficialAlertAssertions!==true)throw Error("Risk isolation failure");
   for(const s of state.config.pilots)if(!state.profiles.profiles?.[s.id]||!state.registry.spots.find(r=>r.id===s.id))throw Error("Unattributed pilot "+s.id);
   const requested=new URLSearchParams(location.search).get("spot");

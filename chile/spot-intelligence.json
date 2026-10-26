@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "0.1.0",
+  "region": "CL-VS",
+  "asOf": "2026-10-26",
+  "status": "guide_hypotheses_not_calibrated",
+  "warning": "Published guide hypotheses are not measured exposure, observed bank state, calibrated thresholds or nearshore physics. Conflicting advice must remain visible; no guide vote becomes a probability.",
+  "angularConvention": "meteorological_oceanographic_FROM_degrees_true_north",
+  "bands": "Guide direction sectors are categorical hypothesis envelopes, not estimated coastal shadowing or offshore normals. Approximate intervals are tagged as editorial interpretation.",
+  "spots": {
+    "CL-VS:la-boca-concon": {
+      "area": "La Boca · playa y desembocadura del Aconcagua",
+      "type": "river_mouth_beachbreak",
+      "sectorStatus": "named_area_only_exact_active_sandbank_unknown",
+      "morphology": "mobile_river_mouth_sandbars",
+      "characteristics": [
+        "soft_variable_waves",
+        "lefts_and_rights",
+        "river_mouth_sediment_and_current",
+        "learner_lineup"
+      ],
+      "guideHypotheses": {
+        "swell": [
+          {
+            "source": "surf-la-boca",
+            "from": [
+              [
+                226,
+                355
+              ]
+            ],
+            "scope": "beach_level",
+            "evidence": "published_guide_explicit_range",
+            "meaning": "W–NW broadly; includes SW boundary"
+          },
+          {
+            "source": "surftrips-la-boca",
+            "from": [
+              [
+                180,
+                235
+              ]
+            ],
+            "scope": "beach_level",
+            "evidence": "published_guide_competing_range",
+            "meaning": "S–SW; differs from W–NW guide"
+          }
+        ],
+        "wind": [
+          {
+            "source": "surf-la-boca",
+            "from": [
+              [
+                82,
+                199
+              ]
+            ],
+            "scope": "beach_level",
+            "evidence": "published_guide_explicit_range",
+            "meaning": "E–SE–S"
+          },
+          {
+            "source": "surftrips-la-boca",
+            "from": [
+              [
+                345,
+                55
+              ]
+            ],
+            "scope": "beach_level",
+            "evidence": "published_guide_competing_range",
+            "meaning": "N–NE; conflicts with E–SE–S"
+          }
+        ],
+        "tide": [
+          {
+            "source": "surf-la-boca",
+            "claim": "all_tides_reported"
+          },
+          {
+            "source": "surftrips-la-boca",
+            "claim": "low_tide_preferred"
+          }
+        ]
+      },
+      "validationNeeds": [
+        "river_discharge_and_water_quality",
+        "active_bank_location_and_beach_orientation",
+        "beach_access_vs_protected_wetland",
+        "field_tide_response",
+        "observed_wave_form"
+      ],
+      "coastalReference": "https://marejadas.uv.cl/CL15CCN01"
+    },
+    "CL-VS:renaca": {
+      "area": "Reñaca · picos norte",
+      "type": "northern_boulder_influenced_sandbar_beachbreak",
+      "sectorStatus": "north_sector_guide_only_bank_not_surveyed",
+      "morphology": "rock_influenced_northern_peaks_and_mobile_sand",
+      "characteristics": [
+        "northern_a_frame_peaks",
+        "short_powerful_sections_possible",
+        "southern_sections_can_close",
+        "erosion_documented"
+      ],
+      "guideHypotheses": {
+        "swell": [
+          {
+            "source": "surf-renaca",
+            "from": [
+              [
+                225,
+                292.5
+              ]
+            ],
+            "scope": "north_beach_peaks",
+            "evidence": "published_guide_W_SW",
+            "meaning": "SW–W"
+          },
+          {
+            "source": "surf-forecast-renaca",
+            "from": [
+              [
+                210,
+                255
+              ]
+            ],
+            "scope": "beach_level",
+            "evidence": "published_guide_SW",
+            "meaning": "SW"
+          }
+        ],
+        "wind": [
+          {
+            "source": "surf-renaca",
+            "from": [
+              [
+                67.5,
+                112.5
+              ]
+            ],
+            "scope": "north_beach_peaks",
+            "evidence": "published_guide_E",
+            "meaning": "E"
+          },
+          {
+            "source": "surf-forecast-renaca",
+            "from": [
+              [
+                22.5,
+                67.5
+              ]
+            ],
+            "scope": "beach_level",
+            "evidence": "published_guide_NE",
+            "meaning": "NE"
+          }
+        ],
+        "tide": [
+          {
+            "source": "surf-renaca",
+            "claim": "medium_low_reported"
+          },
+          {
+            "source": "surf-forecast-renaca",
+            "claim": "all_tides_reported"
+          }
+        ]
+      },
+      "validationNeeds": [
+        "separate_north_center_south_bank",
+        "bathymetry_and_boulder_effect",
+        "tidal_response_by_sector",
+        "erosion_recheck",
+        "observed_wave_shape_and_closeouts"
+      ],
+      "coastalReference": "https://marejadas.uv.cl/CL15VAS04"
+    },
+    "CL-VS:ritoque": {
+      "area": "Ritoque · picos norte",
+      "type": "north_cove_vs_exposed_south_beach",
+      "sectorStatus": "north_area_guide_only_northern_peak_not_georeferenced",
+      "morphology": "long_dynamic_sandy_beach",
+      "characteristics": [
+        "northern_soft_left",
+        "northern_paddle_channel",
+        "south_more_exposed",
+        "stronger_paddling_south",
+        "changing_banks"
+      ],
+      "guideHypotheses": {
+        "swell": [
+          {
+            "source": "surf-ritoque",
+            "from": [
+              [
+                210,
+                255
+              ]
+            ],
+            "scope": "northern_peaks",
+            "evidence": "published_guide_SW",
+            "meaning": "SW"
+          },
+          {
+            "source": "surfnerd-ritoque",
+            "from": [
+              [
+                180,
+                315
+              ]
+            ],
+            "scope": "beach_wide",
+            "evidence": "published_guide_S_NW",
+            "meaning": "S–NW, SW preference"
+          }
+        ],
+        "wind": [
+          {
+            "source": "surf-ritoque",
+            "from": [
+              [
+                337.5,
+                22.5
+              ]
+            ],
+            "scope": "northern_peaks",
+            "evidence": "published_guide_N",
+            "meaning": "N"
+          },
+          {
+            "source": "surfnerd-ritoque",
+            "from": [
+              [
+                67.5,
+                112.5
+              ]
+            ],
+            "scope": "beach_wide",
+            "evidence": "published_guide_E",
+            "meaning": "E"
+          }
+        ],
+        "tide": [
+          {
+            "source": "surf-ritoque",
+            "claim": "medium_low_reported"
+          },
+          {
+            "source": "surfnerd-ritoque",
+            "claim": "rising_reported"
+          }
+        ]
+      },
+      "validationNeeds": [
+        "map_north_peak_and_south_segments",
+        "offshore_exposure_difference",
+        "channel_locations_and_current",
+        "tidal_response_by_bank",
+        "local_wave_power_vs_open_coast"
+      ],
+      "coastalReference": null
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.1.0",
-  "asOf": "2026-10-25",
+  "asOf": "2026-10-26",
   "sources": {
     "travel-arica": {
       "name": "Chile Travel · Arica and local surf beaches",
@@ -229,6 +229,36 @@
       "url": "https://it.surf-forecast.com/breaks/Papagayo",
       "type": "surf-spot-guide",
       "reviewed": "2026-10-25"
+    },
+    "surftrips-la-boca": {
+      "name": "Surftrips · La Boca, alternate guide S–SW and N–NE (contradicts SurfRip)",
+      "url": "https://surftrips.co/chile/central-chile/la-boca-con-con",
+      "type": "independent_editorial_surf_guide",
+      "reviewed": "2026-10-26"
+    },
+    "surf-forecast-renaca": {
+      "name": "Surf-Forecast · Reñaca, NE offshore and SW swell",
+      "url": "https://www.surf-forecast.com/breaks/Renaca",
+      "type": "surf_guide",
+      "reviewed": "2026-10-26"
+    },
+    "surfnerd-ritoque": {
+      "name": "Surfnerd · Ritoque, E winds, S–NW swells and rising tide guide",
+      "url": "https://www.surfnerd.com/surf-forecast/ritoque",
+      "type": "surf_guide",
+      "reviewed": "2026-10-26"
+    },
+    "surftrips-renaca": {
+      "name": "Surftrips · Reñaca north-bank guide",
+      "url": "https://surftrips.co/chile/central-chile/renaca",
+      "type": "surf_guide",
+      "reviewed": "2026-10-26"
+    },
+    "uc-coast-erosion-2026": {
+      "name": "Universidad Católica · Observatorio de la Costa, Reñaca and Bahía de Concón erosion (regional, not break-specific)",
+      "url": "https://www.uc.cl/noticias/estudio-del-centro-uc-observatorio-de-la-costa-alerta-aceleracion-de-erosion-en-playas-chilenas/",
+      "type": "university_coastal_monitoring",
+      "reviewed": "2026-10-26"
     }
   }
 }
