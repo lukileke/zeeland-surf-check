@@ -61,3 +61,14 @@ Vocabulario de Chile: Glassy, Suavecitas, Picadas, Potentes, Líneas limpias y M
 3. Mantener separado el nivel territorial de SENAPRED y evitar duplicar advertencias de un mismo evento: https://senapred.cl/alertas/
 4. Probar errores de red, avisos obsoletos, cambio de huso horario, área equivocada y no contaminación con KNMI de Países Bajos.
 5. No incorporar UV al score de calidad de surf: es información para protección personal y planificación, no evidencia de calidad de la ola.
+
+
+## Investigación de integración oficial · 26 octubre 2026
+
+- **DMC / CAP:** el registro de autoridades alertadoras de la OMM lista `https://archivos.meteochile.gob.cl/portaldmc/rss/rss.php` para la DMC. La consulta directa no proporcionó una respuesta técnica accesible y verificable. Sigue siendo un **candidato de integración**, no un feed probado ni evidencia de la presencia/ausencia de una alerta.
+- **Armada / SERVIMET:** el índice oficial de bajo ancho de banda, `https://web.directemar.cl/met/jturno/indice/index.htm`, lista avisos especiales, de mal tiempo, temporal y marejadas por centro meteorológico (Valparaíso incluido). La estructura operativa, cobertura exacta, expiración y permisos de ingesta automatizada siguen pendientes. No inferir que no existe aviso a partir de páginas vacías o fallos de red.
+- **SENAPRED:** conservar consulta territorial manual hasta disponer de una fuente estructurada verificada con identificadores, jurisdicción y periodo de vigencia.
+- **SHOA:** enlazar al portal oficial de pronósticos de marea, sin usar `sea_level_height_msl` de Open-Meteo como sustituto de una predicción SHOA o como marea óptima de cada banco.
+- **UV costero:** las páginas de la Universidad de Valparaíso de La Boca y Reñaca Norte representan pronósticos costeros a aproximadamente 20 m de profundidad. Son **modelos externos**, no avisos oficiales de marejadas, una batimetría medida por FARO ni alturas observadas de rompiente. Requieren acuerdos de ingesta/atribución si se integran numéricamente.
+
+**Puerta de lanzamiento:** se necesita una fuente accesible y autorizada, normalización de tiempo y geometría, revocación/expiración comprobadas, pruebas de falsos positivos/negativos y separación de severidades oficiales vs. heurísticas FARO antes de enseñar «alerta activa» o «sin alertas».
