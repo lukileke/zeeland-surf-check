@@ -27,7 +27,7 @@
 - If no valid marine grid point exists, do not invent one. Provide an honest coordinate-based schematic and text-only bearings.
 - Cite model source, selected date and local time, grid-to-coast distance and separate total waves, primary swell, windsea and optional secondary/tertiary swell components. Never linearly sum swell heights.
 - Coastline geometry, sandbars, bathymetry, refraction, real breaking height and live camera observations are **NOT implemented** by this map.
-- Use map tiles only when user explicitly expands map; retain attributions and usage limits. Do not treat this demo as calibrated coastal hydrodynamics.
+- The geolocated map initialises when its details section is open. On mobile it remains collapsed until requested; on desktop (≥1120px) the interface currently opens it automatically, so desktop may fetch OSM tiles at page load. Retain attribution and usage limits; replace public OSM tiles with a production-licensed provider before larger-scale use. Do not treat this map as calibrated coastal hydrodynamics.
 
 ## Regression commands
 ```sh
