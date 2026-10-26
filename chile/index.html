@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102427">
+<meta name="description" content="FARO Chile: atlas regional de spots y laboratorio experimental de compatibilidad de viento y swell. No ofrece pronósticos en tiempo real en Chile.">
+<title>FARO Chile · Atlas de spots</title>
+<script>
+try{
+ var favTheme=localStorage.getItem("zeeland-theme");
+ if(favTheme==="light"||favTheme==="dark")document.documentElement.dataset.theme=favTheme;
+ else if(window.matchMedia?.("(prefers-color-scheme:light)").matches)document.documentElement.dataset.theme="light";
+}catch(e){}
+</script>
+<link rel="stylesheet" href="chile-hub.css?v=1">
+</head>
+<body>
+<main class="shell">
+<header class="masthead">
+ <div>
+  <p class="logo-meta">SURF RESEARCH · CHILE</p>
+  <picture>
+   <source media="(prefers-color-scheme: light)" srcset="../assets/faro-logo.svg">
+   <img class="logo-art" id="faroLogo" src="../assets/faro-logo-dark.svg" alt="FARO" width="173" height="59">
+  </picture>
+ </div>
+ <div class="faro-tools">
+  <button type="button" id="langButton" aria-label="Change language">EN</button>
+  <button type="button" id="themeButton" aria-label="Switch between light and dark">☀ Claro</button>
+ </div>
+</header>
+<nav class="switch" aria-label="Choose FARO forecast country">
+ <a href="../"><span>ZEELAND</span><small>LIVE</small></a>
+ <a href="./" aria-current="page"><span>CHILE</span><small>BETA</small></a>
+</nav>
+<section class="hero" aria-labelledby="heroTitle">
+ <div>
+  <p class="eyebrow" data-es="FARO ATLAS · REGIÓN POR REGIÓN" data-en="FARO ATLAS · REGION BY REGION">FARO ATLAS · REGIÓN POR REGIÓN</p>
+  <h1 id="heroTitle" data-es="Chile, spot por spot." data-en="Chile, spot by spot.">Chile, spot por spot.</h1>
+  <p class="hero-description" data-es="El mismo swell puede producir olas muy distintas. Estamos construyendo una lectura específica para cada rompiente: exposición, viento, fondo, marea y carácter de la ola, respaldada por fuentes y observaciones." data-en="The same swell can produce very different surf. We are building source-linked local knowledge for each break: exposure, wind, seabed, tide and wave character.">El mismo swell puede producir olas muy distintas. Estamos construyendo una lectura específica para cada rompiente: exposición, viento, fondo, marea y carácter de la ola, respaldada por fuentes y observaciones.</p>
+ </div>
+ <div class="hero-side" aria-label="Chile research progress">
+  <div class="big-stat"><strong id="regionCount">—</strong><span data-es="REGIONES" data-en="REGIONS">REGIONES</span></div>
+  <div class="big-stat"><strong id="spotCount">—</strong><span data-es="LUGARES CANDIDATOS" data-en="CANDIDATE SPOTS">LUGARES CANDIDATOS</span></div>
+  <div class="big-stat"><strong id="pilotCount">—</strong><span data-es="PERFILES DE PRUEBA" data-en="EXPERIMENTAL PROFILES">PERFILES DE PRUEBA</span></div>
+  <div class="big-stat"><strong style="font-size:24px;color:var(--sun)">BETA</strong><span data-es="SIN MODELO EN VIVO" data-en="NOT LIVE">SIN MODELO EN VIVO</span></div>
+ </div>
+</section>
+<section class="availability" aria-label="Chile forecast data status">
+ <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5m0 4v.01"/></svg>
+ <div>
+  <strong data-es="Chile está disponible como atlas y laboratorio, no como pronóstico en vivo." data-en="Chile is available as a research atlas and lab, not as a live forecast.">Chile está disponible como atlas y laboratorio, no como pronóstico en vivo.</strong>
+  <p data-es="Los perfiles de viento/swell son referencias publicadas aún sin calibrar. Ningún score experimental representa la ola que rompe hoy ni una autorización de acceso." data-en="Wind and swell windows come from published guides and are not calibrated. Experimental scores never represent today's breaking wave or a safety clearance.">Los perfiles de viento/swell son referencias publicadas aún sin calibrar. Ningún score experimental representa la ola que rompe hoy ni una autorización de acceso.</p>
+ </div>
+</section>
+<section aria-labelledby="featuredTitle">
+ <div class="section-title">
+  <h2 id="featuredTitle" data-es="Primera prioridad: La Boca" data-en="First focus: La Boca">Primera prioridad: La Boca</h2>
+  <span data-es="CONCÓN · REGIÓN DE VALPARAÍSO" data-en="CONCÓN · VALPARAÍSO REGION">CONCÓN · REGIÓN DE VALPARAÍSO</span>
+ </div>
+ <article class="featured">
+  <div>
+   <p class="eyebrow" data-es="SPOT DNA · DESEMBOCADURA DEL ACONCAGUA" data-en="SPOT DNA · ACONCAGUA RIVER MOUTH">SPOT DNA · DESEMBOCADURA DEL ACONCAGUA</p>
+   <h3>La Boca de Concón</h3>
+   <p data-es="Los bancos de arena pueden cambiar con los sedimentos y el río. Las referencias de viento y swell son orientativas: necesitamos verificar la respuesta de la ola en cada sector y las condiciones de acceso junto al humedal protegido." data-en="Sandbars can change with river sediment. Published wind and swell windows are preliminary: local wave response, exact sector geometry and access near the protected wetland still require verification.">Los bancos de arena pueden cambiar con los sedimentos y el río. Las referencias de viento y swell son orientativas: necesitamos verificar la respuesta de la ola en cada sector y las condiciones de acceso junto al humedal protegido.</p>
+   <div class="actions">
+    <a class="action" href="lab.html?spot=CL-VS%3Ala-boca-concon"><span data-es="Probar FARO LAB" data-en="Explore FARO LAB">Probar FARO LAB</span>&nbsp; ↗</a>
+    <a class="text-link" href="VALPARAISO_SPOT_DNA.md" data-es="Ver investigación del spot" data-en="Read spot research">Ver investigación del spot</a>
+   </div>
+   <p class="caption" data-es="Atención: corrientes, bancos móviles y normativa del humedal. No se evalúan automáticamente condiciones de seguridad." data-en="Attention: currents, shifting sandbars and wetland restrictions. Water-entry safety is not automatically assessed.">Atención: corrientes, bancos móviles y normativa del humedal. No se evalúan automáticamente condiciones de seguridad.</p>
+  </div>
+  <div class="fact-list">
+   <div class="fact"><span data-es="Tipo de rompiente" data-en="Break type">Tipo de rompiente</span><strong data-es="Desembocadura / arena" data-en="River mouth / sand">Desembocadura / arena</strong></div>
+   <div class="fact"><span data-es="Swell (guía)" data-en="Swell (guide)">Swell (guía)</span><strong>O–NO / W–NW</strong></div>
+   <div class="fact"><span data-es="Viento (guía)" data-en="Wind (guide)">Viento (guía)</span><strong>E · SE · S</strong></div>
+   <div class="fact"><span data-es="Marea" data-en="Tide">Marea</span><strong data-es="Sin óptimo validado" data-en="No verified optimum">Sin óptimo validado</strong></div>
+   <div class="fact"><span data-es="Estado" data-en="Research status">Estado</span><strong data-es="Guías; falta calibración" data-en="Guide-based; uncalibrated">Guías; falta calibración</strong></div>
+  </div>
+ </article>
+</section>
+<section id="atlas" aria-labelledby="atlasTitle">
+ <div class="browser-header">
+  <div>
+   <p class="eyebrow" data-es="ATLAS NACIONAL" data-en="NATIONAL SURF ATLAS">ATLAS NACIONAL</p>
+   <h2 id="atlasTitle" data-es="Explora por región" data-en="Explore by region">Explora por región</h2>
+  </div>
+  <div class="filters">
+   <label><span data-es="Región" data-en="Region">Región</span><select id="regionSelect" aria-label="Choose Chilean region"><option value="CL-VS">Valparaíso</option></select></label>
+   <label><span data-es="Buscar spot" data-en="Search spots">Buscar spot</span><input type="search" id="spotSearch" autocomplete="off" placeholder="Concón, Reñaca, La Boca…" data-es-placeholder="Concón, Reñaca, La Boca…" data-en-placeholder="Concón, Reñaca, La Boca…"></label>
+  </div>
+ </div>
+ <p id="spotSummary" class="list-summary" role="status" aria-live="polite" data-es="Cargando el atlas…" data-en="Loading surf atlas…">Cargando el atlas…</p>
+ <div id="spotGrid" class="spot-grid" aria-label="Regional surf spots"></div>
+ <button id="moreSpots" class="more" type="button" hidden data-es="Mostrar más spots" data-en="Show more spots">Mostrar más spots</button>
+</section>
+<section class="process" aria-labelledby="nextTitle">
+ <h2 id="nextTitle" data-es="De la guía al pronóstico." data-en="From local guide to forecast.">De la guía al pronóstico.</h2>
+ <div class="process-row">
+  <div class="step"><strong data-es="01 · Geografía real" data-en="01 · Verified geography">01 · Geografía real</strong><p data-es="Delimitar bancos y rompientes, acceso y orientación de la costa." data-en="Confirm sandbanks, break points, access and coastline orientation.">Delimitar bancos y rompientes, acceso y orientación de la costa.</p></div>
+  <div class="step"><strong data-es="02 · Modelos y observaciones" data-en="02 · Models and observations">02 · Modelos y observaciones</strong><p data-es="Comparar datos UV y marinos con registros de sesiones. Separar offshore de ola rompiente." data-en="Compare UV and marine models against observed sessions. Separate offshore waves from breaking surf.">Comparar datos UV y marinos con registros de sesiones. Separar offshore de ola rompiente.</p></div>
+  <div class="step"><strong data-es="03 · Calibración del score" data-en="03 · Score calibration">03 · Calibración del score</strong><p data-es="Validar FARO Spot Fit, VIBE y calidad antes de activar predicciones." data-en="Validate FARO Spot Fit, VIBE and quality before enabling forecasts.">Validar FARO Spot Fit, VIBE y calidad antes de activar predicciones.</p></div>
+ </div>
+ <div class="actions"><a href="LA_BOCA_PILOT_PLAN.md" class="text-link" data-es="Ver hoja de ruta de La Boca" data-en="Read La Boca roadmap">Ver hoja de ruta de La Boca</a><a href="field-observations-template.csv" class="text-link" data-es="Plantilla de observaciones" data-en="Field observation template">Plantilla de observaciones</a></div>
+</section>
+<footer><span>FARO · CHILE BETA — </span><span data-es="Catálogo de investigación, sin evaluación de seguridad." data-en="Research catalog, without safety assessment.">Catálogo de investigación, sin evaluación de seguridad.</span> <a href="../" data-es="Volver a Zeeland" data-en="Return to Zeeland">Volver a Zeeland</a>.</footer>
+</main>
+<script defer src="chile-hub.js?v=1"></script>
+</body>
+</html>
