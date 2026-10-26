@@ -23,7 +23,7 @@ The redesigned layout uses an unobtrusive quality rail, larger score typography,
 - **FLOW** (default): FARO VIBE, bold numeric score, five-stage quality meter, an expressive coastal look
 - **MINIMAL**: strong score and essentials with minimal commentary
 - **DATA**: wave height, period and wind with marine SF Symbols
-- **WEEK**: next daylight surf opportunities, best in the large square
+- **WEEK**: next daylight surf opportunities with score and modelled wave height, best in the large square
 
 ## Configure
 
@@ -64,8 +64,8 @@ When running the script from within Scriptable, append `SIZE=SMALL`, `SIZE=MEDIU
 
 ## Data and limitations
 
-- Forecasts come from Open-Meteo. Wave, period and wind values are **model predictions, not beach observations**.
-- Score colours now use five quality bands shared with the website: copper (0–<2), amber (2–<4), golden sand (4–<6), lime (6–<8), and olive (8–10). The numerical score calculation is unchanged. Large numerals use brighter matching tints in dark mode and legible ink tints in light mode.
+- Forecasts come from Open-Meteo. Height shown in the widget is **modelled total wave height**, NOT the wave height that breaks on a specific sandbank. Period is the modelled mean wave period; a separate primary-swell map is a future feature. All readings are forecasts, not beach observations.
+- Score colours now use five quality bands shared with the website: copper (0–<2), amber (2–<4), golden sand (4–<6), lime (6–<8), and olive (8–10). The numerical score calculation is unchanged. Score numerals use **exactly the same five colours in light and dark**; only the background, body text and contextual elements change.
 - The user-facing Poor / Fair / Good labels follow their own verbal thresholds.
 - Weather safety warnings take priority over stylistic commentary, but do **not** substitute for official alerts and visual checks at the spot.
 - iOS controls when widgets refresh. A 30-minute requested refresh does **not** guarantee 30-minute updates.
