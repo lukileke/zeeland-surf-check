@@ -97,6 +97,9 @@ function fixture(){
    await page.locator('#navForecast').click();
    await page.locator('#languageToggle').click();
    assert.equal(await page.locator('html').getAttribute('lang'),'en');
+   assert.equal(await page.locator('#rise').count(),1,'Translation must preserve sunrise value element');
+   assert.equal(await page.locator('#set').count(),1,'Translation must preserve sunset value element');
+   assert.equal(await page.locator('#cutoff').count(),1,'Translation must preserve daylight cut-off element');
    await page.locator('#themeToggle').click();
    assert.equal(scriptErrors.length,0,'No runtime errors during locale/theme/tab changes');
    await context.close();
