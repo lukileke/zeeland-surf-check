@@ -1,16 +1,23 @@
-/* FARO / Tide-to-Olive palette · v1 (25 October 2026)
- * Five evenly spaced QUALITY bands. This is a display scale, not a change
- * to surf-engine.js or the distinct Poor/Fair/Good vocabulary.
- * On light backgrounds, number inks meet large-text contrast (>=3:1).
- * On dark, the colours are brighter but the hue identities are unchanged.
- * Coral is exclusively reserved for model hazards.
+/* FARO / Tide-to-Olive palette v2 (26 October 2026).
+ * One coherent 5-band quality scale across web and widget.
+ * DAY inks are more chromatic (gold and surf lime, not grey-mustard);
+ * NIGHT inks are IDENTICAL to the previous approved dark theme.
+ * The continuous /10 rating and the separate label vocabulary are unchanged.
+ * Risk warnings keep their own coral / hazard styling.
  */
 :root{
+ /* Existing swatches remain for dark-mode borders and any legacy rules. */
  --score-copper:#C46639;
  --score-amber:#BA7C31;
  --score-sand:#9C8431;
  --score-lime:#6E9E43;
  --score-olive:#547642;
+ /* New daylight inks: visual similarity to dark palette, >=3:1 on #F7FAFA. */
+ --score-copper-day:#C26436;
+ --score-amber-day:#BB7820;
+ --score-sand-day:#B68900;
+ --score-lime-day:#689D22;
+ --score-olive-day:#4E7F28;
  --score-copper-night:#F0A46D;
  --score-amber-night:#F0BF69;
  --score-sand-night:#E3D471;
@@ -23,19 +30,19 @@
  --brand-score-high:var(--score-olive);
 }
 html[data-theme="light"] .brand-band-verylow{
- --brand-score-color:var(--score-copper);--brand-score-ink:var(--score-copper);
+ --brand-score-color:var(--score-copper-day);--brand-score-ink:var(--score-copper-day);
 }
 html[data-theme="light"] .brand-band-low{
- --brand-score-color:var(--score-amber);--brand-score-ink:var(--score-amber);
+ --brand-score-color:var(--score-amber-day);--brand-score-ink:var(--score-amber-day);
 }
 html[data-theme="light"] .brand-band-mid{
- --brand-score-color:var(--score-sand);--brand-score-ink:var(--score-sand);
+ --brand-score-color:var(--score-sand-day);--brand-score-ink:var(--score-sand-day);
 }
 html[data-theme="light"] .brand-band-regular{
- --brand-score-color:var(--score-lime);--brand-score-ink:var(--score-lime);
+ --brand-score-color:var(--score-lime-day);--brand-score-ink:var(--score-lime-day);
 }
 html[data-theme="light"] .brand-band-high{
- --brand-score-color:var(--score-olive);--brand-score-ink:var(--score-olive);
+ --brand-score-color:var(--score-olive-day);--brand-score-ink:var(--score-olive-day);
 }
 html:not([data-theme="light"]) .brand-band-verylow{
  --brand-score-color:var(--score-copper);--brand-score-ink:var(--score-copper-night);
@@ -87,3 +94,41 @@ html:not([data-theme="light"]) #dayview .slots button[class*="brand-band-"] b{
 /* Metric identity and safety identity are separate from quality. */
 #forecastPage #dailyOverview .day-signal-metric:first-child strong{color:var(--faro-wave)!important}
 #forecastPage #dailyOverview .best-time{color:var(--faro-selection)!important}
+
+/* The legacy tone-* CSS sets colour directly. Score-specific rules must
+ * override it to prevent washed-out green/yellow on white backgrounds.
+ * These are deliberately restricted to components with an explicit band.
+ */
+html[data-theme="light"] :is(#forecastPage,#dayview,#bestPage,#boardPage)
+ :is(.score,.score-tint,.hero-score,.score-feature,.day-chip)[class*="brand-band-"]{
+ --tone:var(--brand-score-ink)!important;
+ --quality-ink:var(--brand-score-ink)!important;
+ --quality-accent:var(--brand-score-color)!important;
+}
+html[data-theme="light"] :is(#forecastPage,#dayview,#bestPage,#boardPage)
+ .score[class*="brand-band-"],
+html[data-theme="light"] :is(#forecastPage,#dayview,#bestPage,#boardPage)
+ .score-tint[class*="brand-band-"],
+html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"]>strong,
+html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"] .day-chip-score,
+html[data-theme="light"] #dayview .session-glance .hero-score[class*="brand-band-"] .hero-score-value,
+html[data-theme="light"] #bestPage .hero-rank .hero-score[class*="brand-band-"] .hero-score-value,
+html[data-theme="light"] #dayview .hourly-section .slots button[class*="brand-band-"]>b,
+html[data-theme="light"] #boardPage .faro-result-scores .score-tint[class*="brand-band-"]{
+ color:var(--brand-score-ink)!important;
+ background-color:transparent!important;
+ box-shadow:none!important;
+}
+html[data-theme="light"] #forecastPage .day-chip.selected[class*="brand-band-"] .day-chip-grade,
+html[data-theme="light"] #dayview .session-glance .hero-score[class*="brand-band-"] .quality-pill,
+html[data-theme="light"] #bestPage .hero-rank .hero-score[class*="brand-band-"] .quality-pill{
+ border-color:var(--brand-score-color)!important;
+ background:color-mix(in srgb,var(--brand-score-color) 11%,#fff)!important;
+ color:var(--fg)!important;
+}
+/* Keep the main card entirely clean: only numbers and tiny strokes carry
+ * quality hues, not the selected card's background.
+ */
+html[data-theme="light"] #forecastPage .day-chip.selected[class*="brand-band-"]{
+ background:#fff!important;
+}
