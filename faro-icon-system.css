@@ -10,3 +10,66 @@
 #forecastPage .forecast-accordion-title{font-family:var(--faro-text,Manrope,system-ui);font-weight:800}
 .faro-map-shortcuts a,.faro-map-shortcuts button{text-decoration:none}
 @media(prefers-reduced-motion:reduce){.faro-svg-icon{transition:none!important}}
+
+/* Editorial refinement: a single information group, not three competing cards.
+   Primary visual hierarchy: wave figure; supporting period and wind; then context. */
+#forecastPage #daySignalMetrics{
+ display:grid!important;gap:0!important;align-items:stretch!important;
+ background:var(--tile);border:1px solid var(--faro-line);border-radius:13px;
+ overflow:hidden;margin:17px 0 9px!important;min-width:0
+}
+#forecastPage #daySignalMetrics>.day-signal-metric{
+ border:0!important;border-radius:0!important;min-width:0;
+ padding:14px 12px!important;min-height:108px!important
+}
+#forecastPage #daySignalMetrics>.chile-day-wave-feature{
+ border:0!important;background:transparent!important;gap:5px!important
+}
+#forecastPage #daySignalMetrics>.day-signal-metric:not(:first-child){
+ display:flex;align-items:center;justify-content:center;
+ border-left:1px solid var(--faro-line)!important;
+}
+#forecastPage #daySignalMetrics>.day-signal-metric:not(:first-child) .day-signal-figure{
+ width:100%;display:grid;gap:6px;
+}
+#forecastPage #daySignalMetrics>.day-signal-metric:not(:first-child) strong{
+ font-family:var(--faro-text,Manrope,system-ui);font-weight:800;
+ font-variant-numeric:tabular-nums;line-height:1.17;
+}
+#forecastPage #daySignalMetrics .chile-wave-feature-number{
+ display:flex;align-items:baseline;column-gap:8px;row-gap:2px;
+}
+#forecastPage #daySignalMetrics .chile-wave-feature-head small,
+#forecastPage #daySignalMetrics .day-signal-figure small{
+ font-size:10px!important;font-weight:800;letter-spacing:.035em
+}
+#forecastPage #daySignalMetrics .day-signal-icon{display:none!important}
+#forecastPage #chileWaveExplain{margin-top:7px!important}
+#forecastPage #chileWaveExplain summary{font-size:11px!important;
+ text-decoration:none!important;border-bottom:1px solid currentColor;display:inline;
+ cursor:pointer;line-height:1.55}
+#forecastPage .faro-vibe-brand,#forecastPage .faro-map-spot{letter-spacing:.025em}
+#forecastPage .chile-vibe-summary{justify-content:space-between}
+#forecastPage .chile-vibe-help{font-weight:650;opacity:.9}
+#forecastPage #dayview .forecast-expand>summary{cursor:pointer}
+#forecastPage #dayview .forecast-expand>summary:hover .forecast-accordion-title{
+ color:var(--faro-ocean)
+}
+#forecastPage .chile-vibe-details:focus-visible,
+#forecastPage details>summary:focus-visible,
+#forecastPage button:focus-visible{
+ outline:2px solid var(--faro-ocean);outline-offset:3px
+}
+#forecastPage .chile-method-disclaimer{padding-top:18px;margin-top:28px}
+#forecastPage .chile-method-disclaimer>summary{font-weight:750;letter-spacing:.01em}
+@media(max-width:700px){
+ #forecastPage #daySignalMetrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #forecastPage #daySignalMetrics>.chile-day-wave-feature{grid-column:1/-1;
+  border-bottom:1px solid var(--faro-line)!important}
+ #forecastPage #daySignalMetrics>.day-signal-metric:nth-child(2){
+  border-left:0!important
+ }
+ #forecastPage #daySignalMetrics>.day-signal-metric:not(:first-child){min-height:83px!important;
+  justify-content:flex-start}
+ #forecastPage #daySignalMetrics>.day-signal-metric{padding:11px 14px!important}
+}
