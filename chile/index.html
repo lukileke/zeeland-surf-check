@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../faro-spot-signals.css?v=1">
 <link rel="stylesheet" href="../faro-desktop.css?v=1">
 <link rel="stylesheet" href="../faro-country.css?v=1">
-<link rel="stylesheet" href="chile-forecast.css?v=3">
+<link rel="stylesheet" href="chile-forecast.css?v=4">
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=2">
 </head>
 <body>
@@ -74,11 +74,6 @@
    </div>
   </details>
  </section>
- <div class="chile-model-provenance" role="note">
-  <span class="chile-model-dot" aria-hidden="true"></span><strong data-es="MODELO ACTUALIZADO · SCORE EXPERIMENTAL" data-en="UPDATED MODEL · EXPERIMENTAL SCORE">MODELO ACTUALIZADO · SCORE EXPERIMENTAL</strong>
-  <span data-es="Altura offshore ≠ altura rompiente. Falta calibrar cada banco." data-en="Offshore height ≠ breaking surf height. Local sandbanks remain uncalibrated.">Altura offshore ≠ altura rompiente. Falta calibrar cada banco.</span>
- </div>
-
  <div id="forecastPage">
   <div class="forecast-toolbar">
    <div class="forecast-updated"><span class="live-indicator" aria-hidden="true"></span><span class="forecast-updated-label" id="updated" role="status" aria-live="polite">Conectando al modelo…</span></div>
@@ -155,6 +150,10 @@
     <summary><span class="forecast-accordion-title" data-es="📍 Spot DNA · Identidad del spot" data-en="📍 Spot DNA · Local break profile">📍 Spot DNA · Identidad del spot</span><span id="spotInsightContextTag" class="forecast-accordion-meta" data-es="Condiciones y carácter" data-en="Local character">Condiciones y carácter</span></summary>
     <div id="spotinsight" class="insight-panel"><p class="muted">—</p></div>
    </details>
+   <details id="cameraExpand" class="forecast-expand">
+    <summary><span class="forecast-accordion-title" data-es="📷 Mira el spot · cámaras" data-en="📷 See the surf · cameras">📷 Mira el spot · cámaras</span><span class="forecast-accordion-meta" data-es="Vistas externas · sin captura automática" data-en="External views · no auto capture">Vistas externas · sin captura automática</span></summary>
+    <div class="insight-panel" id="chileCameraSources">—</div>
+   </details>
    <details id="waveInsightExpand" class="forecast-expand">
     <summary><span class="forecast-accordion-title" data-es="🌊 Swell Compass" data-en="🌊 Swell Compass">🌊 Swell Compass</span><span class="forecast-accordion-meta" data-es="Direcciones y componentes" data-en="Directions & components">Direcciones y componentes</span></summary>
     <div id="waveinsight" class="insight-panel"><p class="muted">—</p></div>
@@ -175,6 +174,11 @@
     </div>
    </details>
   </div>
+  <details class="chile-method-disclaimer">
+   <summary data-es="Fuentes y límites del pronóstico" data-en="Forecast sources and limitations">Fuentes y límites del pronóstico</summary>
+   <p data-es="FARO combina pronósticos de Open-Meteo y referencias locales de surf. La altura oceánica no es la altura de rompiente; el índice no está calibrado con observaciones de cada banco. La marea, las corrientes, la contaminación y los avisos oficiales requieren comprobación independiente. Una cámara visible gratis no autoriza su uso para entrenar IA."
+      data-en="FARO combines Open-Meteo forecasts with published local surf guidance. Offshore wave height is not breaking-wave height, and the index lacks local sandbank calibration. Check tide, currents, water quality and official notices independently. Free-to-view cameras are not licensed AI training data.">FARO combina pronósticos de Open-Meteo y referencias locales de surf. La altura oceánica no es la altura de rompiente; el índice no está calibrado con observaciones de cada banco. La marea, las corrientes, la contaminación y los avisos oficiales requieren comprobación independiente. Una cámara visible gratis no autoriza su uso para entrenar IA.</p>
+  </details>
  </div>
  <section id="bestPage" class="hide">
   <div class="best-intro"><small data-es="DESCUBRE · VALPARAÍSO" data-en="DISCOVER · VALPARAÍSO">DESCUBRE · VALPARAÍSO</small><h2 data-es="Lo mejor de la semana" data-en="Best of the Week">Lo mejor de la semana</h2><p class="muted" data-es="Dónde y cuándo puede valer la pena revisar el mar. Índice experimental de compatibilidad local, no surf observado." data-en="Where and when conditions may be worth checking. Experimental local fit, not observed surf.">Dónde y cuándo puede valer la pena revisar el mar. Índice experimental de compatibilidad local, no surf observado.</p></div>
@@ -204,6 +208,6 @@
 <script src="faro-chile-live.js?v=3"></script>
 <script src="faro-physics-lab.js?v=1"></script>
 <script src="faro-spot-intelligence.js?v=2"></script>
-<script src="chile-forecast.js?v=7"></script>
+<script src="chile-forecast.js?v=8"></script>
 </body>
 </html>
