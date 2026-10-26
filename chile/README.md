@@ -8,6 +8,8 @@ The first priority is **La Boca de Concón**, the Aconcagua river-mouth beach. T
 
 **[Open the interactive FARO Lab: Valparaíso](lab.html)** to enter hypothetical wave/wind parameters and compare La Boca, Ritoque, Reñaca, Maitencillo and Papagayo. It is **not a live forecast** and does not change Zeeland's model. It produces experimental, visibly capped /10 compatibility values, FARO VIBE, tags, and source-attributed local readings. Changing [`valparaiso-score.config.json`](valparaiso-score.config.json) will change the model rules without rewriting the UI; `valparaiso-score-lab.js` holds the independent interpreter.
 
+**Next operational document:** [La Boca controlled pilot, observations and Chile launch gates](LA_BOCA_PILOT_PLAN.md) · [empty field observation template](field-observations-template.csv). The UV provides nearshore model outlooks around 20 m in the bay of Concón and around Reñaca, but not observed surf height at the breaking peak.
+
 Before release, validate all regional parameters against observed surf at the named bank, check local legal restrictions and coastal warning sources, and only then assess a true forecast score. Run the [regression tests](test-valparaiso-score.js) with `node chile/test-valparaiso-score.js`.
 
 ## Structure
