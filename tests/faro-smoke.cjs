@@ -268,7 +268,8 @@ function fakeNode(tag){
  return {tagName:tag,children:[],attrs:{},className:'',textContent:'',
    append(...children){this.children.push(...children)},
    replaceChildren(...children){this.children=children},
-   setAttribute(name,value){this.attrs[name]=value}
+   setAttribute(name,value){this.attrs[name]=value},
+   addEventListener(type,callback){(this.listeners||(this.listeners={}))[type]=callback}
  };
 }
 const fakeDocument={createElement:fakeNode},viewContext={};
@@ -289,7 +290,11 @@ assert.ok(summary.children[2].textContent.includes('not official alert'),'No mis
 assert.ok(expanded.children.some(x=>x.tagName==='ul'),'Reasons are available on expansion');
 assert.ok(expanded.children.some(x=>x.textContent.includes('Not updated live')),
  'Dated bulletin is explicitly not a live feed');
-assert.equal(expanded.children.at(-1).href,safety.KNMI_URL,'Official KNMI link in expanded panel');
+const safetyActions=expanded.children.at(-1);
+assert.equal(safetyActions.tagName,'div','Safety footer groups official and method links');
+assert.equal(safetyActions.children[0].href,safety.KNMI_URL,'Official KNMI link is visible in expanded panel');
+assert.equal(safetyActions.children[1].href,'#faroSafetyGuide','Full-methodology link stays accessible');
+assert.equal(typeof safetyActions.children[1].listeners.click,'function','Methodology disclosure has an event handler');
 
 // A legacy country value may be present in localStorage but must not alter NL warnings.
 const legacyStore=new Map([['faro-alert-country','CL'],['zeeland-language','es']]);
