@@ -290,8 +290,10 @@ function renderCameras(){
   const availability=cam.viewerAccess==="free_account_required"?
    tr("Gratis · exige iniciar sesión","Free · sign-in required"):
    cam.viewerAccess==="premium_subscription"?tr("Premium · suscripción","Premium · subscription"):
-   cam.viewerAccess==="public_page_currently_offline"?tr("Señal no confirmada · figuraba offline","Feed not confirmed · shown offline"):
-   tr("Vista regional, no La Boca · disponibilidad no confirmada","Regional view, not La Boca · unverified");
+   cam.viewerAccess==="public_page_currently_offline"?tr("Señal no confirmada · figuraba offline","Feed unverified · previously offline"):
+   cam.viewerAccess==="public_youtube_no_account"?tr("YouTube público · emisión actual no verificada","Public YouTube · live status not checked"):
+   cam.viewerAccess==="public_page_unverified"?tr("Página abierta · señal no comprobada","Public page · feed not checked"):
+   tr("Vista regional · transmisión no verificada","Regional context · unverified feed");
   row.append(el("strong",cam.name),el("small",availability));
   if(/^https:\/\//.test(cam.page)){
    const a=el("a",tr("Ver cámara en origen ↗","Open provider's camera ↗"));
