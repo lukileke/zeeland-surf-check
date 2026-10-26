@@ -109,12 +109,13 @@ async function officialFaroLogo(){
  }
 }
 let ORIGINAL_FARO_IMAGE=null;
+/* Match the five FARO numeric score bands across the site and widget. */
 function scoreInk(v){
- if(v<2)return palette("#F0A46D","#F0A46D");
- if(v<4)return palette("#F0BF69","#F0BF69");
- if(v<6)return palette("#E3D471","#E3D471");
- if(v<8)return palette("#B0DB75","#B0DB75");
- return palette("#96C67A","#96C67A");
+ if(v<2)return palette("#a94a33","#ef9b77");
+ if(v<4)return palette("#91601d","#efbd6e");
+ if(v<6)return palette("#79651b","#e0cc73");
+ if(v<8)return palette("#4c712b","#b1d574");
+ return palette("#2f6c43","#8cc584");
 }
 const widget=new ListWidget();
 widget.backgroundColor=C.bg;
