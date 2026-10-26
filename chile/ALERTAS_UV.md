@@ -44,3 +44,20 @@ Referencias: [OMS · UV](https://www.who.int/news-room/fact-sheets/detail/ultrav
 **P1** Implementar almacenamiento/cache y verificación automática con expiración; alertas retiradas deben desaparecer, pero no por error de red.
 **P2** Vincular marejadas a elementos costeros verificables sin inferir que una gran ola offshore implica marejada oficial, y sin convertir un score de surf alto en permiso de entrada.
 **P2** Contrastar UV horario con valores DMC cuando sea técnica y legalmente posible; documentar sesgo del modelo.
+
+
+## Actualización de interfaz · 26 octubre 2026
+
+FARO Valparaíso utiliza ahora una alerta compacta y expandible siguiendo la arquitectura de Zeeland. Las señales modeladas se separan por viento y rachas, tormentas eléctricas, y lluvia. El estado oficial de marejadas de la Armada sigue identificado explícitamente como no comprobado de forma automática; tampoco se equipara un UV modelado a un aviso oficial.
+
+El UV máximo diario también figura en el resumen del día y el índice horario sigue disponible en el detalle. La interfaz FARO VIBE muestra primero un tag desplegable y deja la explicación FARO READ y sus indicadores en el interior.
+
+Vocabulario de Chile: Glassy, Suavecitas, Picadas, Potentes, Líneas limpias y Mixed Bag. No usar vidriado ni cerrón. Campana solo podrá describir cierres observados o calibrados por banco y no inferirse automáticamente de la altura offshore.
+
+### Prioridades para avisos oficiales
+
+1. Verificar si Armada/DIRECTEMAR ofrece un feed oficial con condiciones de uso claras y vigencia por sector geográfico. Si no se puede consultar, mantener estado no comprobado y el enlace oficial: https://meteoarmada.directemar.cl/
+2. Investigar avisos de viento, lluvia, tormentas y UV en DMC, con fecha de publicación y cobertura: https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml
+3. Mantener separado el nivel territorial de SENAPRED y evitar duplicar advertencias de un mismo evento: https://senapred.cl/alertas/
+4. Probar errores de red, avisos obsoletos, cambio de huso horario, área equivocada y no contaminación con KNMI de Países Bajos.
+5. No incorporar UV al score de calidad de surf: es información para protección personal y planificación, no evidencia de calidad de la ola.
