@@ -8,8 +8,11 @@ const el=(tag,value,cls)=>{const x=document.createElement(tag);if(value!==undefi
 const txt=(id,value)=>{$(id).textContent=value},clear=id=>$(id).replaceChildren(),add=(x,...nodes)=>{x.append(...nodes);return x};
 const h=n=>String(n).padStart(2,"0");
 const band=n=>!ok(n)?"":n>=8?"brand-band-high":n>=6?"brand-band-regular":n>=4?"brand-band-mid":n>=2?"brand-band-low":"brand-band-verylow";
+// Exact score bands and colour classes from Zeeland. Spot-fit in Chile is
+// still experimental, so a quality label is NOT a validated beach observation.
+const scoreTone=n=>!ok(n)?"":(n>=8.5?"tone-great":n>=7?"tone-good":n>=5?"tone-fair":n>=3?"tone-poor":"tone-low")+" "+band(n);
 // These are *relative model signals*, never validated observed surf quality.
-const grade=n=>!ok(n)?tr("Sin datos","No data"):n<2?tr("Muy flojo","Very slow"):n<4?tr("Flojo","Slow"):n<6?tr("Variable","Mixed"):n<8?tr("Buena pinta","Looking good"):tr("Con potencial","Good potential");
+const grade=n=>!ok(n)?tr("Sin datos","No data"):n>=8.5?tr("Excelente","Excellent"):n>=7?tr("Bueno","Good"):n>=5?tr("Regular","Fair"):n>=3?tr("Malo","Poor"):tr("Muy malo","Very poor");
 const spot=()=>state.config?.pilots?.[state.selected], profile=()=>state.profiles?.profiles?.[spot()?.id];
 const regionRecord=()=>state.registry?.spots?.find(s=>s.id===spot()?.id);
 const localRead=(s,spotId=spot()?.id)=>window.FaroChileSpotIntelligence&&state.intelligence&&spotId?
@@ -285,11 +288,11 @@ function risk(hazard){
 function strip(){
  const days=state.forecast?.days||[],host=$("dayStripItems");host.replaceChildren();
  for(const [i,d]of days.entries()){
-  const s=bestRemaining(d),button=el("button",null,"day-chip score-tint "+(s?band(s.score):"")+(i===state.day?" selected":""));
+  const s=bestRemaining(d),button=el("button",null,"day-chip score-tint "+(s?scoreTone(s.score):"")+(i===state.day?" selected":""));
   button.type="button";button.setAttribute("aria-pressed",String(i===state.day));
   button.append(el("span",i===0?tr("Hoy","Today"):Live.formatDay(d.date,state.lang),"chile-chip-day"));
   button.append(el(s?"strong":"span",s?num(s.score):"—",s?"chile-chip-number":"chile-chip-empty"));
-  button.append(el("span",s?(localRead(s)?.decision?.shortLabel||grade(s.score)):tr("Sin ventana","No daylight window"),"chile-chip-grade"));
+  button.append(el("span",s?grade(s.score):tr("Sin ventana","No daylight window"),"chile-chip-grade"));
   button.append(el("small",s?sessionTime(s):tr("No evaluado","Not evaluated"),"chile-chip-time"));
   button.addEventListener("click",()=>{state.day=i;state.hour=null;render()});host.append(button);
  }
@@ -361,10 +364,11 @@ function slots(){
   const slotSafety=Live.slotRisk(s,state.config);
   const dangerous=slotSafety==="danger",unknownRisk=slotSafety==="unknown";
   const eligible=s.daylight.eligible&&ok(s.score)&&!dangerous&&!unknownRisk;
-  const button=el("button",null,(eligible?band(s.score):"chile-unavailable")+(selection()?.hour===s.hour?" selected":""));
+  const button=el("button",null,(eligible?scoreTone(s.score):"chile-unavailable")+(selection()?.hour===s.hour?" selected":""));
   button.type="button";button.setAttribute("aria-pressed",String(selection()?.hour===s.hour));button.disabled=!s.modelComplete;
   button.append(el("span",h(s.hour)+"–"+h(s.hour+2),"chile-slot-hour"));
   button.append(el("strong",eligible?num(s.score):"—","chile-slot-score"));
+ if(eligible)button.append(el("span",grade(s.score),"chile-slot-quality"));
   button.append(el("small",dangerous?tr("⚠ Riesgo modelo","⚠ Model risk"):unknownRisk?tr("⚠ Riesgo sin evaluar","⚠ Risk unassessed"):Live.slotRisk(s,state.config)==="caution"?tr("⚠ Precaución","⚠ Caution"):eligible?(localRead(s)?.decision?.shortLabel||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
@@ -418,10 +422,11 @@ function session(){
  main.replaceChildren();ess.replaceChildren();
  if(!s){main.append(el("p",tr("No hay ventana futura con luz y score experimental disponible. Puedes elegir manualmente otra franja.","No upcoming daylight window with experimental fit. Select another window to inspect model data."),"muted"));return}
  const top=el("div",null,"chile-session-head");
- const score=el("div",null,"chile-session-rating "+band(s.score));
+ const score=el("div",null,"chile-session-rating "+scoreTone(s.score));
  score.append(el("small",tr("COMPATIBILIDAD · MODELO","MODEL COMPATIBILITY"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
- score.append(big,el("span",localRead(s)?.decision?.shortLabel||grade(s.score),"chile-session-label"));
+ score.append(big,el("span",grade(s.score),"chile-session-label"));
+ score.append(el("small",tr("Índice modelado · experimental","Model estimate · experimental"),"chile-session-origin"));
  const wave=el("div",null,"chile-session-wave");
  wave.append(el("small",tr("ALTURA MODELO OFFSHORE","OFFSHORE MODEL HEIGHT")),el("strong",num(s.totalWaveHeightM)+" m"),el("small",tr("NO altura rompiente","NOT breaking wave height")));
  top.append(score,wave);main.append(top);
@@ -523,7 +528,7 @@ async function rankings(){
  txt("rankingstatus",tr("Compatibilidad modelada · sin calibrar","Modelled compatibility · uncalibrated"));
  if(!list.length){host.append(el("p",tr("Sin comparaciones suficientes por ahora.","Not enough comparable model values."),"muted"));return}
  for(const item of list.slice(0,12)){
-  const b=el("button",null,"highlight chile-ranking "+band(item.s.score));b.type="button";
+  const b=el("button",null,"highlight chile-ranking "+scoreTone(item.s.score));b.type="button";
   const line=el("div",null,"chile-rank-layout"),data=el("div");
   data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",(localRead(item.s,item.model.spot.id)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
   line.append(data,el("strong",num(item.s.score)));b.append(line);
