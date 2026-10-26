@@ -1,0 +1,65 @@
+name: FARO real ocean-observation model research
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'chile/research/train_ndbc_observation.py'
+      - 'chile/research/test_ndbc_observation.py'
+      - '.github/workflows/faro-wave-research-training.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'chile/research/train_ndbc_observation.py'
+      - 'chile/research/test_ndbc_observation.py'
+      - '.github/workflows/faro-wave-research-training.yml'
+  schedule:
+    - cron: '11 05 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: faro-research-buoy-training
+  cancel-in-progress: false
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python chile/research/test_ndbc_observation.py
+  train-real-noaa-observations:
+    needs: unit-tests
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Train solely on real NOAA NDBC 10-min observations
+        run: python chile/research/train_ndbc_observation.py --output /tmp/observed-height-model.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: faro-real-ndbc-observation-research
+          path: /tmp/observed-height-model.json
+          retention-days: 90
+      - name: Keep real measured result on separate research-data branch
+        run: |
+          git fetch origin faro-research-data
+          git switch -C faro-research-data origin/faro-research-data
+          mkdir -p research-data/buoys
+          cp /tmp/observed-height-model.json research-data/buoys/observed-height-model.json
+          git config user.name 'faro-ocean-learning[bot]'
+          git config user.email 'faro-ocean-learning[bot]@users.noreply.github.com'
+          git add research-data/buoys/observed-height-model.json
+          git diff --cached --quiet && exit 0
+          git commit -m "research: observed NOAA buoy 3h wave-height benchmark [skip ci]"
+          git pull --rebase origin faro-research-data
+          git push origin HEAD:faro-research-data
