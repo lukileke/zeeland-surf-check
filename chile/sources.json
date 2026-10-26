@@ -259,6 +259,27 @@
       "url": "https://www.uc.cl/noticias/estudio-del-centro-uc-observatorio-de-la-costa-alerta-aceleracion-de-erosion-en-playas-chilenas/",
       "type": "university_coastal_monitoring",
       "reviewed": "2026-10-26"
+    },
+    "lineup-la-boca-local-forecaster": {
+      "name": "Lineup / Max Petit-Breuilh · La Boca local swell character and cameras",
+      "url": "https://lineup.surf/es/news/la-boca-en-vivo-bienvenida-a-la-nueva-camara-en-concon-chile",
+      "type": "attributed-local-forecaster-editorial",
+      "reviewed": "2026-10-26",
+      "scope": "La Boca beach-level, not every bank",
+      "rights": "reference only, no copying"
+    },
+    "uv-wave-atlas": {
+      "name": "Universidad de Valparaíso · Atlas de Oleaje de Chile",
+      "url": "https://oleaje.uv.cl/index.html",
+      "type": "university-calibrated-wave-climatology",
+      "reviewed": "2026-10-26"
+    },
+    "lineup-la-boca-cam-1": {
+      "name": "Lineup / Boca Surf · La Boca free-account camera 1",
+      "url": "https://lineup.surf/es/spots/chile/valparaiso/concon/la-boca-concon-1758/camera1",
+      "type": "restricted-viewer-camera",
+      "reviewed": "2026-10-26",
+      "rights": "not licensed for training or copying"
     }
   }
 }
