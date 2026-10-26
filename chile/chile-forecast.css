@@ -149,3 +149,10 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 .chile-vibe-summary .chile-vibe-help{font-size:12px;font-weight:700;letter-spacing:0;color:var(--faro-quiet);flex:1;text-align:right;min-width:0}
 #chileVibeDetails .chile-vibe-more>.faro-read-title{display:block;font-size:clamp(18px,2.6vw,23px);margin:2px 0 9px;line-height:1.35;color:var(--fg)}
 @media(max-width:620px){.chile-vibe-summary .chile-vibe-help{font-size:11px;text-align:left}.chile-vibe-summary{flex-wrap:wrap}}
+
+/* UV is relevant before selecting a 2-hour surf window. */
+.chile-day-uv{display:flex;align-items:baseline;gap:12px 15px;flex-wrap:wrap;margin:10px 0 18px;padding:8px 11px;border-left:3px solid var(--faro-line);background:color-mix(in srgb,var(--tile) 74%,transparent);border-radius:0 9px 9px 0}
+.chile-day-uv #dayUVLabel{font-weight:850;font-size:12px;white-space:nowrap;color:var(--fg)}
+.chile-day-uv #dayUVAdvice{color:var(--faro-quiet);font-size:11px;line-height:1.45}
+.chile-day-uv[data-uv="high"],.chile-day-uv[data-uv="very-high"],.chile-day-uv[data-uv="extreme"]{border-left-color:#d28444}
+@media(max-width:620px){.chile-day-uv{margin:9px 0 16px;gap:5px 10px}.chile-day-uv #dayUVAdvice{font-size:10px}}
