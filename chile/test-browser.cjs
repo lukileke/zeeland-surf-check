@@ -76,6 +76,14 @@ function fixture(){
    }
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
+   const qualityOf=v=>v>=8.5?'Excelente':v>=7?'Bueno':v>=5?'Regular':v>=3?'Malo':'Muy malo';
+   const toneOf=v=>v>=8.5?'tone-great':v>=7?'tone-good':v>=5?'tone-fair':v>=3?'tone-poor':'tone-low';
+   const firstChip=page.locator('#dayStripItems .day-chip').first();
+   const displayedValue=Number(await firstChip.locator('.chile-chip-number').textContent());
+   assert.equal(await firstChip.locator('.chile-chip-grade').textContent(),qualityOf(displayedValue),
+    'Daily scores must use Zeeland score categories, not decisions');
+   assert.ok((await firstChip.getAttribute('class')).includes(toneOf(displayedValue)),
+    'Daily scores must use Zeeland colour band thresholds');
    await page.locator('#dayStripItems .day-chip').nth(1).click();
    // The 06:00 window has stronger wind than 08:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
@@ -85,6 +93,12 @@ function fixture(){
    assert.match(await page.locator('#chileVibeAction').textContent(),/Mejor candidata|Better option/i,
     'A poor slot must point to a grounded better upcoming forecast window');
    await page.locator('#slots button').nth(1).click();
+   const chosen=page.locator('#slots button').nth(1);
+   const hourlyScore=Number(await chosen.locator('.chile-slot-score').textContent());
+   assert.equal(await chosen.locator('.chile-slot-quality').textContent(),qualityOf(hourlyScore),
+    'Hourly score must show the same Zeeland quality caption');
+   assert.equal(await page.locator('.chile-session-rating .chile-session-label').last().textContent(),qualityOf(hourlyScore),
+    'Session score and hourly category must agree');
    await page.waitForFunction(()=>document.getElementById('detail')?.textContent?.includes('UTC'),{timeout:6000});
    // The technical drawer is intentionally collapsed; innerText is empty
    // for hidden elements, while textContent still exposes populated content.
@@ -96,6 +110,19 @@ function fixture(){
    assert.ok(await page.locator('a[href="https://marejadas.uv.cl/CL15CCN01"]').count(),
     'Officially identified university La Boca coastal model needs provenance link');
    assert.equal(await page.locator('#chileRiskDisclosure').count(),1);
+   const cam=page.locator('#cameraExpand');
+   await cam.evaluate(el=>el.open=true);
+   assert.ok(await page.locator('#chileCameraSources a[href*="lineup.surf"][href*="camera1"]').count(),
+    'Direct link to La Boca free-account camera must exist');
+   assert.match(await page.locator('#chileCameraSources').textContent(),/Gratis|cuenta/i);
+   assert.match(await page.locator('#chileCameraSources').textContent(),/Premium/i);
+   assert.equal(await page.locator('#chileCameraSources iframe, #chileCameraSources video').count(),0,
+    'No embedded or scraped third-party video without licence');
+   const disclaimer=page.locator('.chile-method-disclaimer');
+   assert.equal(await disclaimer.count(),1);
+   assert.ok(await disclaimer.evaluate(el=>el.closest('#forecastPage')!==null),
+    'Uncertainty belongs at the end of forecast instead of a loud top banner');
+   assert.equal(await page.locator('.chile-model-provenance').count(),0);
    assert.equal(await page.locator('#faroSafetyCenter').isVisible(),false,
     'No model danger/caution: avoid showing an empty hazard alert as a banner');
    assert.equal(await page.locator('#chileOfficialSources').count(),1,
@@ -119,6 +146,8 @@ function fixture(){
    const hints=await page.locator('#chileVibeEvidence').textContent();
    assert.match(hints,/guías divididas|guides disagree/i,'Conflicting La Boca guide evidence remains accessible');
    await page.locator('#chileSpotSelect').selectOption('CL-VS:renaca');
+   await page.waitForFunction(()=>document.getElementById('chileCameraSources')?.textContent?.includes('Windmaster · Reñaca'),{timeout:12000});
+   assert.match(await page.locator('#chileCameraSources').textContent(),/offline|OFFLINE|Señal no confirmada/);
    await page.waitForFunction(()=>document.getElementById('chileVibeAction')?.textContent?.includes('Reñaca Norte'),{timeout:12000});
    const renacaAction=await page.locator('#chileVibeAction').textContent();
    assert.match(renacaAction,/Reñaca Norte/i);

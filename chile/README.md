@@ -113,3 +113,12 @@ Reference entry points:
 FARO no trata la dirección ideal publicada como una verdad única. El archivo `spot-intelligence.json` representa hipótesis por **sector, fuente y tipo de evidencia**; `faro-spot-intelligence.js` las contrasta contra viento y swell horarios en la convención **DESDE**. Una dirección puede coincidir con todas las guías, solo algunas, ninguna o carecer de datos. Las contradicciones quedan visibles en **Spot DNA**, con vínculos a sus fuentes. `FARO VIBE / READ` ahora diferencia desembocadura móvil (La Boca), picos norte condicionados por bancos y rocas (Reñaca) y sector norte relativamente suave frente a sur más expuesto (Ritoque). No observa bancos, no estima altura rompiente, marea óptima ni seguridad.
 
 **Importante:** el score /10 anterior permanece como prototipo experimental orientado por una sola referencia de guía; el nuevo motor no recalibra automáticamente pesos ni acredita accuracy. Etiquetas de lectura más naturales como `Buena pinta / Looking good` no son observaciones. Ver [investigación detallada, contradicciones y requisitos de validación](SPOT_INTELLIGENCE_RESEARCH.md).
+
+
+## FARO Chile: cámaras + dataset de observaciones (26/10/2026)
+
+- [Investigación de cámaras, visión computacional, fuentes científicas, modelado y permisos](CAMERA_AI_RESEARCH.md).
+- [Catálogo de cámaras y políticas de uso](camera-sources.json): Lineup La Boca 1 gratis con cuenta, La Boca 2 Premium, Windmaster Reñaca no confirmada (página listaba OFFLINE); **ninguna cámara está autorizada para captura / entrenamiento automático por FARO**.
+- [Emparejador offline de etiquetas y pronósticos congelados](camera-learning.cjs) + [pruebas sintéticas](test-camera-learning.cjs): protege licencias, privacidad, tiempos UTC, versiones de pronóstico anteriores a observación y separación por episodios aproximados. **No entrena IA ni recopila videos**.
+- La misma escala visual de score que Zeeland: Very poor (<3), Poor (3–4,9), Fair (5–6,9), Good (7–8,4), Excellent (>=8,5), con traducciones ES. Es la etiqueta de un **índice de compatibilidad todavía experimental**, no resultado observado. El veredicto práctico y FARO VIBE son independientes.
+- La explicación de límites metodológicos se encuentra al final del pronóstico; advertencias de peligro se mantienen con prioridad inmediata.
