@@ -167,3 +167,9 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 #dayview .chile-official-sources .chile-source-links{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
 #dayview .chile-official-sources .chile-source-links a{font-size:12px}
 @media(max-width:420px){#dayview .chile-official-sources summary{gap:6px}#dayview .chile-official-sources .chile-official-state{font-size:10px}}
+
+/* Session decision is the primary read. Evidence stays in expandable VIBE. */
+.chile-decision-brief{display:grid;gap:4px;padding:11px 0 13px;margin:8px 0 2px;border-top:1px solid var(--faro-line);color:var(--fg);min-width:0}
+.chile-decision-brief strong{font-weight:850;font-size:clamp(16px,2.5vw,21px);letter-spacing:-.025em;line-height:1.2}
+.chile-decision-brief span{font-size:12px;line-height:1.5;color:var(--faro-quiet);max-width:68ch}
+.chile-vibe-action{padding:10px 12px;border-left:2px solid var(--faro-line);margin:8px 0 12px;font-size:13px;line-height:1.5;font-weight:650;color:var(--fg)}
