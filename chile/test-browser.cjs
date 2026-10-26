@@ -87,6 +87,17 @@ function fixture(){
    assert.ok(await page.locator('a[href="https://marejadas.uv.cl/CL15CCN01"]').count(),
     'Officially identified university La Boca coastal model needs provenance link');
    assert.equal(await page.locator('#chileRiskDisclosure').count(),1);
+   assert.equal(await page.locator('#faroSafetyCenter').isVisible(),false,
+    'No model danger/caution: avoid showing an empty hazard alert as a banner');
+   assert.equal(await page.locator('#chileOfficialSources').count(),1,
+    'Official sources must remain accessible without modelled risk');
+   await page.locator('#chileOfficialSources summary').click();
+   assert.ok(await page.locator('#chileOfficialSources a[href="https://meteoarmada.directemar.cl/"]').isVisible(),
+    'The Armada source should remain discoverable in Before You Go');
+   const chipText=await page.locator('#dayStripItems .day-chip').first().innerText();
+   assert.ok(!chipText.includes('β')&&!chipText.includes('Promising'),
+    'Model caveats belong in provenance, not duplicated after every score');
+   await page.locator('#chileOfficialSources summary').click();
    for(const nav of ['#navForecast','#navBest','#navBoard']){
     await page.locator(nav).click();
     const sizes=await page.evaluate(()=>({client:document.documentElement.clientWidth,
@@ -102,6 +113,16 @@ function fixture(){
    assert.equal(await page.locator('#cutoff').count(),1,'Translation must preserve daylight cut-off element');
    await page.locator('#themeToggle').click();
    assert.equal(scriptErrors.length,0,'No runtime errors during locale/theme/tab changes');
+   // Simulate an actual model threshold crossing to confirm hazards remain prominent.
+   const severe=JSON.parse(JSON.stringify(weather));
+   severe.hourly.wind_gusts_10m=severe.hourly.wind_gusts_10m.map(()=>80);
+   await page.route('**/api.open-meteo.com/**',route=>route.fulfill({json:severe}));
+   await page.locator('#refreshForecast').click();
+   await page.locator('#faroSafetyCenter').waitFor({state:'visible',timeout:12000});
+   assert.match(await page.locator('#chileRiskGrade').innerText(),
+    /RIESGO MODELO|MODEL RISK/,'Detected model risk must still display a meaningful warning');
+   assert.equal(await page.locator('#chileOfficialSources').count(),1,
+    'Warnings may not erase access to real official bulletins');
    await context.close();
   }
   console.log('PASS FARO Chile responsive QA: forecast, UTC, optional swell, sources, translation and mobile overflow.');
