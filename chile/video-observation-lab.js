@@ -116,6 +116,24 @@ function init(options={}){
  const source=make("select",sourceLabel,{id:"faroObsSource"});
  make("option",source,{value:"authorised_clip"},t("Vídeo propio o autorizado","Own / authorised video"));
  make("option",source,{value:"manual_visual"},t("Observación manual de cámara externa","Manual observation of external camera"));
+ const cameraLabel=make("label",fields,{id:"faroObsCameraLabel"},t("Cámara / fuente observada","Observed camera / source"));
+ const cameraChoice=make("select",cameraLabel,{id:"faroObsCamera"});
+ function renderCameraSources(){
+  const current=typeof options.spotId==="function"?options.spotId():options.spotId;
+  const prev=cameraChoice.value;
+  cameraChoice.replaceChildren();
+  make("option",cameraChoice,{value:""},t("Observación directa / sin cámara","Direct observation / no camera"));
+  const sources=typeof options.cameraSources==="function"?options.cameraSources():options.cameraSources||[];
+  for(const cam of sources.filter(c=>c.spotId===current&&c.type!=="coastal_model_not_camera"&&
+   c.type!=="regional_context_camera")){
+   const access=cam.viewerAccess==="free_account_required"?t(" · cuenta gratis"," · free account"):
+    cam.viewerAccess==="premium_subscription"?" · Premium":
+    cam.viewerAccess==="public_page_currently_offline"?t(" · señal no confirmada"," · feed unverified"):"";
+   make("option",cameraChoice,{value:cam.id},cam.name+access);
+  }
+  if([...cameraChoice.options].some(o=>o.value===prev))cameraChoice.value=prev;
+  cameraLabel.hidden=source.value!=="manual_visual";
+ }
  const dateLabel=make("label",fields,{},t("Momento observado · hora de Chile","Observed moment · Chile local time"));
  const date=make("input",dateLabel,{id:"faroObsDate",type:"datetime-local",required:true});
  const nowLocal=zonedParts(new Date());date.value=nowLocal;
@@ -198,6 +216,7 @@ function init(options={}){
   const withVideo=source.value==="authorised_clip";
   videoWrap.hidden=!withVideo;
   secondsLabel.hidden=!withVideo;
+  cameraLabel.hidden=withVideo;
   status(withVideo?t("Abre un archivo que tengas permiso de analizar.","Open a file you are authorised to analyse."):
     t("Observa la transmisión en el sitio original; marca únicamente las olas vistas. No se captura video.","View the external live stream at its source. Tag visible waves only; no video capture."));
  }
@@ -298,7 +317,8 @@ function init(options={}){
     schemaVersion:"1.0.0",observationId:"faro-"+crypto.randomUUID(),spotId:spot(),
     observedAtUtc:at,observedAtLocalChile:date.value,timezone:ZONE,
     observationType:source.value==="authorised_clip"?"manual_video_annotation":"manual_external_camera_observation",
-    cameraId:null,cameraRightsNotVerified:true,permissionClaimByAnnotator:true,
+    cameraId:source.value==="manual_visual"?(cameraChoice.value||null):null,
+    cameraRightsNotVerified:true,permissionClaimByAnnotator:true,
     privacyReviewedByAnnotator:true,mediaConsentScope:"research_review_only",trainingEligible:false,
     captureAssetId:null,clipDurationSeconds:clipDuration,observationWindowSeconds:windowSeconds,
     waveCountPer10Min:Math.round(c.waveCount*600/windowSeconds*10)/10,
@@ -330,8 +350,8 @@ function init(options={}){
   localStorage.removeItem(KEY);updateTotal();status(t("Registros locales borrados.","Local records cleared."));
  });
  root.addEventListener("beforeunload",()=>{if(clipUrl)URL.revokeObjectURL(clipUrl)},{once:true});
- syncMode();drawCount();drawMatch();updateTotal();
- return {element:section,refreshLanguage:()=>{},getRecords:localStore};
+ renderCameraSources();syncMode();drawCount();drawMatch();updateTotal();
+ return {element:section,refreshLanguage:()=>{},refreshCameras:renderCameraSources,getRecords:localStore};
 }
 const api=Object.freeze({init,localToUtc,deriveEvents,validateObservation,matchSnapshot,readSnapshot});
 root.FaroChileVideoLab=api;
