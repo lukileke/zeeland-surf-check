@@ -831,7 +831,7 @@ html:not([data-theme="light"]) .wave-character--short{
  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
 }
 #forecastPage #dayview > details.forecast-expand > summary::after{
- content:"⌄"!important;display:block!important;
+ content:none!important;display:none!important;
  flex:0 0 15px!important;width:15px!important;
  font:700 18px/1 var(--faro-text)!important;
  color:var(--faro-quiet)!important;text-align:right!important;
