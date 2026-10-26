@@ -22,11 +22,11 @@ html:not([data-theme="light"]){
  --faro-score-0:#ef9b77;--faro-score-1:#efbd6e;--faro-score-2:#e0cc73;
  --faro-score-3:#b1d574;--faro-score-4:#8cc584;
 }
-html .brand-band-verylow{--brand-score-color:var(--faro-score-0);--brand-score-ink:var(--faro-score-0)}
-html .brand-band-low{--brand-score-color:var(--faro-score-1);--brand-score-ink:var(--faro-score-1)}
-html .brand-band-mid{--brand-score-color:var(--faro-score-2);--brand-score-ink:var(--faro-score-2)}
-html .brand-band-regular{--brand-score-color:var(--faro-score-3);--brand-score-ink:var(--faro-score-3)}
-html .brand-band-high{--brand-score-color:var(--faro-score-4);--brand-score-ink:var(--faro-score-4)}
+html[data-theme="light"] .brand-band-verylow,html:not([data-theme="light"]) .brand-band-verylow{--brand-score-color:var(--faro-score-0);--brand-score-ink:var(--faro-score-0)}
+html[data-theme="light"] .brand-band-low,html:not([data-theme="light"]) .brand-band-low{--brand-score-color:var(--faro-score-1);--brand-score-ink:var(--faro-score-1)}
+html[data-theme="light"] .brand-band-mid,html:not([data-theme="light"]) .brand-band-mid{--brand-score-color:var(--faro-score-2);--brand-score-ink:var(--faro-score-2)}
+html[data-theme="light"] .brand-band-regular,html:not([data-theme="light"]) .brand-band-regular{--brand-score-color:var(--faro-score-3);--brand-score-ink:var(--faro-score-3)}
+html[data-theme="light"] .brand-band-high,html:not([data-theme="light"]) .brand-band-high{--brand-score-color:var(--faro-score-4);--brand-score-ink:var(--faro-score-4)}
 /* The score-band token always wins over the older tone-* CSS aliases. */
 html :is(#forecastPage,#dayview,#bestPage,#boardPage)
  :is(.day-chip,.score-tint,.score,.hero-score,.score-feature,.daily-verdict,
