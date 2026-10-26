@@ -261,18 +261,18 @@ function vibe(slot,locale="es"){
  const tr=(a,b)=>es?a:b;
  if(!slot?.modelComplete||!finite(slot.swellPeriodS)||!finite(slot.swellHeightM))return {id:"unknown",label:tr("Sin datos","Unavailable"),description:tr("No hay suficientes datos de swell para describir la ola.","Not enough swell data to describe the surf.")};
  if(finite(slot.gustKmh)&&slot.gustKmh>=75||slot.windKmh>=38)
-  return {id:"windy",label:tr(" Ventoso"," Windy"),description:tr("Viento fuerte modelado: superficie probablemente desordenada. No evalúa corrientes ni seguridad.","Modelled strong winds could produce bumpy surf. Currents and entry risks not assessed.")};
+  return {id:"windy",label:tr("Ventoso","Windy"),description:tr("Viento fuerte modelado: superficie probablemente desordenada. No evalúa corrientes ni seguridad.","Modelled strong winds could produce bumpy surf. Currents and entry risks not assessed.")};
  if(slot.windKmh<=8&&slot.swellPeriodS>=7)
-  return {id:"glassy",label:" Glassy",description:tr("Viento muy suave y algo de período. Podría verse glassy, pero la forma real depende del banco.","Light modelled winds and some swell period. A glassy-looking face is possible, depending on the actual bank.")};
+  return {id:"glassy",label:"Glassy",description:tr("Viento muy suave y algo de período. Podría verse glassy, pero la forma real depende del banco.","Light modelled winds and some swell period. A glassy-looking face is possible, depending on the actual bank.")};
  if(slot.swellPeriodS<5&&slot.windKmh>=18)
-  return {id:"choppy",label:tr(" Picadas"," Choppy"),description:tr("Oleaje de período corto junto con viento: podría haber secciones picadas y seguidas.","Short-period waves with wind could produce short, bumpy sections.")};
+  return {id:"choppy",label:tr("Picadas","Choppy"),description:tr("Oleaje de período corto junto con viento: podría haber secciones picadas y seguidas.","Short-period waves with wind could produce short, bumpy sections.")};
  if(slot.swellHeightM<.45&&finite(slot.swellHeightM))
-  return {id:"mushy",label:tr(" Suavecitas"," Mushy"),description:tr("Poca energía de swell modelada: se pueden necesitar tablas con volumen. No es altura rompiente.","Limited modelled swell energy: a board with more volume may help. Not a breaking surf-height prediction.")};
+  return {id:"mushy",label:tr("Suavecitas","Mushy"),description:tr("Poca energía de swell modelada: se pueden necesitar tablas con volumen. No es altura rompiente.","Limited modelled swell energy: a board with more volume may help. Not a breaking surf-height prediction.")};
  if(slot.swellPeriodS>=11&&slot.swellHeightM>=1.4)
-  return {id:"punchy",label:tr(" Potentes"," Punchy"),description:tr("Mayor energía del swell. Podrían aparecer secciones exigentes; consulta los riesgos propios del spot.","More swell energy could produce demanding sections; review the spot-specific risks.")};
+  return {id:"punchy",label:tr("Potentes","Punchy"),description:tr("Mayor energía del swell. Podrían aparecer secciones exigentes; consulta los riesgos propios del spot.","More swell energy could produce demanding sections; review the spot-specific risks.")};
  if(slot.windKmh<=17&&slot.swellPeriodS>=8)
-  return {id:"clean",label:tr(" Líneas limpias"," Clean lines"),description:tr("Viento relativamente suave y período favorable para líneas más definidas, sin garantía sobre el banco.","Relatively light winds and useful period may favour cleaner lines, subject to actual bank shape.")};
- return {id:"mixed",label:tr(" Mixed Bag"," Mixed Bag"),description:tr("Señales mixtas de viento y swell; puede haber momentos surfeables, pero la forma será variable.","Mixed wind and swell signals; surfable sections may appear, but actual shape is uncertain.")};
+  return {id:"clean",label:tr("Líneas limpias","Clean lines"),description:tr("Viento relativamente suave y período favorable para líneas más definidas, sin garantía sobre el banco.","Relatively light winds and useful period may favour cleaner lines, subject to actual bank shape.")};
+ return {id:"mixed",label:tr("Mixed Bag","Mixed Bag"),description:tr("Señales mixtas de viento y swell; puede haber momentos surfeables, pero la forma será variable.","Mixed wind and swell signals; surfable sections may appear, but actual shape is uncertain.")};
 }
 function boardFit(slot,board="mid",ability="intermediate",style="flow",locale="es",hazard){
  const tr=(es,en)=>locale==="es"?es:en;
