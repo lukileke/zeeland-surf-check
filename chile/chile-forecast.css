@@ -255,3 +255,43 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
  #dayview .chile-session-head>.chile-session-wave strong{font-size:29px}
  #dayview .chile-session-mini strong{font-size:11px}
 }
+
+/* FARO Observation Lab · low-friction annotation, no uploaded media. */
+.chile-video-lab{display:grid;gap:15px;min-width:0;padding:6px 0}
+.chile-lab-header{display:flex;align-items:baseline;gap:5px 15px;flex-wrap:wrap}
+.chile-lab-header strong{font-size:13px;font-weight:900;color:var(--fg);letter-spacing:.035em}
+.chile-lab-header small{font-size:11px;color:var(--faro-quiet)}
+.chile-lab-tip{font-size:12px;line-height:1.6;color:var(--faro-quiet);margin:0}
+.chile-lab-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.chile-lab-fields label,.chile-lab-video label,.chile-lab-event-controls label,.chile-lab-notes{display:grid;gap:7px;min-width:0;font-size:11px;font-weight:800;color:var(--faro-quiet);line-height:1.4}
+.chile-video-lab input:not([type="checkbox"]),.chile-video-lab select,.chile-video-lab textarea{min-width:0;width:100%;max-width:100%;padding:9px 10px;border-radius:10px;background:var(--tile);border:1px solid var(--faro-line);color:var(--fg);font:650 13px/1.35 var(--faro-text,system-ui)}
+.chile-video-lab input[type="file"]{font-size:11px!important;cursor:pointer}
+.chile-lab-video{display:grid;gap:9px;border:1px solid var(--faro-line);border-radius:14px;padding:12px}
+.chile-lab-video video{display:block;width:100%;max-height:400px;object-fit:contain;background:#10191d;border-radius:9px}
+.chile-lab-video small{font-size:11px;color:var(--faro-quiet)}
+.chile-lab-event-controls{border:1px solid var(--faro-line);border-radius:14px;background:var(--tile);padding:14px;display:grid;gap:12px}
+.chile-lab-event-controls>small{font-size:12px;color:var(--faro-quiet);line-height:1.5}
+.chile-lab-buttons{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.chile-lab-buttons button,.chile-lab-import{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;border-radius:9px;background:var(--faro-hero)!important;color:var(--fg)!important;border:1px solid var(--faro-line)!important;font-size:12px;font-weight:750;cursor:pointer}
+.chile-lab-buttons button:disabled{opacity:.5;cursor:wait}
+.chile-lab-buttons button[data-type="wall"]{border-color:var(--surf-good)!important}
+.chile-lab-buttons button[data-type="closeout"]{border-color:var(--surf-poor)!important}
+.chile-lab-count{font-size:13px;font-weight:850;color:var(--fg);margin:0}
+.chile-lab-events{font-size:11px;line-height:1.45;color:var(--faro-quiet);overflow-wrap:anywhere;margin:0}
+.chile-lab-event-controls label{max-width:225px}
+.chile-lab-notes textarea{resize:vertical;min-height:68px}
+.chile-lab-archive{display:grid;gap:9px;border-top:1px solid var(--faro-line);padding-top:16px}
+.chile-lab-archive>strong{font-size:14px;font-weight:850;color:var(--fg)}
+.chile-lab-archive>p{font-size:11px;line-height:1.55;color:var(--faro-quiet);margin:0}
+.chile-lab-import{flex-direction:column;gap:4px;align-items:flex-start;max-width:100%}
+.chile-lab-import input[type="file"]{border:0;padding:0;font-size:10px;max-width:240px}
+.chile-lab-comparison{min-height:52px;display:grid;gap:6px;border:1px solid var(--faro-line);padding:12px;border-radius:11px;background:color-mix(in srgb,var(--faro-ocean) 5%,var(--tile))}
+.chile-lab-comparison strong{color:var(--fg);font-size:12px}
+.chile-lab-comparison>p{font-size:12px;line-height:1.5;color:var(--faro-quiet);margin:0}
+.chile-lab-comparison small{font-size:10px;overflow-wrap:anywhere;color:var(--faro-quiet)}
+.chile-lab-figures{font-size:14px;font-weight:800;color:var(--fg);line-height:1.45}
+.chile-lab-permission{display:flex;gap:10px;align-items:flex-start;font-size:11px;font-weight:650;color:var(--fg);line-height:1.5}
+.chile-lab-permission input{margin-top:3px;flex:none}
+.chile-lab-feedback{min-height:24px;margin:0;font-size:12px;line-height:1.5;font-weight:750;color:var(--fg)}
+#faroObsTotal{font-size:11px;color:var(--faro-quiet)}
+@media(max-width:700px){.chile-lab-fields{grid-template-columns:1fr}.chile-lab-video{padding:10px}.chile-lab-buttons{gap:6px}.chile-lab-buttons button{flex:1 1 125px}}
