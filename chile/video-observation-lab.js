@@ -153,8 +153,8 @@ function init(options={}){
    "Tag each wave while watching. Counts come from your labels, not an AI model."));
  const buttonRow=make("div",controls,{className:"chile-lab-buttons"});
  const addButton=(txt,kind)=>{const b=make("button",buttonRow,{type:"button","data-type":kind},txt);return b};
- const wall=addButton(t("✓ Pared","✓ Rideable wall"),"wall");
- const closeout=addButton(t("× Campana","× Closeout"),"closeout");
+ const wall=addButton(t(" Pared"," Rideable wall"),"wall");
+ const closeout=addButton(t("Campana","Closeout"),"closeout");
  const other=addButton(t("~ Otra ola","~ Other wave"),"other");
  const undo=addButton(t("↶ Deshacer","↶ Undo"),"undo");
  const windowLabel=make("label",controls,{},t("Ventana observada (minutos)","Observation window (minutes)"));
