@@ -120,7 +120,7 @@ assert.ok(css.includes('#datehead{text-transform:capitalize'),'Localized weekday
 assert.ok(!html.includes('faro-safety-region-select'),'Zeeland UI never exposes a country selector');
 assert.ok(!safetySource.includes('faro-alert-country'),'Legacy alert-country choice cannot affect Zeeland warnings');
 
-assert.ok(html.includes('src="faro-spot-evidence.js"'),'Local beach-level evidence module loaded');
+assert.ok(/src="faro-spot-evidence\.js(?:\?v=\d+)?"/.test(html),'Local beach-level evidence module loaded');
 assert.ok(html.includes('marine.hourly.swell_wave_height'),'Shadow-only features read separate swell height');
 assert.ok(html.includes('weather.hourly.wind_gusts_10m'),'Shadow-only features read wind gust ratio');
 assert.ok(html.includes('<span class="quality-pill">'),'Forecast and ranking use consistent quality tags');
