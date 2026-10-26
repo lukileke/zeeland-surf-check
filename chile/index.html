@@ -1,110 +1,186 @@
 <!doctype html>
 <html lang="es" data-theme="dark">
 <head>
-<meta charset="utf-8"><link rel="icon" type="image/svg+xml" href="../assets/faro-o-favicon.svg">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#102427">
-<meta name="description" content="FARO Chile: atlas regional de spots y laboratorio experimental de compatibilidad de viento y swell. No ofrece pronósticos en tiempo real en Chile.">
-<title>FARO Chile · Atlas de spots</title>
-<script>
-try{
- var favTheme=localStorage.getItem("zeeland-theme");
- if(favTheme==="light"||favTheme==="dark")document.documentElement.dataset.theme=favTheme;
- else if(window.matchMedia?.("(prefers-color-scheme:light)").matches)document.documentElement.dataset.theme="light";
-}catch(e){}
-</script>
-<link rel="stylesheet" href="chile-hub.css?v=1">
+<meta name="description" content="FARO Chile · Pronóstico modelado de surf para Valparaíso, FARO VIBE, Spot DNA, índice UV, alertas y ajuste por tabla. Score experimental en calibración.">
+<link rel="icon" type="image/svg+xml" href="../assets/faro-o-favicon.svg">
+<title>FARO · Chile | Valparaíso</title>
+<script>try{const t=localStorage.getItem("zeeland-theme");document.documentElement.dataset.theme=(t==="light"||t==="dark")?t:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark")}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@400;500;600;700;800&display=swap">
+<!-- Exact UI foundation from mature FARO Zeeland, not a new product aesthetic -->
+<link rel="stylesheet" href="../faro-core.css?v=1">
+<link rel="stylesheet" href="../faro-ui.css?v=23">
+<link rel="stylesheet" href="../faro-brand.css?v=39">
+<link rel="stylesheet" href="../faro-daily.css?v=2">
+<link rel="stylesheet" href="../faro-rhythm.css?v=2">
+<link rel="stylesheet" href="../faro-colours.css?v=4">
+<link rel="stylesheet" href="../faro-spot-signals.css?v=1">
+<link rel="stylesheet" href="../faro-desktop.css?v=1">
+<link rel="stylesheet" href="../faro-country.css?v=1">
+<link rel="stylesheet" href="chile-forecast.css?v=1">
 </head>
 <body>
-<main class="shell">
-<header class="masthead">
- <div>
-  <p class="logo-meta">SURF RESEARCH · CHILE</p>
-  <div class="brand-images">
-   <img class="logo-art logo-for-dark" src="../assets/faro-logo-dark.svg" alt="FARO" width="173" height="59">
-   <img class="logo-art logo-for-light" src="../assets/faro-logo.svg" alt="FARO" width="173" height="59">
+<main>
+ <div class="top">
+  <div class="faro-brand-block">
+   <small id="regionTitle" data-es="PRONÓSTICO DE SURF · VALPARAÍSO" data-en="SURF FORECAST · VALPARAÍSO">PRONÓSTICO DE SURF · VALPARAÍSO</small>
+   <h1 class="faro-logo" aria-label="FARO">
+    <img class="faro-logo-art faro-logo-art--light" src="../assets/faro-logo.svg" width="129" height="44" alt="">
+    <img class="faro-logo-art faro-logo-art--dark" src="../assets/faro-logo-dark.svg" width="129" height="44" alt="">
+   </h1>
+  </div>
+  <div class="top-actions">
+   <button class="language-toggle" id="languageToggle" type="button" aria-label="Cambiar idioma">EN</button>
+   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">☀ Claro</button>
+   <span id="status" class="pill faro-cl-status" aria-live="polite">MODELO · BETA</span>
   </div>
  </div>
- <div class="faro-tools">
-  <button type="button" id="langButton" aria-label="Change language">EN</button>
-  <button type="button" id="themeButton" aria-label="Switch between light and dark">☀ Claro</button>
- </div>
-</header>
-<nav class="switch" aria-label="Choose FARO forecast country">
- <a href="../"><span>ZEELAND</span><small>LIVE</small></a>
- <a href="./" aria-current="page"><span>CHILE</span><small>BETA</small></a>
-</nav>
-<section class="hero" aria-labelledby="heroTitle">
- <div>
-  <p class="eyebrow" data-es="FARO ATLAS · REGIÓN POR REGIÓN" data-en="FARO ATLAS · REGION BY REGION">FARO ATLAS · REGIÓN POR REGIÓN</p>
-  <h1 id="heroTitle" data-es="Chile, spot por spot." data-en="Chile, spot by spot.">Chile, spot por spot.</h1>
-  <p class="hero-description" data-es="El mismo swell puede producir olas muy distintas. Estamos construyendo una lectura específica para cada rompiente: exposición, viento, fondo, marea y carácter de la ola, respaldada por fuentes y observaciones." data-en="The same swell can produce very different surf. We are building source-linked local knowledge for each break: exposure, wind, seabed, tide and wave character.">El mismo swell puede producir olas muy distintas. Estamos construyendo una lectura específica para cada rompiente: exposición, viento, fondo, marea y carácter de la ola, respaldada por fuentes y observaciones.</p>
- </div>
- <div class="hero-side" aria-label="Chile research progress">
-  <div class="big-stat"><strong id="regionCount">—</strong><span data-es="REGIONES" data-en="REGIONS">REGIONES</span></div>
-  <div class="big-stat"><strong id="spotCount">—</strong><span data-es="LUGARES CANDIDATOS" data-en="CANDIDATE SPOTS">LUGARES CANDIDATOS</span></div>
-  <div class="big-stat"><strong id="pilotCount">—</strong><span data-es="PERFILES DE PRUEBA" data-en="EXPERIMENTAL PROFILES">PERFILES DE PRUEBA</span></div>
-  <div class="big-stat"><strong style="font-size:24px;color:var(--sun)">BETA</strong><span data-es="SIN MODELO EN VIVO" data-en="NOT LIVE">SIN MODELO EN VIVO</span></div>
- </div>
-</section>
-<section class="availability" aria-label="Chile forecast data status">
- <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5m0 4v.01"/></svg>
- <div>
-  <strong data-es="Chile está disponible como atlas y laboratorio, no como pronóstico en vivo." data-en="Chile is available as a research atlas and lab, not as a live forecast.">Chile está disponible como atlas y laboratorio, no como pronóstico en vivo.</strong>
-  <p data-es="Los perfiles de viento/swell son referencias publicadas aún sin calibrar. Ningún score experimental representa la ola que rompe hoy ni una autorización de acceso." data-en="Wind and swell windows come from published guides and are not calibrated. Experimental scores never represent today's breaking wave or a safety clearance.">Los perfiles de viento/swell son referencias publicadas aún sin calibrar. Ningún score experimental representa la ola que rompe hoy ni una autorización de acceso.</p>
- </div>
-</section>
-<section aria-labelledby="featuredTitle">
- <div class="section-title">
-  <h2 id="featuredTitle" data-es="Primera prioridad: La Boca" data-en="First focus: La Boca">Primera prioridad: La Boca</h2>
-  <span data-es="CONCÓN · REGIÓN DE VALPARAÍSO" data-en="CONCÓN · VALPARAÍSO REGION">CONCÓN · REGIÓN DE VALPARAÍSO</span>
- </div>
- <article class="featured">
-  <div>
-   <p class="eyebrow" data-es="SPOT DNA · DESEMBOCADURA DEL ACONCAGUA" data-en="SPOT DNA · ACONCAGUA RIVER MOUTH">SPOT DNA · DESEMBOCADURA DEL ACONCAGUA</p>
-   <h3>La Boca de Concón</h3>
-   <p data-es="Los bancos de arena pueden cambiar con los sedimentos y el río. Las referencias de viento y swell son orientativas: necesitamos verificar la respuesta de la ola en cada sector y las condiciones de acceso junto al humedal protegido." data-en="Sandbars can change with river sediment. Published wind and swell windows are preliminary: local wave response, exact sector geometry and access near the protected wetland still require verification.">Los bancos de arena pueden cambiar con los sedimentos y el río. Las referencias de viento y swell son orientativas: necesitamos verificar la respuesta de la ola en cada sector y las condiciones de acceso junto al humedal protegido.</p>
-   <div class="actions">
-    <a class="action" href="lab.html?spot=CL-VS%3Ala-boca-concon"><span data-es="Probar FARO LAB" data-en="Explore FARO LAB">Probar FARO LAB</span>&nbsp; ↗</a>
-    <a class="text-link" href="VALPARAISO_SPOT_DNA.md" data-es="Ver investigación del spot" data-en="Read spot research">Ver investigación del spot</a>
+ <nav class="app-nav" aria-label="FARO">
+  <button id="navForecast" class="active" aria-pressed="true" type="button" data-es="Pronóstico" data-en="Forecast">Pronóstico</button>
+  <button id="navBest" aria-pressed="false" type="button" data-es="Lo mejor" data-en="Best of Week">Lo mejor</button>
+  <button id="navBoard" aria-pressed="false" type="button">FARO Match</button>
+ </nav>
+ <nav class="faro-country-switch" aria-label="Ubicación">
+  <span class="faro-country-label" data-es="UBICACIÓN" data-en="LOCATION">UBICACIÓN</span>
+  <div class="faro-country-options">
+   <a href="../"><span>ZEELAND</span><small>LIVE</small></a>
+   <a href="./" aria-current="page"><span>CHILE</span><small data-es="MODELO" data-en="MODEL">MODELO</small></a>
+  </div>
+ </nav>
+
+ <!-- OFFICIAL STATUS IS NEVER INFERRED FROM THRESHOLD SCREENING -->
+ <section id="faroSafetyCenter" class="faro-safety-center advisory" aria-label="Alertas de Valparaíso">
+  <details class="faro-safety-disclosure" id="chileRiskDisclosure">
+   <summary class="faro-safety-summary">
+    <span class="faro-safety-top"><strong class="faro-safety-kicker" data-es="RIESGOS COSTEROS" data-en="COASTAL HAZARDS">RIESGOS COSTEROS</strong><span class="faro-safety-severity" id="chileRiskGrade" data-es="FUENTES OFICIALES" data-en="OFFICIAL SOURCES">FUENTES OFICIALES</span></span>
+    <span class="faro-safety-headline" id="chileRiskTitle" data-es="Revisa los avisos marítimos y meteorológicos" data-en="Check official coastal and weather notices">Revisa los avisos marítimos y meteorológicos</span>
+    <span class="faro-safety-inline-source" id="chileRiskMeta" data-es="Estado oficial no comprobado automáticamente" data-en="Official status not checked automatically">Estado oficial no comprobado automáticamente</span>
+    <span class="faro-safety-chevron" aria-hidden="true">⌄</span>
+   </summary>
+   <div class="faro-safety-expanded">
+    <p id="chileRiskExplanation" class="faro-safety-detail-description" data-es="FARO puede detectar señales de viento, lluvia o tormenta en el modelo, pero NO comprueba automáticamente alertas oficiales. Revisa las fuentes antes de entrar." data-en="FARO screens wind, rainfall and thunderstorms in models, but does NOT automatically check official alerts. Review official sources before entering.">FARO puede detectar señales de viento, lluvia o tormenta en el modelo, pero NO comprueba automáticamente alertas oficiales.</p>
+    <div class="chile-source-links">
+     <a href="https://meteoarmada.directemar.cl/" target="_blank" rel="noopener noreferrer" data-es="Armada · Marejadas ↗" data-en="Navy · Swell warnings ↗">Armada · Marejadas ↗</a>
+     <a href="https://senapred.cl/alertas/" target="_blank" rel="noopener noreferrer">SENAPRED ↗</a>
+     <a href="https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml" target="_blank" rel="noopener noreferrer" data-es="DMC · Meteorología ↗" data-en="DMC · Weather alerts ↗">DMC · Meteorología ↗</a>
+    </div>
+    <p class="chile-risk-note" data-es="No cubre corrientes, bancos, contaminación, inundación de accesos ni límites del humedal. Avisos oficiales no sincronizados." data-en="Rip currents, sandbanks, pollution, blocked access and wetland boundaries are not assessed. Official notices are not synced.">No cubre corrientes, bancos, contaminación, inundación de accesos ni límites del humedal. Avisos oficiales no sincronizados.</p>
    </div>
-   <p class="caption" data-es="Atención: corrientes, bancos móviles y normativa del humedal. No se evalúan automáticamente condiciones de seguridad." data-en="Attention: currents, shifting sandbars and wetland restrictions. Water-entry safety is not automatically assessed.">Atención: corrientes, bancos móviles y normativa del humedal. No se evalúan automáticamente condiciones de seguridad.</p>
+  </details>
+ </section>
+ <div class="chile-model-provenance" role="note">
+  <span class="chile-model-dot" aria-hidden="true"></span><strong data-es="MODELO ACTUALIZADO · SCORE EXPERIMENTAL" data-en="UPDATED MODEL · EXPERIMENTAL SCORE">MODELO ACTUALIZADO · SCORE EXPERIMENTAL</strong>
+  <span data-es="Altura offshore ≠ altura rompiente. Falta calibrar cada banco." data-en="Offshore height ≠ breaking surf height. Local sandbanks remain uncalibrated.">Altura offshore ≠ altura rompiente. Falta calibrar cada banco.</span>
+ </div>
+
+ <div id="forecastPage">
+  <div class="forecast-toolbar">
+   <div class="forecast-updated"><span class="live-indicator" aria-hidden="true"></span><span class="forecast-updated-label" id="updated" role="status" aria-live="polite">Conectando al modelo…</span></div>
+   <button id="refreshForecast" class="forecast-refresh" type="button" aria-label="Actualizar pronóstico">↻ <span data-es="Actualizar" data-en="Refresh">Actualizar</span></button>
   </div>
-  <div class="fact-list">
-   <div class="fact"><span data-es="Tipo de rompiente" data-en="Break type">Tipo de rompiente</span><strong data-es="Desembocadura / arena" data-en="River mouth / sand">Desembocadura / arena</strong></div>
-   <div class="fact"><span data-es="Swell (guía)" data-en="Swell (guide)">Swell (guía)</span><strong>O–NO / W–NW</strong></div>
-   <div class="fact"><span data-es="Viento (guía)" data-en="Wind (guide)">Viento (guía)</span><strong>E · SE · S</strong></div>
-   <div class="fact"><span data-es="Marea" data-en="Tide">Marea</span><strong data-es="Sin óptimo validado" data-en="No verified optimum">Sin óptimo validado</strong></div>
-   <div class="fact"><span data-es="Estado" data-en="Research status">Estado</span><strong data-es="Guías; falta calibración" data-en="Guide-based; uncalibrated">Guías; falta calibración</strong></div>
+  <div class="picker-grid">
+   <label class="chile-spot-picker"><small data-es="REGIÓN" data-en="REGION">REGIÓN</small><strong>Valparaíso · Chile</strong><span class="chile-field-hint" data-es="Primera región disponible" data-en="First supported region">Primera región disponible</span></label>
+   <label class="chile-spot-picker"><small data-es="PLAYA / SPOT" data-en="BEACH / SPOT">PLAYA / SPOT</small><select id="chileSpotSelect" aria-label="Playa o spot"></select></label>
   </div>
- </article>
-</section>
-<section id="atlas" aria-labelledby="atlasTitle">
- <div class="browser-header">
-  <div>
-   <p class="eyebrow" data-es="ATLAS NACIONAL" data-en="NATIONAL SURF ATLAS">ATLAS NACIONAL</p>
-   <h2 id="atlasTitle" data-es="Explora por región" data-en="Explore by region">Explora por región</h2>
-  </div>
-  <div class="filters">
-   <label><span data-es="Región" data-en="Region">Región</span><select id="regionSelect" aria-label="Choose Chilean region"><option value="CL-VS">Valparaíso</option></select></label>
-   <label><span data-es="Buscar spot" data-en="Search spots">Buscar spot</span><input type="search" id="spotSearch" autocomplete="off" placeholder="Concón, Reñaca, La Boca…" data-es-placeholder="Concón, Reñaca, La Boca…" data-en-placeholder="Concón, Reñaca, La Boca…"></label>
+  <section id="dayStrip" class="day-strip-wrap forecast-section" aria-label="Próximos siete días">
+   <div class="day-strip-title"><strong data-es="Próximos 7 días" data-en="Next 7 days">Próximos 7 días</strong><div class="day-strip-tools">
+    <span id="dayStripCount" class="day-strip-count">1–3 / 7</span>
+    <button id="dayPrev" type="button" class="day-strip-arrow" aria-label="Días anteriores">‹</button>
+    <button id="dayNext" type="button" class="day-strip-arrow" aria-label="Días siguientes">›</button>
+   </div></div>
+   <p class="day-strip-deck" data-es="Mejor ventana con luz de cada día · Desliza para explorar" data-en="Best daylight window each day · Swipe to explore">Mejor ventana con luz de cada día · Desliza para explorar</p>
+   <div id="dayStripItems" class="day-strip" role="group" aria-label="Seleccionar día"></div>
+   <div class="day-strip-progress" aria-hidden="true"><span id="dayStripProgress"></span></div>
+  </section>
+  <section class="forecast-section day-outlook-section" aria-label="Resumen diario">
+   <div class="forecast-overview" id="dailyOverview">
+    <div class="day-editorial-overline"><span data-es="EL PANORAMA DEL DÍA" data-en="THE DAILY TAKE">EL PANORAMA DEL DÍA</span> <span>·</span> VALPARAÍSO</div>
+    <div class="row day-overview-row">
+     <div class="day-identity"><h2 id="datehead">—</h2><div id="spotname">—</div></div>
+     <div class="best-session-brief"><small data-es="MEJOR VENTANA" data-en="BEST WINDOW">MEJOR VENTANA</small><div id="bestTime" class="best-time">—</div></div>
+    </div>
+    <div id="daySignalMetrics" class="day-signal-metrics">
+     <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">🌊</span><div class="day-signal-figure"><small data-es="OLAS MODELO" data-en="MODEL WAVES">OLAS MODELO</small><strong id="dayWave">—</strong></div></div>
+     <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">◷</span><div class="day-signal-figure"><small data-es="PERÍODO SWELL" data-en="SWELL PERIOD">PERÍODO SWELL</small><strong id="dayPeriod">—</strong></div></div>
+     <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">💨</span><div class="day-signal-figure"><small data-es="VIENTO" data-en="WIND">VIENTO</small><strong id="dayWind">—</strong></div></div>
+    </div>
+    <!-- FARO VIBE is the only interpretation: click the tag to reveal FARO READ. -->
+    <section class="faro-read chile-vibe" aria-label="FARO VIBE">
+     <div class="faro-vibe-top"><span class="faro-vibe-brand"><span class="faro-vibe-mark" aria-hidden="true">◎</span> FARO VIBE</span></div>
+     <details id="chileVibeDetails" class="chile-vibe-details">
+      <summary class="chile-vibe-summary"><span id="chileVibeTag" class="wave-wizard-tag">🌊 —</span><strong id="chileVibeHeadline" class="faro-read-title">—</strong><span class="chile-chevron">⌄</span></summary>
+      <div class="chile-vibe-more"><p id="chileVibeRead" class="daily-verdict">—</p><div id="chileVibeEvidence" class="chile-signal-tags"></div><p data-es="Interpretación modelada, no observación directa de la ola." data-en="Model interpretation, not an observed breaking wave.">Interpretación modelada, no observación directa de la ola.</p></div>
+     </details>
+    </section>
+   </div>
+  </section>
+  <div id="dayview">
+   <section class="forecast-section hourly-section" aria-label="Horario">
+    <div class="forecast-section-heading"><div><h3 data-es="Elige tu horario" data-en="Find your time">Elige tu horario</h3><p data-es="Compara franjas de 2 horas" data-en="Compare 2-hour windows">Compara franjas de 2 horas</p></div></div>
+    <div id="slots" class="slots"></div>
+   </section>
+   <section class="forecast-section session-section" aria-label="Sesión seleccionada">
+    <div id="sessionAtGlance" class="session-glance"><p class="muted" data-es="Selecciona una ventana para ver sus condiciones." data-en="Select a time window for details.">Selecciona una ventana para ver sus condiciones.</p></div>
+    <div class="session-essentials"><small data-es="ANTES DE IR" data-en="BEFORE YOU GO">ANTES DE IR</small><div id="sessionEssentials" class="essentials-tags"></div></div>
+    <details class="daylight-disclosure"><summary><span data-es="☀ Luz solar y horarios" data-en="☀ Daylight & timing">☀ Luz solar y horarios</span><span class="daylight-leave" id="daylightBrief">—</span><span class="daylight-arrow">⌄</span></summary>
+     <div class="metric"><div data-es="🌅 Amanecer" data-en="🌅 Sunrise">🌅 Amanecer<b id="rise">—</b></div><div data-es="🌇 Atardecer" data-en="🌇 Sunset">🌇 Atardecer<b id="set">—</b></div><div data-es="🏄 Salir antes de" data-en="🏄 Suggested cut-off">🏄 Salir antes de<b id="cutoff">—</b></div></div>
+    </details>
+   </section>
+   <details id="spotInsightExpand" class="forecast-expand">
+    <summary><span class="forecast-accordion-title" data-es="📍 Spot DNA · Identidad del spot" data-en="📍 Spot DNA · Local break profile">📍 Spot DNA · Identidad del spot</span><span id="spotInsightContextTag" class="forecast-accordion-meta" data-es="Condiciones y carácter" data-en="Local character">Condiciones y carácter</span></summary>
+    <div id="spotinsight" class="insight-panel"><p class="muted">—</p></div>
+   </details>
+   <details id="waveInsightExpand" class="forecast-expand">
+    <summary><span class="forecast-accordion-title" data-es="🌊 Swell Compass" data-en="🌊 Swell Compass">🌊 Swell Compass</span><span class="forecast-accordion-meta" data-es="Direcciones y componentes" data-en="Directions & components">Direcciones y componentes</span></summary>
+    <div id="waveinsight" class="insight-panel"><p class="muted">—</p></div>
+   </details>
+   <details id="faroTechnicalExpand" class="forecast-expand faro-technical">
+    <summary><span class="forecast-accordion-title" data-es="⚙ Detalles del pronóstico" data-en="⚙ Forecast details">⚙ Detalles del pronóstico</span><span class="forecast-accordion-meta" data-es="Modelo y UV" data-en="Model & UV">Modelo y UV</span></summary>
+    <div class="faro-technical-inner"><div class="panel" id="detail">—</div></div>
+   </details>
+   <details id="wearExpand" class="forecast-expand">
+    <summary><span class="forecast-accordion-title" data-es="🧥 Qué usar" data-en="🧥 What to Wear">🧥 Qué usar</span><span class="forecast-accordion-meta" data-es="Traje y equipo" data-en="Wetsuit & gear">Traje y equipo</span></summary>
+    <div id="wetsuit" class="panel">—</div>
+   </details>
+   <details id="fieldNotesExpand" class="forecast-expand">
+    <summary><span class="forecast-accordion-title" data-es="✎ FARO Field Notes" data-en="✎ FARO Field Notes">✎ FARO Field Notes</span><span class="forecast-accordion-meta" data-es="Observaciones reales" data-en="Observed surf">Observaciones reales</span></summary>
+    <div id="chileFieldNotes" class="insight-panel">
+     <p data-es="El motor de Chile todavía no se calibra con tus observaciones. Registra los datos en la plantilla hasta que integremos un diario local en la web." data-en="The Chile engine is not calibrated on field observations yet. Use the field log template until in-app journal capture is ready.">El motor de Chile todavía no se calibra con tus observaciones. Registra los datos en la plantilla hasta que integremos un diario local en la web.</p>
+     <a href="field-observations-template.csv" class="faro-safety-link" data-es="Plantilla de observaciones ↗" data-en="Download field log ↗">Plantilla de observaciones ↗</a>
+    </div>
+   </details>
   </div>
  </div>
- <p id="spotSummary" class="list-summary" role="status" aria-live="polite" data-es="Cargando el atlas…" data-en="Loading surf atlas…">Cargando el atlas…</p>
- <div id="spotGrid" class="spot-grid" aria-label="Regional surf spots"></div>
- <button id="moreSpots" class="more" type="button" hidden data-es="Mostrar más spots" data-en="Show more spots">Mostrar más spots</button>
-</section>
-<section class="process" aria-labelledby="nextTitle">
- <h2 id="nextTitle" data-es="De la guía al pronóstico." data-en="From local guide to forecast.">De la guía al pronóstico.</h2>
- <div class="process-row">
-  <div class="step"><strong data-es="01 · Geografía real" data-en="01 · Verified geography">01 · Geografía real</strong><p data-es="Delimitar bancos y rompientes, acceso y orientación de la costa." data-en="Confirm sandbanks, break points, access and coastline orientation.">Delimitar bancos y rompientes, acceso y orientación de la costa.</p></div>
-  <div class="step"><strong data-es="02 · Modelos y observaciones" data-en="02 · Models and observations">02 · Modelos y observaciones</strong><p data-es="Comparar datos UV y marinos con registros de sesiones. Separar offshore de ola rompiente." data-en="Compare UV and marine models against observed sessions. Separate offshore waves from breaking surf.">Comparar datos UV y marinos con registros de sesiones. Separar offshore de ola rompiente.</p></div>
-  <div class="step"><strong data-es="03 · Calibración del score" data-en="03 · Score calibration">03 · Calibración del score</strong><p data-es="Validar FARO Spot Fit, VIBE y calidad antes de activar predicciones." data-en="Validate FARO Spot Fit, VIBE and quality before enabling forecasts.">Validar FARO Spot Fit, VIBE y calidad antes de activar predicciones.</p></div>
- </div>
- <div class="actions"><a href="LA_BOCA_PILOT_PLAN.md" class="text-link" data-es="Ver hoja de ruta de La Boca" data-en="Read La Boca roadmap">Ver hoja de ruta de La Boca</a><a href="field-observations-template.csv" class="text-link" data-es="Plantilla de observaciones" data-en="Field observation template">Plantilla de observaciones</a></div>
-</section>
-<footer><span>FARO · CHILE BETA — </span><span data-es="Catálogo de investigación, sin evaluación de seguridad." data-en="Research catalog, without safety assessment.">Catálogo de investigación, sin evaluación de seguridad.</span> <a href="../" data-es="Volver a Zeeland" data-en="Return to Zeeland">Volver a Zeeland</a>.</footer>
+ <section id="bestPage" class="hide">
+  <div class="best-intro"><small data-es="DESCUBRE · VALPARAÍSO" data-en="DISCOVER · VALPARAÍSO">DESCUBRE · VALPARAÍSO</small><h2 data-es="Lo mejor de la semana" data-en="Best of the Week">Lo mejor de la semana</h2><p class="muted" data-es="Dónde y cuándo puede valer la pena revisar el mar. Índice experimental de compatibilidad local, no surf observado." data-en="Where and when conditions may be worth checking. Experimental local fit, not observed surf.">Dónde y cuándo puede valer la pena revisar el mar. Índice experimental de compatibilidad local, no surf observado.</p></div>
+  <section class="panel"><div class="row"><h2 data-es="Comparación de spots" data-en="Compare spots">Comparación de spots</h2><small id="rankingstatus">—</small></div><div class="highlights" id="highlights"></div></section>
+ </section>
+ <section id="boardPage" class="hide">
+  <div class="panel faro-guide" id="faroGuide">
+   <small class="faro-match-kicker"><span aria-hidden="true">◎</span> FARO MATCH · PERSONAL SURF OUTLOOK</small>
+   <h2 data-es="Encuentra olas para tu estilo." data-en="Find waves that fit your style.">Encuentra olas para tu estilo.</h2>
+   <p class="muted" data-es="La calidad estimada del spot no es igual al ajuste de tabla. Esta recomendación es orientativa, sin evaluación de seguridad." data-en="Estimated spot quality differs from board fit. Guidance is experimental and does not assess safety.">La calidad estimada del spot no es igual al ajuste de tabla. Esta recomendación es orientativa, sin evaluación de seguridad.</p>
+   <div class="faro-match-logic"><span data-es="COMPATIBILIDAD SPOT ≠ AJUSTE DE TABLA" data-en="SPOT FIT ≠ BOARD FIT">COMPATIBILIDAD SPOT ≠ AJUSTE DE TABLA</span><span data-es="HIPÓTESIS · SIN CALIBRAR" data-en="EXPERIMENTAL · UNCALIBRATED">HIPÓTESIS · SIN CALIBRAR</span></div>
+   <div class="chile-match-grid">
+    <label><span data-es="Mi tabla" data-en="My board">Mi tabla</span><select id="matchBoard"><option value="soft">Soft-top</option><option value="long">Longboard</option><option value="mid" selected>Mid-length</option><option value="short">Shortboard</option></select></label>
+    <label><span data-es="Mi nivel" data-en="Ability">Mi nivel</span><select id="matchAbility"><option value="beginner" data-es="Principiante" data-en="Beginner">Principiante</option><option value="intermediate" selected data-es="Intermedio" data-en="Intermediate">Intermedio</option><option value="advanced" data-es="Avanzado" data-en="Advanced">Avanzado</option></select></label>
+    <label><span data-es="Mi estilo" data-en="Style">Mi estilo</span><select id="matchStyle"><option value="flow" selected data-es="Fluido y relajado" data-en="Relaxed & flowing">Fluido y relajado</option><option value="progression" data-es="Progresión y giros" data-en="Progression & turns">Progresión y giros</option><option value="performance" data-es="Performance" data-en="Performance">Performance</option></select></label>
+   </div>
+   <div id="matchResult" class="chile-match-result" aria-live="polite">—</div>
+   <p class="muted" data-es="Un score alto nunca significa que la playa sea segura para tu nivel." data-en="A high score never means a beach is safe for your ability.">Un score alto nunca significa que la playa sea segura para tu nivel.</p>
+  </div>
+ </section>
+ <footer class="chile-footer">
+  <span data-es="FARO · Modelo actualizado, compatibilidad experimental. Marejadas y avisos oficiales no sincronizados." data-en="FARO · Updated model, experimental fit. Official alerts are not automatically checked.">FARO · Modelo actualizado, compatibilidad experimental. Marejadas y avisos oficiales no sincronizados.</span>
+  <span><a href="atlas.html" data-es="Atlas de 73 spots" data-en="73-spot atlas">Atlas de 73 spots</a> · <a href="lab.html" data-es="Laboratorio" data-en="Lab">Laboratorio</a> · <a href="LA_BOCA_PILOT_PLAN.md" data-es="Método y fuentes" data-en="Methods & sources">Método y fuentes</a></span>
+ </footer>
 </main>
-<script defer src="chile-hub.js?v=1"></script>
+<script src="valparaiso-score-lab.js"></script>
+<script src="faro-chile-live.js?v=1"></script>
+<script src="chile-forecast.js?v=1"></script>
 </body>
 </html>
