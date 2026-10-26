@@ -208,6 +208,8 @@ function fixture(){
    await page.locator('#fieldNotesExpand').evaluate(el=>el.open=true);
    assert.equal(await page.locator('#faroObsVideo').count(),1,'Local-only camera/clip player is available');
    await page.locator('#faroObsSource').selectOption('manual_visual');
+   assert.equal(await page.locator('#faroObsCamera').locator('option').count(),1,
+    'Ritoque has no verified camera source; do not invent one');
    assert.equal(await page.locator('#faroObsVideo').isVisible(),false,
     'External third-party camera mode never plays or copies the remote stream');
    const localDay=clock(marine.hourly.time[0]).slice(0,10),localClock=localDay+'T12:00';
@@ -234,6 +236,8 @@ function fixture(){
    });
    assert.equal(record.spotId,'CL-VS:ritoque');
    assert.equal(record.forecast.forecastId,'mock-archived-prior');
+   assert.equal(record.forecast.spotId,'CL-VS:ritoque',
+    'Human labels carry strict geographic identity for future training audit');
    assert.equal(record.trainingEligible,false,'Human annotation is not an automatically permitted AI training sample');
    assert.equal(record.labels.waveCount,2);
    assert.equal(record.labels.closeoutFraction,.5);
@@ -245,6 +249,10 @@ function fixture(){
    assert.match(await page.locator('#spotinsight').textContent(),/surfnerd-ritoque|Surfnerd/i);
    await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
    await page.waitForFunction(()=>document.getElementById('chileVibeAction')?.textContent?.includes('La Boca'),{timeout:12000});
+   assert.ok(await page.locator('#faroObsCamera option[value="lineup-la-boca-1"]').count(),
+    'La Boca camera should be a named manual observation source');
+   assert.ok(await page.locator('#faroObsCamera option[value="lineup-la-boca-2"]').count(),
+    'Premium source available only as manual attribution; no extraction or streaming');
    for(const nav of ['#navForecast','#navBest','#navBoard']){
     await page.locator(nav).click();
     const sizes=await page.evaluate(()=>({client:document.documentElement.clientWidth,
