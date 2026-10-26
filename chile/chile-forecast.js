@@ -12,8 +12,9 @@ const band=n=>!ok(n)?"":n>=8?"brand-band-high":n>=6?"brand-band-regular":n>=4?"b
 const grade=n=>!ok(n)?tr("Sin datos","No data"):n<2?tr("Muy flojo","Very slow"):n<4?tr("Flojo","Slow"):n<6?tr("Variable","Mixed"):n<8?tr("Buena pinta","Looking good"):tr("Con potencial","Good potential");
 const spot=()=>state.config?.pilots?.[state.selected], profile=()=>state.profiles?.profiles?.[spot()?.id];
 const regionRecord=()=>state.registry?.spots?.find(s=>s.id===spot()?.id);
-const localRead=s=>window.FaroChileSpotIntelligence&&state.intelligence&&spot()?
- window.FaroChileSpotIntelligence.evaluate(s,spot().id,state.intelligence,state.lang):null;
+const localRead=(s,spotId=spot()?.id)=>window.FaroChileSpotIntelligence&&state.intelligence&&spotId?
+ window.FaroChileSpotIntelligence.evaluate(s,spotId,state.intelligence,state.lang,
+  {risk:Live.slotRisk(s,state.config)}):null;
 function now(){
  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"America/Santiago",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
  const obj=Object.fromEntries(parts.map(x=>[x.type,x.value]));
@@ -25,11 +26,14 @@ function dateLabel(iso){
  return new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{weekday:"long",day:"numeric",month:"short",timeZone:"UTC"}).format(date);
 }
 function sessionTime(s){return s?h(s.hour)+":00–"+h(s.hour+2)+":00":"—"}
-function bestRemaining(day){
+function bestRemaining(day,spotId=spot()?.id){
  if(!day)return null;
  const present=now();
- return day.slots.filter(s=>s.daylight.eligible&&ok(s.score)&&!["danger","unknown"].includes(Live.slotRisk(s,state.config))&&(day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
-  .sort((a,b)=>b.score-a.score||a.hour-b.hour)[0]||null;
+ // Opportunity first, old guide-fit score only as a tie-breaker.
+ // A caution/unknown risk does not become the "best time" by high score.
+ return day.slots.filter(s=>s.daylight.eligible&&ok(s.score)&&!["danger","unknown","caution"].includes(Live.slotRisk(s,state.config))&&(day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
+  .sort((a,b)=>(localRead(b,spotId)?.decision?.priority??2)-(localRead(a,spotId)?.decision?.priority??2)||
+   b.score-a.score||a.hour-b.hour)[0]||null;
 }
 function selection(){
  const day=state.forecast?.days?.[state.day];
@@ -285,7 +289,7 @@ function strip(){
   button.type="button";button.setAttribute("aria-pressed",String(i===state.day));
   button.append(el("span",i===0?tr("Hoy","Today"):Live.formatDay(d.date,state.lang),"chile-chip-day"));
   button.append(el(s?"strong":"span",s?num(s.score):"—",s?"chile-chip-number":"chile-chip-empty"));
-  button.append(el("span",s?grade(s.score):tr("Sin ventana","No daylight window"),"chile-chip-grade"));
+  button.append(el("span",s?(localRead(s)?.decision?.shortLabel||grade(s.score)):tr("Sin ventana","No daylight window"),"chile-chip-grade"));
   button.append(el("small",s?sessionTime(s):tr("No evaluado","Not evaluated"),"chile-chip-time"));
   button.addEventListener("click",()=>{state.day=i;state.hour=null;render()});host.append(button);
  }
@@ -294,16 +298,39 @@ function strip(){
  $("dayPrev").disabled=state.page===0;$("dayNext").disabled=state.page>=days.length-3;
  $("dayStripProgress").style.width=((state.page+1)/Math.max(1,days.length)*100)+"%";
 }
+function betterWindow(s,local){
+ if(!s||!local?.decision||local.decision.priority>=4)return null;
+ const threshold=local.decision.priority;
+ const present=now(),nowKey=present.date+"T"+h(present.hour);
+ const selectedKey=s.date+"T"+h(s.hour);
+ const candidates=(state.forecast?.days||[]).flatMap(d=>d.slots).filter(t=>
+  t.date+"T"+h(t.hour)>selectedKey&&t.date+"T"+h(t.hour)>=nowKey&&
+  t.daylight?.eligible&&ok(t.score)&&Live.slotRisk(t,state.config)==="none")
+  .map(t=>({t,priority:localRead(t)?.decision?.priority||0}))
+  .filter(x=>x.priority>=3&&x.priority>threshold)
+  .sort((a,b)=>(a.t.date+a.t.hour.toString().padStart(2,"0")).localeCompare(b.t.date+b.t.hour.toString().padStart(2,"0"))||
+   b.priority-a.priority);
+ if(!candidates.length)return null;
+ const next=candidates[0].t;
+ return tr("Mejor candidata para revisar: ","Better option to check: ")+dateLabel(next.date)+" · "+sessionTime(next)+".";
+}
 function vibeUI(s){
  const info=Live.vibe(s,state.lang),meta=s?.scoreMeta,local=localRead(s);
- txt("chileVibeTag",local?.status==="guide_compared"?local.vibe.label:info.label);
- txt("chileVibeHeadline",local?.status==="guide_compared"?local.headline:meta?.read||
-  tr("Selecciona una ventana con datos para interpretar las olas.","Choose a window with data to interpret surf."));
- txt("chileVibeRead",local?.status==="guide_compared"?local.read+" "+(local.notes?.[0]||""):info.description+" "+(meta?.warning||""));
+ const actionable=local?.status==="guide_compared"&&local.decision;
+ txt("chileDecisionHeadline",actionable?local.decision.verdict:tr("Sin recomendación para esta franja","No recommendation for this window"));
+ txt("chileDecisionDriver",actionable?local.decision.reason:
+  tr("Selecciona una ventana con datos suficientes.","Select a window with complete forecast data."));
+ txt("chileVibeTag",actionable?local.vibe.label:info.label);
+ txt("chileVibeHeadline",actionable?tr("Por qué y qué haría","Why it matters & next step"):
+  meta?.read||tr("No hay información suficiente.","Not enough information."));
+ txt("chileVibeRead",actionable?local.read:info.description);
+ txt("chileVibeAction",actionable?local.decision.action+" "+(betterWindow(s,local)||""):
+  tr("Revisa otra franja con datos completos.","Check another complete forecast window."));
  const tags=$("chileVibeEvidence");tags.replaceChildren();
- if(local?.status==="guide_compared"){
-  for(const e of local.evidenceLabels)tags.append(el("span",e.label,"chile-signal-tag "+(e.state==="supported"?"good":e.state==="disputed"?"mixed":"unknown")));
-  tags.append(el("span",tr("Lectura de guías · no observada","Guide interpretation · unobserved"),"chile-signal-tag unknown"));
+ if(actionable){
+  for(const e of local.evidenceLabels.slice(0,3))tags.append(el("span",e.label,"chile-signal-tag "+
+   (e.state==="supported"?"good":e.state==="disputed"?"mixed":"unknown")));
+  tags.append(el("span",tr("Modelo + guías locales","Model + local guides"),"chile-signal-tag unknown"));
  }else{
   for(const t of meta?.tags||[])tags.append(el("span",t.label,"chile-signal-tag "+(t.state==="positive"?"good":t.state==="negative"?"bad":t.state==="mixed"?"mixed":"unknown")));
  }
@@ -312,7 +339,11 @@ function outlook(){
  const d=state.forecast?.days?.[state.day],s=selection();if(!d)return;
  $("dailyOverview").className="forecast-overview "+band(s?.score);
  txt("datehead",dateLabel(d.date));txt("spotname",spot()?.name||"—");
+ const opportunity=localRead(s)?.decision;
  txt("bestTime",sessionTime(s));
+ txt("bestTimeKicker",!s?tr("SIN VENTANA SUGERIDA","NO SUGGESTED WINDOW"):
+  opportunity?.priority>=3?tr("MEJOR VENTANA","BEST WINDOW"):
+   tr("VENTANA PARA EVALUAR","WINDOW TO REVIEW"));
  txt("dayWave",s?num(s.totalWaveHeightM)+" m":"—");
  txt("dayPeriod",s?num(s.swellPeriodS)+" s":"—");
  txt("dayWind",s?num(s.windKmh,0)+" km/h":"—");
@@ -334,7 +365,7 @@ function slots(){
   button.type="button";button.setAttribute("aria-pressed",String(selection()?.hour===s.hour));button.disabled=!s.modelComplete;
   button.append(el("span",h(s.hour)+"–"+h(s.hour+2),"chile-slot-hour"));
   button.append(el("strong",eligible?num(s.score):"—","chile-slot-score"));
-  button.append(el("small",dangerous?tr("⚠ Riesgo modelo","⚠ Model risk"):unknownRisk?tr("⚠ Riesgo sin evaluar","⚠ Risk unassessed"):eligible?Live.vibe(s,state.lang).label:s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
+  button.append(el("small",dangerous?tr("⚠ Riesgo modelo","⚠ Model risk"):unknownRisk?tr("⚠ Riesgo sin evaluar","⚠ Risk unassessed"):Live.slotRisk(s,state.config)==="caution"?tr("⚠ Precaución","⚠ Caution"):eligible?(localRead(s)?.decision?.shortLabel||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
  session();
@@ -390,7 +421,7 @@ function session(){
  const score=el("div",null,"chile-session-rating "+band(s.score));
  score.append(el("small",tr("COMPATIBILIDAD · MODELO","MODEL COMPATIBILITY"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
- score.append(big,el("span",grade(s.score),"chile-session-label"));
+ score.append(big,el("span",localRead(s)?.decision?.shortLabel||grade(s.score),"chile-session-label"));
  const wave=el("div",null,"chile-session-wave");
  wave.append(el("small",tr("ALTURA MODELO OFFSHORE","OFFSHORE MODEL HEIGHT")),el("strong",num(s.totalWaveHeightM)+" m"),el("small",tr("NO altura rompiente","NOT breaking wave height")));
  top.append(score,wave);main.append(top);
@@ -484,16 +515,17 @@ async function rankings(){
  const list=[];
  for(const item of results)if(item.status==="fulfilled"){
   const model=item.value;
-  for(const day of model.days){const s=bestRemaining(day);if(s)list.push({model,day,s})}
+  for(const day of model.days){const s=bestRemaining(day,model.spot.id);if(s)list.push({model,day,s})}
  }
- list.sort((a,b)=>b.s.score-a.s.score||a.day.date.localeCompare(b.day.date));
+ list.sort((a,b)=>(localRead(b.s,b.model.spot.id)?.decision?.priority??2)-
+ (localRead(a.s,a.model.spot.id)?.decision?.priority??2)||b.s.score-a.s.score||a.day.date.localeCompare(b.day.date));
  host.replaceChildren();
  txt("rankingstatus",tr("Compatibilidad modelada · sin calibrar","Modelled compatibility · uncalibrated"));
  if(!list.length){host.append(el("p",tr("Sin comparaciones suficientes por ahora.","Not enough comparable model values."),"muted"));return}
  for(const item of list.slice(0,12)){
   const b=el("button",null,"highlight chile-ranking "+band(item.s.score));b.type="button";
   const line=el("div",null,"chile-rank-layout"),data=el("div");
-  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",(window.FaroChileSpotIntelligence?.evaluate(item.s,item.model.spot.id,state.intelligence,state.lang)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
+  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",(localRead(item.s,item.model.spot.id)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
   line.append(data,el("strong",num(item.s.score)));b.append(line);
   b.addEventListener("click",()=>{
    state.selected=state.config.pilots.findIndex(s=>s.id===item.model.spot.id);
