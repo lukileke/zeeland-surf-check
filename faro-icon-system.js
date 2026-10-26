@@ -30,7 +30,7 @@
  function clean(str){
   if(typeof str!=="string"||!str.trim())return str;
   return str.replace(pictograph,"").replace(doodle,"")
-   .replace(/[\uFE0F\u200D]/g,"").replace(/[ \t]{2,}/g," ").trimStart();
+   .replace(/[\uFE0F\u200D]/g,"").replace(/[ \t]{2,}/g," ");
  }
  function protectedNode(node){
   const el=node.nodeType===1?node:node.parentElement;
