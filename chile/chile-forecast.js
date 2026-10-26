@@ -400,6 +400,12 @@ function waveExplanation(s){
   host.append(signal);
  }
 }
+function renderHourlyPreview(){
+ const s=selection(),local=localRead(s);
+ const read=window.FaroChileCoastalLens?.reading(s,local,state.lang);
+ txt("faroHourlyHeadline",read?.headline||tr("Sin lectura de esta franja","No outlook for this window"));
+ txt("faroHourlyExplanation",read?.explanation||tr("Selecciona un horario para comparar las condiciones.","Select a time window to compare conditions."));
+}
 function updateCoastMap(){
  const s=selection();
  state.coastMap?.update({spot:spot(),spots:state.config?.pilots?.filter(p=>
@@ -597,7 +603,7 @@ function render(){
  if(!state.forecast)return;
  txt("updated",tr("Modelo consultado ","Model fetched ")+new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(state.forecast.model.fetchedAt))+" · CL");
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
- state.videoLab?.refreshCameras();updateCoastMap();if(state.tab==="board")match();
+ state.videoLab?.refreshCameras();updateCoastMap();renderHourlyPreview();if(state.tab==="board")match();
 }
 async function refresh(force=false){
  if(!state.config)return;
@@ -683,6 +689,10 @@ async function initialize(){
  }
  for(const [name,id]of [["forecast","navForecast"],["best","navBest"],["board","navBoard"]])$(id).addEventListener("click",()=>tab(name));
  $("refreshForecast").addEventListener("click",()=>refresh(true));
+ $("faroHourlyGoLens").addEventListener("click",()=>{
+  const panel=$("coastMapExpand");panel.open=true;
+  panel.scrollIntoView({block:"center",behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+ });
  $("chileSpotSelect").addEventListener("change",()=>{
   const i=state.config.pilots.findIndex(x=>x.id===$("chileSpotSelect").value);
   if(i>=0){
