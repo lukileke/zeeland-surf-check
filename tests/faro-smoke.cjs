@@ -39,8 +39,8 @@ assert.ok(salva.includes('viewBox="0 0 126.82 126.5"')&&salva.includes('opacity=
 for(const hex of ['#ce762e','#efbc62','#6b9347','#a4d156','#e55845','#f47b67','#526a74','#c9d8da','#355baf','#5878e0','#1f3b3d','#ffda71'])
  assert.ok(brand.toLowerCase().includes(hex),'Official PDF colour '+hex+' preserved');
 assert.ok(brand.includes('assets/faro-salva-red.svg'),'Danger banner actually loads the user-supplied watermark');
-assert.ok(html.includes("v>=7.5?'brand-band-high':v>=5?'brand-band-regular':v>=2.5?'brand-band-mid':'brand-band-low'"),
- 'Numeric scale matches PDF boundaries independently of quality text thresholds');
+assert.ok(html.includes("v>=8?'brand-band-high':v>=6?'brand-band-regular':v>=4?'brand-band-mid':v>=2?'brand-band-low':'brand-band-verylow'"),
+ 'Five numeric Tide-to-Olive score bands are independent of verbal quality thresholds');
 assert.ok(scripts.length>=2,'HTML includes application and translation scripts');
 scripts.forEach((s,i)=>assert.doesNotThrow(()=>new vm.Script(s), 'Script '+i+' syntax'));
 assert.doesNotThrow(()=>new vm.Script(engine),'Shared surf engine syntax');
