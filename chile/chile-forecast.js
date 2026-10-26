@@ -691,9 +691,14 @@ async function initialize(){
     $("dayStripItems").replaceChildren();
     $("slots").replaceChildren();
     $("sessionAtGlance").replaceChildren();
+    for(const id of ["dayWave","dayWaveLabel","dayPeriod","dayWind","chileVibeTag","chileVibeRead",
+      "chileVibeAction","chileVibeHeadline"])txt(id,"—");
+    $("dayWaveMeter").replaceChildren();
+    $("chileWaveHow").replaceChildren();
+    $("chileVibeExplained").replaceChildren();
     txt("chileDecisionHeadline",tr("Cargando este spot…","Loading this spot…"));
     txt("chileDecisionDriver","");txt("bestTime","—");
-    renderDNA();renderCameras();void refresh();
+    renderDNA();renderCameras();updateCoastMap();void refresh();
    }
  });
  for(const [id,move]of [["dayPrev",-1],["dayNext",1]])$(id).addEventListener("click",()=>{
