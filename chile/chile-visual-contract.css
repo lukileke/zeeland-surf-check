@@ -361,14 +361,18 @@ html:not([data-theme="light"]) #forecastPage{
 
 /* Resolve quality ink on the actual coloured card, NOT on the forecast
    container; band variables are declared only by its descendants. */
+/* In LIGHT mode use FARO's original saturated numeral ink, exactly as in
+   DARK mode. --brand-score-color is the muted border/stroke colour and must
+   NEVER replace the score numeral: this was the unwanted darkening. */
 html[data-theme="light"] #forecastPage :is(.day-chip,.slots>button,.chile-session-rating)[class*="brand-band-"]{
- --cl-score-numeral:var(--brand-score-color);
+ --cl-score-numeral:var(--brand-score-ink);
 }
 html:not([data-theme="light"]) #forecastPage :is(.day-chip,.slots>button,.chile-session-rating)[class*="brand-band-"]{
  --cl-score-numeral:var(--brand-score-ink);
 }
-/* The rating is a quality index, not another product highlight colour.
-   Same FARO five quality bands; light theme darkens numeric ink for contrast. */
+/* Rating labels use the shared five quality bands. The numeric ink
+   itself MUST stay vibrant on white, while surrounding explanatory text
+   retains its independently accessible dark/light typographic colours. */
 #forecastPage #dayStripItems .day-chip{
  background:var(--faro-raised)!important;
  min-height:120px!important;
