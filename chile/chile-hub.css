@@ -11,6 +11,8 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{ou
 .masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
 .logo-meta{font-size:11px;font-weight:800;letter-spacing:.19em;color:var(--muted);margin:0 0 9px}
 .logo-art{width:173px;max-width:100%;height:auto;display:block}
+.brand-images{display:block}.logo-for-light{display:none}:root[data-theme="light"] .logo-for-light{display:block}:root[data-theme="light"] .logo-for-dark{display:none}
+[hidden]{display:none!important}
 .faro-tools{display:flex;align-items:center;gap:8px}
 .faro-tools button{min-height:44px;border:1px solid var(--line);border-radius:12px;padding:8px 13px;background:transparent;color:var(--ink);font-weight:650}
 .switch{display:inline-flex;flex-wrap:wrap;gap:4px;border:1px solid var(--line);border-radius:13px;padding:5px;margin:27px 0 34px;background:var(--panel)}
