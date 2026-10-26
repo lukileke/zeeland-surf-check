@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../faro-spot-signals.css?v=1">
 <link rel="stylesheet" href="../faro-desktop.css?v=1">
 <link rel="stylesheet" href="../faro-country.css?v=1">
-<link rel="stylesheet" href="chile-forecast.css?v=4">
+<link rel="stylesheet" href="chile-forecast.css?v=5">
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=2">
 </head>
 <body>
@@ -102,7 +102,11 @@
     </div>
     <div class="chile-day-uv" id="dayUVBadge" role="note"><span id="dayUVLabel">☀ UV —</span><small id="dayUVAdvice">—</small></div>
     <div id="daySignalMetrics" class="day-signal-metrics">
-     <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">🌊</span><div class="day-signal-figure"><small data-es="OLAS MODELO" data-en="MODEL WAVES">OLAS MODELO</small><strong id="dayWave">—</strong></div></div>
+     <div class="day-signal-metric chile-day-wave-feature">
+      <div class="chile-wave-feature-head"><span aria-hidden="true">〰</span><small data-es="OLAS · MODELO OCEÁNICO" data-en="WAVES · OFFSHORE MODEL">OLAS · MODELO OCEÁNICO</small></div>
+      <div class="chile-wave-feature-number"><strong id="dayWave">—</strong><span id="dayWaveLabel" class="chile-wave-size-tag">—</span></div>
+      <div id="dayWaveMeter" class="chile-wave-bars" role="img" aria-label="Altura modelada">—</div>
+     </div>
      <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">◷</span><div class="day-signal-figure"><small data-es="PERÍODO SWELL" data-en="SWELL PERIOD">PERÍODO SWELL</small><strong id="dayPeriod">—</strong></div></div>
      <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">💨</span><div class="day-signal-figure"><small data-es="VIENTO" data-en="WIND">VIENTO</small><strong id="dayWind">—</strong></div></div>
     </div>
@@ -169,8 +173,9 @@
    <details id="fieldNotesExpand" class="forecast-expand">
     <summary><span class="forecast-accordion-title" data-es="✎ FARO Field Notes" data-en="✎ FARO Field Notes">✎ FARO Field Notes</span><span class="forecast-accordion-meta" data-es="Observaciones reales" data-en="Observed surf">Observaciones reales</span></summary>
     <div id="chileFieldNotes" class="insight-panel">
-     <p data-es="El motor de Chile todavía no se calibra con tus observaciones. Registra los datos en la plantilla hasta que integremos un diario local en la web." data-en="The Chile engine is not calibrated on field observations yet. Use the field log template until in-app journal capture is ready.">El motor de Chile todavía no se calibra con tus observaciones. Registra los datos en la plantilla hasta que integremos un diario local en la web.</p>
-     <a href="field-observations-template.csv" class="faro-safety-link" data-es="Plantilla de observaciones ↗" data-en="Download field log ↗">Plantilla de observaciones ↗</a>
+     <p data-es="FARO Lab cruza observaciones con pronósticos guardados antes de la sesión. Un video propio se reproduce solo en tu navegador; no se sube ni se guarda." data-en="FARO Lab pairs observations with forecasts archived before the session. Your authorised video plays only on your device; it is not uploaded or stored.">FARO Lab cruza observaciones con pronósticos guardados antes de la sesión. Un video propio se reproduce solo en tu navegador; no se sube ni se guarda.</p>
+     <div id="faroVideoLab"></div>
+     <a href="field-observations-template.csv" class="faro-safety-link" data-es="Plantilla CSV avanzada ↗" data-en="Advanced CSV template ↗">Plantilla CSV avanzada ↗</a>
     </div>
    </details>
   </div>
@@ -208,6 +213,7 @@
 <script src="faro-chile-live.js?v=3"></script>
 <script src="faro-physics-lab.js?v=1"></script>
 <script src="faro-spot-intelligence.js?v=2"></script>
-<script src="chile-forecast.js?v=8"></script>
+<script src="video-observation-lab.js?v=1"></script>
+<script src="chile-forecast.js?v=9"></script>
 </body>
 </html>
