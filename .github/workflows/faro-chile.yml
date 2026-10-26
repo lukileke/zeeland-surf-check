@@ -28,6 +28,7 @@ jobs:
           node --check chile/archive-forecast.mjs
           node --check chile/coast-map.js
           node --check chile/video-observation-lab.js
+          node --check chile/calibrate-observations.cjs
       - name: Confirm regional model and score invariants
         run: |
           node chile/test-valparaiso-score.js
@@ -37,3 +38,4 @@ jobs:
           node chile/test-camera-learning.cjs
           node chile/test-archive-forecast.mjs
           node chile/test-video-observation.cjs
+          node chile/test-calibrate-observations.cjs
