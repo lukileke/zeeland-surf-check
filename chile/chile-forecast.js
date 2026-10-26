@@ -64,47 +64,138 @@ function link(parent,title,url){
  if(!/^https:\/\//.test(url||""))return;
  const a=el("a",title+" ↗");a.href=url;a.target="_blank";a.rel="noopener noreferrer";parent.append(a);
 }
-function renderDNA(){
- if(!spot())return;
- const rec=regionRecord(),p=profile(),box=$("spotinsight");
- box.replaceChildren(el("small",tr("SPOT DNA · IDENTIDAD Y EVIDENCIA LOCAL","SPOT DNA · LOCAL EVIDENCE"),"chile-dna-kicker"),el("h3",spot().name,"chile-dna-title"));
- const grid=el("div",null,"chile-dna-grid");
- for(const [name,value]of [
-  [tr("Rompiente","Break type"),rec?.breakType||p?.kind||"—"],
-  [tr("Viento (guía)","Wind (guide)"),rec?.conditions?.publishedReference?.windFrom||"—"],
-  [tr("Swell (guía)","Swell (guide)"),rec?.conditions?.publishedReference?.swellFrom||"—"],
-  [tr("Marea","Tide"),tr("No calibrada","Not calibrated")]
- ]){
-  const f=el("div",null,"chile-dna-fact");f.append(el("span",name),el("strong",value));grid.append(f);
+/* Spot DNA · Editorial identity card
+ * Stable local facts come from the sourced regional record.
+ * Model-vs-guide fit only appears after a 2-hour window is selected.
+ * No locally observed breaking height, tide fit or access clearance is inferred.
+ */
+const dnaIntroductions={
+ "CL-VS:la-boca-concon":{
+  es:"La desembocadura del Aconcagua da forma a bancos de arena que pueden cambiar con el río y los sedimentos. El carácter de la ola depende del banco y de la orientación del swell; verifica corrientes y acceso al humedal.",
+  en:"At the Aconcagua river mouth, shifting sediment can reshape the sandbars. Wave character depends on the active bank and incoming swell; check currents and access around the protected wetland."
+ },
+ "CL-VS:renaca":{
+  es:"En el sector norte se describen picos sobre bancos de arena influenciados por rocas. Más al sur puede haber secciones que cierran. El resultado cambia según el banco y la fuerza del swell.",
+  en:"The northern peaks are described as sandbanks influenced by nearby rocks. Southern sections can close out more readily. The active bank and swell energy change the result."
+ },
+ "CL-VS:ritoque":{
+  es:"Esta playa extensa tiene bancos y zonas de entrada diferentes. Las guías describen olas más suaves en sectores del norte, pero el tamaño y la remada pueden cambiar hacia el sur.",
+  en:"This long, exposed beach has different sandbanks and entry zones. Guides describe softer waves around northern peaks; size and paddling conditions can change farther south."
+ },
+ "CL-VS:maitencillo":{
+  es:"Maitencillo reúne varios picos y bancos. El swell del suroeste y el viento del este son referencias generales, no una regla comprobada para cada sector.",
+  en:"Maitencillo includes multiple peaks and shifting banks. South-westerly swell and easterly wind are general guide references, not verified conditions for every section."
  }
- box.append(grid);
- // A live model-to-guide directional comparison lives in Spot DNA.
- // This is *not* a calibrated local wave-quality assessment.
+};
+function dnaBreakName(type){
+ const dictionary={
+  "river-mouth":[ "Desembocadura / arena","River mouth / sand"],
+  "beach":[ "Playa de arena","Sandy beachbreak"],
+  "reef":[ "Arrecife","Reefbreak"],
+  "point":[ "Punta / pointbreak","Pointbreak"],
+  "mixed":[ "Fondo mixto","Mixed bottom"],
+  "unverified":[ "Por verificar","Unverified"]
+ };
+ return tr(...(dictionary[type]||dictionary.unverified));
+}
+function renderDNA(){
+ const current=spot();if(!current)return;
+ const rec=regionRecord(),p=profile(),host=$("spotinsight");
+ if(!host)return;
+ const context=$("spotInsightContextTag");
+ if(context)context.textContent=tr("Perfil local · "+(current.shortName||current.locality||"Valparaíso"),
+  "Local profile · "+(current.shortName||current.locality||"Valparaíso"));
+ const guide=rec?.conditions?.publishedReference||{};
+ const intro=dnaIntroductions[current.id];
+ const story=intro?.[state.lang]||tr(
+  "Esta playa tiene características propias. Los rangos de guías son orientativos y requieren observaciones antes de representar la ola que rompe.",
+  "This break has its own local character. Published guide ranges are indicative until field observations confirm the actual breaking surf."
+ );
+ const card=el("article",null,"faro-dna-editorial");
+ const portrait=el("div",null,"faro-dna-portrait");
+ portrait.append(
+  el("small",tr("SPOT DNA · GUÍA LOCAL / "+(current.locality||"VALPARAÍSO").toUpperCase(),
+    "SPOT DNA · LOCAL GUIDE / "+(current.locality||"VALPARAÍSO").toUpperCase()),"faro-dna-eyebrow"),
+  el("h3",rec?.name||current.name,"faro-dna-name"),
+  el("p",story,"faro-dna-deck")
+ );
+ const ids=el("div",null,"faro-dna-identity");
+ ids.append(
+  el("span",dnaBreakName(rec?.breakType)),
+  el("span",current.locality||"Valparaíso")
+ );
+ portrait.append(ids);
+ portrait.append(el("small",
+  tr("Basado en guías, no en observaciones en directo","Based on published guides, not live surf observations"),
+  "faro-dna-evidence"));
+ const facts=el("div",null,"faro-dna-facts");
+ const rows=[
+  [tr("Tipo de rompiente","Break type"),dnaBreakName(rec?.breakType)],
+  ["Swell · "+tr("guía","guide"),guide.swellFrom||tr("Sin verificar","Unverified")],
+  [tr("Viento · guía","Wind · guide"),guide.windFrom||tr("Sin verificar","Unverified")],
+  [tr("Marea","Tide"),tr("Sin óptimo validado","No validated optimum")],
+  [tr("Estado","Status"),tr("Guía · falta calibración","Guide · uncalibrated")]
+ ];
+ for(const [title,value]of rows){
+  const item=el("div",null,"faro-dna-fact");
+  item.append(el("span",title),el("strong",value));
+  facts.append(item);
+ }
+ card.append(portrait,facts);
+ const lower=el("div",null,"faro-dna-below");
  const selected=selection();
  if(selected?.scoreMeta?.components){
-  const signals=el("div",null,"chile-dna-live-fit");
-  signals.append(el("small",tr("RESPUESTA AL PRONÓSTICO SELECCIONADO · MODELO Y GUÍA","CURRENT MODEL VS PUBLISHED LOCAL GUIDE"),"chile-dna-kicker"));
-  const tags=el("div",null,"chile-signal-tags");
-  for(const [key,label]of [["windDirection",tr("Viento","Wind")],["swellDirection","Swell"],["windStrength",tr("Intensidad","Strength")]]){
-   const data=selected.scoreMeta.components[key];
-   if(!ok(data?.value))continue;
-   const text=data.value>=.8?tr("favorable","favourable"):data.value>=.45?tr("variable","mixed"):tr("desfavorable","unfavourable");
-   tags.append(el("span",label+" · "+text,"chile-signal-tag "+(data.value>=.8?"good":data.value>=.45?"mixed":"bad")));
+  lower.append(el("small",tr(
+    "CÓMO ENCAJA EL PRONÓSTICO SELECCIONADO",
+    "HOW THE SELECTED MODEL WINDOW FITS THE GUIDE"),"faro-dna-below-title"));
+  const indicators=el("div",null,"faro-dna-signals");
+  for(const [key,label]of [
+   ["windDirection",tr("Dirección de viento","Wind direction")],
+   ["swellDirection",tr("Dirección del swell","Swell direction")],
+   ["windStrength",tr("Intensidad del viento","Wind strength")]
+  ]){
+   const component=selected.scoreMeta.components[key];
+   if(!ok(component?.value))continue;
+   const stateValue=component.value>=.8?"good":component.value>=.45?"mixed":"bad";
+   const assessment=component.value>=.8?tr("Favorable","Favourable"):
+      component.value>=.45?tr("Variable","Mixed"):tr("Desfavorable","Unfavourable");
+   indicators.append(el("span",label+" · "+assessment,"chile-signal-tag "+stateValue));
   }
-  tags.append(el("span",tr("Marea · no calibrada","Tide · uncalibrated"),"chile-signal-tag unknown"));
-  signals.append(tags);box.append(signals);
+  indicators.append(el("span",tr("Marea · no evaluada","Tide · not assessed"),"chile-signal-tag unknown"));
+  lower.append(indicators);
+ }else{
+  lower.append(el("small",tr("PRONÓSTICO LOCAL · POR COMPARAR","LOCAL MODEL · FIT UNAVAILABLE"),"faro-dna-below-title"));
+  lower.append(el("p",tr("El ajuste por dirección requiere datos válidos para la franja elegida.",
+   "Directional compatibility requires valid data for the selected window."),"faro-dna-method"));
  }
- const personality=state.lang==="es"?p?.personality?.es:p?.personality?.en;
- if(personality)box.append(el("p",tr("Carácter típico según guías: ","Typical character in guides: ")+personality,"chile-dna-prose"));
- box.append(el("p",rec?.conditions?.regionSpecificNoteEs||"", "chile-dna-prose"));
- box.append(el("p",state.lang==="es"?p?.hazardContextEs:p?.hazardContextEn,"chile-dna-warning"));
- box.append(el("p",tr("Los rangos de guía son hipótesis, no validaciones de cada banco. No se evalúan acceso ni seguridad al agua.","Guide ranges are hypotheses, not individual bank calibration. Access and water safety are not evaluated."),"chile-dna-prose"));
- const refs=el("div",null,"chile-source-index");
- for(const key of new Set([...(rec?.sources||[]),...Object.values(p?.origins||{})])){
-  const entry=state.sources?.sources?.[key];if(entry?.url)link(refs,entry.name,entry.url);
+ const safety=state.lang==="es"?p?.hazardContextEs:p?.hazardContextEn;
+ if(safety)lower.append(el("p",safety,"faro-dna-safety"));
+ lower.append(el("p",tr(
+  "Las direcciones proceden de guías; no determinan altura rompiente, marea óptima, zonas permitidas ni seguridad.",
+  "These guide directions do not establish breaking-wave height, optimal tide, permitted zones or water-entry safety."
+ ),"faro-dna-method"));
+ const detail=el("details",null,"faro-dna-source-disclosure");
+ const references=new Set([...(rec?.sources||[]),...Object.values(p?.origins||{})]);
+ detail.append(el("summary",tr("Fuentes y alcance de la investigación","Research sources and limitations")));
+ if(state.lang==="es"&&rec?.conditions?.regionSpecificNoteEs){
+  detail.append(el("p",rec.conditions.regionSpecificNoteEs,"faro-dna-method"));
+ }else{
+  detail.append(el("p",tr(
+   "La información corresponde a sectores descritos por guías. Los bancos y límites exactos están pendientes de validación.",
+   "Guide descriptions refer to particular sectors. Exact banks and access boundaries still require field verification."
+  ),"faro-dna-method"));
  }
- box.append(refs);
+ const urls=el("div",null,"faro-dna-source-links");
+ for(const key of references){
+  const source=state.sources?.sources?.[key];
+  if(source?.url)link(urls,source.name,source.url);
+ }
+ if(urls.children.length)detail.append(urls);
+ lower.append(detail);
+ card.append(lower);
+ host.replaceChildren(card);
 }
+
 function risk(hazard){
  const container=$("faroSafetyCenter");container.classList.remove("danger","caution","chile-model-danger","chile-model-caution");
  const level=hazard?.level||"unknown";
