@@ -12,7 +12,7 @@ const events=[
  {type:'wall',atSeconds:45,wallSeconds:8},
  {type:'other',atSeconds:66,wallSeconds:null}
 ];
-assert.deepEqual(lab.deriveEvents(events),{waveCount:4,surfableWaveCount:2,closeoutFraction:.25,
+assert.deepEqual(lab.deriveEvents(events),{waveCount:4,surfableWaveCount:2,closeoutFraction:1/3,
  medianWaveFaceSeconds:6,unclassifiedWaveCount:1});
 assert.equal(lab.deriveEvents([]).closeoutFraction,null);
 const at='2026-10-26T15:00:00.000Z';
