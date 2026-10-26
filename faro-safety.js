@@ -173,7 +173,7 @@
     (es?'KNMI · Consulta oficial, no sincronizada':'KNMI · Official source, not synced');
   const chevron=document.createElement('span');chevron.className='faro-safety-chevron';
   chevron.setAttribute('aria-hidden','true');
-  summary.append(top,title,chevron);
+  summary.append(top,title,sourceNote,chevron);
   detail.append(summary);
 
   // A compact risk explanation: no duplication of the summary values or
