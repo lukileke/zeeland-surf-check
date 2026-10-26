@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../faro-spot-signals.css?v=1">
 <link rel="stylesheet" href="../faro-desktop.css?v=1">
 <link rel="stylesheet" href="../faro-country.css?v=1">
-<link rel="stylesheet" href="chile-forecast.css?v=2">
+<link rel="stylesheet" href="chile-forecast.css?v=3">
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=2">
 </head>
 <body>
@@ -111,12 +111,16 @@
      <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">◷</span><div class="day-signal-figure"><small data-es="PERÍODO SWELL" data-en="SWELL PERIOD">PERÍODO SWELL</small><strong id="dayPeriod">—</strong></div></div>
      <div class="day-signal-metric"><span class="day-signal-icon" aria-hidden="true">💨</span><div class="day-signal-figure"><small data-es="VIENTO" data-en="WIND">VIENTO</small><strong id="dayWind">—</strong></div></div>
     </div>
-    <!-- FARO VIBE is the only interpretation: click the tag to reveal FARO READ. -->
+    <!-- One immediate decision; expandable VIBE explains why and what next. -->
+    <div class="chile-decision-brief" id="chileDecisionBrief" aria-live="polite">
+     <strong id="chileDecisionHeadline">—</strong>
+     <span id="chileDecisionDriver">—</span>
+    </div>
     <section class="faro-read chile-vibe" aria-label="FARO VIBE">
      <div class="faro-vibe-top"><span class="faro-vibe-brand"><span class="faro-vibe-mark" aria-hidden="true">◎</span> FARO VIBE</span></div>
      <details id="chileVibeDetails" class="chile-vibe-details">
       <summary class="chile-vibe-summary"><span id="chileVibeTag" class="wave-wizard-tag">🌊 —</span><span class="chile-vibe-help" data-es="¿Cómo estarán las olas?" data-en="What will the waves feel like?">¿Cómo estarán las olas?</span><span class="chile-chevron">⌄</span></summary>
-      <div class="chile-vibe-more"><strong id="chileVibeHeadline" class="faro-read-title">—</strong><p id="chileVibeRead" class="daily-verdict">—</p><div id="chileVibeEvidence" class="chile-signal-tags"></div><p data-es="Interpretación modelada, no observación directa de la ola." data-en="Model interpretation, not an observed breaking wave.">Interpretación modelada, no observación directa de la ola.</p></div>
+      <div class="chile-vibe-more"><strong id="chileVibeHeadline" class="faro-read-title">—</strong><p id="chileVibeRead" class="daily-verdict">—</p><p id="chileVibeAction" class="chile-vibe-action">—</p><div id="chileVibeEvidence" class="chile-signal-tags"></div><p data-es="Interpretación modelada, no observación directa de la ola." data-en="Model interpretation, not an observed breaking wave.">Interpretación modelada, no observación directa de la ola.</p></div>
      </details>
     </section>
     <button id="openSpotDNA" class="faro-dna-jump" type="button" aria-controls="spotInsightExpand" aria-expanded="false">
@@ -199,7 +203,7 @@
 <script src="valparaiso-score-lab.js"></script>
 <script src="faro-chile-live.js?v=3"></script>
 <script src="faro-physics-lab.js?v=1"></script>
-<script src="faro-spot-intelligence.js?v=1"></script>
-<script src="chile-forecast.js?v=6"></script>
+<script src="faro-spot-intelligence.js?v=2"></script>
+<script src="chile-forecast.js?v=7"></script>
 </body>
 </html>
