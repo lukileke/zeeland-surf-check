@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "0.2.0",
+  "region": "CL-VS",
+  "label": "Valparaíso",
+  "country": "CL",
+  "timezone": "America/Santiago",
+  "forecastStatus": "live_model_provisional_fit",
+  "modelProviders": {
+    "marine": "https://marine-api.open-meteo.com/v1/marine",
+    "weather": "https://api.open-meteo.com/v1/forecast",
+    "requiredVariables": {
+      "marine": [
+        "wave_height",
+        "wave_direction",
+        "wave_period",
+        "swell_wave_height",
+        "swell_wave_direction",
+        "swell_wave_period",
+        "wind_wave_height",
+        "wind_wave_direction",
+        "sea_surface_temperature"
+      ],
+      "weather": [
+        "wind_speed_10m",
+        "wind_direction_10m",
+        "wind_gusts_10m",
+        "precipitation",
+        "weather_code",
+        "uv_index",
+        "temperature_2m",
+        "cloud_cover",
+        "precipitation_probability"
+      ]
+    }
+  },
+  "sourcePolicy": "Live means regularly updated third-party model output, not observation at the breaking wave. Experimental spot-fit scores remain uncalibrated.",
+  "marinePointPolicy": "Coordinates are documented approximate coastal reference locations; nearest eligible sea grid cell may be several kilometres offshore. Not calibrated to a sandbank.",
+  "slots": {
+    "startHour": 6,
+    "endHour": 22,
+    "stepHours": 2,
+    "minDaylightMinutes": 40
+  },
+  "riskScreen": {
+    "cautionGustKmh": 55,
+    "dangerGustKmh": 75,
+    "dangerMeanWindKmh": 55,
+    "rainHourlyKmh": 0,
+    "cautionRainHourlyMm": 15,
+    "cautionRain24hMm": 40,
+    "thunderWeatherCodeMin": 95,
+    "forecastHorizonHours": 48
+  },
+  "officialLinks": [
+    {
+      "id": "armada",
+      "name": "Armada · Avisos marítimos y marejadas",
+      "url": "https://meteoarmada.directemar.cl/",
+      "type": "official",
+      "autoChecked": false
+    },
+    {
+      "id": "senapred",
+      "name": "SENAPRED · Alertas territoriales",
+      "url": "https://senapred.cl/alertas/",
+      "type": "official",
+      "autoChecked": false
+    },
+    {
+      "id": "dmc",
+      "name": "Dirección Meteorológica de Chile · Alertamientos",
+      "url": "https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml",
+      "type": "official",
+      "autoChecked": false
+    },
+    {
+      "id": "uv",
+      "name": "DMC · Pronóstico índice UV",
+      "url": "https://www.meteochile.gob.cl/PortalDMC-web/otros_pronosticos/radiacion_uv.xhtml",
+      "type": "official",
+      "autoChecked": false
+    },
+    {
+      "id": "uvwaves",
+      "name": "Universidad de Valparaíso · La Boca oleaje costero",
+      "url": "https://marejadas.uv.cl/CL15CCN01",
+      "type": "research",
+      "autoChecked": false
+    }
+  ],
+  "pilots": [
+    {
+      "id": "CL-VS:la-boca-concon",
+      "name": "La Boca · Concón",
+      "shortName": "La Boca",
+      "locality": "Concón",
+      "latitude": -32.918807,
+      "longitude": -71.512047,
+      "coordinateSource": "https://commons.wikimedia.org/wiki/File:Playa_La_Boca,_Conc%C3%B3n_20211011_12.jpg",
+      "coordinateStatus": "documented_shore_landmark_not_wave_break",
+      "priority": 1,
+      "feature": true
+    },
+    {
+      "id": "CL-VS:renaca",
+      "name": "Reñaca · sector norte",
+      "shortName": "Reñaca",
+      "locality": "Viña del Mar",
+      "latitude": -32.964844,
+      "longitude": -71.546378,
+      "coordinateSource": "https://www.bcn.cl/leychile/navegar?idNorma=1156943",
+      "coordinateStatus": "nearby_documented_beach_sector_not_confirmed_break_north",
+      "priority": 2
+    },
+    {
+      "id": "CL-VS:ritoque",
+      "name": "Ritoque · picos norte",
+      "shortName": "Ritoque",
+      "locality": "Quintero",
+      "latitude": -32.828369,
+      "longitude": -71.527297,
+      "coordinateSource": "https://subpesca.cl/portal/615/articles-107811_documento.pdf",
+      "coordinateStatus": "north_sector_sampling_reference_not_exact_break",
+      "priority": 3
+    },
+    {
+      "id": "CL-VS:maitencillo",
+      "name": "Maitencillo · perfil general",
+      "shortName": "Maitencillo",
+      "locality": "Puchuncaví",
+      "latitude": -32.644869,
+      "longitude": -71.435337,
+      "coordinateSource": "https://www.munipuchuncavi.cl/pdf/pladetur/pladetur2025.pdf",
+      "coordinateStatus": "municipal_beach_town_coordinate_not_exact_break",
+      "priority": 4
+    }
+  ],
+  "unavailable": [
+    "CL-VS:papagayo-quintero"
+  ],
+  "uvIndexSource": "Open-Meteo forecast uv_index; official DMC corroboration link, not a DMC observed UV reading.",
+  "noOfficialAlertAssertions": true
+}
