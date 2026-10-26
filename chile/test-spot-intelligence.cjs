@@ -100,5 +100,13 @@ for(const [id,name] of [[ids[0],"La Boca"],[ids[1],"Reñaca Norte"],[ids[2],"Rit
  const betterThanLow=assess({...base,swellHeightM:.9,swellPeriodS:10},id,'en');
  assert.ok(betterThanLow.decision.priority>flat.decision.priority);
 }
+const swLocal=assess({...base,swellDirection:210},ids[0],'es');
+assert.equal(swLocal.waveShapeGuide.id,'south_southwest_longer_walls');
+assert.equal(swLocal.waveShapeGuide.verifiedByCamera,false);
+assert.match(swLocal.decision.action,/En la cámara busca.*S\/SSO/);
+const nwLocal=assess({...base,swellDirection:310},ids[0],'en');
+assert.equal(nwLocal.waveShapeGuide.id,'northwest_faster_sections');
+assert.match(nwLocal.decision.action,/NW.*faster/);
+assert.notEqual(swLocal.waveShapeGuide.id,nwLocal.waveShapeGuide.id);
 console.log('FARO decision checks: clear local action, low swell, bad wind, hazard gating, missing risk, daylight and opportunity ranking passed.');
 console.log('FARO Spot Intelligence: 3 distinct surf regimes, contradictory source bands, uncertain tide, missing partitions and no fabricated nearshore prediction passed.');
