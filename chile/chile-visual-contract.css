@@ -14,14 +14,14 @@
  --cl-space-3:14px;
  --cl-space-4:18px;
  --cl-space-5:24px;
- --cl-score-numeral:var(--brand-score-color);
+ --cl-score-numeral:var(--fg);
  --cl-wave-ink:#26748b;
  --cl-primary-ink:var(--fg);
  --cl-muted-ink:var(--faro-quiet);
  --cl-pick:var(--faro-selection,#176d78);
 }
 html:not([data-theme="light"]) #forecastPage{
- --cl-score-numeral:var(--brand-score-ink);
+ --cl-score-numeral:var(--fg);
  --cl-wave-ink:#8bd6e6;
 }
 
@@ -359,6 +359,14 @@ html:not([data-theme="light"]) #forecastPage{
  font-size:12px!important;
 }
 
+/* Resolve quality ink on the actual coloured card, NOT on the forecast
+   container; band variables are declared only by its descendants. */
+html[data-theme="light"] #forecastPage :is(.day-chip,.slots>button,.chile-session-rating)[class*="brand-band-"]{
+ --cl-score-numeral:var(--brand-score-color);
+}
+html:not([data-theme="light"]) #forecastPage :is(.day-chip,.slots>button,.chile-session-rating)[class*="brand-band-"]{
+ --cl-score-numeral:var(--brand-score-ink);
+}
 /* The rating is a quality index, not another product highlight colour.
    Same FARO five quality bands; light theme darkens numeric ink for contrast. */
 #forecastPage #dayStripItems .day-chip{
