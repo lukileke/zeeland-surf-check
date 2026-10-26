@@ -1,6 +1,8 @@
 # FARO · Chile surf spot atlas (research scaffold, October 2026)
 
-**Research only, NOT an active Chile forecast.** FARO's live forecasts, risk notices, board matching and widgets remain scoped to Zeeland. The Chile atlas is a separately maintained, source-attributed foundation.
+**Research beta visible at [FARO Chile](index.html), NOT an active Chile forecast.** Users can switch between the Zeeland live forecast and the Chile regional atlas. FARO's operational forecasts, risk notices, board matching and widgets remain scoped to Zeeland. The Chile atlas is a separately maintained, source-attributed foundation.
+
+The [country explorer](index.html) loads one regional JSON file on demand and explicitly shows source evidence vs missing calibration. It exposes **five experimental Valparaíso profiles** but no live Chile score, tide, warnings or surf-height predictions.
 
 ## Valparaíso research pilot
 
