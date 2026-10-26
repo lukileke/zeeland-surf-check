@@ -140,6 +140,43 @@ function fixture(){
     'Daily scores must use Zeeland score categories, not decisions');
    assert.ok((await firstChip.getAttribute('class')).includes(toneOf(displayedValue)),
     'Daily scores must use Zeeland colour band thresholds');
+   // Regression: never darken score numerals on LIGHT theme for contrast.
+   // Their inks must remain the original vibrant FARO palette on all screen sizes.
+   const vividColours=await page.evaluate(()=>{
+    const html=document.documentElement,previous=html.dataset.theme;
+    html.dataset.theme='light';
+    const swatches={
+     'brand-band-verylow':'rgb(240, 164, 109)',
+     'brand-band-low':'rgb(240, 191, 105)',
+     'brand-band-mid':'rgb(227, 212, 113)',
+     'brand-band-regular':'rgb(176, 219, 117)',
+     'brand-band-high':'rgb(150, 198, 122)'
+    },out=[];
+    const band=el=>[...el.classList].find(x=>x.startsWith('brand-band-'));
+    try{
+     // Exercise all five colours, even when a given forecast lacks a category.
+     for(const [name,expected] of Object.entries(swatches)){
+      const card=document.createElement('button'),strong=document.createElement('strong');
+      card.className='day-chip score-tint '+name;
+      strong.className='chile-chip-number';strong.textContent='7.5';
+      card.append(strong);document.getElementById('dayStripItems').append(card);
+      out.push({component:name,expected,actual:getComputedStyle(strong).color});
+      card.remove();
+     }
+     for(const [component,selector,inner] of [
+      ['daily','#dayStripItems .day-chip[class*="brand-band-"]','.chile-chip-number'],
+      ['hourly','#slots button[class*="brand-band-"]','.chile-slot-score'],
+      ['session','#sessionAtGlance .chile-session-rating[class*="brand-band-"]','.chile-session-score']
+     ]){
+      const card=document.querySelector(selector);
+      if(!card||!card.querySelector(inner))throw Error('No rendered '+component+' score');
+      out.push({component,actual:getComputedStyle(card.querySelector(inner)).color,expected:swatches[band(card)]});
+     }
+    }finally{html.dataset.theme=previous}
+    return out;
+   });
+   for(const v of vividColours)assert.equal(v.actual,v.expected,
+    'Light mode must use original saturated score colours (not darkened border ink): '+JSON.stringify({width,...v}));
    await page.locator('#dayStripItems .day-chip').nth(1).click();
    // The 06:00 window has stronger wind than 08:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
