@@ -92,7 +92,7 @@ async function swipe(session,x0,y0,x1,y1){
       const lightStyle=getComputedStyle(el),darkStyle=getComputedStyle(darkLogo);
       const visibleLogo=document.documentElement.dataset.theme==='light'?el:darkLogo;
       const danger=document.querySelector('.faro-safety-center.danger .faro-safety-summary');
-      const watermark=danger?getComputedStyle(danger,'::before').backgroundImage:'';
+      const watermark=danger?getComputedStyle(danger,'::after').backgroundImage:'';
       return {
        logoLoaded:el.complete&&el.naturalWidth>0,
        logoSrc:el.getAttribute('src'),
