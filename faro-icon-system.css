@@ -73,3 +73,15 @@
   justify-content:flex-start}
  #forecastPage #daySignalMetrics>.day-signal-metric{padding:11px 14px!important}
 }
+
+/* Remove FARO's old improvised emblem and pseudo-chevron artwork.
+   Interactive labels and native details behaviour remain accessible. */
+#forecastPage .faro-vibe-mark,
+#forecastPage .spot-profile-highlight-icon,
+#forecastPage .faro-dna-jump>span:empty,
+#forecastPage .wave-wizard-tag>span:empty{display:none!important}
+#forecastPage #dayview>details.forecast-expand>summary::after{content:none!important;display:none!important}
+#forecastPage #dayview>details.forecast-expand>summary{position:relative}
+#forecastPage #dayview>details.forecast-expand>summary .forecast-accordion-meta{
+ text-align:right;letter-spacing:0;font-weight:650
+}
