@@ -77,7 +77,9 @@ function fixture(){
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
    await page.locator('#dayStripItems .day-chip').nth(1).click();
    await page.waitForFunction(()=>document.getElementById('detail')?.textContent?.includes('UTC'),{timeout:6000});
-   const text=await page.locator('#detail').innerText();
+   // The technical drawer is intentionally collapsed; innerText is empty
+   // for hidden elements, while textContent still exposes populated content.
+   const text=await page.locator('#detail').textContent();
    assert.match(text,/Swell secundario|Secondary swell/);
    assert.match(text,/UTC/);
    assert.match(text,/7 d|7 d|ventanas|windows/i);
