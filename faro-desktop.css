@@ -65,9 +65,8 @@
   #dayStrip .day-strip-title{
     margin-bottom:11px!important;
   }
-  #dayStrip .day-strip-deck{
-    margin:0 0 18px!important;
-  }
+  /* All seven days are visible at this size: remove the mobile swipe hint. */
+  #dayStrip .day-strip-deck{display:none!important;}
   #dayStrip #dayStripItems{
     display:grid!important;
     grid-template-columns:repeat(7,minmax(0,1fr))!important;
