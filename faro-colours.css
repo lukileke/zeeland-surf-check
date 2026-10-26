@@ -1,9 +1,7 @@
-/* FARO / Tide-to-Olive palette v3 (26 October 2026).
- * One coherent 5-band quality scale across web and widget.
- * DAY scores use a vibrant editorial palette, never mudded with slate or grey;
- * NIGHT inks are IDENTICAL to the previous approved dark theme.
- * The continuous /10 rating and the separate label vocabulary are unchanged.
- * Risk warnings keep their own coral / hazard styling.
+/* FARO / Tide-to-Olive palette v4 (26 October 2026).
+ * IDENTICAL score inks in LIGHT and DARK, based on the original dark theme.
+ * Backgrounds, ordinary text, controls and safety alerts retain their themes.
+ * Five numeric bands and the independent Poor/Fair/Good labels remain unchanged.
  */
 :root{
  /* Existing swatches remain for dark-mode borders and any legacy rules. */
@@ -12,13 +10,7 @@
  --score-sand:#9C8431;
  --score-lime:#6E9E43;
  --score-olive:#547642;
- /* Bright daylight hues reflect the original dark aesthetic.
-  * Score numbers are large display text; grade text remains neutral dark ink. */
- --score-copper-day:#C96C49;
- --score-amber-day:#C7852F;
- --score-sand-day:#C6A134;
- --score-lime-day:#9DBA4A;
- --score-olive-day:#6F8C3A;
+ /* Single shared score ink palette across both themes. */
  --score-copper-night:#F0A46D;
  --score-amber-night:#F0BF69;
  --score-sand-night:#E3D471;
@@ -31,19 +23,19 @@
  --brand-score-high:var(--score-olive);
 }
 html[data-theme="light"] .brand-band-verylow{
- --brand-score-color:var(--score-copper-day);--brand-score-ink:var(--score-copper-day);
+ --brand-score-color:var(--score-copper);--brand-score-ink:var(--score-copper-night);
 }
 html[data-theme="light"] .brand-band-low{
- --brand-score-color:var(--score-amber-day);--brand-score-ink:var(--score-amber-day);
+ --brand-score-color:var(--score-amber);--brand-score-ink:var(--score-amber-night);
 }
 html[data-theme="light"] .brand-band-mid{
- --brand-score-color:var(--score-sand-day);--brand-score-ink:var(--score-sand-day);
+ --brand-score-color:var(--score-sand);--brand-score-ink:var(--score-sand-night);
 }
 html[data-theme="light"] .brand-band-regular{
- --brand-score-color:var(--score-lime-day);--brand-score-ink:var(--score-lime-day);
+ --brand-score-color:var(--score-lime);--brand-score-ink:var(--score-lime-night);
 }
 html[data-theme="light"] .brand-band-high{
- --brand-score-color:var(--score-olive-day);--brand-score-ink:var(--score-olive-day);
+ --brand-score-color:var(--score-olive);--brand-score-ink:var(--score-olive-night);
 }
 html:not([data-theme="light"]) .brand-band-verylow{
  --brand-score-color:var(--score-copper);--brand-score-ink:var(--score-copper-night);
