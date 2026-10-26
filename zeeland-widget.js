@@ -1,4 +1,4 @@
-// FARO Widget · Coastal Punch v12 · legible model-first widgets · Scriptable iOS
+// FARO Widget · Coastal Editorial v13 · legible model-first widgets · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -456,112 +456,137 @@ function vibePanel(parent,best,small=false){
  label(block,waveText(best,small),small?11:12,C.ink,"bold",1);
  return block;
 }
+/* V13 · Coastal Editorial.
+ * Truly different composition: a large uncluttered score, a separate
+ * marine model panel and a compact, high-contrast FARO VIBE ribbon.
+ * The original FARO logo and the IDENTICAL five ink colours in both
+ * system themes remain unchanged.
+ */
+function editorialHero(parent,best,large=false){
+ const row=hstack(parent,large?14:9);row.centerAlignContent();
+ const quality=vstack(row,large?5:3);
+ label(quality,word("CALIDAD DE SURF","SURF QUALITY"),large?10:8,C.quiet,"bold",1);
+ scoreRow(quality,best,large?60:43);
+ label(quality,T[gradeOf(best.score)].toUpperCase(),large?12:10,C.ink,"bold",1);
+ row.addSpacer();
+ const wave=vstack(row,large?6:3);
+ wave.backgroundColor=C.panel;wave.cornerRadius=large?15:12;
+ wave.setPadding(large?13:8,large?15:10,large?13:8,large?15:10);
+ label(wave,word("OLAS MODELO · MAR ABIERTO","MODEL · OFFSHORE WAVES"),large?10:8,C.quiet,"bold",1);
+ const measurement=hstack(wave,5);measurement.centerAlignContent();
+ glyph(measurement,"water.waves",large?21:16,C.wave);
+ label(measurement,best.x.h.toFixed(1)+" m",large?32:24,C.wave,"black",1);
+ label(wave,best.x.period.toFixed(1)+" s   ·   "+best.x.wind+" km/h",large?11:9,C.quiet,"semi",1);
+ return row;
+}
+function vibeRibbon(parent,best,large=false){
+ const ribbon=hstack(parent,large?11:8);
+ ribbon.centerAlignContent();
+ ribbon.backgroundColor=C.subtle;ribbon.cornerRadius=large?13:10;
+ ribbon.setPadding(large?11:7,large?13:9,large?11:7,large?13:9);
+ const stripe=ribbon.addStack();stripe.size=new Size(large?4:3,large?30:20);
+ stripe.cornerRadius=2;stripe.backgroundColor=scoreInk(best.score);
+ const copy=vstack(ribbon,large?5:2);
+ label(copy,"FARO VIBE",large?10:8,C.quiet,"bold",1);
+ label(copy,waveText(best,!large),large?15:11,C.ink,"bold",1);
+ ribbon.addSpacer();
+ glyph(ribbon,"water.waves",large?19:15,scoreInk(best.score));
+ return ribbon;
+}
 function renderSmall(best,data,hazard,sessions){
- widget.setPadding(12,13,10,13);
- accentLine(widget,48,4,scoreInk(best.score));widget.addSpacer(7);
+ widget.setPadding(12,12,10,12);
  brandRow(widget,true);widget.addSpacer(8);
- scoreRow(widget,best,43);
- meter(widget,best.score,19,4,4);
- widget.addSpacer(6);
+ const row=hstack(widget,5);row.centerAlignContent();
+ const quality=vstack(row,2);
+ label(quality,word("CALIDAD","QUALITY"),8,C.quiet,"bold");
+ scoreRow(quality,best,41);
+ row.addSpacer();
+ const wave=vstack(row,2);
+ label(wave,word("OLAS MODELO","MODEL WAVES"),8,C.quiet,"bold",1);
+ label(wave,best.x.h.toFixed(1)+" m",20,C.wave,"black");
+ label(wave,best.x.period.toFixed(1)+" s",9,C.quiet,"semi");
+ widget.addSpacer(6);meter(widget,best.score,18,4,4);
+ widget.addSpacer(7);
  label(widget,best.spot[0],12,C.ink,"bold",1);
  label(widget,dayLabel(best.day)+" · "+windowLabel(best.h),9,C.quiet,"semi",1);
- widget.addSpacer(4);
+ widget.addSpacer(5);
  if(!hazardLine(widget,hazard,true)){
-  if(STYLE==="DATA")label(widget,best.x.h.toFixed(1)+" m  /  "+best.x.period.toFixed(1)+" s",10,C.wave,"bold",1);
+  if(STYLE==="DATA")label(widget,compassFrom(best.x.wd)+"  ·  "+best.x.wind+" km/h",9,C.wave,"semi",1);
   else if(STYLE==="WEEK"){
    const next=sessions.find(x=>x.day!==best.day);
-   label(widget,next?dayLabel(next.day)+"  "+next.score.toFixed(1):T.model,9,C.quiet,"semi",1);
-  }else if(STYLE==="FLOW")label(widget,waveText(best,true),10,C.ink,"semi",1);
+   label(widget,next?dayLabel(next.day)+" · "+next.score.toFixed(1):T.model,9,C.quiet,"semi",1);
+  }else label(widget,"FARO VIBE · "+waveText(best,true),9,C.ink,"bold",1);
  }
  if(data.stale)label(widget,T.stale,8,C.caution,"bold");
 }
 function renderMedium(best,data,hazard,sessions){
- widget.setPadding(9,13,8,13);
- accentLine(widget,58,3,scoreInk(best.score));widget.addSpacer(4);
- brandRow(widget,true);widget.addSpacer(3);
- const main=hstack(widget,7);main.centerAlignContent();
- const quality=vstack(main,1);
- scoreRow(quality,best,40);
- label(quality,T[gradeOf(best.score)].toUpperCase(),9,scoreInk(best.score),"bold");
- main.addSpacer();
- const waves=vstack(main,2);
- label(waves,word("OLAS MODELO","MODEL WAVES"),8,C.quiet,"bold",1);
- heroWave(waves,best);
- label(waves,best.x.period.toFixed(1)+" s · "+best.x.wind+" km/h",9,C.quiet,"semi");
- widget.addSpacer(4);
- meter(widget,best.score,25,3,4);
- widget.addSpacer(4);
- const rule=widget.addStack();rule.size=new Size(0,1);rule.backgroundColor=C.line;
- widget.addSpacer(4);
- const row=hstack(widget,5);row.centerAlignContent();
- label(row,best.spot[0]+" · "+best.spot[1],11,C.ink,"bold",1);
- row.addSpacer();
- label(row,dayLabel(best.day)+" "+windowLabel(best.h),9,C.quiet,"semi",1);
- widget.addSpacer(3);
- if(!hazardLine(widget,hazard,true)){
-  if(STYLE==="WEEK"){
-   const next=sessions.find(x=>x.day!==best.day);
-   label(widget,next?word("PRÓXIMA ","NEXT ")+dayLabel(next.day)+"  "+next.score.toFixed(1):T.model,9,C.quiet,"semi",1);
-  }else if(STYLE==="DATA")label(widget,word("OLAS TOTALES DE ","TOTAL WAVES FROM ")+compassFrom(best.x.wd)+" · "+Math.round(best.x.wd)+"°",9,C.quiet,"semi",1);
-  else if(STYLE==="FLOW"){
-   const vibe=hstack(widget,5);vibe.centerAlignContent();
-   label(vibe,"FARO VIBE",9,C.quiet,"bold");
-   label(vibe,"·",9,C.quiet,"semi");
-   label(vibe,waveText(best,true),10,scoreInk(best.score),"bold",1);
-  }else label(widget,data.stale?T.stale:T.model,9,C.quiet,"semi",1);
+ widget.setPadding(10,14,10,14);
+ brandRow(widget,true);
+ widget.addSpacer(8);
+ editorialHero(widget,best,false);
+ widget.addSpacer(7);
+ meter(widget,best.score,26,4,4);
+ widget.addSpacer(7);
+ const position=hstack(widget,8);position.centerAlignContent();
+ label(position,best.spot[0]+" · "+best.spot[1],11,C.ink,"bold",1);
+ position.addSpacer();
+ label(position,dayLabel(best.day)+" "+windowLabel(best.h),10,C.quiet,"semi",1);
+ widget.addSpacer(6);
+ if(["danger","caution"].includes(hazard?.level)){
+  // Preserve the risk signal if vertical room is constrained.
+  hazardLine(widget,hazard,true);
+ }else if(STYLE==="WEEK"){
+  const next=sessions.find(x=>x.day!==best.day);
+  const row=hstack(widget,7);row.centerAlignContent();
+  label(row,word("SIGUIENTE","NEXT"),8,C.quiet,"bold",1);
+  label(row,next?dayLabel(next.day)+" · "+next.score.toFixed(1):T.model,11,scoreInk(next?.score??best.score),"bold",1);
+ }else if(STYLE==="DATA"){
+  const line=hstack(widget,6);line.centerAlignContent();
+  label(line,word("OLAS TOTALES DE","TOTAL WAVES FROM"),9,C.quiet,"bold",1);
+  label(line,compassFrom(best.x.wd)+" · "+Math.round(best.x.wd)+"°",11,C.wave,"bold",1);
+ }else{
+  vibeRibbon(widget,best,false);
  }
- if(data.stale&&STYLE!=="MINIMAL"){
-  // Staleness must not be hidden behind a model-risk notice.
-  widget.addSpacer(2);
-  label(widget,T.stale,8,C.caution,"bold",1);
- }
+ if(data.stale)label(widget,T.stale,8,C.caution,"bold");
 }
 function renderLarge(best,data,hazard,sessions){
- widget.setPadding(18,18,16,18);
- accentLine(widget,84,5,scoreInk(best.score));widget.addSpacer(13);
- brandRow(widget);widget.addSpacer(12);
- spotHeading(widget,best);widget.addSpacer(13);
- const top=hstack(widget,10);top.centerAlignContent();
- const score=vstack(top,5);
- scoreRow(score,best,62);
- label(score,T[gradeOf(best.score)].toUpperCase(),12,scoreInk(best.score),"bold");
- top.addSpacer();
- const wave=vstack(top,5);
- label(wave,word("OLAS MODELADAS","MODEL WAVES"),9,C.quiet,"bold",1);
- heroWave(wave,best);
- label(wave,T.period+" "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi");
+ widget.setPadding(15,18,14,18);
+ brandRow(widget);
+ widget.addSpacer(11);
+ spotHeading(widget,best);
+ widget.addSpacer(10);
+ editorialHero(widget,best,true);
  widget.addSpacer(13);
- meter(widget,best.score,37,6,6);
+ meter(widget,best.score,34,5,6);
  sectionRule(widget);
- if(hazardLine(widget,hazard))widget.addSpacer(11);
+ const hazardVisible=hazardLine(widget,hazard);
+ if(hazardVisible)widget.addSpacer(9);
  if(STYLE==="WEEK"){
-  label(widget,word("PRÓXIMAS VENTANAS","NEXT SURF WINDOWS"),10,C.quiet,"bold");
-  // Preserve the risk callout and freshness footer on iPhone large widgets.
-  widget.addSpacer(7);nextWindows(widget,best,sessions,
-   ["danger","caution"].includes(hazard?.level)?2:3);
- }else if(STYLE==="DATA"){
-  label(widget,word("CONDICIONES MODELO","MODEL CONDITIONS"),10,C.quiet,"bold");
-  widget.addSpacer(10);
-  const metrics=hstack(widget,16);
-  compactMetric(metrics,"wind",T.wind,best.x.wind+" km/h",C.wave);
-  compactMetric(metrics,"clock",T.period,best.x.period.toFixed(1)+" s",C.wave);
-  widget.addSpacer(8);
-  label(widget,word("OLEAJE TOTAL DESDE ","TOTAL WAVES FROM ")+compassFrom(best.x.wd)+" · "+Math.round(best.x.wd)+"°",10,C.quiet,"semi",1);
-  widget.addSpacer(9);vibePanel(widget,best);
- }else if(STYLE==="MINIMAL"){
-  vibePanel(widget,best);widget.addSpacer(12);
-  label(widget,best.x.period.toFixed(1)+" s  ·  "+best.x.wind+" km/h",12,C.quiet,"semi");
+  label(widget,word("PRÓXIMAS VENTANAS","NEXT SURF WINDOWS"),10,C.quiet,"bold",1);
+  widget.addSpacer(9);
+  nextWindows(widget,best,sessions,hazardVisible?2:3);
  }else{
-  vibePanel(widget,best);widget.addSpacer(11);
-  const insight=globalThis.ZeelandEngine.quickRead(best.x,LANG);
-  label(widget,insight.headline,15,C.ink,"bold",2);
-  widget.addSpacer(8);
-  label(widget,word("OLAS TOTALES DE ","TOTAL WAVES FROM ")+compassFrom(best.x.wd)+" · "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi",1);
-  /* Expanded interpretation remains available on the FARO website. */
+  vibeRibbon(widget,best,true);
+  widget.addSpacer(10);
+  if(STYLE==="DATA"){
+   const metrics=hstack(widget,16);metrics.centerAlignContent();
+   compactMetric(metrics,"wind",T.wind,best.x.wind+" km/h",C.wave);
+   compactMetric(metrics,"clock",T.period,best.x.period.toFixed(1)+" s",C.wave);
+   widget.addSpacer(7);
+   label(widget,word("OLAS TOTALES DESDE ","TOTAL WAVES FROM ")+compassFrom(best.x.wd)+" · "+Math.round(best.x.wd)+"°",10,C.quiet,"semi",1);
+  }else if(STYLE==="MINIMAL"){
+   label(widget,word("VIENTO ","WIND ")+best.x.wind+" km/h · "+best.x.period.toFixed(1)+" s",12,C.quiet,"semi",1);
+  }else{
+   const insight=globalThis.ZeelandEngine.quickRead(best.x,LANG);
+   label(widget,insight.headline,15,C.ink,"bold",2);
+   widget.addSpacer(7);
+   label(widget,word("OLEAJE TOTAL DE ","TOTAL WAVES FROM ")+compassFrom(best.x.wd)+" · "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi",1);
+  }
  }
  widget.addSpacer();
  freshness(widget,data);
 }
+
 function renderAccessory(best,hazard){
  widget.backgroundColor=new Color("#000000",0);
  widget.setPadding(0,0,0,0);
