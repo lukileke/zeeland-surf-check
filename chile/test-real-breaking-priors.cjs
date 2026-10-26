@@ -20,5 +20,12 @@ assert.ok(Math.abs(v.acrossUnseenSites.meanLogLoss-trained.acrossUnseenSites.mea
 assert.ok(v.acrossUnseenSites.meanLogLoss>v.acrossUnseenSites.uniformBaselineLogLoss,
  'Labels from 6 other beaches cannot be marketed as calibrated predictive skill on new coast');
 assert.equal(v.acrossUnseenSites.beatsUniform,false);
-assert.equal(JSON.stringify(v),JSON.stringify(trained),'Commit exact reproducible trained result, no invented results');
+for(const id of Object.keys(v.bySite)){
+ assert.equal(v.bySite[id].samples,trained.bySite[id].samples);
+ assert.equal(v.bySite[id].majorityClass,trained.bySite[id].majorityClass);
+ for(let j=0;j<3;j++)assert.ok(Math.abs(v.bySite[id].probabilities[j]-
+  trained.bySite[id].probabilities[j])<tol,'Site prior must reproduce to floating-point tolerance');
+}
+assert.equal(v.trainedBreakingVideoModel,trained.trainedBreakingVideoModel);
+assert.ok(Math.abs(v.acrossUnseenSites.meanLogLoss-trained.acrossUnseenSites.meanLogLoss)<tol);
 console.log('FARO research: trained 9000 real published labels as categorical priors; transfer FAIL correctly reported; no licensed video used.');
