@@ -146,10 +146,15 @@ function create(opts){
   const guide=local?.waveShapeGuide?.hypothesis;
   if(guide)append("p","faro-map-insight",guide+" · "+(es?"Hipótesis local por verificar.":"Unverified local hypothesis."));
   const camera=(v.cameras||[]).find(cam=>cam.spotId===spot.id&&
-   cam.type==="surf_camera"&&cam.viewerAccess==="free_account_required");
+   cam.viewerAccess==="public_youtube_no_account")||
+   (v.cameras||[]).find(cam=>cam.spotId===spot.id&&
+    cam.type==="surf_camera"&&cam.viewerAccess==="free_account_required");
   const shortcuts=append("div","faro-map-shortcuts");
   if(camera&&/^https:\/\//.test(camera.page)){
-   const view=append("a","faro-map-shortcut",es?"📷 Ver La Boca en Lineup ↗":"📷 See La Boca on Lineup ↗",shortcuts);
+   const independent=camera.viewerAccess==="public_youtube_no_account";
+   const view=append("a","faro-map-shortcut",independent?
+    (es?"📷 Ver Marejadas UV ↗":"📷 View Marejadas UV ↗"):
+    (es?"📷 Ver La Boca en Lineup ↗":"📷 See La Boca on Lineup ↗"),shortcuts);
    view.href=camera.page;view.target="_blank";view.rel="noopener noreferrer";
   }
   const note=append("button","faro-map-shortcut secondary",es?"✎ Registrar olas observadas":"✎ Log observed waves",shortcuts);
