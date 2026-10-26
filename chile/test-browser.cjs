@@ -146,6 +146,11 @@ function fixture(){
    assert.match(mapText,/SWELL/);
    assert.match(mapText,/VIENTO|WIND/);
    assert.match(mapText,/OpenStreetMap/,'Map must show attribution and limits');
+   assert.ok(await page.locator('#chileCoastMap a[href*="lineup.surf"][href*="camera1"]').count(),
+    'Map makes the original free-account La Boca surf camera discoverable');
+   await page.locator('#chileCoastMap button.faro-map-shortcut').click();
+   assert.equal(await page.locator('#fieldNotesExpand').evaluate(el=>el.open),true,
+    'One-click coast-map action should reveal the private observation journal');
    // Switch spot by selecting the georeferenced map pin, not just the dropdown.
    if(width>=1120){
     await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:renaca"]').click();
