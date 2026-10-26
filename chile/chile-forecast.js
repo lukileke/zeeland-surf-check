@@ -92,7 +92,7 @@ function tab(name){
 }
 function link(parent,title,url){
  if(!/^https:\/\//.test(url||""))return;
- const a=el("a",title+" ↗");a.href=url;a.target="_blank";a.rel="noopener noreferrer";parent.append(a);
+ const a=el("a",title+"");a.href=url;a.target="_blank";a.rel="noopener noreferrer";parent.append(a);
 }
 /* Spot DNA · Editorial identity card
  * Stable local facts come from the sourced regional record.
@@ -296,7 +296,7 @@ function renderCameras(){
    tr("Vista regional · transmisión no verificada","Regional context · unverified feed");
   row.append(el("strong",cam.name),el("small",availability));
   if(/^https:\/\//.test(cam.page)){
-   const a=el("a",tr("Ver cámara en origen ↗","Open provider's camera ↗"));
+   const a=el("a",tr("Ver cámara en origen","Open provider's camera"));
    a.href=cam.page;a.target="_blank";a.rel="noopener noreferrer";row.append(a);
   }
   host.append(row);
