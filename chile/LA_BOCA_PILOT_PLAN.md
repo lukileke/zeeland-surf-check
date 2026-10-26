@@ -1,10 +1,17 @@
 # FARO Chile · Primera activación controlada (La Boca → Reñaca)
-**26 de octubre de 2026 · Plan operativo v1 · Chile permanece DESACTIVADO**
+**26 de octubre de 2026 · Plan operativo v1.1 · Atlas beta público; pronósticos chilenos DESACTIVADOS**
 
 FARO ya dispone de un catálogo de 16 regiones, 73 lugares candidatos y un FARO Lab experimental con perfiles documentados para La Boca, Ritoque, Reñaca norte, Maitencillo y Papagayo. Nada de eso constituye todavía un pronóstico publicado ni una calibración de la ola rompiente. Este documento convierte la investigación en **tareas con entregables y criterios de salida**.
 
 ## Decisión de producto
-**Primera playa: La Boca de Concón.** Segunda fase: Reñaca Norte. No activar todo Chile de una vez. Mantener Zeeland sin cambios. Hasta superar los criterios de salida, el modo Chile debe seguir oculto en la navegación principal y los widgets.
+**Primera playa: La Boca de Concón.** Segunda fase: Reñaca Norte. No activar todo Chile de una vez. Mantener Zeeland sin cambios. Hemos publicado un selector de país y un atlas chileno **rotulado BETA sin pronóstico en directo**. Hasta superar los criterios de salida, el motor de predicción chileno, las clasificaciones en vivo y los widgets chilenos siguen desactivados; el modo Zeeland permanece independiente.
+
+### Ya implementado (sin pronóstico en vivo)
+- [x] Selector ZEELAND LIVE / CHILE BETA en la web, con URLs independientes.
+- [x] Chile browseable por 16 regiones y 73 spots candidatos; Valparaíso tiene 21 lugares.
+- [x] Acceso desde el atlas a los cinco perfiles de investigación en FARO Lab con spot preseleccionado.
+- [x] Estilos y logotipos para claro/oscuro; misma paleta de scores para los experimentos.
+- [x] Protección frente a activar accidentalmente puntuaciones u horarios en vivo de Chile.
 
 ### Puerta 0 — Identificar el lugar EXACTO
 Entregables:
