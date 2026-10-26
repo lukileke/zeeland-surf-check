@@ -441,6 +441,18 @@ async function initialize(){
   setLanguage();state.cache.clear();void refresh(true);
  });
  $("themeToggle").addEventListener("click",()=>setTheme(true));
+ const dnaButton=$("openSpotDNA"),dnaDisclosure=$("spotInsightExpand");
+ if(dnaButton&&dnaDisclosure){
+  dnaButton.addEventListener("click",()=>{
+   dnaDisclosure.open=true;
+   dnaButton.setAttribute("aria-expanded","true");
+   const motion=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+   dnaDisclosure.scrollIntoView({behavior:motion,block:"start"});
+  });
+  dnaDisclosure.addEventListener("toggle",()=>{
+   dnaButton.setAttribute("aria-expanded",String(dnaDisclosure.open));
+  });
+ }
  for(const [name,id]of [["forecast","navForecast"],["best","navBest"],["board","navBoard"]])$(id).addEventListener("click",()=>tab(name));
  $("refreshForecast").addEventListener("click",()=>refresh(true));
  $("chileSpotSelect").addEventListener("change",()=>{
