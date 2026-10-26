@@ -218,6 +218,7 @@ async function swipe(session,x0,y0,x1,y1){
            editorial.nav!=='FARO Match'||!editorial.branded.includes('FARO MATCH')){
          failures.push({width,locale,theme,issue:'FARO READ/MATCH brand and interpretation must be visible and translated',editorial,expectedHeadline});
         }
+        await page.locator('#faroRead .faro-read-details>summary').click();
         await page.locator('#faroRead .faro-read-match').click();
         const contextFromForecast=await page.evaluate(()=>({
          boardVisible:!document.querySelector('#boardPage').classList.contains('hide'),
