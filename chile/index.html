@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../faro-spot-signals.css?v=1">
 <link rel="stylesheet" href="../faro-desktop.css?v=1">
 <link rel="stylesheet" href="../faro-country.css?v=1">
-<link rel="stylesheet" href="chile-forecast.css?v=8">
+<link rel="stylesheet" href="chile-forecast.css?v=9">
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=2">
 </head>
 <body>
@@ -136,6 +136,12 @@
    <section class="forecast-section hourly-section" aria-label="Horario">
     <div class="forecast-section-heading"><div><h3 data-es="Elige tu horario" data-en="Find your time">Elige tu horario</h3><p data-es="Compara franjas de 2 horas" data-en="Compare 2-hour windows">Compara franjas de 2 horas</p></div></div>
     <div id="slots" class="slots"></div>
+     <div id="faroHourlyPreview" class="faro-hourly-preview" aria-live="polite">
+      <small>◎ FARO · COASTAL READ</small>
+      <strong id="faroHourlyHeadline">—</strong>
+      <span id="faroHourlyExplanation">—</span>
+      <button id="faroHourlyGoLens" type="button" data-es="Ver brújula y mapa ↗" data-en="See compass and map ↗">Ver brújula y mapa ↗</button>
+     </div>
    </section>
    <section class="forecast-section session-section" aria-label="Sesión seleccionada">
     <div id="sessionAtGlance" class="session-glance"><p class="muted" data-es="Selecciona una ventana para ver sus condiciones." data-en="Select a time window for details.">Selecciona una ventana para ver sus condiciones.</p></div>
@@ -222,7 +228,8 @@
 <script src="faro-physics-lab.js?v=1"></script>
 <script src="faro-spot-intelligence.js?v=2"></script>
 <script src="video-observation-lab.js?v=1"></script>
-<script src="coast-map.js?v=2"></script>
-<script src="chile-forecast.js?v=12"></script>
+<script src="faro-coastal-lens.js?v=1"></script>
+<script src="coast-map.js?v=3"></script>
+<script src="chile-forecast.js?v=13"></script>
 </body>
 </html>
