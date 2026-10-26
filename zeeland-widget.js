@@ -536,7 +536,9 @@ function renderLarge(best,data,hazard,sessions){
  if(hazardLine(widget,hazard))widget.addSpacer(11);
  if(STYLE==="WEEK"){
   label(widget,word("PRÓXIMAS VENTANAS","NEXT SURF WINDOWS"),10,C.quiet,"bold");
-  widget.addSpacer(10);nextWindows(widget,best,sessions,3);
+  // Preserve the risk callout and freshness footer on iPhone large widgets.
+  widget.addSpacer(7);nextWindows(widget,best,sessions,
+   ["danger","caution"].includes(hazard?.level)?2:3);
  }else if(STYLE==="DATA"){
   label(widget,word("CONDICIONES MODELO","MODEL CONDITIONS"),10,C.quiet,"bold");
   widget.addSpacer(10);
