@@ -464,33 +464,33 @@ function vibePanel(parent,best,small=false){
  */
 function editorialHero(parent,best,large=false){
  const row=hstack(parent,large?14:9);row.centerAlignContent();
- const quality=vstack(row,large?5:3);
- label(quality,word("CALIDAD DE SURF","SURF QUALITY"),large?10:8,C.quiet,"bold",1);
- scoreRow(quality,best,large?60:43);
- label(quality,T[gradeOf(best.score)].toUpperCase(),large?12:10,C.ink,"bold",1);
+ const quality=vstack(row,large?3:2);
+ label(quality,large?word("CALIDAD DE SURF","SURF QUALITY"):word("CALIDAD · ","QUALITY · ")+T[gradeOf(best.score)].toUpperCase(),large?10:8,C.quiet,"bold",1);
+ scoreRow(quality,best,large?56:40);
+ if(large)label(quality,T[gradeOf(best.score)].toUpperCase(),10,C.ink,"bold",1);
  row.addSpacer();
  const wave=vstack(row,large?6:3);
  wave.backgroundColor=C.panel;wave.cornerRadius=large?15:12;
- wave.setPadding(large?13:8,large?15:10,large?13:8,large?15:10);
- label(wave,word("OLAS MODELO · MAR ABIERTO","MODEL · OFFSHORE WAVES"),large?10:8,C.quiet,"bold",1);
+ wave.setPadding(large?10:6,large?12:9,large?10:6,large?12:9);
+ label(wave,word("OLAS MODELO · MAR ABIERTO","MODEL · OFFSHORE WAVES"),large?9:8,C.quiet,"bold",1);
  const measurement=hstack(wave,5);measurement.centerAlignContent();
- glyph(measurement,"water.waves",large?21:16,C.wave);
- label(measurement,best.x.h.toFixed(1)+" m",large?32:24,C.wave,"black",1);
- label(wave,best.x.period.toFixed(1)+" s   ·   "+best.x.wind+" km/h",large?11:9,C.quiet,"semi",1);
+ glyph(measurement,"water.waves",large?20:15,C.wave);
+ label(measurement,best.x.h.toFixed(1)+" m",large?29:22,C.wave,"black",1);
+ label(wave,best.x.period.toFixed(1)+" s   ·   "+best.x.wind+" km/h",large?10:9,C.quiet,"semi",1);
  return row;
 }
 function vibeRibbon(parent,best,large=false){
- const ribbon=hstack(parent,large?11:8);
+ const ribbon=hstack(parent,large?10:7);
  ribbon.centerAlignContent();
  ribbon.backgroundColor=C.subtle;ribbon.cornerRadius=large?13:10;
- ribbon.setPadding(large?11:7,large?13:9,large?11:7,large?13:9);
- const stripe=ribbon.addStack();stripe.size=new Size(large?4:3,large?30:20);
+ ribbon.setPadding(large?8:5,large?12:8,large?8:5,large?12:8);
+ const stripe=ribbon.addStack();stripe.size=new Size(large?4:3,large?24:17);
  stripe.cornerRadius=2;stripe.backgroundColor=scoreInk(best.score);
- const copy=vstack(ribbon,large?5:2);
- label(copy,"FARO VIBE",large?10:8,C.quiet,"bold",1);
- label(copy,waveText(best,!large),large?15:11,C.ink,"bold",1);
+ const copy=vstack(ribbon,large?3:1);
+ label(copy,"FARO VIBE",large?9:8,C.quiet,"bold",1);
+ label(copy,waveText(best,!large),large?14:10,C.ink,"bold",1);
  ribbon.addSpacer();
- glyph(ribbon,"water.waves",large?19:15,scoreInk(best.score));
+ glyph(ribbon,"water.waves",large?17:13,scoreInk(best.score));
  return ribbon;
 }
 function renderSmall(best,data,hazard,sessions){
@@ -520,18 +520,18 @@ function renderSmall(best,data,hazard,sessions){
  if(data.stale)label(widget,T.stale,8,C.caution,"bold");
 }
 function renderMedium(best,data,hazard,sessions){
- widget.setPadding(10,14,10,14);
+ widget.setPadding(7,13,7,13);
  brandRow(widget,true);
- widget.addSpacer(8);
+ widget.addSpacer(4);
  editorialHero(widget,best,false);
- widget.addSpacer(7);
- meter(widget,best.score,26,4,4);
- widget.addSpacer(7);
+ widget.addSpacer(4);
+ meter(widget,best.score,26,3,4);
+ widget.addSpacer(4);
  const position=hstack(widget,8);position.centerAlignContent();
  label(position,best.spot[0]+" · "+best.spot[1],11,C.ink,"bold",1);
  position.addSpacer();
  label(position,dayLabel(best.day)+" "+windowLabel(best.h),10,C.quiet,"semi",1);
- widget.addSpacer(6);
+ widget.addSpacer(4);
  if(["danger","caution"].includes(hazard?.level)){
   // Preserve the risk signal if vertical room is constrained.
   hazardLine(widget,hazard,true);
@@ -550,13 +550,13 @@ function renderMedium(best,data,hazard,sessions){
  if(data.stale)label(widget,T.stale,8,C.caution,"bold");
 }
 function renderLarge(best,data,hazard,sessions){
- widget.setPadding(15,18,14,18);
+ widget.setPadding(13,17,11,17);
  brandRow(widget);
- widget.addSpacer(11);
+ widget.addSpacer(9);
  spotHeading(widget,best);
- widget.addSpacer(10);
+ widget.addSpacer(8);
  editorialHero(widget,best,true);
- widget.addSpacer(13);
+ widget.addSpacer(10);
  meter(widget,best.score,34,5,6);
  sectionRule(widget);
  const hazardVisible=hazardLine(widget,hazard);
@@ -567,7 +567,7 @@ function renderLarge(best,data,hazard,sessions){
   nextWindows(widget,best,sessions,hazardVisible?2:3);
  }else{
   vibeRibbon(widget,best,true);
-  widget.addSpacer(10);
+  widget.addSpacer(7);
   if(STYLE==="DATA"){
    const metrics=hstack(widget,16);metrics.centerAlignContent();
    compactMetric(metrics,"wind",T.wind,best.x.wind+" km/h",C.wave);
@@ -579,7 +579,7 @@ function renderLarge(best,data,hazard,sessions){
   }else{
    const insight=globalThis.ZeelandEngine.quickRead(best.x,LANG);
    label(widget,insight.headline,15,C.ink,"bold",2);
-   widget.addSpacer(7);
+   widget.addSpacer(5);
    label(widget,word("OLEAJE TOTAL DE ","TOTAL WAVES FROM ")+compassFrom(best.x.wd)+" · "+best.x.period.toFixed(1)+" s",10,C.quiet,"semi",1);
   }
  }
