@@ -126,13 +126,39 @@ html[data-theme="light"] #forecastPage .day-chip.selected[class*="brand-band-"]{
  background:#fff!important;
 }
 
-/* The user's authentic vector safety mark must survive later theme layers.
- * This is safety-only artwork supplied by the FARO designer, not a generic icon. */
-.faro-safety-center.danger .faro-safety-summary::before{
+/* Keep risk source legible in the collapsed mobile safety rail.
+ * Explanations stay under the accordion; provenance must not. */
+#faroSafetyCenter .faro-safety-summary{
+ display:grid!important;
+ grid-template-columns:auto minmax(0,1fr) 9px!important;
+ grid-template-rows:auto auto!important;
+ align-items:center!important;
+ gap:3px 10px!important;
+ min-height:72px!important;
+ padding:11px 13px!important;
+}
+#faroSafetyCenter .faro-safety-summary>.faro-safety-top{
+ grid-column:1!important;grid-row:1/span 2!important;align-self:center!important;
+}
+#faroSafetyCenter .faro-safety-summary>.faro-safety-headline{
+ grid-column:2!important;grid-row:1!important;align-self:end!important;
+}
+#faroSafetyCenter.faro-safety-center .faro-safety-summary>.faro-safety-inline-source{
+ display:block!important;
+ grid-column:2!important;grid-row:2!important;
+ font:650 10px/1.35 var(--faro-text)!important;
+ color:var(--faro-quiet)!important;
+ align-self:start!important;
+}
+#faroSafetyCenter .faro-safety-summary>.faro-safety-chevron{
+ grid-column:3!important;grid-row:1/span 2!important;margin:0!important;
+}
+#faroSafetyCenter:not(.danger) .faro-safety-summary::after{
+ content:none!important;display:none!important;background:none!important;
+}
+/* Original FARO designer rescue ring is exclusively an actual danger watermark. */
+#faroSafetyCenter.faro-safety-center.danger .faro-safety-summary::after{
  content:""!important;display:block!important;
- background-image:url("assets/faro-salva-red.svg")!important;
- background-repeat:no-repeat!important;
- background-position:center!important;
- background-size:120px auto!important;
- pointer-events:none!important;
+ background:url("assets/faro-salva-red.svg") center/contain no-repeat!important;
+ opacity:.18!important;pointer-events:none!important;
 }
