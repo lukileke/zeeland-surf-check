@@ -107,7 +107,15 @@
       "coordinateSource": "https://commons.wikimedia.org/wiki/File:Playa_La_Boca,_Conc%C3%B3n_20211011_12.jpg",
       "coordinateStatus": "documented_shore_landmark_not_wave_break",
       "priority": 1,
-      "feature": true
+      "feature": true,
+      "coastalReference": {
+        "label": "Universidad de Valparaíso · Nodo Costero Playa La Boca",
+        "url": "https://marejadas.uv.cl/CL15CCN01",
+        "siteId": "CL15CCN01",
+        "depthM": 20,
+        "sourceType": "coastal_model_forecast",
+        "autoIntegrated": false
+      }
     },
     {
       "id": "CL-VS:renaca",
@@ -118,7 +126,15 @@
       "longitude": -71.546378,
       "coordinateSource": "https://www.bcn.cl/leychile/navegar?idNorma=1156943",
       "coordinateStatus": "nearby_documented_beach_sector_not_confirmed_break_north",
-      "priority": 2
+      "priority": 2,
+      "coastalReference": {
+        "label": "Universidad de Valparaíso · Reñaca Norte",
+        "url": "https://marejadas.uv.cl/CL15VAS04",
+        "siteId": "CL15VAS04",
+        "depthM": 20,
+        "sourceType": "coastal_model_forecast",
+        "autoIntegrated": false
+      }
     },
     {
       "id": "CL-VS:ritoque",
