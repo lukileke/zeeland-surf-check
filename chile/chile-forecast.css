@@ -441,3 +441,15 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
  #forecastPage #dayview>#coastMapExpand{margin:14px 0!important}
  #forecastPage #dailyOverview .chile-day-wave-feature{min-height:100px}
 }
+
+/* See source ↔ log observed surf is directly accessible from coast map. */
+.faro-map-shortcuts{display:flex;align-items:stretch;flex-wrap:wrap;gap:7px}
+.faro-map-shortcuts .faro-map-shortcut{
+ display:inline-flex;justify-content:center;align-items:center;min-height:34px;
+ padding:8px 10px;border:1px solid var(--faro-line);border-radius:9px;
+ background:var(--faro-hero);color:var(--fg);font-family:var(--faro-text,system-ui);
+ font-size:10px;font-weight:850;line-height:1.25;text-decoration:none;
+ cursor:pointer;max-width:100%;
+}
+.faro-map-shortcuts .faro-map-shortcut.secondary{background:var(--tile)}
+.faro-map-shortcuts .faro-map-shortcut:hover{border-color:var(--faro-ocean)}
