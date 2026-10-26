@@ -135,10 +135,17 @@ function extract(config,spot,marine,weather,profileConfig,locale="es"){
 }
 function screenRisk(config,weather,locale="es"){
  const tr=(es,en)=>locale==="es"?es:en;
- const h=config.riskScreen,day=weather.hourly||{},hours=Math.min(day.time?.length||0,h.forecastHorizonHours);
+ const h=config.riskScreen,day=weather.hourly||{};
+ const nowParts=new Intl.DateTimeFormat("en-GB",{timeZone:config.timezone||"America/Santiago",
+  year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+ const now=Object.fromEntries(nowParts.map(p=>[p.type,p.value]));
+ const localHour=now.year+"-"+now.month+"-"+now.day+"T"+now.hour+":00";
+ const first=(day.time||[]).findIndex(t=>t>=localHour);
+ const start=Math.max(0,first);
+ const hours=first<0?0:Math.min((day.time?.length||0)-start,h.forecastHorizonHours);
  const samples=Array.from({length:hours},(_,i)=>({
-  time:day.time[i],gust:day.wind_gusts_10m?.[i],wind:day.wind_speed_10m?.[i],
-  rain:day.precipitation?.[i],code:day.weather_code?.[i]
+  time:day.time[start+i],gust:day.wind_gusts_10m?.[start+i],wind:day.wind_speed_10m?.[start+i],
+  rain:day.precipitation?.[start+i],code:day.weather_code?.[start+i]
  }));
  const maxGust=max(samples.map(x=>x.gust)),maxWind=max(samples.map(x=>x.wind));
  const maxRain=max(samples.map(x=>x.rain));
@@ -160,6 +167,16 @@ function screenRisk(config,weather,locale="es"){
   type:"model_risk_screen",officialStatus:"not_checked",issuedAt:null,forecastHours:hours,
   label:unknown?tr("Riesgo modelo sin datos","No model risk data"):reasons.join(" · ")||
    tr("Sin señales de umbral en el modelo","No model thresholds crossed")};
+}
+function slotRisk(slot,config){
+ if(!slot)return "unknown";
+ const h=config?.riskScreen||{};
+ if(finite(slot.gustKmh)&&slot.gustKmh>=h.dangerGustKmh||
+    finite(slot.windKmh)&&slot.windKmh>=h.dangerMeanWindKmh||
+    finite(slot.weatherCode)&&slot.weatherCode>=95&&slot.weatherCode<=99)return "danger";
+ if(finite(slot.gustKmh)&&slot.gustKmh>=h.cautionGustKmh||
+    finite(slot.precipitationMm)&&slot.precipitationMm>=h.cautionRainHourlyMm)return "caution";
+ return "none";
 }
 function vibe(slot,locale="es"){
  const es=locale==="es";
@@ -205,5 +222,5 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
  const [marine,weather]=await Promise.all([fetchJSON(urls.marine,fetcher),fetchJSON(urls.weather,fetcher)]);
  return extract(config,spot,marine,weather,profiles,locale);
 }
-root.FaroChileLive=Object.freeze({buildUrls,fetchSpot,extract,screenRisk,statusUV,vibe,boardFit,cardinal,formatDay,daylight,mean,circleMean});
+root.FaroChileLive=Object.freeze({buildUrls,fetchSpot,extract,screenRisk,slotRisk,statusUV,vibe,boardFit,cardinal,formatDay,daylight,mean,circleMean});
 })(typeof globalThis!=="undefined"?globalThis:this);
