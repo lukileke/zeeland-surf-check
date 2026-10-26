@@ -78,6 +78,18 @@ function fixture(){
    }
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
+   assert.equal(await page.evaluate(()=>!!window.FaroIconSystem),true,
+    'Both Faro country variants must share Maria-approved icon contract');
+   const graphicGlyphs=await page.evaluate(()=>({
+    emoji:[...document.body.innerText.matchAll(/\p{Extended_Pictographic}/gu)].map(m=>m[0]),
+    sourceSymbols:[...document.body.innerText.matchAll(/[◎◷〰✎✐]/gu)].map(m=>m[0])
+   }));
+   assert.deepEqual(graphicGlyphs.emoji,[],
+    'No old decorative emoji should remain visible anywhere in Chile forecast');
+   assert.deepEqual(graphicGlyphs.sourceSymbols,[],
+    'No homemade graphic pseudo-icons should remain visible in interface text');
+   assert.equal(await page.locator('.faro-svg-icon.is-approved').count(),0,
+    'Until Maria delivers approved SVG assets, FARO must use clear text-only fallbacks');
    assert.equal(await page.locator('#dayWaveMeter .chile-wave-bars span').count(),8,
     'Zeeland-style wave-height scale must show all eight bars');
    assert.match(await page.locator('#dayWave').textContent(),/m/,'Daily hero must feature modelled wave height');
