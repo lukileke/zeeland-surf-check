@@ -22,7 +22,9 @@ jobs:
           node --check chile/faro-chile-live.js
           node --check chile/chile-forecast.js
           node --check chile/valparaiso-score-lab.js
+          node --check chile/faro-physics-lab.js
       - name: Confirm regional model and score invariants
         run: |
           node chile/test-valparaiso-score.js
           node chile/test-live-forecast.js
+          node chile/test-physics-lab.cjs
