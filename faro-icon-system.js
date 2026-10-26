@@ -26,7 +26,7 @@
  // later generated dynamic tags. Scientific azimuth degrees and arrows inside
  // modelled SVG instruments are deliberately exempt.
  const pictograph=/\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*/gu;
- const doodle=/[◎◷〰✎✐⌄↗↘⬆⬇]/gu;
+ const doodle=/[◎◷〰✎✐⌄↗↘⬆⬇✓☾✕✖✗]/gu;
  function clean(str){
   if(typeof str!=="string"||!str.trim())return str;
   return str.replace(pictograph,"").replace(doodle,"")
