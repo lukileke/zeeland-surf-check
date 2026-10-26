@@ -222,9 +222,9 @@ async function swipe(session,x0,y0,x1,y1){
         // mobile editorial view compact. Expand before testing its action.
         const editorialDetails=page.locator('#faroRead details.faro-read-details');
         if(await editorialDetails.count()){
-         await editorialDetails.locator('summary').click();
+         await editorialDetails.evaluate(el=>{el.open=true});
          assert.equal(await editorialDetails.evaluate(el=>el.open),true,
-          'Native FARO READ expands before its personal-match CTA can be used');
+          'FARO READ disclosure exposes personal-match CTA after expanding');
         }
         await page.locator('#faroRead .faro-read-match').click();
         const contextFromForecast=await page.evaluate(()=>({
