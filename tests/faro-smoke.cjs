@@ -305,17 +305,17 @@ legacyContext.FaroSafety.render(legacyBanner,example,'Domburg',new Date('2026-10
 const legacyDetails=legacyBanner.children[0];
 assert.ok(legacyDetails.children[0].children[0].children[0].textContent.includes('RIESGO SEGÚN EL MODELO'),
  'Spanish danger heading is visible');
-assert.ok(legacyDetails.children[0].children[1].textContent.includes('Rachas hasta'),
+assert.ok(/Rachas (de )?hasta/.test(legacyDetails.children[0].children[1].textContent),
  'Spanish summary communicates numeric gust');
 assert.ok(legacyDetails.children[0].children[2].textContent.includes('no aviso oficial'),
  'Spanish source warning is visible even while collapsed');
-assert.equal(legacyDetails.children[1].children.at(-1).href,safety.KNMI_URL,
+assert.equal(legacyDetails.children[1].children.at(-1).children[0].href,safety.KNMI_URL,
  'Stale Chile selection must never override Zeeland KNMI');
 
 const fallbackBanner=fakeNode('section');
 viewContext.FaroSafety.render(fallbackBanner,null,'Domburg',new Date('2026-10-26T12:00:00+01:00'));
 assert.ok(fallbackBanner.className.includes('advisory'),'Missing model is not called safe');
-assert.equal(fallbackBanner.children[0].children[1].children.at(-1).href,safety.KNMI_URL,
+assert.equal(fallbackBanner.children[0].children[1].children.at(-1).children[0].href,safety.KNMI_URL,
  'Official link survives unavailable model and expired dated bulletin');
 assert.equal(fallbackBanner.attrs.role,'region','Routine notices are not emergency alerts');
 assert.ok(fallbackBanner.children[0].children[0].children[1].textContent.includes('Check official warnings'),
