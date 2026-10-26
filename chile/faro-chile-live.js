@@ -36,7 +36,7 @@ function statusUV(n,locale="es"){
  return {category:"extreme",name:tr("Extremo","Extreme"),protection:tr("Evita exposición directa prolongada y refuerza la protección.","Avoid prolonged direct exposure and increase protection.")};
 }
 function buildUrls(spot,config){
- if(!finite(spot.latitude)||!finite(spot.longitude)||spot.coordinateStatus?.includes("exact_verified_break"))
+ if(!finite(spot.latitude)||!finite(spot.longitude))
   throw Error("Pilot location metadata invalid");
  const common={latitude:spot.latitude,longitude:spot.longitude,timezone:config.timezone,forecast_days:"7"};
  const marine=new URL(config.modelProviders.marine);
@@ -68,6 +68,8 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const height=mean(vals(mar,"wave_height")),swellHeight=mean(vals(mar,"swell_wave_height"));
  const swellDirection=circleMean(vals(mar,"swell_wave_direction"));
  const totalDirection=circleMean(vals(mar,"wave_direction"));
+ const windSeaHeight=mean(vals(mar,"wind_wave_height"));
+ const windSeaDirection=circleMean(vals(mar,"wind_wave_direction"));
  const swellPeriod=mean(vals(mar,"swell_wave_period"));
  const totalPeriod=mean(vals(mar,"wave_period"));
  const wind=mean(vals(met,"wind_speed_10m"));
@@ -87,6 +89,7 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
   spotId:spot.id,date,hour:startHour,label:String(startHour).padStart(2,"0")+":00–"+String(startHour+2).padStart(2,"0")+":00",
   modelComplete,score:score.score,scoreMeta:score,
   totalWaveHeightM:height,totalWaveDirection:totalDirection,totalWavePeriodS:totalPeriod,
+  windSeaHeightM:windSeaHeight,windSeaDirection,
   swellHeightM:swellHeight,swellDirection,swellPeriodS:swellPeriod,
   windKmh:wind,windDirection,gustKmh:gust,uvIndex,uv:statusUV(uvIndex,locale),
   temperatureC:temperature,waterTemperatureC:sst,cloudPercent:cloud,precipitationMm:precipMissing?null:precip,
@@ -161,7 +164,7 @@ function screenRisk(config,weather,locale="es"){
 function vibe(slot,locale="es"){
  const es=locale==="es";
  const tr=(a,b)=>es?a:b;
- if(!slot?.modelComplete)return {id:"unknown",label:tr("Sin datos","Unavailable"),description:tr("Faltan variables del modelo.","Model fields are missing.")};
+ if(!slot?.modelComplete||!finite(slot.swellPeriodS)||!finite(slot.swellHeightM))return {id:"unknown",label:tr("Sin datos","Unavailable"),description:tr("No hay suficientes datos de swell para describir la ola.","Not enough swell data to describe the surf.")};
  if(finite(slot.gustKmh)&&slot.gustKmh>=75||slot.windKmh>=38)
   return {id:"windy",label:tr("💨 Ventoso","💨 Windy"),description:tr("Viento fuerte modelado: superficie probablemente desordenada. No evalúa corrientes ni seguridad.","Modelled strong winds could produce bumpy surf. Currents and entry risks not assessed.")};
  if(slot.windKmh<=8&&slot.swellPeriodS>=7)
