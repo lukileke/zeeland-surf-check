@@ -10,7 +10,7 @@ const h=n=>String(n).padStart(2,"0");
 const band=n=>!ok(n)?"":n>=8?"brand-band-high":n>=6?"brand-band-regular":n>=4?"brand-band-mid":n>=2?"brand-band-low":"brand-band-verylow";
 // Exact score bands and colour classes from Zeeland. Spot-fit in Chile is
 // still experimental, so a quality label is NOT a validated beach observation.
-const scoreTone=n=>!ok(n)?"":(n>=8.5?"tone-great":n>=7?"tone-good":n>=5?"tone-fair":n>=3?"tone-poor":"tone-low")+" "+band(n);
+const scoreTone=n=>!ok(n)?"":(n>=8?"tone-great":n>=6?"tone-good":n>=4?"tone-fair":n>=2?"tone-poor":"tone-low")+" "+band(n);
 // These are *relative model signals*, never validated observed surf quality.
 const grade=n=>!ok(n)?tr("Sin datos","No data"):n>=8.5?tr("Excelente","Excellent"):n>=7?tr("Bueno","Good"):n>=5?tr("Regular","Fair"):n>=3?tr("Malo","Poor"):tr("Muy malo","Very poor");
 const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
