@@ -24,6 +24,15 @@ const circleMean=a=>{
  if(Math.hypot(sin,cos)<1e-6)return null;
  return ((Math.atan2(sin,cos)*180/Math.PI)%360+360)%360;
 };
+// Numeric forecast instants are UTC epoch seconds; render in the real IANA zone.
+function wallClock(instant,zone){
+ if(!finite(instant))return String(instant);
+ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:zone,year:"numeric",month:"2-digit",
+  day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date(instant*1000));
+ const p=Object.fromEntries(parts.map(v=>[v.type,v.value]));
+ return p.year+"-"+p.month+"-"+p.day+"T"+p.hour+":"+p.minute;
+}
+const utcInstant=instant=>finite(instant)?new Date(instant*1000).toISOString():null;
 const dateFromTime=t=>String(t).slice(0,10);
 const hh=t=>parseInt(String(t).slice(11,13),10);
 const minutes=t=>{const n=String(t).match(/T(\d\d):(\d\d)/);return n?Number(n[1])*60+Number(n[2]):null};
@@ -46,7 +55,8 @@ function statusUV(n,locale="es"){
 function buildUrls(spot,config){
  if(!finite(spot.latitude)||!finite(spot.longitude))
   throw Error("Pilot location metadata invalid");
- const common={latitude:spot.latitude,longitude:spot.longitude,timezone:config.timezone,forecast_days:"7"};
+ const common={latitude:spot.latitude,longitude:spot.longitude,timezone:config.timezone,
+  timeformat:"unixtime",forecast_days:"7"};
  const marine=new URL(config.modelProviders.marine);
  marine.search=new URLSearchParams({...common,cell_selection:"sea",hourly:config.modelProviders.requiredVariables.marine.join(",")}).toString();
  const weather=new URL(config.modelProviders.weather);
@@ -58,17 +68,17 @@ async function fetchJSON(url,fetcher){
  if(!res||!res.ok)throw Error("HTTP "+(res?.status||"unknown")+" from model provider");
  return res.json();
 }
-function hourMap(data,fields){
+function hourMap(data,fields,zone){
  const timestamps=data?.hourly?.time||[];
  const out=new Map(),ambiguous=new Set();
  for(let i=0;i<timestamps.length;i++){
-  const stamp=timestamps[i];
+  const stamp=wallClock(timestamps[i],zone);
   // On a fall-back DST transition the same wall-clock hour may occur twice.
   // Without an absolute UTC offset we cannot match these hours safely across
   // providers, so exclude both occurrences rather than silently overwrite.
   if(ambiguous.has(stamp))continue;
   if(out.has(stamp)){out.delete(stamp);ambiguous.add(stamp);continue}
-  const row={time:stamp};
+  const row={time:stamp,validAtUtc:utcInstant(timestamps[i])};
   for(const key of fields)row[key]=finite(data?.hourly?.[key]?.[i])?data.hourly[key][i]:null;
   out.set(stamp,row);
  }
@@ -106,12 +116,13 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const precip=vals(met,"precipitation").filter(finite).reduce((a,b)=>a+b,0);
  const precipMissing=vals(met,"precipitation").every(v=>!finite(v));
  const weatherCode=max(vals(met,"weather_code"));
+ const validTimesUtc=slotHours.map(t=>weatherHours.get(t)?.validAtUtc).filter(Boolean);
  const fields={windFromDeg:windDirection,windKmh:wind,gustKmh:gust,swellFromDeg:swellDirection,swellPeriodS:swellPeriod,swellHeightM:swellHeight};
  const score=root.FaroChileScoreLab?.evaluate(profileConfig,spot.id,complete?fields:{},{locale})||{score:null,status:"unavailable",tags:[]};
  const modelComplete=complete&&[height,totalDirection,totalPeriod,wind].every(finite);
  return {
   spotId:spot.id,date,hour:startHour,label:String(startHour).padStart(2,"0")+":00–"+String(startHour+2).padStart(2,"0")+":00",
-  modelComplete,coverage,score:score.score,scoreMeta:score,
+  modelComplete,coverage,validTimesUtc,score:score.score,scoreMeta:score,
   totalWaveHeightM:height,totalWaveDirection:totalDirection,totalWavePeriodS:totalPeriod,
   windSeaHeightM:windSeaHeight,windSeaDirection,
   swellHeightM:swellHeight,swellDirection,swellPeriodS:swellPeriod,
@@ -129,24 +140,32 @@ function daylight(slot,sunrise,sunset,minMinutes){
 function extract(config,spot,marine,weather,profileConfig,locale="es"){
  if(!marine?.hourly?.time?.length||!weather?.hourly?.time?.length)
   throw Error("Model response lacks hourly data");
- const marineHours=hourMap(marine,config.modelProviders.requiredVariables.marine);
- const weatherHours=hourMap(weather,config.modelProviders.requiredVariables.weather);
+ const marineHours=hourMap(marine,config.modelProviders.requiredVariables.marine,config.timezone);
+ const weatherHours=hourMap(weather,config.modelProviders.requiredVariables.weather,config.timezone);
  const weatherTimes=weather.hourly.time;
  const days=[];
- const dailyDates=weather.daily?.time?.length?weather.daily.time:[...new Set(weatherTimes.map(dateFromTime))].slice(0,7);
+ // Derive dates from actual hourly instants. Daily timestamps may encode
+ // midnight using a fixed UTC offset across daylight-saving transitions.
+ const dailyDates=typeof weatherTimes[0]==="number"?
+  [...new Set(weatherTimes.map(t=>dateFromTime(wallClock(t,config.timezone))))].slice(0,7):
+  (weather.daily?.time?.length?weather.daily.time:[...new Set(weatherTimes.map(dateFromTime))].slice(0,7));
  for(let di=0;di<7;di++){
   const date=dailyDates[di];if(!date)continue;
   const slots=[];
   for(let hour=config.slots.startHour;hour<config.slots.endHour;hour+=config.slots.stepHours){
    const times=Array.from({length:config.slots.stepHours},(_,i)=>date+"T"+String(hour+i).padStart(2,"0")+":00");
    const x=summarize(times,marineHours,weatherHours,profileConfig,spot,config,locale);
-   x.daylight=daylight(x,weather.daily?.sunrise?.[di],weather.daily?.sunset?.[di],config.slots.minDaylightMinutes);
+   const sunrise=wallClock(weather.daily?.sunrise?.[di],config.timezone);
+   const sunset=wallClock(weather.daily?.sunset?.[di],config.timezone);
+   x.daylight=daylight(x,sunrise,sunset,config.slots.minDaylightMinutes);
    x.daylightMinutes=x.daylight.minutes;
    slots.push(x);
   }
   const eligible=slots.filter(x=>x.daylight.eligible&&finite(x.score));
   const best=eligible.length?[...eligible].sort((a,b)=>b.score-a.score||a.hour-b.hour)[0]:null;
-  days.push({date,index:di,slots,best,sunrise:weather.daily?.sunrise?.[di]||null,sunset:weather.daily?.sunset?.[di]||null,
+  days.push({date,index:di,slots,best,
+   sunrise:weather.daily?.sunrise?.[di]==null?null:wallClock(weather.daily.sunrise[di],config.timezone),
+   sunset:weather.daily?.sunset?.[di]==null?null:wallClock(weather.daily.sunset[di],config.timezone),
    uvMax:finite(weather.daily?.uv_index_max?.[di])?weather.daily.uv_index_max[di]:null,
    precipitationDailyMm:finite(weather.daily?.precipitation_sum?.[di])?weather.daily.precipitation_sum[di]:null});
  }
@@ -157,7 +176,7 @@ function extract(config,spot,marine,weather,profileConfig,locale="es"){
  return {spot,region:config.region,timezone:config.timezone,model:{fetchedAt,
   marineGrid:{lat:marine.latitude,lon:marine.longitude,distanceKm:gridDistanceKm(spot.latitude,spot.longitude,marine.latitude,marine.longitude)},
   weatherGrid:{lat:weather.latitude,lon:weather.longitude,distanceKm:gridDistanceKm(spot.latitude,spot.longitude,weather.latitude,weather.longitude)},
-  issueAt:null,validFrom:weatherTimes[0],source:"Open-Meteo",
+  issueAt:null,validFrom:utcInstant(weatherTimes[0]),timeBasis:typeof weatherTimes[0]==="number"?"epoch_utc":"legacy_local_unverified",source:"Open-Meteo",
   coverage:{completeSlots,totalSlots:windows.length},
   offshoreApproximation:true,referencePointStatus:spot.coordinateStatus||"unverified"},days,windows,hazard:screenRisk(config,weather,locale),fitExperimental:true};
 }
@@ -168,7 +187,7 @@ function screenRisk(config,weather,locale="es"){
   year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
  const now=Object.fromEntries(nowParts.map(p=>[p.type,p.value]));
  const localHour=now.year+"-"+now.month+"-"+now.day+"T"+now.hour+":00";
- const first=(day.time||[]).findIndex(t=>t>=localHour);
+ const first=(day.time||[]).findIndex(t=>finite(t)?t*1000>=Date.now()-3600000:t>=localHour);
  const start=Math.max(0,first);
  const hours=first<0?0:Math.min((day.time?.length||0)-start,h.forecastHorizonHours);
  const samples=Array.from({length:hours},(_,i)=>({
@@ -268,5 +287,5 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
  const [marine,weather]=await Promise.all([fetchJSON(urls.marine,fetcher),fetchJSON(urls.weather,fetcher)]);
  return extract(config,spot,marine,weather,profiles,locale);
 }
-root.FaroChileLive=Object.freeze({buildUrls,fetchSpot,extract,screenRisk,slotRisk,statusUV,vibe,boardFit,cardinal,formatDay,daylight,mean,circleMean});
+root.FaroChileLive=Object.freeze({buildUrls,fetchSpot,extract,screenRisk,slotRisk,statusUV,vibe,boardFit,cardinal,formatDay,daylight,mean,circleMean,wallClock});
 })(typeof globalThis!=="undefined"?globalThis:this);
