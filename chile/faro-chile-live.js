@@ -151,7 +151,8 @@ function daylight(slot,sunrise,sunset,minMinutes){
 function extract(config,spot,marine,weather,profileConfig,locale="es"){
  if(!marine?.hourly?.time?.length||!weather?.hourly?.time?.length)
   throw Error("Model response lacks hourly data");
- const marineHours=hourMap(marine,config.modelProviders.requiredVariables.marine,config.timezone);
+ const marineFields=[...new Set([...config.modelProviders.requiredVariables.marine,...(config.modelProviders.optionalMarineVariables||[])])];
+ const marineHours=hourMap(marine,marineFields,config.timezone);
  const weatherHours=hourMap(weather,config.modelProviders.requiredVariables.weather,config.timezone);
  const weatherTimes=weather.hourly.time;
  const days=[];
