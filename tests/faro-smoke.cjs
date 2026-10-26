@@ -109,7 +109,7 @@ assert.ok(css.includes('.faro-safety-summary'),'Click/tap target styled');
 assert.ok(css.includes('.faro-safety-expanded'),'Expanded explanation styled');
 
 assert.ok(html.indexOf('id="faroSafetyCenter"')<html.indexOf('id="forecastPage"'),'Safety banner not trapped inside Forecast');
-assert.ok(/src="faro-safety\\.js\\?v=\\d+"/.test(html),'Dedicated safety module loads');
+assert.ok(/src="faro-safety\.js\?v=\d+"/.test(html),'Dedicated safety module loads');
 assert.ok(html.includes('gust:w')===false,'Gusts not accidentally fabricated as constants');
 assert.ok(html.includes('gust:scores.reduce('),'Entire two-hour window uses worst gust');
 assert.ok(css.includes('.faro-safety-center.danger'),'Severe alert is visible separately from score');
