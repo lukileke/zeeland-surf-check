@@ -130,10 +130,10 @@ function create(opts){
   const dir=x=>deg(x)?Math.round(x)+"°":"—";
   const row=append("div","faro-map-readings");
   const cards=[
-   [es?"🌊 SWELL · DESDE":"🌊 SWELL · FROM",
+   [es?" SWELL · DESDE":" SWELL · FROM",
     dir(slot.swellDirection)+" · "+(deg(slot.swellHeightM)?slot.swellHeightM.toFixed(1)+" m":"—"),
     es?"Período "+(deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s":"—"):"Period "+(deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s":"—")],
-   [es?"💨 VIENTO · DESDE":"💨 WIND · FROM",
+   [es?" VIENTO · DESDE":" WIND · FROM",
     dir(slot.windDirection)+" · "+(deg(slot.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—"),
     deg(slot.gustKmh)?(es?"Rachas ":"Gusts ")+slot.gustKmh.toFixed(0)+" km/h":""]
   ];
@@ -153,11 +153,11 @@ function create(opts){
   if(camera&&/^https:\/\//.test(camera.page)){
    const independent=camera.viewerAccess==="public_youtube_no_account";
    const view=append("a","faro-map-shortcut",independent?
-    (es?"📷 Ver Marejadas UV ↗":"📷 View Marejadas UV ↗"):
-    (es?"📷 Ver La Boca en Lineup ↗":"📷 See La Boca on Lineup ↗"),shortcuts);
+    (es?" Ver Marejadas UV ↗":" View Marejadas UV ↗"):
+    (es?" Ver La Boca en Lineup ↗":" See La Boca on Lineup ↗"),shortcuts);
    view.href=camera.page;view.target="_blank";view.rel="noopener noreferrer";
   }
-  const note=append("button","faro-map-shortcut secondary",es?"✎ Registrar olas observadas":"✎ Log observed waves",shortcuts);
+  const note=append("button","faro-map-shortcut secondary",es?" Registrar olas observadas":" Log observed waves",shortcuts);
   note.type="button";note.addEventListener("click",()=>{
    const panel=document.getElementById("fieldNotesExpand");
    if(panel){panel.open=true;panel.scrollIntoView({block:"start",behavior:"smooth"})}
