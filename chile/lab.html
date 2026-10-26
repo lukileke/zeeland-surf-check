@@ -20,10 +20,39 @@ input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{ou
 .compare{margin-top:18px}.compare>p{font-size:12px;color:var(--muted);margin-bottom:16px}.compare-row{display:grid;grid-template-columns:minmax(0,1fr) 48px 110px;align-items:center;gap:10px;border-top:1px solid var(--line);padding:10px 3px;min-width:0}.compare-name{font-size:13px;font-weight:750;min-width:0}.compare-name small{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-top:3px}.compare-num{font-weight:850;font-size:20px;line-height:1;font-variant-numeric:tabular-nums}.compare-track{height:8px;background:#dce5e2;border-radius:8px;overflow:hidden}.compare-fill{height:100%;border-radius:8px}.compare-row.current{background:color-mix(in srgb,var(--blue) 6%,transparent);border-radius:8px;padding-inline:9px}@media(max-width:380px){.compare-row{grid-template-columns:minmax(0,1fr) 44px 75px;gap:7px}.compare-name{font-size:12px}}
 .footer{margin-top:25px;font-size:12px;color:var(--muted)}.footer a{display:inline-block;margin-right:13px;margin-top:8px}
 @media(max-width:700px){.layout{grid-template-columns:1fr}main{width:min(100% - 24px,680px)}.panel{padding:19px}.signals{gap:8px}.fields{gap:0 12px}}
-@media(prefers-color-scheme:dark){:root{color-scheme:dark;--paper:#102427;--card:#1c3538;--ink:#eff4ef;--muted:#bdcdd0;--line:#496368;--blue:#a1afff}select,input{background:#294348}.signal{background:#253f42}.vibe{background:#2b4032;border-color:#688b54}.caveat{background:#2c4041}.alert{background:#393330}.slices span{background:#425458}.score{color:#a9d376}a{color:#b6c7ff}}
-</style></head>
+:root[data-theme="dark"]{color-scheme:dark;--paper:#102427;--card:#1c3538;--ink:#eff4ef;--muted:#bdcdd0;--line:#496368;--blue:#a1afff}
+:root[data-theme="dark"] select,:root[data-theme="dark"] input{background:#294348}
+:root[data-theme="dark"] .signal{background:#253f42}
+:root[data-theme="dark"] .vibe{background:#2b4032;border-color:#688b54}
+:root[data-theme="dark"] .caveat{background:#2c4041}
+:root[data-theme="dark"] .alert{background:#393330}
+:root[data-theme="dark"] .slices span{background:#425458}
+:root[data-theme="dark"] .score{color:#a9d376}
+:root[data-theme="dark"] a{color:#b6c7ff}
+.logo-pair .dark-art{display:none}
+:root[data-theme="dark"] .logo-pair .dark-art{display:block}
+:root[data-theme="dark"] .logo-pair .light-art{display:none}
+.lab-cross-nav{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:18px 0 27px}
+.lab-cross-nav a{border:1px solid var(--line);border-radius:9px;padding:8px 12px;text-decoration:none;font-size:12px;font-weight:800}
+.lab-cross-nav a.active{background:var(--card);color:var(--ink);border-color:var(--blue)}
+.lab-cross-nav a:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+</style>
+<script>
+try{
+ const saved=localStorage.getItem("zeeland-theme");
+ document.documentElement.dataset.theme=(saved==="dark"||saved==="light")?saved:
+  (window.matchMedia?.("(prefers-color-scheme:dark)").matches?"dark":"light");
+}catch(e){document.documentElement.dataset.theme="light"}
+</script></head>
 <body><main>
-<header><div><picture><source media="(prefers-color-scheme: dark)" srcset="../assets/faro-logo-dark.svg"><img src="../assets/faro-logo.svg" alt="FARO"></picture><div class="overline">VALPARAÍSO · LABORATORIO DE SPOTS</div></div><span class="lab">EXPERIMENTAL / NO LIVE</span></header>
+<header><div><div class="logo-pair">
+<img class="light-art" src="../assets/faro-logo.svg" alt="FARO" width="135">
+<img class="dark-art" src="../assets/faro-logo-dark.svg" alt="FARO" width="135">
+</div><div class="overline">VALPARAÍSO · LABORATORIO DE SPOTS</div></div><span class="lab">EXPERIMENTAL / NO LIVE</span></header>
+<nav class="lab-cross-nav" aria-label="FARO location and research navigation">
+<a href="../">ZEELAND · LIVE</a><a href="./" class="active">CHILE · BETA</a><a href="LA_BOCA_PILOT_PLAN.md">MÉTODO / SOURCES ↗</a>
+</nav>
 <h1>El mismo swell.<br>Distintas olas.</h1>
 <p class="intro">Compara cómo una misma situación meteorológica podría encajar con las guías de cada playa. Son <strong>datos introducidos manualmente</strong>, no un pronóstico en tiempo real. La calidad real de la rompiente sigue sin calibrar.</p>
 <div class="layout">
@@ -63,14 +92,17 @@ const refs=await Promise.all([fetch("valparaiso-score.config.json"),fetch("sourc
 if(refs.some(x=>!x.ok))throw Error("No se encontraron los datos del laboratorio");
 const cfg=await refs[0].json(),sourceRegistry=await refs[1].json();
 const $=id=>document.getElementById(id);
-const colors={copper:"#C46639",amber:"#BA7C31",sand:"#9C8431",lime:"#6E9E43",olive:"#547642"};
-const darkColors={copper:"#F0A46D",amber:"#F0BF69",sand:"#E3D471",lime:"#B0DB75",olive:"#96C67A"};
+const requestedSpot=new URLSearchParams(location.search).get("spot");
+if(cfg.profiles?.[requestedSpot]&&Array.from($("spot").options).some(o=>o.value===requestedSpot))$("spot").value=requestedSpot;
+// One shared set of score colours in LIGHT and DARK, as requested for FARO.
+const colors={copper:"#F0A46D",amber:"#F0BF69",sand:"#E3D471",lime:"#B0DB75",olive:"#96C67A"};
+const darkColors=colors;
 function render(){
 const ids=["windFromDeg","windKmh","swellFromDeg","swellPeriodS","swellHeightM","gustKmh"];
 const values=Object.fromEntries(ids.map(id=>[id,$(id).value.trim()===""?null:Number($(id).value)]));
 const result=window.FaroChileScoreLab.evaluate(cfg,$("spot").value,values,{locale:"es"});
 $("score").textContent=result.score===null?"—":result.score.toFixed(1);
-$("score").style.color=(window.matchMedia("(prefers-color-scheme: dark)").matches?darkColors:colors)[result.band]||"var(--ink)";
+$("score").style.color=(document.documentElement.dataset.theme==="dark"?darkColors:colors)[result.band]||"var(--ink)";
 $("grade").textContent=result.scoreLabel||"Datos insuficientes";
 [...$("meter").children].forEach((el,i)=>el.classList.toggle("on",result.score!==null&&i<Math.max(1,Math.ceil(result.score/2))));
 $("vibe").textContent="FARO VIBE · "+(result.vibe?.label||"Sin datos");
@@ -98,7 +130,7 @@ for(const item of ranked){
  const track=document.createElement("div");track.className="compare-track";
  const fill=document.createElement("div");fill.className="compare-fill";
  fill.style.width=item.assessment.score===null?"0%":(item.assessment.score*10)+"%";
- fill.style.background=(window.matchMedia("(prefers-color-scheme: dark)").matches?darkColors:colors)[item.assessment.band]||"var(--line)";
+ fill.style.background=(document.documentElement.dataset.theme==="dark"?darkColors:colors)[item.assessment.band]||"var(--line)";
  track.append(fill);row.append(identity,scoreCell,track);comparison.append(row);
 }
 $("warning").textContent=result.warning||"Prototipo sin datos suficientes.";
