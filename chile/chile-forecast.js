@@ -421,6 +421,13 @@ function vibeUI(s){
  txt("chileDecisionDriver",actionable?local.decision.reason:
   tr("Selecciona una ventana con datos suficientes.","Select a window with complete forecast data."));
  txt("chileVibeTag",actionable?local.vibe.label:info.label);
+ const vibeIconNames={windy:"windy",glassy:"glassy",choppy:"choppy",mushy:"mushy",
+  punchy:"punchy",clean:"clean-lines",mixed:"mixed-bag",short:"small-swell",
+  small:"small-swell",unassessed:"unknown-data"};
+ const vibeId=(actionable?local.vibe.id:info.id)||"unassessed";
+ const tagIcon=el("span",null,"faro-icon-slot");
+ tagIcon.setAttribute("data-faro-icon",vibeIconNames[vibeId]||"wave-height");
+ $("chileVibeTag").prepend(tagIcon);
  txt("chileVibeHeadline",actionable?tr("Por qué y qué haría","Why it matters & next step"):
   meta?.read||tr("No hay información suficiente.","Not enough information."));
  txt("chileVibeRead",actionable?local.read:info.description);
@@ -558,11 +565,18 @@ function session(){
  }
  main.append(meta);
  const essentials=[
-  " "+wetsuit(s)," "+num(s.waterTemperatureC)+" °C"," "+num(s.temperatureC)+" °C",
-  " "+num(s.windKmh,0)+" km/h"
+  ["wetsuit",wetsuit(s)],
+  ["water-temperature",num(s.waterTemperatureC)+" °C"],
+  ["air-temperature",num(s.temperatureC)+" °C"],
+  ["wind-speed",num(s.windKmh,0)+" km/h"],
+  ["uv-index","UV "+num(s.uvIndex)+" · "+s.uv.name]
  ];
- for(const label of essentials)ess.append(el("span",label,"essential-tag"));
- ess.append(el("span"," UV "+num(s.uvIndex)+" · "+s.uv.name,"essential-tag chile-uv-tag chile-uv-"+s.uv.category));
+ for(const [kind,label]of essentials){
+  const cls="essential-tag"+(kind==="uv-index"?" chile-uv-tag chile-uv-"+s.uv.category:"");
+  const tag=el("span",null,cls);
+  const icon=el("span",null,"faro-icon-slot");icon.setAttribute("data-faro-icon",kind);
+  tag.append(icon,document.createTextNode(label));ess.append(tag);
+ }
  txt("rise",d.sunrise?.slice(11,16)||"—");txt("set",d.sunset?.slice(11,16)||"—");
  const sunset=d.sunset?.slice(11,16).split(":").map(Number);
  const cut=sunset?.length===2?Math.max(0,sunset[0]*60+sunset[1]-35):null;
