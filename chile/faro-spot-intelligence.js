@@ -34,7 +34,7 @@ function tideAgreement(hypotheses){
   claims:unique,verified:false};
 }
 const message=(locale,es,en)=>locale==="es"?es:en;
-function evaluate(slot,spotId,catalog,locale="es"){
+function evaluate(slot,spotId,catalog,locale="es",options={}){
  const spot=catalog?.spots?.[spotId];
  if(!spot)return {status:"unconfigured",read:null,vibe:null,sourceIds:[],safetyAssessed:false};
  const say=(es,en)=>message(locale,es,en);
@@ -52,86 +52,169 @@ function evaluate(slot,spotId,catalog,locale="es"){
   read:say("Faltan variables del modelo para comparar este sector con las guías.",
    "Some model variables are missing; the sector cannot be compared to published guides."),
   method:say("Sin datos suficientes para inferir condiciones locales.","Not enough data for local inference.")};
- const soft=slot.swellHeightM<.55||slot.swellPeriodS<6.5;
- const bigger=slot.swellHeightM>=1.35&&slot.swellPeriodS>=10;
- const windy=slot.windKmh>=25||(finite(slot.gustKmh)&&slot.gustKmh>=38);
- const calm=slot.windKmh<=12&&(!finite(slot.gustKmh)||slot.gustKmh<=22);
+
+ // A decision requires a falsifiable observation from the *model*.
+ // It is never a prediction of breaking-wave size, a safety approval, or a
+ // validated quality score. The decision and the guide/source audit are separate.
+ const h=slot.swellHeightM,p=slot.swellPeriodS,u=slot.windKmh,g=slot.gustKmh;
+ const soft=h<.55||p<6.5;
+ const bigger=h>=1.35&&p>=10;
+ const windy=u>=25||(finite(g)&&g>=38);
+ const calm=u<=12&&(!finite(g)||g<=22);
  const crossing=physics?.crossingAngleDeg!==null&&finite(physics?.crossingAngleDeg)&&
   physics.crossingAngleDeg>=50&&physics.systems[1]?.available&&
   physics.systems[1].proxyM2S>=physics.systems[0].proxyM2S*.25;
  const notes=[],evidenceLabels=[];
- if(swell.state==="convergent")evidenceLabels.push({type:"swell",state:"supported",label:say("Swell coincide con las guías","Swell fits the guides")});
- else if(swell.state==="disputed")evidenceLabels.push({type:"swell",state:"disputed",label:say("Swell: guías divididas","Swell: guides disagree")});
- else if(swell.state==="outside")evidenceLabels.push({type:"swell",state:"outside",label:say("Swell fuera de referencias","Swell outside guide ranges")});
- if(wind.state==="disputed")evidenceLabels.push({type:"wind",state:"disputed",label:say("Viento: guías divididas","Wind: guides disagree")});
- else if(wind.state==="convergent")evidenceLabels.push({type:"wind",state:"supported",label:say("Viento coincide con las guías","Wind fits the guides")});
- else if(wind.state==="outside")evidenceLabels.push({type:"wind",state:"outside",label:say("Viento fuera de referencias","Wind outside guide ranges")});
+ for(const [type,signal,nameEs,nameEn]of [["swell",swell,"Swell","Swell"],["wind",wind,"Viento","Wind"]]){
+  const label=signal.state==="convergent"?say(nameEs+" coincide con las guías",nameEn+" fits the guides"):
+   signal.state==="disputed"?say(nameEs+": guías divididas",nameEn+": guides disagree"):
+   signal.state==="outside"?say(nameEs+" fuera de referencias",nameEn+" outside guide ranges"):null;
+  if(label)evidenceLabels.push({type,state:signal.state==="convergent"?"supported":signal.state,label});
+ }
  if(crossing)evidenceLabels.push({type:"partitions",state:"mixed",label:say("Swells cruzados en el modelo","Crossing modelled swells")});
- if(tide.state==="disputed")notes.push(say("Las guías discrepan sobre la marea ideal; no se calcula su efecto.",
-  "Published guides disagree on ideal tide; no tidal effect is calculated."));
- let headline,description,vibe;
- if(windy){
-  vibe={id:"windy",label:say("💨 Ventoso","💨 Windy")};
-  headline=say("El viento puede pesar más que el swell","Wind could dominate this window");
- }else if(soft){
-  vibe={id:"soft",label:say("☀️ Suavecitas","☀️ Soft surf potential")};
-  headline=say("Swell oceánico limitado","Limited offshore swell");
- }else if(crossing){
-  vibe={id:"mixed",label:"🌊 Mixed Bag"};
-  headline=say("Dos direcciones de swell en juego","Multiple swell directions in play");
- }else if(swell.state==="outside"){
-  vibe={id:"mixed",label:"🌊 Mixed Bag"};
-  headline=say("Swell alejado de las referencias locales","Swell outside local guide directions");
- }else if(calm&&swell.state==="convergent"&&wind.state==="convergent"){
-  vibe={id:"clean-potential",label:say("🌊 Líneas con potencial","🌊 Potential lines")};
-  headline=say("Viento suave y orientaciones compatibles","Light wind and guide-compatible directions");
+ if(tide.state==="disputed")notes.push(say("Las guías discrepan sobre la marea; no se ha modelado el efecto local.",
+  "Published tide guidance differs; local tidal response has not been modelled."));
+ if(wind.state==="disputed"||swell.state==="disputed")notes.push(say(
+  "Hay referencias contradictorias de viento o swell: revisa las fuentes en Spot DNA.",
+  "Published wind or swell directions conflict: inspect the sources in Spot DNA."));
+
+ const risk=options?.risk||"unknown";
+ const missingRisk=risk==="unknown";
+ const danger=risk==="danger",caution=risk==="caution";
+ const tooWindy=u>=30||(finite(g)&&g>=45);
+ const windySurface=u>=22||(finite(g)&&g>=35);
+ const weak=h<.45||p<6;
+ const strongSwell=h>=1.5&&p>=10.5;
+ const enough=h>=.7&&p>=8.5;
+ const score=slot.score;
+ const lowFit=finite(score)&&score<3.5;
+ const poorFit=finite(score)&&score<4.8;
+ const noDaylight=slot.daylight?.eligible===false;
+ let decision;
+ if(danger){
+  decision="hazard";
+ }else if(missingRisk){
+  decision="unassessed";
+ }else if(noDaylight){
+  decision="no_daylight";
+ }else if(caution){
+  decision="caution";
+ }else if(tooWindy){
+  decision="skip_wind";
+ }else if(weak){
+  decision="skip_swell";
+ }else if(lowFit||swell.state==="outside"&&poorFit){
+  decision="skip_direction";
+ }else if(windySurface){
+  decision="wait_wind";
+ }else if(poorFit){
+  decision="mixed";
+ }else if(enough&&u<=17){
+  decision="check";
  }else{
-  vibe={id:"mixed",label:"🌊 Mixed Bag"};
-  headline=say("Condiciones con matices locales","Conditions depend on local details");
+  decision="maybe";
  }
- if(spotId==="CL-VS:la-boca-concon"){
-  description=soft?
-   say("En La Boca, un swell limitado podría dar olas suaves. Los bancos junto al Aconcagua cambian y no sabemos cuál está activo.",
-    "Limited swell could mean softer waves at La Boca. Aconcagua sandbanks shift; the active bank is unknown."):
-   bigger?
-   say("Hay más swell oceánico disponible, pero en La Boca los bancos de la desembocadura deciden cómo rompe. Revisa corriente y estado del río.",
-    "There is more offshore swell, but river-mouth sandbanks determine the actual breaking wave. Check current and river conditions."):
-   say("La Boca puede ofrecer olas suaves y variables; el modelo no ve los bancos móviles ni la corriente de la desembocadura.",
-    "La Boca may offer softer, variable surf; the model cannot see shifting river-mouth banks or currents.");
- }else if(spotId==="CL-VS:renaca"){
-  description=soft?
-   say("Con poco swell, no se puede anticipar si los picos del norte tendrán pared. El banco actual manda.",
-    "With limited swell it is unclear whether the northern peaks will have a surfable face. The current bank matters."):
-   bigger?
-   say("El swell tiene más presencia: las guías describen picos rápidos al norte, pero también secciones que cierran. No se conoce el banco activo.",
-    "More swell is present: guides describe punchier northern peaks, but also sections that close out. The active bank is unknown."):
-   say("Las guías describen picos tipo A-frame al norte de Reñaca. La forma y el posible cierre dependen de la arena actual.",
-    "Guides describe A-frame peaks in northern Reñaca. Shape and possible closeouts depend on the current sandbanks.");
- }else if(spotId==="CL-VS:ritoque"){
-  description=soft?
-   say("Los picos del norte podrían estar suaves; las guías describen un canal de remada, pero su estado actual no está verificado.",
-    "Northern peaks could be soft; guides describe a paddle channel, but its current state is unverified."):
-   bigger?
-   say("El swell oceánico aumenta. Las guías describen un norte más suave y un sur más expuesto; esta lectura solo corresponde al sector norte.",
-    "Offshore swell is stronger. Guides describe a mellower north and a more exposed south; this read applies only to the north."):
-   say("En Ritoque Norte las guías describen izquierdas suaves y un canal de entrada; más al sur cambia la exposición.",
-    "Guides describe soft lefts and a paddle channel in northern Ritoque; exposure changes farther south.");
- }else{
-  description=say("Las guías describen el spot, pero falta una lectura sectorial comprobada.",
-   "Published guides describe the spot but sector-specific verification is missing.");
- }
- if(wind.state==="disputed")notes.push(say("La dirección de viento encaja con algunas guías y con otras no.",
-  "Wind direction fits some guides but not others."));
- if(swell.state==="disputed")notes.push(say("La dirección del swell encaja solo con parte de las guías.",
-  "Swell direction fits only some published guides."));
- if(windy)notes.push(say("El viento fuerte podría desordenar la superficie, con independencia del banco.",
-  "Strong wind may disturb the surface, regardless of sandbank shape."));
- if(crossing)notes.push(say("Hay swells cruzados, pero eso no demuestra olas desordenadas en la rompiente.",
-  "Swells are crossing, but this does not prove that breaking waves are disorganised."));
- return {...neutral,headline,read:description,vibe,evidenceLabels,notes,
+ const outcomes={
+  hazard:[say("No recomendar entrada","Do not recommend entry"),0,"model_risk"],
+  unassessed:[say("Revisa los riesgos primero","Check risk data first"),0,"risk_unassessed"],
+  no_daylight:[say("Fuera de la ventana de luz","Outside daylight"),0,"daylight"],
+  caution:[say("Precaución con el tiempo","Weather caution"),1,"model_caution"],
+  skip_wind:[say("Mejor esperar al viento","Wait for lighter wind"),1,"wind"],
+  skip_swell:[say("No priorizar esta franja","Low priority window"),1,"low_swell"],
+  skip_direction:[say("No priorizar esta franja","Low priority window"),1,"spot_fit"],
+  wait_wind:[say("Busca una hora más calma","Look for lighter wind"),2,"wind"],
+  mixed:[say("Hay opciones, con reservas","Possible, with caveats"),2,"mixed"],
+  maybe:[say("Podría valer la pena mirar","Could be worth a look"),3,"model_potential"],
+  check:[say("Vale la pena echar un ojo","Worth a closer look"),4,"model_potential"]
+ };
+ const [verdict,priority,driver]=outcomes[decision];
+ const measurement=say("Swell "+h.toFixed(1)+" m @ "+p.toFixed(0)+" s; viento "+u.toFixed(0)+" km/h.",
+  "Swell "+h.toFixed(1)+" m @ "+p.toFixed(0)+" s; wind "+u.toFixed(0)+" km/h.");
+ const mainReason={
+  hazard:say("El modelo detecta un umbral meteorológico peligroso; no compenses ese riesgo con un score alto.",
+   "A hazardous model threshold is flagged; a high score does not offset this risk."),
+  unassessed:say("Faltan variables para descartar riesgos meteorológicos en esta franja.",
+   "Risk-screen inputs are missing for this window."),
+  no_daylight:say("No hay luz suficiente para sugerir esta sesión.",
+   "There is insufficient daylight for a suggested session."),
+  caution:say("El modelo señala precaución meteorológica; consulta el detalle antes de decidir.",
+   "A modelled weather caution is present; inspect the detail before deciding."),
+  skip_wind:say("Demasiado viento o rachas para priorizar esta ventana.",
+   "Wind or gusts are too strong to prioritise this window."),
+  skip_swell:say("Swell de poca altura o período corto: baja prioridad para desplazarse.",
+   "Small or short-period swell: low priority for making a trip."),
+  skip_direction:say("La compatibilidad direccional del modelo con la guía de este sector es baja.",
+   "The model has low directional fit to this sector's published guide."),
+  wait_wind:say("El viento puede afectar la superficie; una franja más calma sería preferible.",
+   "Wind may disturb the surface; a calmer window would be preferable."),
+  mixed:say("La combinación actual no destaca frente a otras franjas del mismo spot.",
+   "This combination does not stand out among this spot's forecast windows."),
+  maybe:say("Swell aprovechable, pero los indicadores no destacan lo suficiente para priorizarla.",
+   "There is usable swell, but the indicators do not yet make this a priority."),
+  check:say("Hay swell con período y viento relativamente suave: buena candidata para revisar.",
+   "Swell, period and relatively light wind make this worth checking.")
+ }[decision];
+ const spotLogic={
+  "CL-VS:la-boca-concon":{
+   low:say("En La Boca priorizaría otra hora antes que hacer un viaje por este pronóstico.",
+    "At La Boca I would look for another window rather than travel on this forecast alone."),
+   watch:say("Para una sesión suave, revisaría la zona surfeable de La Boca desde la orilla antes de entrar; verifica corriente y acceso.",
+    "For mellow surf, check the permitted surf section from shore before entering; assess current and access."),
+   power:say("Con este swell, empezaría observando la corriente y la forma de las series antes de elegir una tabla o entrar.",
+    "With this swell, check currents and how the sets break before choosing a board or entering.")
+  },
+  "CL-VS:renaca":{
+   low:say("No contaría con paredes consistentes en los picos norte; buscaría una ventana con mejor combinación.",
+    "Do not count on consistent walls at the northern peaks; look for a better window."),
+   watch:say("Revisaría los picos norte: si hay pared, es el sector donde las guías describen secciones para giros.",
+    "Check the northern peaks: when there is a wall, guides describe sections suited to turns."),
+   power:say("Miraría la proporción de olas que cierran desde la orilla antes de entrar a Reñaca Norte.",
+    "Watch how many waves close out from shore before paddling out at Reñaca Norte.")
+  },
+  "CL-VS:ritoque":{
+   low:say("Para Ritoque Norte no haría el viaje basándome solo en este swell; buscaría otra franja.",
+    "I would not make the trip to Ritoque North based on this swell alone; look for another window."),
+   watch:say("Miraría primero los picos norte si buscas olas más suaves y recorrido.",
+    "Check the northern peaks first if you prefer softer waves with room to cruise."),
+   power:say("Si quieres algo suave, revisa primero el norte; hacia el south la playa se describe más expuesta.",
+    "For softer surf, check the north first; the beach is described as more exposed towards the south.")
+  }
+ };
+ const local=spotLogic[spotId]||spotLogic["CL-VS:la-boca-concon"];
+ const low=["hazard","unassessed","no_daylight","caution","skip_wind","skip_swell","skip_direction","wait_wind"].includes(decision);
+ const spotAction=low?local.low:(strongSwell?local.power:local.watch);
+ const action=decision==="hazard"?say("No recomendar entrada; verifica las advertencias oficiales y las condiciones del lugar.",
+   "Do not recommend entry; check official notices and site conditions."):
+  decision==="unassessed"?say("Consulta datos meteorológicos y avisos oficiales antes de decidir.",
+   "Check risk data and official notices before deciding."):
+  decision==="no_daylight"?say("Busca una ventana con luz suficiente.","Choose a daylight window."):
+  decision==="caution"?say("Consulta el riesgo modelado y los avisos oficiales antes de considerar la sesión.",
+   "Check the modelled caution and official notices before considering this session."):
+  decision==="skip_wind"||decision==="wait_wind"?
+   say("Prioriza una hora con menos viento y vuelve a comparar el swell.","Prioritise a calmer hour and compare the swell again."):
+  spotAction;
+ const vibe=decision==="skip_wind"||decision==="wait_wind"?{id:"windy",label:say("💨 Ventoso","💨 Windy")}:
+  decision==="skip_swell"?{id:"small",label:say("🌊 Poco swell","🌊 Small swell")}:
+  decision==="hazard"||decision==="unassessed"||decision==="caution"?
+   {id:"unknown",label:say("⚠ Revisa condiciones","⚠ Check conditions")}:
+  crossing?{id:"mixed",label:"🌊 Mixed Bag"}:
+  decision==="check"&&calm&&swell.state!=="outside"?{id:"clean-potential",label:say("🌊 Buenas líneas posibles","🌊 Potential lines")}:
+  decision==="check"&&strongSwell?{id:"power",label:say("⚡ Con fuerza","⚡ More punch")}:
+  decision==="skip_direction"||decision==="mixed"?{id:"mixed",label:"🌊 Mixed Bag"}:
+  decision==="maybe"?{id:"cruisy",label:say("🌊 Para mirar","🌊 Worth a look")}:
+  {id:"soft",label:say("☀️ Suavecitas posibles","☀️ Mellow potential")};
+ // Do not claim measured breaking waves, actual current, tidal preference,
+ // a verified sandbank or a safe session. Numeric values are offshore input.
+ const read=measurement+" "+mainReason;
+ const opportunity={id:decision,priority,driver,verdict,reason:mainReason,
+  action,modelEvidence:measurement,scope:spot.area,
+  basedOn:"offshore_model_and_unvalidated_guide",isObserved:false,
+  validated:false,safetyAssessed:false};
+ return {...neutral,headline:verdict,read,vibe,decision:opportunity,
+  evidenceLabels,notes,
   drivers:{soft,bigger,windy,calm,crossing,guideDisagreement:wind.state==="disputed"||swell.state==="disputed",sectorDependent:true},
-  method:say("Comparación de hipótesis publicadas y datos oceánicos, no observación ni predicción de altura rompiente.",
-   "Comparison of published hypotheses with offshore data, not observed surf or breaking-height prediction.")};
+  method:say("Primero decisión comparativa con entradas oceánicas; fuentes y límites en Spot DNA. No estima altura rompiente.",
+   "Comparative decision using offshore inputs; source conflicts and limits in Spot DNA. No breaking-wave estimate.")};
 }
 root.FaroChileSpotIntelligence=Object.freeze({evaluate,assessDirection,angularDistance,tideAgreement});
 })(typeof globalThis!=="undefined"?globalThis:this);
