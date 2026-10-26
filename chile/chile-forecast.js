@@ -298,6 +298,22 @@ function strip(){
  $("dayPrev").disabled=state.page===0;$("dayNext").disabled=state.page>=days.length-3;
  $("dayStripProgress").style.width=((state.page+1)/Math.max(1,days.length)*100)+"%";
 }
+function betterWindow(s,local){
+ if(!s||!local?.decision||local.decision.priority>=4)return null;
+ const threshold=local.decision.priority;
+ const present=now(),nowKey=present.date+"T"+h(present.hour);
+ const selectedKey=s.date+"T"+h(s.hour);
+ const candidates=(state.forecast?.days||[]).flatMap(d=>d.slots).filter(t=>
+  t.date+"T"+h(t.hour)>selectedKey&&t.date+"T"+h(t.hour)>=nowKey&&
+  t.daylight?.eligible&&ok(t.score)&&Live.slotRisk(t,state.config)==="none")
+  .map(t=>({t,priority:localRead(t)?.decision?.priority||0}))
+  .filter(x=>x.priority>=3&&x.priority>threshold)
+  .sort((a,b)=>(a.t.date+a.t.hour.toString().padStart(2,"0")).localeCompare(b.t.date+b.t.hour.toString().padStart(2,"0"))||
+   b.priority-a.priority);
+ if(!candidates.length)return null;
+ const next=candidates[0].t;
+ return tr("Mejor candidata para revisar: ","Better option to check: ")+dateLabel(next.date)+" · "+sessionTime(next)+".";
+}
 function vibeUI(s){
  const info=Live.vibe(s,state.lang),meta=s?.scoreMeta,local=localRead(s);
  const actionable=local?.status==="guide_compared"&&local.decision;
@@ -308,7 +324,7 @@ function vibeUI(s){
  txt("chileVibeHeadline",actionable?tr("Por qué y qué haría","Why it matters & next step"):
   meta?.read||tr("No hay información suficiente.","Not enough information."));
  txt("chileVibeRead",actionable?local.read:info.description);
- txt("chileVibeAction",actionable?local.decision.action:
+ txt("chileVibeAction",actionable?local.decision.action+" "+(betterWindow(s,local)||""):
   tr("Revisa otra franja con datos completos.","Check another complete forecast window."));
  const tags=$("chileVibeEvidence");tags.replaceChildren();
  if(actionable){
