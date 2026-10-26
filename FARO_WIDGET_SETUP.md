@@ -1,20 +1,24 @@
 # FARO · Scriptable iPhone/iPad widgets
 
+**Chile widgets are not yet active**. This script still operates only in Zeeland, even though the website offers a Chile research section.
+
 The same **`zeeland-widget.js`** script adapts to the widget size chosen in iOS. Add more than one copy of the widget and give each one a different **Parameter** in Scriptable's widget configuration.
 
 ## Widget sizes
 
 | iOS widget size | FARO layout | Use |
 | --- | --- | --- |
-| Small square | Compact score, beach, window and a single surf cue | Quick glance |
-| Medium rectangle | Surf Quality, wave height, period, wind and wave character | Everyday decision |
-| Large square | Full surf summary and a choice of additional information | Planning |
+| Small square | Side-by-side score and offshore model wave height, window and surf cue | Quick glance |
+| Medium rectangle | Unboxed Surf Quality + offshore-model tile + FARO VIBE strip | Everyday decision |
+| Large square | Coastal Editorial with VIBE, wave direction / short reading or WEEK windows | Planning |
 | Extra large (iPad only) | Expanded version of the large widget | Tablet |
 | Lock Screen accessory | Short, circular or rectangular score | Lock Screen |
 
 The size comes from iOS; a parameter cannot make a small iOS widget physically large.
 
-The redesigned layout uses an unobtrusive quality rail, larger score typography, a five-step copper→olive quality meter, model-wave bearings (direction FROM) where space permits, and SF Symbols for marine metrics. **The original FARO SVG logo is embedded in the widget script**, preserving the custom wordmark and rescue-ring 'O'. Scriptable renders the SVG to a high-resolution PNG on first run and caches it for future updates. For `THEME=AUTO` and default `DARK`, the widget uses a cohesive dark FARO background with the original white/yellow transparent logo directly on it — **no backing box**. Use `THEME=LIGHT` to show the original charcoal/yellow logo on a light widget. Scriptable's device appearance query does not work inside widgets, so AUTO intentionally does not attempt unreliable automatic colour switching.
+**Coastal Editorial v13** is a structural redesign, not merely a font/colour patch: a clean, unboxed Surf Quality number, a separate marine model-height tile, a slim five-colour meter and a stronger FARO VIBE strip. Large widgets use the same visual family, with source-labelled wave direction and better organised WEEK windows. Actual iOS height is compact, so a wind warning may take priority over the VIBE strip in medium/small sizes.
+
+The layout uses a five-step copper→olive quality meter, model-wave bearings (direction FROM) where space permits, and SF Symbols for marine metrics. **The original FARO SVG logo is embedded in the widget script**, preserving the custom wordmark and rescue-ring 'O'. Scriptable renders the SVG to a high-resolution PNG on first run and caches it for future updates. For `THEME=AUTO` and default `DARK`, the widget uses a cohesive dark FARO background with the original white/yellow transparent logo directly on it — **no backing box**. Use `THEME=LIGHT` to show the original charcoal/yellow logo on a light widget. Scriptable's device appearance query does not work inside widgets, so AUTO intentionally does not attempt unreliable automatic colour switching.
 
 **Preview recommendation:** compare `BEST|ES|STYLE=FLOW|THEME=DARK|SIZE=MEDIUM` and `BEST|ES|STYLE=WEEK|THEME=DARK|SIZE=LARGE`. iOS will ultimately decide its actual widget size and refresh timing. The preview is indicative, not a pixel-perfect final Home Screen render. Real forecasts remain model estimates, not live surf reports.
 
