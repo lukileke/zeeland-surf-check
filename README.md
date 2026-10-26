@@ -59,3 +59,12 @@ All widgets and website score calculations use `surf-engine.js`. Scores, spot or
 
 [Chile 16-region atlas](chile/atlas.html) · [regional source inventory](chile/README.md) · [field-observation CSV](chile/field-observations-template.csv) · [local validation tests](chile/test-live-forecast.js).
 
+
+
+## Handoff de diseño para María y ciencia reproducible (26-10-2026)
+
+- [Brief visual para María: 68 iconos, ubicación, objetivo, prioridad y entrega](docs/FARO_MARIA_ICON_BRIEF_68.md), generado desde el [manifiesto canónico](assets/faro-icon-manifest.json); la app tiene etiquetas sin emojis y solo activará SVG revisados por la diseñadora.
+- [Modelo oceanográfico supervisado con boyas reales NOAA](chile/research/OPEN_DATA_TRAINING.md): tareas de altura significativa de ola observada; no es pronóstico validado de rompiente chilena.
+- [Experimento complementario de 9.000 etiquetas publicadas de tipo de rompiente](chile/research/wave-breaking-baseline/README.md): priors empíricos, evaluación dejando una costa fuera, y **fallo honesto frente a baseline uniforme**. No descarga ni entrena modelos de vídeo. No se conecta al score de FARO.
+
+La interfaz científica y los nuevos assets deben conservar permisos y procedencia; no usar imágenes de cámaras de terceros para entrenamiento sin verificar las condiciones de la fuente.
