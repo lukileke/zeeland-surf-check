@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "0.1.0",
+  "sourceDoi": "10.1038/s41597-025-06005-5",
+  "trainedOn": "published_tabulated_label_counts",
+  "trainingLabels": 9000,
+  "trainingVideos": 0,
+  "trainingImages": 0,
+  "trainedBreakingVideoModel": false,
+  "target": "wave_breaking_type_categorical_prior",
+  "notTargets": [
+    "closeout",
+    "rideable_wall",
+    "La_Boca_quality",
+    "FARO_score"
+  ],
+  "labels": [
+    "plunging",
+    "spilling",
+    "surging"
+  ],
+  "overallPrior": [
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
+  "bySite": {
+    "A": {
+      "samples": 1999,
+      "probabilities": [
+        0.30719280719280717,
+        0.47002997002997005,
+        0.22277722277722278
+      ],
+      "majorityClass": "spilling"
+    },
+    "B": {
+      "samples": 2558,
+      "probabilities": [
+        0.44631003514252243,
+        0.20655993752440452,
+        0.347130027333073
+      ],
+      "majorityClass": "plunging"
+    },
+    "C": {
+      "samples": 642,
+      "probabilities": [
+        0.06821705426356589,
+        0.9131782945736434,
+        0.018604651162790697
+      ],
+      "majorityClass": "spilling"
+    },
+    "D": {
+      "samples": 466,
+      "probabilities": [
+        0.0021321961620469083,
+        0.014925373134328358,
+        0.9829424307036247
+      ],
+      "majorityClass": "surging"
+    },
+    "E": {
+      "samples": 694,
+      "probabilities": [
+        0.40459110473457677,
+        0.3098995695839311,
+        0.2855093256814921
+      ],
+      "majorityClass": "plunging"
+    },
+    "F": {
+      "samples": 2641,
+      "probabilities": [
+        0.3483358547655068,
+        0.27382753403933435,
+        0.3778366111951589
+      ],
+      "majorityClass": "surging"
+    }
+  },
+  "leaveOneSiteOut": [
+    {
+      "heldOutSite": "A",
+      "samples": 1999,
+      "classFractions": [
+        0.3071535767883942,
+        0.4702351175587794,
+        0.2226113056528264
+      ],
+      "logLoss": 1.1302682434280398,
+      "uniformBaselineLogLoss": 1.0986122886681098,
+      "beatsUniform": false
+    },
+    {
+      "heldOutSite": "B",
+      "samples": 2558,
+      "classFractions": [
+        0.4464425332290852,
+        0.20641125879593433,
+        0.34714620797498047
+      ],
+      "logLoss": 1.139898516283274,
+      "uniformBaselineLogLoss": 1.0986122886681098,
+      "beatsUniform": false
+    },
+    {
+      "heldOutSite": "C",
+      "samples": 642,
+      "classFractions": [
+        0.06697819314641744,
+        0.9158878504672897,
+        0.017133956386292833
+      ],
+      "logLoss": 1.225394073816113,
+      "uniformBaselineLogLoss": 1.0986122886681098,
+      "beatsUniform": false
+    },
+    {
+      "heldOutSite": "D",
+      "samples": 466,
+      "classFractions": [
+        0,
+        0.012875536480686695,
+        0.9871244635193133
+      ],
+      "logLoss": 1.209735388961867,
+      "uniformBaselineLogLoss": 1.0986122886681098,
+      "beatsUniform": false
+    },
+    {
+      "heldOutSite": "E",
+      "samples": 694,
+      "classFractions": [
+        0.4048991354466859,
+        0.30979827089337175,
+        0.28530259365994237
+      ],
+      "logLoss": 1.10070423520075,
+      "uniformBaselineLogLoss": 1.0986122886681098,
+      "beatsUniform": false
+    },
+    {
+      "heldOutSite": "F",
+      "samples": 2641,
+      "classFractions": [
+        0.34835289663006436,
+        0.27375993941688753,
+        0.3778871639530481
+      ],
+      "logLoss": 1.1071690770823632,
+      "uniformBaselineLogLoss": 1.0986122886681098,
+      "beatsUniform": false
+    }
+  ],
+  "acrossUnseenSites": {
+    "meanLogLoss": 1.134847620190587,
+    "uniformBaselineLogLoss": 1.0986122886681098,
+    "beatsUniform": false
+  },
+  "deployable": false,
+  "disclaimer": "Actual fitted categorical priors, NOT visual wave recognition, Chilean surf quality, or transfer-tested predictions."
+}
