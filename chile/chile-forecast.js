@@ -13,6 +13,19 @@ const band=n=>!ok(n)?"":n>=8?"brand-band-high":n>=6?"brand-band-regular":n>=4?"b
 const scoreTone=n=>!ok(n)?"":(n>=8.5?"tone-great":n>=7?"tone-good":n>=5?"tone-fair":n>=3?"tone-poor":"tone-low")+" "+band(n);
 // These are *relative model signals*, never validated observed surf quality.
 const grade=n=>!ok(n)?tr("Sin datos","No data"):n>=8.5?tr("Excelente","Excellent"):n>=7?tr("Bueno","Good"):n>=5?tr("Regular","Fair"):n>=3?tr("Malo","Poor"):tr("Muy malo","Very poor");
+const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
+const waveSizeLabel=h=>!ok(h)?"—":h<.5?tr("Pequeñas","Small"):h<1.2?tr("Medianas","Medium"):h<2?tr("Grandes","Large"):tr("Muy grandes","Very large");
+function waveBars(h){
+ const x=el("div",null,"chile-wave-bars "+waveSize(h));
+ x.setAttribute("role","img");
+ x.setAttribute("aria-label",tr("Indicador de oleaje oceánico: ","Offshore model wave indicator: ")+num(h)+" m");
+ const count=ok(h)?Math.max(1,Math.min(8,Math.round(h/.25))):0;
+ for(let i=0;i<8;i++){
+  const b=el("span",null,i<count?"on":"");
+  b.style.height=(7+i*2)+"px";x.append(b);
+ }
+ return x;
+}
 const spot=()=>state.config?.pilots?.[state.selected], profile=()=>state.profiles?.profiles?.[spot()?.id];
 const regionRecord=()=>state.registry?.spots?.find(s=>s.id===spot()?.id);
 const localRead=(s,spotId=spot()?.id)=>window.FaroChileSpotIntelligence&&state.intelligence&&spotId?
@@ -385,6 +398,9 @@ function outlook(){
   opportunity?.priority>=3?tr("MEJOR VENTANA","BEST WINDOW"):
    tr("VENTANA PARA EVALUAR","WINDOW TO REVIEW"));
  txt("dayWave",s?num(s.totalWaveHeightM)+" m":"—");
+ txt("dayWaveLabel",s?waveSizeLabel(s.totalWaveHeightM):"—");
+ const meter=$("dayWaveMeter");meter.replaceChildren();
+ if(s)meter.append(waveBars(s.totalWaveHeightM));
  txt("dayPeriod",s?num(s.swellPeriodS)+" s":"—");
  txt("dayWind",s?num(s.windKmh,0)+" km/h":"—");
  const uvMax=ok(d.uvMax)?d.uvMax:null;
@@ -458,19 +474,30 @@ function session(){
  const s=selection(),d=state.forecast?.days?.[state.day],main=$("sessionAtGlance"),ess=$("sessionEssentials");
  main.replaceChildren();ess.replaceChildren();
  if(!s){main.append(el("p",tr("No hay ventana futura con luz y score experimental disponible. Puedes elegir manualmente otra franja.","No upcoming daylight window with experimental fit. Select another window to inspect model data."),"muted"));return}
+ const heading=el("div",null,"chile-session-overline");
+ heading.append(el("span",tr("VENTANA SELECCIONADA","SELECTED WINDOW"),"chile-session-eyebrow"),
+  el("span",sessionTime(s),"chile-session-hours"));
+ const local=localRead(s);
+ if(local?.vibe?.label)heading.append(el("span",local.vibe.label,"chile-session-vibe"));
+ main.append(heading);
  const top=el("div",null,"chile-session-head");
  const score=el("div",null,"chile-session-rating "+scoreTone(s.score));
- score.append(el("small",tr("COMPATIBILIDAD · MODELO","MODEL COMPATIBILITY"),"chile-session-label"));
+ score.append(el("small",tr("SURF QUALITY · MODELO","SURF QUALITY · MODEL"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
  score.append(big,el("span",grade(s.score),"chile-session-label"));
- score.append(el("small",tr("Índice modelado · experimental","Model estimate · experimental"),"chile-session-origin"));
+ score.append(el("small",tr("Índice experimental","Experimental index"),"chile-session-origin"));
  const wave=el("div",null,"chile-session-wave");
- wave.append(el("small",tr("ALTURA MODELO OFFSHORE","OFFSHORE MODEL HEIGHT")),el("strong",num(s.totalWaveHeightM)+" m"),el("small",tr("NO altura rompiente","NOT breaking wave height")));
+ wave.append(el("small",tr("ALTURA DE OLAS · MODELO","MODEL WAVE HEIGHT"),"chile-session-label"),
+  el("strong",num(s.totalWaveHeightM)+" m"),waveBars(s.totalWaveHeightM),
+  el("span",waveSizeLabel(s.totalWaveHeightM),"chile-wave-size-tag"));
  top.append(score,wave);main.append(top);
  const meta=el("div",null,"chile-session-meta");
- meta.append(el("div",tr("Swell ","Swell ")+num(s.swellHeightM)+" m · "+num(s.swellPeriodS)+" s"));
- meta.append(el("div",tr("Desde ","From ")+Live.cardinal(s.swellDirection)+" · "+num(s.swellDirection,0)+"°"));
- meta.append(el("div",tr("Viento ","Wind ")+num(s.windKmh,0)+" km/h"));
+ for(const [label,value]of [[tr("PERÍODO","PERIOD"),num(s.swellPeriodS)+" s"],
+  [tr("SWELL DESDE","SWELL FROM"),Live.cardinal(s.swellDirection)+" · "+num(s.swellDirection,0)+"°"],
+  [tr("VIENTO","WIND"),num(s.windKmh,0)+" km/h"]]){
+  const block=el("div",null,"chile-session-mini");
+  block.append(el("small",label),el("strong",value));meta.append(block);
+ }
  main.append(meta);
  const essentials=[
   "🧥 "+wetsuit(s),"🌊 "+num(s.waterTemperatureC)+" °C","🌡 "+num(s.temperatureC)+" °C",
