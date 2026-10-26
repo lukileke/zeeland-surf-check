@@ -24,13 +24,13 @@ function applyLocale(){
   el.setAttribute("placeholder",el.dataset[language+"Placeholder"]);
  }
  setText("langButton",language==="es"?"EN":"ES");
- setText("themeButton",theme==="dark"?tr("☀ Claro","☀ Light"):tr("☾ Oscuro","☾ Dark"));
+ setText("themeButton",theme==="dark"?tr(" Claro"," Light"):tr(" Oscuro"," Dark"));
  document.title=tr("FARO Chile · Atlas de spots","FARO Chile · Surf spot atlas");
  if(manifest)renderCards();
 }
 function applyTheme(){
  document.documentElement.dataset.theme=theme;
- setText("themeButton",theme==="dark"?tr("☀ Claro","☀ Light"):tr("☾ Oscuro","☾ Dark"));
+ setText("themeButton",theme==="dark"?tr(" Claro"," Light"):tr(" Oscuro"," Dark"));
  const meta=document.querySelector('meta[name="theme-color"]');
  if(meta)meta.content=theme==="dark"?"#102427":"#f7fafa";
 }
