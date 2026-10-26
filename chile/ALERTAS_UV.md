@@ -21,6 +21,8 @@ FARO calcula un **cribado de condiciones modeladas**, parametrizable en [`valpar
 3. [Dirección Meteorológica de Chile](https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml) — avisos, alertas y alarmas por zonas, incluida Valparaíso. Su ámbito no siempre coincide con un spot.
 4. [DMC · Pronóstico de índice UV](https://www.meteochile.gob.cl/PortalDMC-web/otros_pronosticos/radiacion_uv.xhtml) — referencia oficial para corroborar el UV.
 
+**Posible vía de integración identificada:** el [registro de autoridades alertadoras de la OMM para Chile](https://alertingauthority.wmo.int/authorities.php?recId=28) publica una dirección de **feed CAP de la DMC**: `https://archivos.meteochile.gob.cl/portaldmc/rss/rss.php`. Ese registro NO garantiza acceso CORS desde GitHub Pages, actualización actual ni estructura del XML, y no incluye necesariamente avisos marítimos de la Armada o alertas SENAPRED. Antes de conectarlo, confirmar su vigencia, derechos de redistribución, polígonos/ámbitos, timestamps de entrada y retirada, y si requiere adaptación del lado de servidor. No mostrar «alerta activa» basándose solo en una coincidencia de palabras en RSS.
+
 **No existe un conector comprobado de estos boletines en FARO hoy.** Primero investigar API pública, RSS o licencia/permiso para procesamiento automático. No asumir que se pueden obtener avisos vigentes simplemente consultando una portada HTML sin control de actualización, zona y retiro del aviso. No hacer scraping sin verificar términos.
 
 ## Radiación UV
