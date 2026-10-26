@@ -36,7 +36,14 @@ function setLanguage(){
  const saved=(()=>{try{return localStorage.getItem("zeeland-language")}catch(e){return "es"}})();
  state.lang=saved==="en"?"en":"es";document.documentElement.lang=state.lang;
  txt("languageToggle",state.lang==="es"?"EN":"ES");
- for(const item of document.querySelectorAll("[data-es][data-en]"))item.textContent=item.dataset[state.lang];
+ for(const item of document.querySelectorAll("[data-es][data-en]")){
+   const copy=item.dataset[state.lang];
+   if(!item.children.length){item.textContent=copy;continue}
+   // Preserve nested readings/buttons. Replacing parent textContent would
+   // delete their IDs (e.g. sunrise, sunset and daylight cut-off values).
+   const direct=[...item.childNodes].filter(n=>n.nodeType===3&&n.textContent.trim());
+   if(direct.length)direct[0].textContent=copy;
+  }
  setTheme(false);
 }
 function setTheme(toggle){
