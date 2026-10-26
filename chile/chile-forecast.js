@@ -164,6 +164,11 @@ function outlook(){
  txt("dayWave",s?num(s.totalWaveHeightM)+" m":"—");
  txt("dayPeriod",s?num(s.swellPeriodS)+" s":"—");
  txt("dayWind",s?num(s.windKmh,0)+" km/h":"—");
+ const uvMax=ok(d.uvMax)?d.uvMax:null;
+ const uv=Live.statusUV(uvMax,state.lang);
+ txt("dayUVLabel","☀ UV "+num(uvMax,0)+" · "+uv.name);
+ txt("dayUVAdvice",uvMax===null?tr("Sin dato UV","UV unavailable"):uv.protection);
+ $("dayUVBadge").dataset.uv=uv.category;
  vibeUI(s);
 }
 function slots(){
