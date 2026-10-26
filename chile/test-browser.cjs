@@ -62,7 +62,17 @@ function fixture(){
    const scriptErrors=[];
    page.on('pageerror',err=>scriptErrors.push(err.message));
    await page.goto('http://127.0.0.1:'+port+'/chile/',{waitUntil:'domcontentloaded'});
-   await page.waitForSelector('#dayStripItems .day-chip',{timeout:16000});
+   try{await page.waitForSelector('#dayStripItems .day-chip',{timeout:16000})}
+   catch(err){
+    const debug=await page.evaluate(()=>({
+     title:document.title,ready:document.readyState,
+     status:document.getElementById('status')?.textContent,
+     updated:document.getElementById('updated')?.textContent,
+     dayStrip:document.getElementById('dayStripItems')?.innerText,
+     body:document.body?.innerText?.slice(0,1000)
+    }));
+    throw Error('Chile forecast boot failed: '+JSON.stringify({debug,scriptErrors,original:String(err)}));
+   }
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
    await page.locator('#dayStripItems .day-chip').nth(1).click();
