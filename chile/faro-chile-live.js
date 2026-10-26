@@ -58,14 +58,16 @@ function buildUrls(spot,config){
  const common={latitude:spot.latitude,longitude:spot.longitude,timezone:config.timezone,
   timeformat:"unixtime",forecast_days:"7"};
  const marine=new URL(config.modelProviders.marine);
- marine.search=new URLSearchParams({...common,cell_selection:"sea",hourly:config.modelProviders.requiredVariables.marine.join(",")}).toString();
+ const required=config.modelProviders.requiredVariables.marine;
+ const optional=config.modelProviders.optionalMarineVariables||[];
+ marine.search=new URLSearchParams({...common,cell_selection:"sea",hourly:[...new Set([...required,...optional])].join(",")}).toString();
  const weather=new URL(config.modelProviders.weather);
  weather.search=new URLSearchParams({...common,hourly:config.modelProviders.requiredVariables.weather.join(","),daily:"sunrise,sunset,uv_index_max,precipitation_sum",wind_speed_unit:"kmh",temperature_unit:"celsius",precipitation_unit:"mm"}).toString();
  return {marine:marine.toString(),weather:weather.toString()};
 }
 async function fetchJSON(url,fetcher){
  const res=await fetcher(url);
- if(!res||!res.ok)throw Error("HTTP "+(res?.status||"unknown")+" from model provider");
+ if(!res||!res.ok){const error=Error("HTTP "+(res?.status||"unknown")+" from model provider");error.status=res?.status;throw error;}
  return res.json();
 }
 function hourMap(data,fields,zone){
@@ -95,7 +97,8 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const requiredWeather=["wind_speed_10m","wind_direction_10m"];
  const complete=slotHours.every(t=>{
   const m=marineHours.get(t),w=weatherHours.get(t);
-  return m&&w&&requiredMarine.every(k=>finite(m[k]))&&requiredWeather.every(k=>finite(w[k]));
+  return m&&w&&(!m.validAtUtc||!w.validAtUtc||m.validAtUtc===w.validAtUtc)&&
+   requiredMarine.every(k=>finite(m[k]))&&requiredWeather.every(k=>finite(w[k]));
  });
  const coverage={expectedHours:slotHours.length,marineHours:mar.length,weatherHours:met.length,complete};
  const vals=(rows,key)=>rows.map(x=>x[key]);
@@ -104,6 +107,13 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const totalDirection=circleMean(vals(mar,"wave_direction"));
  const windSeaHeight=mean(vals(mar,"wind_wave_height"));
  const windSeaDirection=circleMean(vals(mar,"wind_wave_direction"));
+ const secondarySwell={heightM:mean(vals(mar,"secondary_swell_wave_height")),
+  periodS:mean(vals(mar,"secondary_swell_wave_period")),
+  fromDeg:circleMean(vals(mar,"secondary_swell_wave_direction"))};
+ const tertiarySwell={heightM:mean(vals(mar,"tertiary_swell_wave_height")),
+  periodS:mean(vals(mar,"tertiary_swell_wave_period")),
+  fromDeg:circleMean(vals(mar,"tertiary_swell_wave_direction"))};
+ const partition=part=>[part.heightM,part.periodS,part.fromDeg].every(finite)?part:null;
  const swellPeriod=mean(vals(mar,"swell_wave_period"));
  const totalPeriod=mean(vals(mar,"wave_period"));
  const wind=mean(vals(met,"wind_speed_10m"));
@@ -126,6 +136,7 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
   totalWaveHeightM:height,totalWaveDirection:totalDirection,totalWavePeriodS:totalPeriod,
   windSeaHeightM:windSeaHeight,windSeaDirection,
   swellHeightM:swellHeight,swellDirection,swellPeriodS:swellPeriod,
+  secondarySwell:partition(secondarySwell),tertiarySwell:partition(tertiarySwell),
   windKmh:wind,windDirection,gustKmh:gust,uvIndex,uv:statusUV(uvIndex,locale),
   temperatureC:temperature,waterTemperatureC:sst,cloudPercent:cloud,precipitationMm:precipMissing?null:precip,
   weatherCode,weatherSource:"Open-Meteo",observed:false,nearshoreHeightEstimated:false
@@ -178,6 +189,7 @@ function extract(config,spot,marine,weather,profileConfig,locale="es"){
   weatherGrid:{lat:weather.latitude,lon:weather.longitude,distanceKm:gridDistanceKm(spot.latitude,spot.longitude,weather.latitude,weather.longitude)},
   issueAt:null,validFrom:utcInstant(weatherTimes[0]),timeBasis:typeof weatherTimes[0]==="number"?"epoch_utc":"legacy_local_unverified",source:"Open-Meteo",
   coverage:{completeSlots,totalSlots:windows.length},
+  optionalSwellFallback:marine.optionalSwellFallback===true,
   offshoreApproximation:true,referencePointStatus:spot.coordinateStatus||"unverified"},days,windows,hazard:screenRisk(config,weather,locale),fitExperimental:true};
 }
 function screenRisk(config,weather,locale="es"){
@@ -284,7 +296,21 @@ function boardFit(slot,board="mid",ability="intermediate",style="flow",locale="e
 }
 async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
  const urls=buildUrls(spot,config);
- const [marine,weather]=await Promise.all([fetchJSON(urls.marine,fetcher),fetchJSON(urls.weather,fetcher)]);
+ const marineRequest=async()=>{
+  try{return await fetchJSON(urls.marine,fetcher)}
+  catch(error){
+   // Some wave-model combinations reject unsupported partition variables.
+   // Retry only a 400 from this optional request; never mask outages or
+   // missing primary wave variables, and never impute a secondary swell.
+   if(error.status!==400||!config.modelProviders.optionalMarineVariables?.length)throw error;
+   const fallback=new URL(urls.marine);
+   fallback.searchParams.set("hourly",config.modelProviders.requiredVariables.marine.join(","));
+   const data=await fetchJSON(fallback.toString(),fetcher);
+   data.optionalSwellFallback=true;
+   return data;
+  }
+ };
+ const [marine,weather]=await Promise.all([marineRequest(),fetchJSON(urls.weather,fetcher)]);
  return extract(config,spot,marine,weather,profiles,locale);
 }
 root.FaroChileLive=Object.freeze({buildUrls,fetchSpot,extract,screenRisk,slotRisk,statusUV,vibe,boardFit,cardinal,formatDay,daylight,mean,circleMean,wallClock});
