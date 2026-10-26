@@ -53,7 +53,7 @@ function fixture(){
   await new Promise(ok=>setTimeout(ok,800));
   const {marine,weather}=fixture();
   browser=await chromium.launch({headless:true,channel:'chrome'});
-  for(const width of [375,430,1366]){
+  for(const width of [375,390,430,768,1180,1440]){
    const context=await browser.newContext({viewport:{width,height:840},deviceScaleFactor:1});
    await context.route('**/marine-api.open-meteo.com/**',route=>route.fulfill({json:marine}));
    await context.route('**/api.open-meteo.com/**',route=>route.fulfill({json:weather}));
@@ -78,6 +78,50 @@ function fixture(){
    }
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
+   // One FARO design system, rather than contradictory inherited layout
+   // overrides. Mobile has no giant blank vertical bands; desktop does
+   // not force the daily card to stretch to the height of hourly content.
+   const visual=await page.evaluate(()=>{
+    const $=s=>document.querySelector(s),style=s=>getComputedStyle($(s));
+    const selectors=['.day-editorial-overline','.day-overview-row','#dayUVBadge',
+      '#daySignalMetrics','#chileDecisionBrief','.chile-vibe','#openSpotDNA'];
+    const rects=selectors.map(selector=>{
+     const r=$(selector).getBoundingClientRect();
+     return {selector,top:r.top,bottom:r.bottom,height:r.height,width:r.width};
+    });
+    const gaps=rects.slice(1).map((r,i)=>({from:rects[i].selector,to:r.selector,gap:r.top-rects[i].bottom}));
+    const hero=$('#dailyOverview').getBoundingClientRect();
+    return {gaps,heroHeight:hero.height,heroWidth:hero.width,
+     display:style('#dailyOverview').display,
+     flexDirection:style('#dailyOverview').flexDirection,
+     oceanColumns:style('#daySignalMetrics').gridTemplateColumns.split(' ').length,
+     waveSpan:style('.chile-day-wave-feature').gridColumnStart,
+     dateFont:style('#datehead').fontFamily,
+     numericFont:style('#dayWave').fontFamily,
+     scoreFont:style('.chile-chip-number').fontFamily,
+     waveColor:style('#dayWave').color,
+     scoreColor:style('.chile-chip-number').color,
+     scrollWidth:document.documentElement.scrollWidth,
+     clientWidth:document.documentElement.clientWidth};
+   });
+   assert.equal(visual.display,'flex','Daily hero must use single vertical design composition');
+   assert.equal(visual.flexDirection,'column');
+   assert.equal(visual.oceanColumns,2,'Wave height full row + two equal numeric context columns');
+   assert.equal(visual.waveSpan,'1');
+   assert.match(visual.dateFont,/Archivo/i,'Only editorial headings use Archivo');
+   assert.match(visual.numericFont,/Manrope/i,'Numeric wave data uses readable Manrope');
+   assert.match(visual.scoreFont,/Manrope/i,'Score numerals match other numeric metrics');
+   assert.notEqual(visual.waveColor,visual.scoreColor,
+    'Blue/teal ocean measurements and quality-score semantic palette must stay distinct');
+   for(const {from,to,gap} of visual.gaps){
+    assert.ok(gap>=-4&&gap<=40,
+     'Excessive white space or overlap in daily hero: '+JSON.stringify({width,from,to,gap,visual}));
+   }
+   if(width<=430)assert.ok(visual.heroHeight<770,
+    'Mobile daily hero has excessive forced height: '+JSON.stringify(visual));
+   assert.ok(visual.scrollWidth<=visual.clientWidth+3,
+    'Daily hero overflows viewport: '+JSON.stringify(visual));
+
    assert.equal(await page.locator('#dayWaveMeter .chile-wave-bars span').count(),8,
     'Zeeland-style wave-height scale must show all eight bars');
    assert.match(await page.locator('#dayWave').textContent(),/m/,'Daily hero must feature modelled wave height');
