@@ -35,22 +35,24 @@ function pair(observations,forecasts,cameras,opts={}){
   const cam=camMap.get(o.cameraId),at=epoch(o.observedAtUtc);
   if(!allowed(cam)){deny('source_not_licensed_for_training',counts);continue}
   if(!at||o.spotId!==cam.spotId){deny('invalid_time_or_spot',counts);continue}
-  if(o.privacyProcessed!==true||o.mediaConsentScope!=='ml_training_approved'){deny('privacy_or_media_rights_not_confirmed',counts);continue}
+  if(o.privacyProcessed!==true||o.mediaConsentScope!=='ml_training_approved'||typeof o.captureAssetId!=='string'||!o.captureAssetId.trim()){deny('privacy_or_media_rights_not_confirmed',counts);continue}
   if(!validLabels(o.labels)){deny('invalid_labels',counts);continue}
   const matches=forecasts.filter(f=>{
    const issued=epoch(f.issuedAtUtc),ingested=epoch(f.ingestedAtUtc),valid=epoch(f.validAtUtc);
-   return f.spotId===o.spotId&&issued!==null&&ingested!==null&&valid!==null&&
-     issued<=ingested&&ingested<=at&&issued<=at&&
+   return f.spotId===o.spotId&&ingested!==null&&valid!==null&&
+     (issued!==null?issued<=ingested:opts.allowUnknownIssueTime===true)&&ingested<=at&&
      Math.abs(valid-at)<=windowMs&&
      f.source&&FEATURES.slice(0,5).every(key=>finite(f.features?.[key]));
-  }).sort((a,b)=>epoch(b.issuedAtUtc)-epoch(a.issuedAtUtc)||Math.abs(epoch(a.validAtUtc)-at)-Math.abs(epoch(b.validAtUtc)-at));
+  }).sort((a,b)=>epoch(b.ingestedAtUtc)-epoch(a.ingestedAtUtc)||Math.abs(epoch(a.validAtUtc)-at)-Math.abs(epoch(b.validAtUtc)-at));
   if(!matches.length){deny('no_prior_valid_forecast_snapshot',counts);continue}
   const f=matches[0];
   const features=Object.fromEntries(FEATURES.map(k=>[k,finite(f.features[k])?f.features[k]:null]));
   const labels=Object.fromEntries(LABELS.map(k=>[k,o.labels[k]??null]));
   records.push({
    observationId:o.observationId,cameraId:o.cameraId,spotId:o.spotId,
-   observedAtUtc:o.observedAtUtc,forecastId:f.forecastId,issuedAtUtc:f.issuedAtUtc,
+   observedAtUtc:o.observedAtUtc,forecastId:f.forecastId,issuedAtUtc:f.issuedAtUtc||null,
+    ingestedAtUtc:f.ingestedAtUtc,forecastVintageStatus:epoch(f.issuedAtUtc)!==null?
+     'issued_and_ingested_pre_observation':'retrieved_pre_observation_issue_unknown',
    validAtUtc:f.validAtUtc,forecastSource:f.source,forecastModel:f.model||null,
    cameraPermissionDocumentId:cam.permissionDocumentId,
    captureAssetId:o.captureAssetId,roiVersion:o.roiVersion||null,labels,features
@@ -83,11 +85,13 @@ function readJsonl(path){return fs.readFileSync(path,'utf8').split(/\r?\n/).filt
 if(require.main===module){
  const args=process.argv.slice(2);const a=name=>{const i=args.indexOf(name);return i<0?null:args[i+1]};
  const catalog=a('--catalog'),obs=a('--observations'),fc=a('--forecasts'),out=a('--out');
+  const allowUnknownIssueTime=args.includes('--allow-unknown-issue-time');
  if(!catalog||!obs||!fc||!out){
   process.stderr.write('Usage: node chile/camera-learning.cjs --catalog camera-sources.json --observations authorised-observations.jsonl --forecasts forecast-snapshots.jsonl --out paired.json\n');
   process.exitCode=2;
  }else{
-  const result=pair(readJsonl(obs),readJsonl(fc),JSON.parse(fs.readFileSync(catalog,'utf8')));
+  const result=pair(readJsonl(obs),readJsonl(fc),JSON.parse(fs.readFileSync(catalog,'utf8')),
+   {allowUnknownIssueTime});
   fs.writeFileSync(out,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
   process.stdout.write(JSON.stringify(result.summary,null,2)+'\n');
  }
