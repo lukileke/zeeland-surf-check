@@ -1,6 +1,6 @@
 # FARO Spot DNA · Valparaíso (research edition, 25 October 2026)
 
-**Status:** research only. No Chilean spot has an operational 0–10 Surf Quality forecast. The separate [FARO LAB simulator](lab.html) estimates **guide-derived compatibility**, NOT measured breaking waves. Never use as an entry/safety recommendation.
+**Status (26 October 2026):** FARO now retrieves updated **marine and weather model forecasts** for four Valparaíso pilot locations. Local /10 compatibility scores remain **research hypotheses, not validated Surf Quality**. The separate [FARO LAB simulator](lab.html) estimates **guide-derived compatibility**, NOT measured breaking waves. Never use as an entry/safety recommendation.
 
 ## How spot-specific FARO scoring works
 
@@ -12,7 +12,7 @@ The [editable scoring configuration](valparaiso-score.config.json) contains expe
 
 The separate availability gate equals `clamp(offshore_swell_height_m / 0.9, 0, 1)` in the **current experiment**. It prevents a tiny offshore swell producing a high result simply because the wind and compass directions line up. The 0.9 m value is a generic uncalibrated placeholder (not an observed optimal La Boca surf height), and ignores independent windsea and other swell partitions. Tune/replace it only with local data.
 
-All components are bounded between 0 and 1. The weights are **engineering hypotheses**, not experimentally fitted coefficients. With no observations the total is capped at **7.9**, and it is never displayed on the main FARO website. No tide fit is scored. Neither `waveHeightM` from offshore nor `swellHeightM` in the simulator equals a predicted *breaking surf height*. The user selects model parameters manually, and the result is explicitly non-live.
+All components are bounded between 0 and 1. The weights are **engineering hypotheses**, not experimentally fitted coefficients. With no observations the total is capped at **7.9**, and is displayed on FARO Chile **with a visible experimental status** next to updated model conditions; it is not displayed as certified surf quality. No tide fit is scored. Neither `waveHeightM` from offshore nor `swellHeightM` in the simulator equals a predicted *breaking surf height*. In [FARO Lab](lab.html) the user selects model parameters manually; in the [Chile forecast](index.html) the same engine receives updated model inputs. Neither is a locally calibrated breaking-wave forecast.
 
 Wind/swell direction are **FROM** true north in degrees. If a spot lacks credible ranges, it receives **no score**. No score or tag implies safe entry.
 
