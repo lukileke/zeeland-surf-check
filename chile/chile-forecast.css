@@ -295,3 +295,46 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 .chile-lab-feedback{min-height:24px;margin:0;font-size:12px;line-height:1.5;font-weight:750;color:var(--fg)}
 #faroObsTotal{font-size:11px;color:var(--faro-quiet)}
 @media(max-width:700px){.chile-lab-fields{grid-template-columns:1fr}.chile-lab-video{padding:10px}.chile-lab-buttons{gap:6px}.chile-lab-buttons button{flex:1 1 125px}}
+
+/* Understated, evidence-first ocean explanation. Not a breaking-wave estimate. */
+#forecastPage .chile-wave-explain{margin-top:3px;width:100%;max-width:100%;min-width:0}
+#forecastPage .chile-wave-explain summary{cursor:pointer;list-style:none;font-size:10px;font-weight:850;text-decoration:underline;text-underline-offset:3px;line-height:1.5;color:var(--faro-ocean)}
+#forecastPage .chile-wave-explain summary::-webkit-details-marker{display:none}
+#forecastPage .chile-wave-explain[open]{grid-column:1/-1}
+#forecastPage .chile-wave-how{margin:12px 0 3px;padding:11px 0 0;border-top:1px solid var(--faro-line);display:grid;gap:12px;max-width:100%}
+.chile-wave-how-row{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1fr);gap:4px 9px}
+.chile-wave-how-row span{font-size:9px;font-weight:850;letter-spacing:.03em;color:var(--faro-quiet)}
+.chile-wave-how-row strong{font-size:12px;font-weight:850;text-align:right;color:var(--fg)}
+.chile-wave-how-row p{grid-column:1/-1;margin:0;font-size:11px;line-height:1.5;color:var(--faro-quiet)}
+.chile-wave-how-signal{border-top:1px solid var(--faro-line);font-size:11px;line-height:1.55;color:var(--fg);margin:0;padding-top:10px}
+.chile-vibe-explained{display:grid;grid-template-columns:1fr;gap:7px;border-top:1px solid var(--faro-line);margin-top:13px;padding-top:12px}
+.chile-vibe-evidence-title{font-size:10px;font-weight:850;color:var(--faro-quiet);letter-spacing:.055em}
+.chile-vibe-factor{display:flex;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;font-size:11px;line-height:1.45}
+.chile-vibe-factor span{color:var(--faro-quiet);font-weight:700}
+.chile-vibe-factor strong{font-weight:800;max-width:65ch;color:var(--fg)}
+/* Map: load external OpenStreetMap tiles only when the user opens this panel. */
+.chile-coast-map{min-width:0}
+.faro-map-wrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:15px;align-items:start}
+.faro-map-viewport{height:345px;border-radius:14px;border:1px solid var(--faro-line);background:var(--tile);isolation:isolate;z-index:0;overflow:hidden;font-size:12px}
+.faro-map-brief{display:grid;gap:10px;align-content:start;padding:2px 1px;min-width:0}
+.faro-map-spot{font:850 19px/1.25 var(--faro-display,system-ui);color:var(--fg);letter-spacing:-.025em}
+.faro-map-readings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.faro-map-reading{padding:12px;border:1px solid var(--faro-line);border-radius:11px;min-width:0;background:var(--tile);display:grid;gap:5px}
+.faro-map-reading small{font-size:9px;color:var(--faro-quiet);font-weight:850;letter-spacing:.025em}
+.faro-map-reading strong{font-size:14px;line-height:1.35;font-weight:850;color:var(--fg)}
+.faro-map-reading span{font-size:11px;color:var(--faro-quiet);line-height:1.35}
+.faro-map-evidence{display:grid;gap:6px;margin:4px 0}
+.faro-map-evidence span{font-size:11px;font-weight:750;color:var(--fg);border-left:2px solid var(--faro-ocean);padding:5px 7px;background:var(--tile)}
+.faro-map-insight,.faro-map-summary{font-size:12px;line-height:1.6;color:var(--fg);margin:3px 0}
+.faro-map-note{grid-column:1/-1;font-size:10px;line-height:1.5;color:var(--faro-quiet);margin:0}
+.faro-leaflet-marker{background:transparent;border:0}
+.faro-map-pin{display:inline-flex;align-items:center;justify-content:center;gap:3px;position:relative;background:#183341;color:#fff;padding:7px 9px;border:1px solid #a9d3d9;border-radius:99px;box-shadow:0 3px 12px #102a3444;white-space:nowrap;min-width:78px}
+.faro-map-pin.is-current{background:#1a5365;border:2px solid #e9faf5;box-shadow:0 2px 0 2px #316f7a88,0 3px 16px #0c1b2455}
+.faro-map-pin-name{font-size:11px;font-weight:850}
+.faro-map-arrow{display:inline-flex;justify-content:center;align-items:center;height:16px;width:14px;font-weight:1000;transform-origin:center}
+.faro-map-arrow.swell{color:#a7edff}
+.faro-map-arrow.wind{color:#ffe69c}
+.faro-map-viewport .leaflet-control-attribution{font-size:9px!important}
+.faro-map-viewport .leaflet-container,.faro-map-viewport .leaflet-pane{max-width:none}
+@media(max-width:880px){.faro-map-wrap{grid-template-columns:1fr}.faro-map-viewport{height:290px}}
+@media(max-width:430px){.faro-map-readings{grid-template-columns:repeat(2,minmax(0,1fr))}.faro-map-reading{padding:9px}.faro-map-reading strong{font-size:12px}.faro-map-viewport{height:265px}}
