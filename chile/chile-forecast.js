@@ -76,7 +76,7 @@ function setTheme(toggle){
   state.theme=["light","dark"].includes(val)?val:(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark");
  }
  document.documentElement.dataset.theme=state.theme;
- txt("themeToggle",state.theme==="dark"?tr(" Claro"," Light"):tr("☾ Oscuro","☾ Dark"));
+ txt("themeToggle",state.theme==="dark"?tr(" Claro"," Light"):tr(" Oscuro"," Dark"));
  if(toggle)try{localStorage.setItem("zeeland-theme",state.theme)}catch(e){}
 }
 function tab(name){
