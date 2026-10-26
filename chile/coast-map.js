@@ -87,7 +87,7 @@ function create(opts){
    shape("text",{x:pos.x+15,y:pos.y+4,fill:"#173c4a","font-family":"sans-serif",
     "font-size":active?17:14,"font-weight":active?900:750,
     stroke:"#dceef1","stroke-width":3,"paint-order":"stroke"},
-    sp.shortName||sp.name,null,g);
+    sp.shortName||sp.name,g);
    if(!active){
     const activate=()=>opts.onSelectSpot?.(sp.id);
     g.addEventListener("click",activate);
