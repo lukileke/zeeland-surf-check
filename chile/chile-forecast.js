@@ -78,6 +78,24 @@ function renderDNA(){
   const f=el("div",null,"chile-dna-fact");f.append(el("span",name),el("strong",value));grid.append(f);
  }
  box.append(grid);
+ // A live model-to-guide directional comparison lives in Spot DNA.
+ // This is *not* a calibrated local wave-quality assessment.
+ const selected=selection();
+ if(selected?.scoreMeta?.components){
+  const signals=el("div",null,"chile-dna-live-fit");
+  signals.append(el("small",tr("RESPUESTA AL PRONÓSTICO SELECCIONADO · MODELO Y GUÍA","CURRENT MODEL VS PUBLISHED LOCAL GUIDE"),"chile-dna-kicker"));
+  const tags=el("div",null,"chile-signal-tags");
+  for(const [key,label]of [["windDirection",tr("Viento","Wind")],["swellDirection","Swell"],["windStrength",tr("Intensidad","Strength")]]){
+   const data=selected.scoreMeta.components[key];
+   if(!ok(data?.value))continue;
+   const text=data.value>=.8?tr("favorable","favourable"):data.value>=.45?tr("variable","mixed"):tr("desfavorable","unfavourable");
+   tags.append(el("span",label+" · "+text,"chile-signal-tag "+(data.value>=.8?"good":data.value>=.45?"mixed":"bad")));
+  }
+  tags.append(el("span",tr("Marea · no calibrada","Tide · uncalibrated"),"chile-signal-tag unknown"));
+  signals.append(tags);box.append(signals);
+ }
+ const personality=state.lang==="es"?p?.personality?.es:p?.personality?.en;
+ if(personality)box.append(el("p",tr("Carácter típico según guías: ","Typical character in guides: ")+personality,"chile-dna-prose"));
  box.append(el("p",rec?.conditions?.regionSpecificNoteEs||"", "chile-dna-prose"));
  box.append(el("p",state.lang==="es"?p?.hazardContextEs:p?.hazardContextEn,"chile-dna-warning"));
  box.append(el("p",tr("Los rangos de guía son hipótesis, no validaciones de cada banco. No se evalúan acceso ni seguridad al agua.","Guide ranges are hypotheses, not individual bank calibration. Access and water safety are not evaluated."),"chile-dna-prose"));
