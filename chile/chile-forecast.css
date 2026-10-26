@@ -173,3 +173,32 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 .chile-decision-brief strong{font-weight:850;font-size:clamp(16px,2.5vw,21px);letter-spacing:-.025em;line-height:1.2}
 .chile-decision-brief span{font-size:12px;line-height:1.5;color:var(--faro-quiet);max-width:68ch}
 .chile-vibe-action{padding:10px 12px;border-left:2px solid var(--faro-line);margin:8px 0 12px;font-size:13px;line-height:1.5;font-weight:650;color:var(--fg)}
+
+/* Score semantics shared with Zeeland. Keep decision and wave character apart. */
+#forecastPage .day-chip.tone-great{--tone:var(--surf-great)}
+#forecastPage .day-chip.tone-good{--tone:var(--surf-good)}
+#forecastPage .day-chip.tone-fair{--tone:var(--surf-fair)}
+#forecastPage .day-chip.tone-poor{--tone:var(--surf-poor)}
+#forecastPage .day-chip.tone-low{--tone:var(--surf-low)}
+#forecastPage .day-chip .chile-chip-number{color:var(--tone,var(--brand-score-ink))!important}
+#forecastPage .day-chip .chile-chip-grade{font-size:12px!important}
+#dayview .slots .chile-slot-quality{font-size:10px!important;line-height:1.2;font-weight:750;color:var(--tone,var(--faro-quiet))!important;display:block}
+#dayview .slots button.tone-great{--tone:var(--surf-great)}
+#dayview .slots button.tone-good{--tone:var(--surf-good)}
+#dayview .slots button.tone-fair{--tone:var(--surf-fair)}
+#dayview .slots button.tone-poor{--tone:var(--surf-poor)}
+#dayview .slots button.tone-low{--tone:var(--surf-low)}
+#dayview .slots .chile-slot-score{color:var(--tone,var(--brand-score-ink))!important}
+#dayview .chile-session-rating.tone-great{--tone:var(--surf-great)}
+#dayview .chile-session-rating.tone-good{--tone:var(--surf-good)}
+#dayview .chile-session-rating.tone-fair{--tone:var(--surf-fair)}
+#dayview .chile-session-rating.tone-poor{--tone:var(--surf-poor)}
+#dayview .chile-session-rating.tone-low{--tone:var(--surf-low)}
+#dayview .chile-session-rating .chile-session-score{color:var(--tone,var(--brand-score-ink))!important}
+#dayview .chile-session-rating .chile-session-origin{color:var(--faro-quiet);font-size:10px;line-height:1.25;letter-spacing:0;font-weight:550;display:block}
+#bestPage .chile-ranking strong{color:var(--tone,var(--brand-score-ink))!important}
+#bestPage .chile-ranking.tone-great{--tone:var(--surf-great)}
+#bestPage .chile-ranking.tone-good{--tone:var(--surf-good)}
+#bestPage .chile-ranking.tone-fair{--tone:var(--surf-fair)}
+#bestPage .chile-ranking.tone-poor{--tone:var(--surf-poor)}
+#bestPage .chile-ranking.tone-low{--tone:var(--surf-low)}
