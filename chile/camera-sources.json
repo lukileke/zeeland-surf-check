@@ -82,18 +82,63 @@
       "automatedCapturePermitted": false,
       "allowEmbedding": false,
       "notes": "Nearshore model at ~20 m is not ground-truth camera imagery."
+    },
+    {
+      "id": "marejadas-uv-renaca-youtube",
+      "spotId": "CL-VS:renaca",
+      "name": "Marejadas UV · Reñaca (cámara universitaria pública)",
+      "view": "Reñaca · Viña del Mar",
+      "page": "https://www.youtube.com/watch?v=NomqMgWrVlY",
+      "type": "surf_context_camera",
+      "viewerAccess": "public_youtube_no_account",
+      "feedLiveVerified": false,
+      "trainingRights": "permission_unconfirmed",
+      "automatedCapturePermitted": false,
+      "allowEmbedding": false,
+      "partner": "Universidad de Valparaíso · Sistema de Alerta de Marejadas",
+      "notes": "Camera published Dec 31 2025; independent of Lineup. Live availability not confirmed here. Public YouTube viewing is not a licence for FARO to bulk-record or train. Contact owner before training."
+    },
+    {
+      "id": "marejadas-uv-av-peru",
+      "spotId": "CL-VS:renaca",
+      "name": "Marejadas UV · Avenida Perú (regional, no Reñaca Norte)",
+      "view": "Viña del Mar · referencia de oleaje",
+      "page": "https://www.24horas.cl/regiones/zona-centro/valparaiso/imagen-en-vivo-marejadas-region-de-valparaiso",
+      "type": "regional_context_camera",
+      "viewerAccess": "public_page",
+      "feedLiveVerified": false,
+      "trainingRights": "permission_unconfirmed",
+      "automatedCapturePermitted": false,
+      "allowEmbedding": false,
+      "partner": "Universidad de Valparaíso",
+      "notes": "Reference camera within Viña del Mar. Not representative of actual sandbank at Reñaca or La Boca."
+    },
+    {
+      "id": "windmaster-ritoque-legacy",
+      "spotId": "CL-VS:ritoque",
+      "name": "Windmaster · Ritoque (página histórica)",
+      "view": "Ritoque · vista no verificada",
+      "page": "https://windmaster.cl/webcam-ritoque/",
+      "type": "regional_context_camera",
+      "viewerAccess": "public_page_unverified",
+      "feedLiveVerified": false,
+      "trainingRights": "permission_unconfirmed",
+      "automatedCapturePermitted": false,
+      "allowEmbedding": false,
+      "notes": "Historical page announces ONLINE; no proof of a working stream now; do not claim live availability."
     }
   ],
   "capture": {
     "status": "blocked_pending_written_permission",
-    "outreachTarget": "Lineup (aloha@lineup.surf), Boca Surf and Surf Academy Concón",
+    "outreachTarget": "Lineup (aloha@lineup.surf), Boca Surf and Surf Academy Concón; Marejadas UV / Universidad de Valparaíso; Windmaster",
     "requestedPermissions": [
       "automated time-bounded image capture",
       "storage and retention",
       "machine-learning training and evaluation",
       "derived anonymised metrics",
       "review by host/provider",
-      "licence scope, transfer, and deletion"
+      "licence scope, transfer, and deletion",
+      "possible University of Valparaíso permission to record/label coastal images for local research and non-generative wave-feature model"
     ],
     "privacyControls": [
       "mask people and land-side public areas",
