@@ -128,6 +128,19 @@ function evaluate(slot,spotId,catalog,locale="es",options={}){
   check:[say("Vale la pena echar un ojo","Worth a closer look"),4,"model_potential"]
  };
  const [verdict,priority,driver]=outcomes[decision];
+ const shortNames={
+  hazard:say("Riesgo modelo","Model risk"),
+  unassessed:say("Sin evaluar","Unassessed"),
+  no_daylight:say("Sin luz","No daylight"),
+  caution:say("Precaución","Caution"),
+  skip_wind:say("Mucho viento","Too windy"),
+  skip_swell:say("Poco swell","Small swell"),
+  skip_direction:say("Poco encaje","Low fit"),
+  wait_wind:say("Esperar viento","Wait for wind"),
+  mixed:say("Variable","Mixed"),
+  maybe:say("Para mirar","Worth a look"),
+  check:say("Vale mirar","Worth checking")
+ };
  const measurement=say("Swell "+h.toFixed(1)+" m @ "+p.toFixed(0)+" s; viento "+u.toFixed(0)+" km/h.",
   "Swell "+h.toFixed(1)+" m @ "+p.toFixed(0)+" s; wind "+u.toFixed(0)+" km/h.");
  const mainReason={
@@ -206,7 +219,7 @@ function evaluate(slot,spotId,catalog,locale="es",options={}){
  // Do not claim measured breaking waves, actual current, tidal preference,
  // a verified sandbank or a safe session. Numeric values are offshore input.
  const read=measurement+" "+mainReason;
- const opportunity={id:decision,priority,driver,verdict,reason:mainReason,
+ const opportunity={id:decision,priority,driver,verdict,shortLabel:shortNames[decision],reason:mainReason,
   action,modelEvidence:measurement,scope:spot.area,
   basedOn:"offshore_model_and_unvalidated_guide",isObserved:false,
   validated:false,safetyAssessed:false};
