@@ -31,8 +31,8 @@ assert.equal(ritoque.wind.state,'disputed','Ritoque: N and E conflicting guidanc
 assert.equal(boca.tide.state,'disputed');
 assert.equal(renaca.tide.verified,false);
 assert.equal(ritoque.tide.state,'disputed');
-assert.notEqual(boca.read,renaca.read);
-assert.notEqual(ritoque.read,renaca.read);
+assert.notEqual(boca.decision.action,renaca.decision.action);
+assert.notEqual(ritoque.decision.action,renaca.decision.action);
 for(const item of [boca,renaca,ritoque]){
  assert.equal(item.status,'guide_compared');
  assert.equal(item.safetyAssessed,false);
