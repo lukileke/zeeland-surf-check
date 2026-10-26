@@ -125,3 +125,14 @@ html[data-theme="light"] #bestPage .hero-rank .hero-score[class*="brand-band-"] 
 html[data-theme="light"] #forecastPage .day-chip.selected[class*="brand-band-"]{
  background:#fff!important;
 }
+
+/* The user's authentic vector safety mark must survive later theme layers.
+ * This is safety-only artwork supplied by the FARO designer, not a generic icon. */
+.faro-safety-center.danger .faro-safety-summary::before{
+ content:""!important;display:block!important;
+ background-image:url("assets/faro-salva-red.svg")!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:120px auto!important;
+ pointer-events:none!important;
+}
