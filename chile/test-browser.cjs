@@ -140,6 +140,42 @@ function fixture(){
     'Daily scores must use Zeeland score categories, not decisions');
    assert.ok((await firstChip.getAttribute('class')).includes(toneOf(displayedValue)),
     'Daily scores must use Zeeland colour band thresholds');
+   // Ensure no future Chile light-mode override darkens any of the
+   // original FIVE FARO score inks (computed style in real browser).
+   const vivid=await page.evaluate(()=>{
+    const html=document.documentElement,prev=html.dataset.theme;
+    html.dataset.theme="light";
+    const expected={
+     "brand-band-verylow":"rgb(240, 164, 109)",
+     "brand-band-low":"rgb(240, 191, 105)",
+     "brand-band-mid":"rgb(227, 212, 113)",
+     "brand-band-regular":"rgb(176, 219, 117)",
+     "brand-band-high":"rgb(150, 198, 122)"
+    },out=[];
+    const band=el=>[...el.classList].find(x=>x.startsWith("brand-band-"));
+    try{
+     for(const [b,rgb]of Object.entries(expected)){
+      const card=document.createElement("button"),score=document.createElement("strong");
+      card.className="day-chip score-tint "+b;score.className="chile-chip-number";
+      score.textContent="7.5";card.append(score);
+      document.getElementById("dayStripItems").append(card);
+      out.push({component:b,actual:getComputedStyle(score).color,expected:rgb});
+      card.remove();
+     }
+     for(const [name,outer,inner] of [
+      ["daily","#dayStripItems .day-chip[class*='brand-band-']",".chile-chip-number"],
+      ["hourly","#slots button[class*='brand-band-']",".chile-slot-score"],
+      ["session","#sessionAtGlance .chile-session-rating[class*='brand-band-']",".chile-session-score"]
+     ]){
+      const parent=document.querySelector(outer),score=parent?.querySelector(inner);
+      if(!score)throw Error("Missing "+name+" numerical score");
+      out.push({component:name,actual:getComputedStyle(score).color,expected:expected[band(parent)]});
+     }
+    }finally{html.dataset.theme=prev;}
+    return out;
+   });
+   for(const item of vivid)assert.equal(item.actual,item.expected,
+    "Light theme must keep FARO's vivid score inks: "+JSON.stringify({width,...item}));
    await page.locator('#dayStripItems .day-chip').nth(1).click();
    // The 06:00 window has stronger wind than 08:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
@@ -172,8 +208,12 @@ function fixture(){
    assert.equal(await page.locator('#coastMapExpand .leaflet-container').count(),0);
    await page.locator('#coastMapExpand').evaluate(el=>el.open=true);
    await page.waitForFunction(()=>document.querySelector('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:la-boca-concon"]'),{timeout:8000});
-   assert.equal(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot]').count(),3,
-    'All 3 published coastal reference positions must render without external CDNs');
+   // The selected spot can have an additional focus marker. Confirm every
+   // unique reference is present instead of incorrectly requiring 3 nodes.
+   for(const id of ['CL-VS:la-boca-concon','CL-VS:renaca','CL-VS:ritoque']){
+    assert.ok(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="'+id+'"]').count()>=1,
+     'Map must include published coastal reference '+id);
+   }
    const arrowCount=await page.locator('#chileCoastMap .faro-map-schematic line[stroke="#137d9f"], #chileCoastMap .faro-map-schematic line[stroke="#ba7628"]').count();
    assert.equal(arrowCount,2,'Model swell and wind travel vectors must be visible');
    if(width>=1120){
