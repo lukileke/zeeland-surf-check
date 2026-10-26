@@ -89,7 +89,37 @@
         "field_tide_response",
         "observed_wave_form"
       ],
-      "coastalReference": "https://marejadas.uv.cl/CL15CCN01"
+      "coastalReference": "https://marejadas.uv.cl/CL15CCN01",
+      "guideWaveShapeHypotheses": [
+        {
+          "id": "south_southwest_longer_walls",
+          "source": "lineup-la-boca-local-forecaster",
+          "directionFromRanges": [
+            [
+              170,
+              235
+            ]
+          ],
+          "waveCharacter": "longer_more_open_potential",
+          "evidence": "local_forecaster_editorial_not_quantified",
+          "es": "S/SSO: posible línea más larga y abierta",
+          "en": "S/SSW: potentially longer, more open lines"
+        },
+        {
+          "id": "northwest_faster_sections",
+          "source": "lineup-la-boca-local-forecaster",
+          "directionFromRanges": [
+            [
+              292.5,
+              337.5
+            ]
+          ],
+          "waveCharacter": "faster_hollower_potential",
+          "evidence": "local_forecaster_editorial_not_quantified",
+          "es": "NW: posibles secciones más rápidas y huecas",
+          "en": "NW: potentially faster, hollower sections"
+        }
+      ]
     },
     "CL-VS:renaca": {
       "area": "Reñaca · picos norte",
