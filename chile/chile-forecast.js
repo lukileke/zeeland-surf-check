@@ -25,7 +25,7 @@ function sessionTime(s){return s?h(s.hour)+":00–"+h(s.hour+2)+":00":"—"}
 function bestRemaining(day){
  if(!day)return null;
  const present=now();
- return day.slots.filter(s=>s.daylight.eligible&&ok(s.score)&&(day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
+ return day.slots.filter(s=>s.daylight.eligible&&ok(s.score)&&Live.slotRisk(s,state.config)!=="danger"&&(day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
   .sort((a,b)=>b.score-a.score||a.hour-b.hour)[0]||null;
 }
 function selection(){
@@ -153,12 +153,13 @@ function slots(){
  const container=$("slots");container.replaceChildren();
  const day=state.forecast?.days?.[state.day];if(!day)return;
  for(const s of day.slots){
-  const eligible=s.daylight.eligible&&ok(s.score);
+  const dangerous=Live.slotRisk(s,state.config)==="danger";
+  const eligible=s.daylight.eligible&&ok(s.score)&&!dangerous;
   const button=el("button",null,(eligible?band(s.score):"chile-unavailable")+(selection()?.hour===s.hour?" selected":""));
   button.type="button";button.setAttribute("aria-pressed",String(selection()?.hour===s.hour));button.disabled=!s.modelComplete;
   button.append(el("span",h(s.hour)+"–"+h(s.hour+2),"chile-slot-hour"));
   button.append(el("strong",eligible?num(s.score):"—","chile-slot-score"));
-  button.append(el("small",eligible?Live.vibe(s,state.lang).label:s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
+  button.append(el("small",dangerous?tr("⚠ Riesgo modelo","⚠ Model risk"):eligible?Live.vibe(s,state.lang).label:s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
  session();
