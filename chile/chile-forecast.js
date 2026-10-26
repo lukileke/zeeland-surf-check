@@ -404,7 +404,7 @@ function updateCoastMap(){
  const s=selection();
  state.coastMap?.update({spot:spot(),spots:state.config?.pilots?.filter(p=>
   ["CL-VS:la-boca-concon","CL-VS:renaca","CL-VS:ritoque"].includes(p.id)),slot:s,
-  local:localRead(s),lang:state.lang});
+  local:localRead(s),lang:state.lang,cameras:state.cameras?.sources||[]});
 }
 function vibeUI(s){
  const info=Live.vibe(s,state.lang),meta=s?.scoreMeta,local=localRead(s);
@@ -596,7 +596,8 @@ function session(){
 function render(){
  if(!state.forecast)return;
  txt("updated",tr("Modelo consultado ","Model fetched ")+new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(state.forecast.model.fetchedAt))+" · CL");
- risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();updateCoastMap();if(state.tab==="board")match();
+ risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
+ state.videoLab?.refreshCameras();updateCoastMap();if(state.tab==="board")match();
 }
 async function refresh(force=false){
  if(!state.config)return;
@@ -718,19 +719,24 @@ async function initialize(){
   state.selected=Math.max(0,state.config.pilots.findIndex(s=>s.id===requested));
   picker();
   if(window.FaroChileVideoLab)state.videoLab=window.FaroChileVideoLab.init({
-   container:$("faroVideoLab"),spotId:()=>spot()?.id
+   container:$("faroVideoLab"),spotId:()=>spot()?.id,
+   cameraSources:()=>state.cameras?.sources||[]
   });
   if(window.FaroChileCoastMap)state.coastMap=window.FaroChileCoastMap.create({
    container:$("chileCoastMap"),disclosure:$("coastMapExpand"),
    getCurrent:()=>({spot:spot(),spots:state.config.pilots.filter(p=>
     ["CL-VS:la-boca-concon","CL-VS:renaca","CL-VS:ritoque"].includes(p.id)),
-    slot:selection(),local:localRead(selection()),lang:state.lang}),
+    slot:selection(),local:localRead(selection()),lang:state.lang,
+    cameras:state.cameras?.sources||[]}),
    onSelectSpot:id=>{
     if(spot()?.id===id)return;
     $("chileSpotSelect").value=id;
     $("chileSpotSelect").dispatchEvent(new Event("change",{bubbles:true}));
    }
   });
+  // Desktop previews are part of the primary forecast hierarchy.
+  // Mobile keeps map detail optional, with a local geolocated SVG fallback.
+  if(window.matchMedia("(min-width: 1120px)").matches)$("coastMapExpand").open=true;
   renderDNA();risk(null);await refresh();
  }catch(err){
   txt("updated",tr("Error cargando FARO Chile: ","FARO Chile loading error: ")+String(err.message||err));

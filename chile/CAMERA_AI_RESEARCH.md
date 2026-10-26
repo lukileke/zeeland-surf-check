@@ -156,3 +156,37 @@ No scraping or session-cookie replay, private API extraction, automated browser 
 - **SHOA / CENDHOC:** https://cendhoc.shoa.cl/solicitudes registra solicitudes científicas de nivel del mar, olas y corrientes. De ser necesarias series académicas, existen formularios y compromiso de uso; una finalidad comercial puede tener requisitos diferentes.
 - **DGA hidrometría:** https://dga.mop.gob.cl/sistema-hidrometrico-en-linea/ presenta registros de caudales, calidad del agua y turbiedad según estación. Para La Boca interesaría identificar una estación de caudal del Aconcagua y la distancia/tiempo de propagación antes de modelar la influencia de la descarga del río sobre las condiciones locales.
 - **Validación local:** la cámara debería entregar olas observadas y métricas de formación; la lectura de guías locales proporciona hipótesis físicas, pero no debe ser la etiqueta objetivo de entrenamiento.
+
+
+## 26/10/2026 · FARO v2: calibration with reviewed manual surf data
+
+The [calibrate-observations.cjs](calibrate-observations.cjs) module is a **real runnable offline statistical baseline**, not a trained camera-vision product. It can fit ordinal rideability (1–5), observed closeout fraction, and number of rideable waves per ten minutes **once sufficiently many genuine reviewed observations exist**. It never opens camera footage, downloads third-party frames, or changes the public app's scores.
+
+**Current reality:** zero reviewed observations available to this repository. The regression has only passed synthetic deterministic tests. There is no defensible predictive error estimate for La Boca yet and no deployed AI weights. Do not show synthetic accuracy to surfers.
+
+### Data provenance and explicit human review
+
+Export the [FARO Field Notes](https://lukileke.github.io/zeeland-surf-check/chile/) JSONL file from your own browser (user-contributed observations remain on-device). The observations contain `observationId`, `spotId`, `cameraId` if applicable, Chile and UTC time, observed wave counts, classified campanas, rider rating, observation duration, and the forecast **already stored before** the observed instant. Raw video never accompanies the JSONL. An observation is `trainingEligible:false` and `reviewStatus:pending_review_not_training_data` until a separate human reviewer approves rights and quality.
+
+Create a **private** JSONL review manifest, one row per genuine observation, such as:
+
+```json
+{"observationId":"real-id-from-export","reviewer":"human reviewer","reviewedAtUtc":"2026-11-15T17:00:00Z","qualityStatus":"accepted","dataRightsStatus":"manual_derived_facts_reviewed"}
+```
+
+The manifest is an attestation by a person who has reviewed the source data, not a checkbox to bypass camera provider terms. For **owned/licensed video annotation**, `dataRightsStatus` must be `written_training_licence_verified` and include `permissionDocumentId` (the actual signed agreement). No authorisation can be assumed from paid Lineup access; licence conditions still apply. Source providers may restrict even derived use.
+
+Run:
+```bash
+node chile/calibrate-observations.cjs /private/faro-observations.jsonl /private/review-manifest.jsonl /private/calibration-research.json
+```
+
+The script excludes unknown rights, incomplete wave labels, wrong-spot forecast pairs, forecast versions saved **after** the video moment, and observations shorter than five minutes. It requires **at least 60 reviewed clips/sessions and 15 independent provisional three-day blocks for a given spot**, with a chronological 75/25 episode split and a sufficient unseen holdout. Its simple ridge baseline predicts a numerical measure of rideability, closeout percentage and waves per 10 minutes, evaluated against a constant training-set baseline. Its outputs are `researchOnly:true`, `deployed:false`. They must **not** be integrated into public scores until held-out accuracy and real session coverage justify it.
+
+Do not conflate three-day blocks with actual storm events: the next methodological improvement is to group contiguous forecasts by shared directional swell episode and hold out complete swell systems, preferably across seasons. Re-evaluate when the camera moves, the bank changes or the observing definition changes. Collect human inter-rater reliability before scoring model skill. A confident interface can prioritise what to do and why, while detailed residual errors belong to the expandable methodology section at the bottom.
+
+### Newly confirmed camera-source lineage
+
+- [Lineup's interview with Buscaolas founders](https://lineup.surf/news/los-creadores-de-buscaolas-cuentan-su-historia) says Buscaolas was acquired by Lineup in 2025. [buscaolas.cl](https://buscaolas.cl/) now redirects to Lineup. Third-party camera directories linking Buscaolas or the old Los Lobos feed are **not an independent camera source or a reuse permission**.
+- [Lineup terms](https://lineup.surf/terms-of-use) limit access to personal use and do not provide authorisation for scraping, redistributing, automatic recording or using video to train FARO. The Lineup camera 1 may be watched with an account, but cannot be silently ingested.
+- [Windmaster webcams](https://windmaster.cl/webcams/) show Reñaca, Acapulco and other coastal feeds as OFFLINE at the time of this review; surf-camera availability and legal permissions must be checked before relying on those links.

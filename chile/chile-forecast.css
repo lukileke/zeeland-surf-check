@@ -341,3 +341,115 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 
 /* Ensure external-camera annotation never displays a local video control. */
 .chile-video-lab [hidden]{display:none!important}
+
+/* Chile desktop editorial grid v2: purposeful pairs rather than auto-placed leftovers.
+ * Restores Zeeland wave figures' Manrope text numerals, not Archivo headlines. */
+#forecastPage .chile-wave-feature-number #dayWave{
+ font-family:var(--faro-text,Manrope,system-ui)!important;font-weight:800!important;
+ font-variant-numeric:tabular-nums!important;letter-spacing:-.065em!important;
+ font-size:clamp(30px,4vw,45px)!important;
+}
+#forecastPage .chile-wave-size-tag,#dayview .chile-session-wave strong{
+ font-family:var(--faro-text,Manrope,system-ui)!important;
+ font-variant-numeric:tabular-nums!important;
+}
+#dayview .chile-session-wave strong{font-weight:800!important;letter-spacing:-.06em!important}
+#forecastPage .day-signal-metrics .chile-day-wave-feature{
+ background:color-mix(in srgb,var(--faro-ocean) 6%,var(--tile))!important;
+}
+#forecastPage #dailyOverview{min-width:0}
+#forecastPage #dailyOverview .day-overview-row{gap:10px;min-width:0}
+#forecastPage #dailyOverview #datehead{overflow-wrap:anywhere}
+#forecastPage #dailyOverview .best-session-brief{min-width:120px}
+#forecastPage .chile-wave-feature-number{max-width:100%;gap:7px}
+#forecastPage #chileWaveExplain{max-width:100%;min-width:0}
+#forecastPage #chileWaveExplain[open] .chile-wave-how{max-width:100%}
+#dayview .session-glance{min-width:0}
+#dayview .chile-session-head{max-width:100%}
+#dayview .chile-session-meta .chile-session-mini{min-width:0}
+/* Geographic reference SVG is immediately usable even without Leaflet/CDN.
+ * OpenStreetMap, when available, enhances rather than replaces the first-party fallback. */
+#chileCoastMap .faro-map-schematic{display:block;width:100%;height:100%;max-height:360px;min-height:245px;background:#dceef1}
+#chileCoastMap .faro-map-schematic g[role="button"]:focus-visible{outline:none;filter:drop-shadow(0 0 6px #087eaa)}
+#chileCoastMap .faro-map-viewport{min-height:265px}
+#chileCoastMap .faro-map-viewport:has(.faro-map-schematic){border:1px solid #b4d5d6}
+#chileCoastMap .faro-map-brief{min-width:0}
+#chileCoastMap .faro-map-note{font-size:10px}
+#chileCoastMap .faro-map-reading{padding:10px}
+#chileCoastMap .faro-map-reading strong{font-size:13px}
+#chileCoastMap .faro-map-spot{font-size:18px}
+@media(min-width:1120px){
+ #forecastPage{row-gap:clamp(14px,1.5vw,22px)!important}
+ #forecastPage > .day-outlook-section{grid-column:1/span 5!important}
+ #forecastPage #dayview>.hourly-section{grid-column:6/-1!important}
+ #forecastPage #dayview>.session-section{
+   grid-column:1/span 7!important;grid-row:auto!important;
+   min-width:0;align-self:stretch!important;margin:0!important
+ }
+ #forecastPage #dayview>.session-section .session-glance{padding:20px 22px!important}
+ #forecastPage #dayview>.session-section .chile-session-meta{margin-top:6px!important}
+ #forecastPage #dayview>#coastMapExpand{
+   grid-column:8/-1!important;grid-row:auto!important;
+   align-self:stretch!important;min-width:0!important;
+   margin:0!important;display:block;
+   background:var(--tile);border:1px solid var(--faro-line);
+   border-radius:16px;overflow:hidden;
+ }
+ #forecastPage #dayview>#coastMapExpand[open]{display:block}
+ #forecastPage #dayview>#coastMapExpand>summary{
+   font-size:12px!important;padding:15px!important;min-height:55px!important;
+   border-bottom:1px solid var(--faro-line);display:flex;gap:9px;align-items:center
+ }
+ #forecastPage #dayview>#coastMapExpand .forecast-accordion-meta{font-size:10px!important}
+ #forecastPage #dayview>#coastMapExpand .faro-map-wrap{
+   grid-template-columns:1fr!important;gap:8px!important;padding:11px!important
+ }
+ #forecastPage #dayview>#coastMapExpand .faro-map-viewport{
+   height:235px!important;min-height:235px!important;
+ }
+ #forecastPage #dayview>#coastMapExpand .faro-map-brief{
+   display:grid;grid-template-columns:1fr;gap:5px;padding:4px 0
+ }
+ #forecastPage #dayview>#coastMapExpand .faro-map-spot{font-size:15px}
+ #forecastPage #dayview>#coastMapExpand .faro-map-readings{gap:6px}
+ #forecastPage #dayview>#coastMapExpand .faro-map-reading{
+   min-width:0;padding:8px
+ }
+ #forecastPage #dayview>#coastMapExpand .faro-map-reading strong{font-size:12px}
+ #forecastPage #dayview>#coastMapExpand .faro-map-evidence{display:flex;flex-wrap:wrap;gap:6px}
+ #forecastPage #dayview>#coastMapExpand .faro-map-evidence span{font-size:10px}
+ #forecastPage #dayview>#coastMapExpand .faro-map-note{
+   grid-column:1/-1;line-height:1.45;font-size:9px
+ }
+ #forecastPage #dayview>#spotInsightExpand{grid-column:1/span 7!important}
+ #forecastPage #dayview>#waveInsightExpand{grid-column:8/-1!important}
+ #forecastPage #dayview>#cameraExpand{grid-column:1/span 7!important}
+ #forecastPage #dayview>#faroTechnicalExpand{grid-column:8/-1!important}
+ #forecastPage #dayview>#wearExpand{grid-column:1/span 7!important}
+ #forecastPage #dayview>#fieldNotesExpand{grid-column:8/-1!important}
+ #forecastPage #dayview>.session-section,
+ #forecastPage #dayview>#coastMapExpand{min-width:0!important}
+}
+@media(min-width:1120px) and (max-width:1260px){
+ #forecastPage #dayview>.session-section{grid-column:1/span 7!important}
+ #forecastPage #dayview>#coastMapExpand{grid-column:8/-1!important}
+ #forecastPage #dayview>.session-section .chile-session-head>.chile-session-rating,
+ #forecastPage #dayview>.session-section .chile-session-head>.chile-session-wave{padding:12px!important}
+ #forecastPage #dayview>#coastMapExpand .faro-map-viewport{height:215px!important;min-height:215px!important}
+}
+@media(max-width:1119px){
+ #forecastPage #dayview>#coastMapExpand{margin:14px 0!important}
+ #forecastPage #dailyOverview .chile-day-wave-feature{min-height:100px}
+}
+
+/* See source ↔ log observed surf is directly accessible from coast map. */
+.faro-map-shortcuts{display:flex;align-items:stretch;flex-wrap:wrap;gap:7px}
+.faro-map-shortcuts .faro-map-shortcut{
+ display:inline-flex;justify-content:center;align-items:center;min-height:34px;
+ padding:8px 10px;border:1px solid var(--faro-line);border-radius:9px;
+ background:var(--faro-hero);color:var(--fg);font-family:var(--faro-text,system-ui);
+ font-size:10px;font-weight:850;line-height:1.25;text-decoration:none;
+ cursor:pointer;max-width:100%;
+}
+.faro-map-shortcuts .faro-map-shortcut.secondary{background:var(--tile)}
+.faro-map-shortcuts .faro-map-shortcut:hover{border-color:var(--faro-ocean)}
