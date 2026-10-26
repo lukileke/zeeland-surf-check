@@ -289,7 +289,7 @@ function strip(){
   button.type="button";button.setAttribute("aria-pressed",String(i===state.day));
   button.append(el("span",i===0?tr("Hoy","Today"):Live.formatDay(d.date,state.lang),"chile-chip-day"));
   button.append(el(s?"strong":"span",s?num(s.score):"—",s?"chile-chip-number":"chile-chip-empty"));
-  button.append(el("span",s?grade(s.score):tr("Sin ventana","No daylight window"),"chile-chip-grade"));
+  button.append(el("span",s?(localRead(s)?.decision?.shortLabel||grade(s.score)):tr("Sin ventana","No daylight window"),"chile-chip-grade"));
   button.append(el("small",s?sessionTime(s):tr("No evaluado","Not evaluated"),"chile-chip-time"));
   button.addEventListener("click",()=>{state.day=i;state.hour=null;render()});host.append(button);
  }
@@ -323,7 +323,11 @@ function outlook(){
  const d=state.forecast?.days?.[state.day],s=selection();if(!d)return;
  $("dailyOverview").className="forecast-overview "+band(s?.score);
  txt("datehead",dateLabel(d.date));txt("spotname",spot()?.name||"—");
+ const opportunity=localRead(s)?.decision;
  txt("bestTime",sessionTime(s));
+ txt("bestTimeKicker",!s?tr("SIN VENTANA SUGERIDA","NO SUGGESTED WINDOW"):
+  opportunity?.priority>=3?tr("MEJOR VENTANA","BEST WINDOW"):
+   tr("VENTANA PARA EVALUAR","WINDOW TO REVIEW"));
  txt("dayWave",s?num(s.totalWaveHeightM)+" m":"—");
  txt("dayPeriod",s?num(s.swellPeriodS)+" s":"—");
  txt("dayWind",s?num(s.windKmh,0)+" km/h":"—");
@@ -345,7 +349,7 @@ function slots(){
   button.type="button";button.setAttribute("aria-pressed",String(selection()?.hour===s.hour));button.disabled=!s.modelComplete;
   button.append(el("span",h(s.hour)+"–"+h(s.hour+2),"chile-slot-hour"));
   button.append(el("strong",eligible?num(s.score):"—","chile-slot-score"));
-  button.append(el("small",dangerous?tr("⚠ Riesgo modelo","⚠ Model risk"):unknownRisk?tr("⚠ Riesgo sin evaluar","⚠ Risk unassessed"):eligible?(localRead(s)?.vibe?.label||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
+  button.append(el("small",dangerous?tr("⚠ Riesgo modelo","⚠ Model risk"):unknownRisk?tr("⚠ Riesgo sin evaluar","⚠ Risk unassessed"):Live.slotRisk(s,state.config)==="caution"?tr("⚠ Precaución","⚠ Caution"):eligible?(localRead(s)?.decision?.shortLabel||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
  session();
@@ -401,7 +405,7 @@ function session(){
  const score=el("div",null,"chile-session-rating "+band(s.score));
  score.append(el("small",tr("COMPATIBILIDAD · MODELO","MODEL COMPATIBILITY"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
- score.append(big,el("span",grade(s.score),"chile-session-label"));
+ score.append(big,el("span",localRead(s)?.decision?.shortLabel||grade(s.score),"chile-session-label"));
  const wave=el("div",null,"chile-session-wave");
  wave.append(el("small",tr("ALTURA MODELO OFFSHORE","OFFSHORE MODEL HEIGHT")),el("strong",num(s.totalWaveHeightM)+" m"),el("small",tr("NO altura rompiente","NOT breaking wave height")));
  top.append(score,wave);main.append(top);
