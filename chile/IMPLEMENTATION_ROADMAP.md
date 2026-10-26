@@ -3,6 +3,8 @@
 ## Baseline architecture
 Zeeland is active. Chile catalogue is **inactive** and read-only. Do not feed Chile places into the Zeeland evaluator and do not clone its ocean exposure thresholds. A global `surf-engine.js` might one day orchestrate model outputs but calibrated parameters must remain region/spot-specific.
 
+**Immediate owner of the next implementation steps:** [La Boca → Reñaca launch gates](LA_BOCA_PILOT_PLAN.md). Start with the pilot, not a simultaneous national rollout. The empty observation spreadsheet template is [here](field-observations-template.csv).
+
 ## P0 · Coastline and break identity
 - [ ] Confirm region, coastal municipality, break access point and subspot names. Store exact coordinates only from verified sources (never town-centroid guesses).
 - [ ] Categorise: exposed beachbreak, sheltered beachbreak, rocky/reef, point, rivermouth, reef/point mixture; include changing banks, direction of ride, local restrictions and known hazards.
