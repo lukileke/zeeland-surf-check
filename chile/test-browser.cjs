@@ -141,6 +141,14 @@ function fixture(){
     const font=await page.locator('#dayWave').evaluate(el=>getComputedStyle(el).fontFamily);
     assert.match(font,/Manrope|faro-text|system-ui/i,'Model wave size must use Zeeland number font, not Archivo Black');
    }
+   assert.equal(await page.locator('#coastMapExpand .faro-lens-compass-svg').count(),1,
+    'Compass must display actual bearing rose for swell and wind');
+   assert.equal(await page.locator('#coastMapExpand .faro-lens-compass-svg circle').count()>=3,true,
+    'Compass must show actual direction rings, not a decorative emoji');
+   assert.match(await page.locator('#coastMapExpand .faro-lens-module').textContent(),/SWELL COMPASS/);
+   assert.match(await page.locator('#faroHourlyPreview').textContent(),/COASTAL READ/);
+   await page.locator('#faroHourlyGoLens').click();
+   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
    const mapText=await page.locator('#chileCoastMap').textContent();
    assert.match(mapText,/La Boca/);
    assert.match(mapText,/SWELL/);
@@ -199,6 +207,10 @@ function fixture(){
    const hints=await page.locator('#chileVibeEvidence').textContent();
    assert.match(hints,/guías divididas|guides disagree/i,'Conflicting La Boca guide evidence remains accessible');
    await page.locator('#chileSpotSelect').selectOption('CL-VS:renaca');
+   await page.waitForFunction(()=>document.getElementById('chileCameraSources')?.textContent?.includes('Marejadas UV'),{timeout:12000});
+   assert.ok(await page.locator('#chileCameraSources a[href*="youtube.com/watch?v=NomqMgWrVlY"]').count(),
+    'Reñaca must link to independent free Marejadas UV webcam');
+   assert.match(await page.locator('#chileCameraSources').textContent(),/YouTube público|Public YouTube/i);
    await page.waitForFunction(()=>document.getElementById('chileCameraSources')?.textContent?.includes('Windmaster · Reñaca'),{timeout:12000});
    assert.match(await page.locator('#chileCameraSources').textContent(),/offline|OFFLINE|Señal no confirmada/);
    await page.waitForFunction(()=>document.getElementById('chileVibeAction')?.textContent?.includes('Reñaca Norte'),{timeout:12000});

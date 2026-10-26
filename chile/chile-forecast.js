@@ -290,8 +290,10 @@ function renderCameras(){
   const availability=cam.viewerAccess==="free_account_required"?
    tr("Gratis · exige iniciar sesión","Free · sign-in required"):
    cam.viewerAccess==="premium_subscription"?tr("Premium · suscripción","Premium · subscription"):
-   cam.viewerAccess==="public_page_currently_offline"?tr("Señal no confirmada · figuraba offline","Feed not confirmed · shown offline"):
-   tr("Vista regional, no La Boca · disponibilidad no confirmada","Regional view, not La Boca · unverified");
+   cam.viewerAccess==="public_page_currently_offline"?tr("Señal no confirmada · figuraba offline","Feed unverified · previously offline"):
+   cam.viewerAccess==="public_youtube_no_account"?tr("YouTube público · emisión actual no verificada","Public YouTube · live status not checked"):
+   cam.viewerAccess==="public_page_unverified"?tr("Página abierta · señal no comprobada","Public page · feed not checked"):
+   tr("Vista regional · transmisión no verificada","Regional context · unverified feed");
   row.append(el("strong",cam.name),el("small",availability));
   if(/^https:\/\//.test(cam.page)){
    const a=el("a",tr("Ver cámara en origen ↗","Open provider's camera ↗"));
@@ -399,6 +401,12 @@ function waveExplanation(s){
     tr("viento sin contrastar","wind not yet assessed"))+".";
   host.append(signal);
  }
+}
+function renderHourlyPreview(){
+ const s=selection(),local=localRead(s);
+ const read=window.FaroChileCoastalLens?.reading(s,local,state.lang);
+ txt("faroHourlyHeadline",read?.headline||tr("Sin lectura de esta franja","No outlook for this window"));
+ txt("faroHourlyExplanation",read?.explanation||tr("Selecciona un horario para comparar las condiciones.","Select a time window to compare conditions."));
 }
 function updateCoastMap(){
  const s=selection();
@@ -597,7 +605,7 @@ function render(){
  if(!state.forecast)return;
  txt("updated",tr("Modelo consultado ","Model fetched ")+new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(state.forecast.model.fetchedAt))+" · CL");
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
- state.videoLab?.refreshCameras();updateCoastMap();if(state.tab==="board")match();
+ state.videoLab?.refreshCameras();updateCoastMap();renderHourlyPreview();if(state.tab==="board")match();
 }
 async function refresh(force=false){
  if(!state.config)return;
@@ -683,6 +691,10 @@ async function initialize(){
  }
  for(const [name,id]of [["forecast","navForecast"],["best","navBest"],["board","navBoard"]])$(id).addEventListener("click",()=>tab(name));
  $("refreshForecast").addEventListener("click",()=>refresh(true));
+ $("faroHourlyGoLens").addEventListener("click",()=>{
+  const panel=$("coastMapExpand");panel.open=true;
+  panel.scrollIntoView({block:"center",behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+ });
  $("chileSpotSelect").addEventListener("change",()=>{
   const i=state.config.pilots.findIndex(x=>x.id===$("chileSpotSelect").value);
   if(i>=0){

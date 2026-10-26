@@ -103,6 +103,25 @@ function create(opts){
  function describe(){
   const v=latest||p(),lang=v.lang||"es",es=lang!=="en",spot=v.spot,slot=v.slot,local=v.local;
   brief.replaceChildren();
+  const lensApi=root.FaroChileCoastalLens;
+  const lensRead=lensApi?.reading(slot,local,lang);
+  if(lensRead){
+   const lens=append("section","faro-lens-module",null);
+   const hdr=append("div","faro-lens-title",null,lens);
+   append("strong","",es?"SWELL COMPASS":"SWELL COMPASS",hdr);
+   append("span","",es?"Lectura de la franja":"Selected time",hdr);
+   const inner=append("div","faro-lens-inner",null,lens);
+   if(lensRead.available)inner.append(lensApi.compass(lensRead,lang));
+   else append("p","faro-map-summary",lensRead.explanation,inner);
+   const detail=append("div","faro-lens-detail",null,inner);
+   for(const n of lensRead.notes){
+    const k=append("div","faro-lens-legend "+n.kind,null,detail);
+    append("small","",n.title,k);
+    append("strong","",n.value,k);
+    append("span","",n.detail,k);
+   }
+   append("p","faro-lens-caption",lensRead.preview||"",lens);
+  }
   if(!spot){append("p","faro-map-summary",es?"Selecciona un spot.":"Select a spot.");return}
   append("strong","faro-map-spot",spot.name||spot.shortName);
   if(!slot?.modelComplete){
@@ -127,10 +146,15 @@ function create(opts){
   const guide=local?.waveShapeGuide?.hypothesis;
   if(guide)append("p","faro-map-insight",guide+" · "+(es?"Hipótesis local por verificar.":"Unverified local hypothesis."));
   const camera=(v.cameras||[]).find(cam=>cam.spotId===spot.id&&
-   cam.type==="surf_camera"&&cam.viewerAccess==="free_account_required");
+   cam.viewerAccess==="public_youtube_no_account")||
+   (v.cameras||[]).find(cam=>cam.spotId===spot.id&&
+    cam.type==="surf_camera"&&cam.viewerAccess==="free_account_required");
   const shortcuts=append("div","faro-map-shortcuts");
   if(camera&&/^https:\/\//.test(camera.page)){
-   const view=append("a","faro-map-shortcut",es?"📷 Ver La Boca en Lineup ↗":"📷 See La Boca on Lineup ↗",shortcuts);
+   const independent=camera.viewerAccess==="public_youtube_no_account";
+   const view=append("a","faro-map-shortcut",independent?
+    (es?"📷 Ver Marejadas UV ↗":"📷 View Marejadas UV ↗"):
+    (es?"📷 Ver La Boca en Lineup ↗":"📷 See La Boca on Lineup ↗"),shortcuts);
    view.href=camera.page;view.target="_blank";view.rel="noopener noreferrer";
   }
   const note=append("button","faro-map-shortcut secondary",es?"✎ Registrar olas observadas":"✎ Log observed waves",shortcuts);
@@ -139,8 +163,8 @@ function create(opts){
    if(panel){panel.open=true;panel.scrollIntoView({block:"start",behavior:"smooth"})}
   });
   attr.textContent=es?
-   "Puntos de referencia costera, no picos georreferenciados. Las flechas representan viaje modelado (180° respecto a DESDE), no refracción ni olas rompientes. © OpenStreetMap contributors.":
-   "Coastal reference points, not surveyed peaks. Arrows show modelled travel (180° from the FROM bearings), not refraction or breaking direction. © OpenStreetMap contributors.";
+   "Puntos costeros de referencia, no picos exactos. Brújula: dirección DESDE. Mapa: dirección de viaje (+180°). No estima refracción ni altura rompiente. © OpenStreetMap contributors.":
+   "Coastal reference points, not exact peaks. Compass shows FROM bearings; map shows travel (+180°). No refraction or breaking height. © OpenStreetMap contributors.";
  }
  function markerIcon(L,spot,selected,slot){
   const d1=selected?bearingFromArrow(slot?.swellDirection):null;
@@ -168,7 +192,9 @@ function create(opts){
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
   }
   if(latest.spot&&Number.isFinite(latest.spot.latitude)&&Number.isFinite(latest.spot.longitude)){
-   if(!opened){map.setView([latest.spot.latitude,latest.spot.longitude],11,{animate:false});opened=true}
+   const lat=latest.spot.latitude,lon=latest.spot.longitude;
+   if(!opened){map.setView([lat,lon],13,{animate:false});opened=true}
+   else map.setView([lat,lon],13,{animate:false});
   }
  }
  async function open(){
@@ -182,7 +208,7 @@ function create(opts){
    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
     maxZoom:15,minZoom:9,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
    }).addTo(map);
-   map.setView([-32.91,-71.53],11);
+   map.setView([-32.918807,-71.512047],13);
    update(p());
    requestAnimationFrame(()=>map?.invalidateSize({pan:false}));
   }catch(err){
