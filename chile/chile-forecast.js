@@ -191,6 +191,16 @@ function renderDNA(){
   if(source?.url)link(urls,source.name,source.url);
  }
  if(urls.children.length)detail.append(urls);
+ const coastal=current.coastalReference;
+ if(coastal?.autoIntegrated===false&&/^https:\/\//.test(coastal.url)){
+  const label=tr("COMPARACIÓN COSTERA · FUENTE EXTERNA","COASTAL CROSS-CHECK · EXTERNAL SOURCE");
+  detail.append(el("p",label+" · "+coastal.depthM+" m. "+tr(
+   "Pronóstico costero independiente; FARO aún no recupera ni coteja sus valores automáticamente. No representa altura de rompiente ni una marea SHOA.",
+   "Independent coastal model; FARO does not ingest or compare its values automatically. Not breaking-wave height or an official SHOA tide."),"faro-dna-method"));
+  const related=el("div",null,"faro-dna-source-links");
+  link(related,coastal.label,coastal.url);
+  detail.append(related);
+ }
  lower.append(detail);
  card.append(lower);
  host.replaceChildren(card);
