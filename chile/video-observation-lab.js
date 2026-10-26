@@ -308,7 +308,7 @@ function init(options={}){
      closeoutFraction:c.closeoutFraction,medianWaveFaceSeconds:c.medianWaveFaceSeconds,
      surface:"unknown",visibility:"manual_observed",bankNotes:notes.value.slice(0,750)},
     forecast:cross?{
-     forecastId:cross.forecastId,forecastSource:cross.source,ingestedAtUtc:cross.ingestedAtUtc,
+     forecastId:cross.forecastId,spotId:spot(),forecastSource:cross.source,ingestedAtUtc:cross.ingestedAtUtc,
      validAtUtc:cross.validAtUtc,issuedAtUtc:cross.issuedAtUtc||null,features:{...cross.features},
      provenance:"retrieved_before_observation_issue_unknown"
     }:null,
