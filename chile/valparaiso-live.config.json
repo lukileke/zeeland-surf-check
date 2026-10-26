@@ -31,9 +31,17 @@
         "cloud_cover",
         "precipitation_probability"
       ]
-    }
+    },
+    "optionalMarineVariables": [
+      "secondary_swell_wave_height",
+      "secondary_swell_wave_period",
+      "secondary_swell_wave_direction",
+      "tertiary_swell_wave_height",
+      "tertiary_swell_wave_period",
+      "tertiary_swell_wave_direction"
+    ]
   },
-  "sourcePolicy": "Live means regularly updated third-party model output, not observation at the breaking wave. Experimental spot-fit scores remain uncalibrated. Official marine/weather alerts from DMC, Armada and SENAPRED require manual verification until a dependable licensed API is implemented.",
+  "sourcePolicy": "Live means regularly updated third-party model output, not observation at the breaking wave. Experimental spot-fit scores remain uncalibrated. Official marine/weather alerts from DMC, Armada and SENAPRED require manual verification until a dependable licensed API is implemented. API timestamps are requested as Unix UTC instants and rendered with the IANA spot timezone, not the provider's response-wide fixed UTC offset. Secondary and tertiary partitions are optional and never imputed.",
   "marinePointPolicy": "Coordinates are documented approximate coastal reference locations; nearest eligible sea grid cell may be several kilometres offshore. Not calibrated to a sandbank.",
   "slots": {
     "startHour": 6,
