@@ -137,7 +137,7 @@ No scraping or session-cookie replay, private API extraction, automated browser 
 
 ## Actualización 26/10/2026 · Archivo de pronósticos que realmente se emitieron ANTES de observar
 
-**Nuevo ejecutable:** `chile/archive-forecast.mjs`. Captura los 3 pilotos de Valparaíso desde Open-Meteo marine + weather a horas UTC reales cada seis horas mediante [GitHub Actions](../.github/workflows/faro-chile-forecast-archive.yml), con ejecución inicial al integrar el workflow en main. Los snapshots van a `research-data/chile/forecast-snapshots/YYYY/MM/` como JSON inmutable por hora de consulta. El esquema `1.0.0` conserva para cada uno:
+**Nuevo ejecutable:** `chile/archive-forecast.mjs`. Captura los 3 pilotos de Valparaíso desde Open-Meteo marine + weather a horas UTC reales cada seis horas mediante [GitHub Actions](../.github/workflows/faro-chile-forecast-archive.yml), con ejecución inicial al integrar el workflow en main. Los snapshots van a la rama dedicada [`faro-research-data`](https://github.com/lukileke/zeeland-surf-check/tree/faro-research-data/research-data/chile/forecast-snapshots) en `research-data/chile/forecast-snapshots/YYYY/MM/` como **JSON comprimido `.json.gz`** inmutable por hora de consulta. Se conserva el primer JSON del 26/10/2026 en `main` como captura inicial, pero el flujo regular archiva en la rama de datos sin forzar despliegues de GitHub Pages. El esquema `1.0.0` conserva para cada uno:
 - ubicación del punto costero y **coordenada real de la celda marina y meteorológica**;
 - tiempo UTC `validAtUtc` de cada pronóstico; `fetchedAtUtc` y `ingestedAtUtc` del congelamiento;
 - `issuedAtUtc:null` explícito porque Open-Meteo forecast live NO documenta la fecha de emisión de cada modelo en esta respuesta. NO falsificarla;

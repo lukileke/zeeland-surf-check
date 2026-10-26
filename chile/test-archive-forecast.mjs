@@ -1,7 +1,7 @@
 /* Live API never called by these tests. Validate archive shapes and provenance. */
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
-import {collect,urls,outputPath} from "./archive-forecast.mjs";
+import {collect,urls,outputPath,encodeSnapshot,decodeSnapshot} from "./archive-forecast.mjs";
 const cfg=JSON.parse(await readFile(new URL("./valparaiso-live.config.json",import.meta.url),"utf8"));
 const refTime=new Date("2026-10-26T18:00:00Z");
 const times=Array.from({length:96},(_,i)=>Math.floor(refTime.getTime()/1000)+i*3600);
@@ -50,7 +50,13 @@ for(const spot of r.data.spots){
   assert.equal(row.features.seaLevelHeightMslModelM,null,"Absent model tide != observed tide");
  }
 }
-assert.ok(outputPath(refTime).endsWith("2026/10/20261026T180000.000Z.json"));
+assert.ok(outputPath(refTime).endsWith("2026/10/20261026T180000.000Z.json.gz"));
+const compressed=encodeSnapshot(r.data,r.sha256);
+assert.ok(compressed.byteLength<Buffer.byteLength(JSON.stringify(r.data))*.4,
+ "Snapshots should be compressed significantly for sustainable archival.");
+const decoded=decodeSnapshot(compressed);
+assert.equal(decoded.sha256,r.sha256);
+assert.deepEqual(decoded.spots[0].records[0],r.data.spots[0].records[0]);
 const one=cfg.pilots.find(s=>s.id==="CL-VS:la-boca-concon");
 const q=urls(one,cfg);
 assert.equal(q.marine.searchParams.get("timeformat"),"unixtime");
