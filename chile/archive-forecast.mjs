@@ -7,6 +7,7 @@ import {readFile,writeFile,mkdir} from "node:fs/promises";
 import {join,dirname,resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 import {createHash} from "node:crypto";
+import {gzipSync,gunzipSync} from "node:zlib";
 const REQUIRED={
  marine:["wave_height","wave_direction","wave_period","swell_wave_height","swell_wave_direction","swell_wave_period"],
  weather:["wind_speed_10m","wind_direction_10m"]
@@ -115,11 +116,15 @@ async function collect(cfg,fetcher=fetch,now=new Date()){
  const canonical=JSON.stringify(data);
  return {data,sha256:createHash("sha256").update(canonical).digest("hex")};
 }
+function encodeSnapshot(data,sha256){
+ return gzipSync(Buffer.from(JSON.stringify({...data,sha256})+"\n"),{level:9,mtime:0});
+}
+function decodeSnapshot(bytes){return JSON.parse(gunzipSync(bytes).toString("utf8"));}
 function outputPath(now=new Date()){
  if(Number.isNaN(now.getTime()))throw Error("Invalid archive time");
  const t=now.toISOString().replace(/[-:]/g,"");
  const yyyy=now.toISOString().slice(0,4),mm=now.toISOString().slice(5,7);
- return join("research-data","chile","forecast-snapshots",yyyy,mm,t+".json");
+ return join("research-data","chile","forecast-snapshots",yyyy,mm,t+".json.gz");
 }
 async function main(){
  if(process.env.FARO_RESEARCH_NONCOMMERCIAL_ACK!=="true")
@@ -128,11 +133,11 @@ async function main(){
  const now=new Date(),result=await collect(cfg,fetch,now);
  const file=outputPath(now);
  await mkdir(dirname(file),{recursive:true});
- await writeFile(file,JSON.stringify({...result.data,sha256:result.sha256})+"\n",{flag:"wx"});
+ await writeFile(file,encodeSnapshot(result.data,result.sha256),{flag:"wx"});
  console.log("Saved immutable research snapshot "+file+"; records "+
   result.data.spots.map(s=>s.spotId+":"+s.records.length).join(",")+
   "; issue date NOT known; no camera data.");
 }
 if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1]))
  main().catch(e=>{console.error(e.message);process.exitCode=1});
-export {collect,outputPath,urls,combine};
+export {collect,outputPath,urls,combine,encodeSnapshot,decodeSnapshot};
