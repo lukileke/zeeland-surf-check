@@ -18,9 +18,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install Chromium for FARO Chile
+      - name: Use hosted Chrome with Playwright
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
-          npx playwright install --with-deps chromium
+          google-chrome --version
       - name: Check Valparaíso UX, UTC, sources and overflow
         run: node chile/test-browser.cjs
