@@ -76,6 +76,16 @@ function fixture(){
    }
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
+   assert.equal(await page.locator('#dayWaveMeter .chile-wave-bars span').count(),8,
+    'Zeeland-style wave-height scale must show all eight bars');
+   assert.match(await page.locator('#dayWave').textContent(),/m/,'Daily hero must feature modelled wave height');
+   assert.equal(await page.locator('#chileWaveExplain').count(),1);
+   await page.locator('#chileWaveExplain').evaluate(el=>el.open=true);
+   assert.match(await page.locator('#chileWaveHow').textContent(),/SWELL PRINCIPAL|PRIMARY SWELL/);
+   assert.match(await page.locator('#chileWaveHow').textContent(),/VIENTO Y RACHAS|WIND & GUSTS/);
+   assert.equal(await page.locator('#chileSessionVibe').count(),0);
+   assert.equal(await page.locator('#sessionAtGlance .chile-session-overline').count(),1);
+   assert.equal(await page.locator('#sessionAtGlance .chile-session-head>.chile-session-wave .chile-wave-bars span').count(),8);
    const qualityOf=v=>v>=8.5?'Excelente':v>=7?'Bueno':v>=5?'Regular':v>=3?'Malo':'Muy malo';
    const toneOf=v=>v>=8.5?'tone-great':v>=7?'tone-good':v>=5?'tone-fair':v>=3?'tone-poor':'tone-low';
    const firstChip=page.locator('#dayStripItems .day-chip').first();
@@ -110,6 +120,18 @@ function fixture(){
    assert.ok(await page.locator('a[href="https://marejadas.uv.cl/CL15CCN01"]').count(),
     'Officially identified university La Boca coastal model needs provenance link');
    assert.equal(await page.locator('#chileRiskDisclosure').count(),1);
+   // Only load map tiles after explicit expansion; mocked CDN failure
+   // must degrade to accurate bearing details without blocking the forecast.
+   assert.equal(await page.locator('#coastMapExpand .leaflet-container').count(),0);
+   await page.route('**/unpkg.com/**',route=>route.abort());
+   await page.locator('#coastMapExpand').evaluate(el=>el.open=true);
+   await page.waitForFunction(()=>document.getElementById('chileCoastMap')?.textContent?.includes('La Boca'),{timeout:8000});
+   const mapText=await page.locator('#chileCoastMap').textContent();
+   assert.match(mapText,/La Boca/);
+   assert.match(mapText,/SWELL/);
+   assert.match(mapText,/VIENTO|WIND/);
+   assert.match(mapText,/OpenStreetMap/,'Map must show attribution and limits');
+   await page.locator('#coastMapExpand').evaluate(el=>el.open=false);
    const cam=page.locator('#cameraExpand');
    await cam.evaluate(el=>el.open=true);
    assert.ok(await page.locator('#chileCameraSources a[href*="lineup.surf"][href*="camera1"]').count(),
@@ -143,6 +165,10 @@ function fixture(){
     'Decision must state the dominant reason');
    assert.match(firstRead,/swell.*m.*s.*viento|swell.*m.*s.*wind/i,
     'FARO READ must explain the forecast measurements, not generic bank caveats');
+   const explained=await page.locator('#chileVibeExplained').textContent();
+   assert.match(explained,/SWELL|Swell/i);
+   assert.match(explained,/Viento|Wind/i);
+   assert.match(explained,/Factor decisivo|Decisive factor/i);
    const hints=await page.locator('#chileVibeEvidence').textContent();
    assert.match(hints,/guías divididas|guides disagree/i,'Conflicting La Boca guide evidence remains accessible');
    await page.locator('#chileSpotSelect').selectOption('CL-VS:renaca');
@@ -157,6 +183,41 @@ function fixture(){
    const ritoqueAction=await page.locator('#chileVibeAction').textContent();
    assert.match(ritoqueAction,/Ritoque Norte/);
    assert.notEqual(ritoqueAction,renacaAction);
+   await page.locator('#fieldNotesExpand').evaluate(el=>el.open=true);
+   assert.equal(await page.locator('#faroObsVideo').count(),1,'Local-only camera/clip player is available');
+   await page.locator('#faroObsSource').selectOption('manual_visual');
+   assert.equal(await page.locator('#faroObsVideo').isVisible(),false,
+    'External third-party camera mode never plays or copies the remote stream');
+   const localDay=clock(marine.hourly.time[0]).slice(0,10),localClock=localDay+'T12:00';
+   await page.locator('#faroObsDate').fill(localClock);
+   const validAt=new Date(fromLocal(localDay,12)*1000).toISOString();
+   const before=new Date(Date.parse(validAt)-7200000).toISOString();
+   const archive={schemaVersion:'1.0.0',region:'CL-VS',provider:'Open-Meteo',
+    fetchedAtUtc:before,spots:[{spotId:'CL-VS:ritoque',records:[{
+     forecastId:'mock-archived-prior',spotId:'CL-VS:ritoque',source:'Open-Meteo',
+     ingestedAtUtc:before,issuedAtUtc:null,validAtUtc:validAt,
+     features:{swellHeightM:1.1,swellPeriodS:11,swellFromDeg:240,windKmh:10,windFromDeg:95}
+    }]}]};
+   await page.locator('#faroObsArchive').setInputFiles({
+    name:'snapshot.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(archive))
+   });
+   await page.waitForFunction(()=>document.getElementById('faroObsComparison')?.textContent?.includes('mock')||
+    document.getElementById('faroObsComparison')?.textContent?.includes('Pronóstico guardado'),{timeout:6000});
+   await page.locator('#faroVideoLab button[data-type="wall"]').click();
+   await page.locator('#faroVideoLab button[data-type="closeout"]').click();
+   await page.locator('#faroObsPermission').check();
+   await page.locator('#faroObsSave').click();
+   const record=await page.evaluate(()=>{
+    const rows=JSON.parse(localStorage.getItem('faro-chile-visual-observations-v1')||'[]');return rows.at(-1)||null
+   });
+   assert.equal(record.spotId,'CL-VS:ritoque');
+   assert.equal(record.forecast.forecastId,'mock-archived-prior');
+   assert.equal(record.trainingEligible,false,'Human annotation is not an automatically permitted AI training sample');
+   assert.equal(record.labels.waveCount,2);
+   assert.equal(record.labels.closeoutFraction,.5);
+   assert.equal(record.observationWindowSeconds,600);
+   assert.equal(record.waveCountPer10Min,2);
+   assert.equal(record.captureAssetId,null,'No remote video or screenshot storage');
    await page.locator('#spotInsightExpand').evaluate(el=>el.open=true);
    assert.match(await page.locator('#spotinsight').textContent(),/Guías difieren|GUIDES|guías/i);
    assert.match(await page.locator('#spotinsight').textContent(),/surfnerd-ritoque|Surfnerd/i);
