@@ -265,10 +265,11 @@ assert.equal(safety.scan48h(null).level,'unknown');
 /* The banner itself must remain available in all modes, including failed API
  * reads. A mocked DOM verifies content/link/priority, not Safari layout. */
 function fakeNode(tag){
- return {tagName:tag,children:[],attrs:{},className:'',textContent:'',
+ return {tagName:tag,children:[],attrs:{},className:'',textContent:'',listeners:{},
    append(...children){this.children.push(...children)},
    replaceChildren(...children){this.children=children},
-   setAttribute(name,value){this.attrs[name]=value}
+   setAttribute(name,value){this.attrs[name]=value},
+   addEventListener(type,fn){this.listeners[type]=fn}
  };
 }
 const fakeDocument={createElement:fakeNode},viewContext={};
