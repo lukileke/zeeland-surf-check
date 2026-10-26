@@ -60,11 +60,17 @@ async function fetchJSON(url,fetcher){
 }
 function hourMap(data,fields){
  const timestamps=data?.hourly?.time||[];
- const out=new Map();
+ const out=new Map(),ambiguous=new Set();
  for(let i=0;i<timestamps.length;i++){
-  const row={time:timestamps[i]};
+  const stamp=timestamps[i];
+  // On a fall-back DST transition the same wall-clock hour may occur twice.
+  // Without an absolute UTC offset we cannot match these hours safely across
+  // providers, so exclude both occurrences rather than silently overwrite.
+  if(ambiguous.has(stamp))continue;
+  if(out.has(stamp)){out.delete(stamp);ambiguous.add(stamp);continue}
+  const row={time:stamp};
   for(const key of fields)row[key]=finite(data?.hourly?.[key]?.[i])?data.hourly[key][i]:null;
-  out.set(timestamps[i],row);
+  out.set(stamp,row);
  }
  return out;
 }
