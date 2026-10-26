@@ -39,8 +39,8 @@ assert.ok(salva.includes('viewBox="0 0 126.82 126.5"')&&salva.includes('opacity=
 for(const hex of ['#ce762e','#efbc62','#6b9347','#a4d156','#e55845','#f47b67','#526a74','#c9d8da','#355baf','#5878e0','#1f3b3d','#ffda71'])
  assert.ok(brand.toLowerCase().includes(hex),'Official PDF colour '+hex+' preserved');
 assert.ok(brand.includes('assets/faro-salva-red.svg'),'Danger banner actually loads the user-supplied watermark');
-assert.ok(html.includes("v>=7.5?'brand-band-high':v>=5?'brand-band-regular':v>=2.5?'brand-band-mid':'brand-band-low'"),
- 'Numeric scale matches PDF boundaries independently of quality text thresholds');
+assert.ok(html.includes("v>=8?'brand-band-high':v>=6?'brand-band-regular':v>=4?'brand-band-mid':v>=2?'brand-band-low':'brand-band-verylow'"),
+ 'Five numeric Tide-to-Olive score bands are independent of verbal quality thresholds');
 assert.ok(scripts.length>=2,'HTML includes application and translation scripts');
 scripts.forEach((s,i)=>assert.doesNotThrow(()=>new vm.Script(s), 'Script '+i+' syntax'));
 assert.doesNotThrow(()=>new vm.Script(engine),'Shared surf engine syntax');
@@ -109,7 +109,7 @@ assert.ok(css.includes('.faro-safety-summary'),'Click/tap target styled');
 assert.ok(css.includes('.faro-safety-expanded'),'Expanded explanation styled');
 
 assert.ok(html.indexOf('id="faroSafetyCenter"')<html.indexOf('id="forecastPage"'),'Safety banner not trapped inside Forecast');
-assert.ok(html.includes('src="faro-safety.js"'),'Dedicated safety module loads');
+assert.ok(/<script\s+src="faro-safety\.js(?:\?v=\d+)?"[^>]*><\/script>/.test(html),'Dedicated safety module loads');
 assert.ok(html.includes('gust:w')===false,'Gusts not accidentally fabricated as constants');
 assert.ok(html.includes('gust:scores.reduce('),'Entire two-hour window uses worst gust');
 assert.ok(css.includes('.faro-safety-center.danger'),'Severe alert is visible separately from score');
@@ -120,7 +120,7 @@ assert.ok(css.includes('#datehead{text-transform:capitalize'),'Localized weekday
 assert.ok(!html.includes('faro-safety-region-select'),'Zeeland UI never exposes a country selector');
 assert.ok(!safetySource.includes('faro-alert-country'),'Legacy alert-country choice cannot affect Zeeland warnings');
 
-assert.ok(html.includes('src="faro-spot-evidence.js"'),'Local beach-level evidence module loaded');
+assert.ok(/<script\s+src="faro-spot-evidence\.js(?:\?v=\d+)?"[^>]*><\/script>/.test(html),'Local beach-level evidence module loaded');
 assert.ok(html.includes('marine.hourly.swell_wave_height'),'Shadow-only features read separate swell height');
 assert.ok(html.includes('weather.hourly.wind_gusts_10m'),'Shadow-only features read wind gust ratio');
 assert.ok(html.includes('<span class="quality-pill">'),'Forecast and ranking use consistent quality tags');
@@ -268,7 +268,8 @@ function fakeNode(tag){
  return {tagName:tag,children:[],attrs:{},className:'',textContent:'',
    append(...children){this.children.push(...children)},
    replaceChildren(...children){this.children=children},
-   setAttribute(name,value){this.attrs[name]=value}
+   setAttribute(name,value){this.attrs[name]=value},
+   addEventListener(type,callback){(this.listeners||(this.listeners={}))[type]=callback}
  };
 }
 const fakeDocument={createElement:fakeNode},viewContext={};
@@ -287,9 +288,13 @@ assert.ok(summary.children[0].children[0].textContent.includes('MODEL HAZARD'),'
 assert.ok(summary.children[1].textContent.includes('84 km/h'),'Critical gust is visible while collapsed');
 assert.ok(summary.children[2].textContent.includes('not official alert'),'No misleading official alert status');
 assert.ok(expanded.children.some(x=>x.tagName==='ul'),'Reasons are available on expansion');
-assert.ok(expanded.children.some(x=>x.textContent.includes('Not updated live')),
+assert.ok(expanded.children.some(x=>/Not live|Not updated live|NOT LIVE/i.test(x.textContent)),
  'Dated bulletin is explicitly not a live feed');
-assert.equal(expanded.children.at(-1).href,safety.KNMI_URL,'Official KNMI link in expanded panel');
+const safetyActions=expanded.children.at(-1);
+assert.equal(safetyActions.tagName,'div','Safety footer groups official and method links');
+assert.equal(safetyActions.children[0].href,safety.KNMI_URL,'Official KNMI link is visible in expanded panel');
+assert.equal(safetyActions.children[1].href,'#faroSafetyGuide','Full-methodology link stays accessible');
+assert.equal(typeof safetyActions.children[1].listeners.click,'function','Methodology disclosure has an event handler');
 
 // A legacy country value may be present in localStorage but must not alter NL warnings.
 const legacyStore=new Map([['faro-alert-country','CL'],['zeeland-language','es']]);
@@ -300,17 +305,17 @@ legacyContext.FaroSafety.render(legacyBanner,example,'Domburg',new Date('2026-10
 const legacyDetails=legacyBanner.children[0];
 assert.ok(legacyDetails.children[0].children[0].children[0].textContent.includes('RIESGO SEGÚN EL MODELO'),
  'Spanish danger heading is visible');
-assert.ok(legacyDetails.children[0].children[1].textContent.includes('Rachas hasta'),
+assert.ok(/Rachas (de )?hasta/.test(legacyDetails.children[0].children[1].textContent),
  'Spanish summary communicates numeric gust');
 assert.ok(legacyDetails.children[0].children[2].textContent.includes('no aviso oficial'),
  'Spanish source warning is visible even while collapsed');
-assert.equal(legacyDetails.children[1].children.at(-1).href,safety.KNMI_URL,
+assert.equal(legacyDetails.children[1].children.at(-1).children[0].href,safety.KNMI_URL,
  'Stale Chile selection must never override Zeeland KNMI');
 
 const fallbackBanner=fakeNode('section');
 viewContext.FaroSafety.render(fallbackBanner,null,'Domburg',new Date('2026-10-26T12:00:00+01:00'));
 assert.ok(fallbackBanner.className.includes('advisory'),'Missing model is not called safe');
-assert.equal(fallbackBanner.children[0].children[1].children.at(-1).href,safety.KNMI_URL,
+assert.equal(fallbackBanner.children[0].children[1].children.at(-1).children[0].href,safety.KNMI_URL,
  'Official link survives unavailable model and expired dated bulletin');
 assert.equal(fallbackBanner.attrs.role,'region','Routine notices are not emergency alerts');
 assert.ok(fallbackBanner.children[0].children[0].children[1].textContent.includes('Check official warnings'),

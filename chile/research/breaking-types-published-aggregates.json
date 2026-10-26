@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "Yin et al., Scientific Data 12, 1722 (2025), Table 3",
+  "doi": "10.1038/s41597-025-06005-5",
+  "datasetDoi": "10.6084/m9.figshare.28814993",
+  "licenseScope": "Factual published aggregate class counts; this repository does not reproduce clips or metadata subject to unknown media reuse terms.",
+  "measurement": "30-second clips labelled by 5 researchers; 15 cameras in 6 locations; no Chilean beaches",
+  "labels": [
+    "plunging",
+    "spilling",
+    "surging"
+  ],
+  "sites": [
+    {
+      "id": "A",
+      "counts": [
+        614,
+        940,
+        445
+      ]
+    },
+    {
+      "id": "B",
+      "counts": [
+        1142,
+        528,
+        888
+      ]
+    },
+    {
+      "id": "C",
+      "counts": [
+        43,
+        588,
+        11
+      ]
+    },
+    {
+      "id": "D",
+      "counts": [
+        0,
+        6,
+        460
+      ]
+    },
+    {
+      "id": "E",
+      "counts": [
+        281,
+        215,
+        198
+      ]
+    },
+    {
+      "id": "F",
+      "counts": [
+        920,
+        723,
+        998
+      ]
+    }
+  ],
+  "caution": "Site aggregate counts contain NO video pixels, wave/wind inputs or individual event history; cannot train a visual model or predict La Boca surfing quality. Categories plunging/spilling/surging are not campanas, rideability or wave-face height."
+}

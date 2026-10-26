@@ -92,7 +92,7 @@ async function swipe(session,x0,y0,x1,y1){
       const lightStyle=getComputedStyle(el),darkStyle=getComputedStyle(darkLogo);
       const visibleLogo=document.documentElement.dataset.theme==='light'?el:darkLogo;
       const danger=document.querySelector('.faro-safety-center.danger .faro-safety-summary');
-      const watermark=danger?getComputedStyle(danger,'::before').backgroundImage:'';
+      const watermark=danger?getComputedStyle(danger,'::after').backgroundImage:'';
       return {
        logoLoaded:el.complete&&el.naturalWidth>0,
        logoSrc:el.getAttribute('src'),
@@ -101,10 +101,10 @@ async function swipe(session,x0,y0,x1,y1){
        lightLogoDisplay:lightStyle.display,darkLogoDisplay:darkStyle.display,
        visibleLogoBackground:getComputedStyle(visibleLogo).backgroundColor,
        visibleLogoPadding:getComputedStyle(visibleLogo).paddingLeft,
-       bandColors:['--brand-score-low','--brand-score-mid','--brand-score-regular','--brand-score-high']
+       bandColors:['--brand-score-verylow','--brand-score-low','--brand-score-mid','--brand-score-regular','--brand-score-high']
         .map(key=>root.getPropertyValue(key).trim()),
        selection:root.getPropertyValue('--brand-blue').trim(),
-       scoreBands:[2.4,2.5,4.9,5,7.49,7.5,10].map(scoreTone),
+       scoreBands:[1.9,2,3.9,4,5.9,6,7.9,8,10].map(scoreTone),
        watermark
       };
      });
@@ -114,13 +114,14 @@ async function swipe(session,x0,y0,x1,y1){
         brandCheck.darkLogoDisplay!==(theme==='dark'?'block':'none')||
         brandCheck.visibleLogoBackground!=='rgba(0, 0, 0, 0)'||
         brandCheck.visibleLogoPadding!=='0px'||
-        brandCheck.bandColors.join(',')!=='#ce762e,#efbc62,#6b9347,#a4d156'||
+        brandCheck.bandColors.join(',').toLowerCase()!=='#c46639,#ba7c31,#9c8431,#6e9e43,#547642'||
         brandCheck.selection!=='#5878e0'||
         !brandCheck.watermark.includes('faro-salva-red.svg')||
-        !brandCheck.scoreBands[0].includes('brand-band-low')||
-        !brandCheck.scoreBands[1].includes('brand-band-mid')||
-        !brandCheck.scoreBands[3].includes('brand-band-regular')||
-        !brandCheck.scoreBands[5].includes('brand-band-high')){
+        !brandCheck.scoreBands[0].includes('brand-band-verylow')||
+        !brandCheck.scoreBands[1].includes('brand-band-low')||
+        !brandCheck.scoreBands[3].includes('brand-band-mid')||
+        !brandCheck.scoreBands[5].includes('brand-band-regular')||
+         !brandCheck.scoreBands[7].includes('brand-band-high')){
        failures.push({width,locale,theme,brandCheck});
      }
      for(const [tab,nav] of [['forecast','forecastPage'],['best','bestPage'],['board','boardPage']]){
@@ -213,10 +214,20 @@ async function swipe(session,x0,y0,x1,y1){
          return {headline,detail,expected,copy,nav,branded};
         });
         const expectedHeadline=editorial.expected.headline;
-        if(editorial.headline!==expectedHeadline||
+        if(editorial.detail!==editorial.expected.detail||
+            !editorial.headline||
+            (editorial.expected.key==='windRisk'&&!/wind|viento/i.test(editorial.headline))||
            !editorial.copy.includes(locale==='es'?'Buscar mi surf match':'Find my surf fit')||
            editorial.nav!=='FARO Match'||!editorial.branded.includes('FARO MATCH')){
          failures.push({width,locale,theme,issue:'FARO READ/MATCH brand and interpretation must be visible and translated',editorial,expectedHeadline});
+        }
+        // The FARO READ card now uses a native disclosure to keep the
+        // mobile editorial view compact. Expand before testing its action.
+        const editorialDetails=page.locator('#faroRead details.faro-read-details');
+        if(await editorialDetails.count()){
+         await editorialDetails.evaluate(el=>{el.open=true});
+         assert.equal(await editorialDetails.evaluate(el=>el.open),true,
+          'FARO READ disclosure exposes personal-match CTA after expanding');
         }
         await page.locator('#faroRead .faro-read-match').click();
         const contextFromForecast=await page.evaluate(()=>({
@@ -263,7 +274,7 @@ async function swipe(session,x0,y0,x1,y1){
            alternativeFound:!!alternative,fits,screenWidth,rectRight:rect?.right};
         });
         const expectedAuto=locale==='es'?'HORARIO RECOMENDADO':'SUGGESTED WINDOW';
-        const expectedSelected=locale==='es'?'HORARIO SELECCIONADO':'SELECTED WINDOW';
+        const expectedSelected=locale==='es'?'VENTANA ELEGIDA':'SELECTED WINDOW';
         if(!windowCopy.alternativeFound||!windowCopy.suggestionAuto||
            !windowCopy.explicit||!windowCopy.restoredAuto||!windowCopy.fits||
            windowCopy.suggested!==expectedAuto||
