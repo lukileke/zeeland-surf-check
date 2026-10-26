@@ -177,7 +177,7 @@ function evaluate(slot,spotId,catalog,locale="es",options={}){
     "With this swell, check currents and how the sets break before choosing a board or entering.")
   },
   "CL-VS:renaca":{
-   low:say("No contaría con paredes consistentes en los picos norte; buscaría una ventana con mejor combinación.",
+   low:say("En Reñaca Norte no contaría con paredes consistentes; buscaría otra franja.",
     "Do not count on consistent walls at the northern peaks; look for a better window."),
    watch:say("En Reñaca Norte revisaría los picos: ahí las guías describen paredes para giros cuando el banco acompaña.",
     "Check the northern peaks: when there is a wall, guides describe sections suited to turns."),
