@@ -190,3 +190,29 @@ Do not conflate three-day blocks with actual storm events: the next methodologic
 - [Lineup's interview with Buscaolas founders](https://lineup.surf/news/los-creadores-de-buscaolas-cuentan-su-historia) says Buscaolas was acquired by Lineup in 2025. [buscaolas.cl](https://buscaolas.cl/) now redirects to Lineup. Third-party camera directories linking Buscaolas or the old Los Lobos feed are **not an independent camera source or a reuse permission**.
 - [Lineup terms](https://lineup.surf/terms-of-use) limit access to personal use and do not provide authorisation for scraping, redistributing, automatic recording or using video to train FARO. The Lineup camera 1 may be watched with an account, but cannot be silently ingested.
 - [Windmaster webcams](https://windmaster.cl/webcams/) show Reñaca, Acapulco and other coastal feeds as OFFLINE at the time of this review; surf-camera availability and legal permissions must be checked before relying on those links.
+
+
+## Actualización · 26 October 2026 · Independiente de Lineup + FARO Coastal Lens
+
+### Otra cámara gratis de la zona, sin cuenta de Lineup
+- **Marejadas UV · Reñaca**, publicación pública del canal universitario: https://www.youtube.com/watch?v=NomqMgWrVlY. Esta fuente es independiente de Lineup y no requiere cuenta de Lineup para acceder a su página. **La publicación existe, pero no hay verificación de señal activa al momento ni permiso confirmado para capturar o entrenar**. Las condiciones de YouTube para entrenamiento de terceros exigen consentimiento y configuración del titular, no se presume de un vídeo público. Ver https://support.google.com/youtube/answer/15509945?hl=es.
+- **Marejadas UV** también publica vistas de Av. Perú, Playa Acapulco y Las Torpederas. Son fuentes regionales de contexto, NO datos de olas rompientes en La Boca ni del pico Reñaca Norte. El directorio de https://www.24horas.cl/regiones/zona-centro/valparaiso/imagen-en-vivo-marejadas-region-de-valparaiso enlaza esas cámaras.
+- **Windmaster antiguo · Playa Amarilla**, https://www.windmaster.cl/old/web/webcam/0/webcams.html, documenta una serie de 20 imágenes tomadas cada 30 segundos desde Playa Amarilla, incluidas vistas hacia Ritoque; no equivale a filmar el banco de La Boca. Su funcionamiento y derechos hoy no están confirmados.
+- **Windmaster Reñaca** https://windmaster.cl/webcams/ estaba etiquetada OFFLINE en la página revisada; no usar como fuente activa.
+- **La Boca**: no se ha confirmado ninguna transmisión directa y libre de registro INDEPENDIENTE de Lineup. Los agregadores como Worldcam enlazan de vuelta a Lineup.
+
+### Licencia, no confundir ausencia de prohibición literal de 'IA' con autorización
+Los términos publicados por https://lineup.surf/es/terms-of-use restringen la copia, la extracción automática, la redistribución y retransmisión del vídeo de sus cámaras. Una persona puede consultar manualmente las olas en una cámara permitida y anotar hechos básicos, sujeto a las condiciones de uso. No almacenar imágenes ajenas o reutilizar grabaciones sin acuerdo. No hacer login o scraping automático de cuentas privadas. Una publicación pública en YouTube no equivale a permiso para descargar y entrenar. Solicitar acuerdo explícito de uso de vídeo/frames al titular universitario si queremos entrenar detección de rompientes.
+
+### Datasets publicados para predesarrollo (NO son ground truth FARO)
+1. **RipAID v2.0**: https://zenodo.org/records/18196300: 6.789 imágenes y etiquetas de corrientes de resaca/sedimentos/duda. Las imágenes pueden ayudar a evaluar arquitectura de visión y segmentación, pero **no contienen etiquetas de olas surfeables o closeouts**. Su página no muestra una licencia textual inequívoca en los resultados revisados; confirmar licencia para cada fuente original antes de copiar y entrenar.
+2. **University of Bath, Run-up Code & Data**: https://researchdata.bath.ac.uk/1724/: scripts para calibración visual, grillas rectificadas y resultados de run-up bajo CC BY 4.0. **Los archivos NO incluyen los vídeos crudos** y no aportan características de surf de La Boca.
+3. **University of Bath, LiDAR breaking surf**: https://researchdata.bath.ac.uk/540/: mediciones de 116 olas en zona de rompiente con licencia CC BY 4.0, útil como referencia física para eventos de rotura, no sustituye un vídeo de La Boca.
+
+### Implicación del producto
+La nueva **Coastal Lens** muestra brújula de procedencia de swell y viento en la franja seleccionada; las flechas del mapa indican su viaje a +180° (marino/meteorológico), NO refracción cerca del fondo. Explica qué variable concreta limita la ventana (período corto, viento fuerte, guía direccional, precaución), con información contextual separada del score experimental. Cada dato es propiedad del modelo meteorológico, no observación local.
+
+### Puertas de entrenamiento y transferencia
+- **Ahora:** continuar el archivado de pronósticos versionados e implementar registro de observaciones humanas (ya en Field Notes), con ID de cámara/fuente y derecho declarado. Solo se entrenará después de la revisión humana, consentimientos y cantidad de eventos suficientemente diversa.
+- **Para entrenar visión:** adquirir clips con permiso expreso de Marejadas UV, escuela surf o cámara propia; calibrar campo de visión y región de interés; acordar protección de privacidad y retención de datos. Etiquetar vídeos de diez minutos por eventos de rompiente, paredes y campanas. Entrenar detector sobre episodios distintos a los de evaluación.
+- **Sin un clip autorizado verificado:** el número de **predicciones aprendidas de cámaras = 0**. No sustituir datos reales con imágenes sintéticas ni transferir supuesta precisión de RipAID a surfabilidad.
