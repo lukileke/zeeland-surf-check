@@ -113,7 +113,24 @@ function risk(hazard){
  txt("chileRiskGrade",level==="danger"?tr("RIESGO MODELO","MODEL RISK"):level==="caution"?tr("PRECAUCIÓN","CAUTION"):tr("FUENTES OFICIALES","OFFICIAL SOURCES"));
  txt("chileRiskTitle",["danger","caution"].includes(level)?hazard.label:tr("Consulta marejadas y avisos oficiales","Check official coastal notices"));
  txt("chileRiskMeta",tr("Avisos oficiales no consultados automáticamente · 48 h","Official notices not automatically checked · 48h"));
- txt("chileRiskExplanation",tr("FARO detecta señales de viento, tormentas y lluvia en un modelo. No comprueba avisos oficiales de la Armada, DMC o SENAPRED. "+(hazard?.label||"")+" Revisa los enlaces originales.","FARO screens modelled wind, storms and rainfall, not official Navy, DMC or SENAPRED notices. "+(hazard?.label||"")+" Check the source websites."));
+ txt("chileRiskExplanation",tr("FARO puede detectar viento, tormentas y lluvia en el modelo. Un aviso oficial de marejadas es diferente y todavía requiere consultar a la Armada. La ausencia de riesgo modelado NO significa ausencia de alerta oficial.","FARO can screen wind, thunderstorms and rainfall in the model. Official swell warnings require checking the Navy. No model threshold crossed does NOT mean no official warning."));
+ const host=$("chileRiskSignals");
+ if(host){
+  host.replaceChildren();
+  const rows=hazard?.signals||[];
+  for(const r of rows){
+   const line=el("div",null,"chile-risk-item "+(r.detected?"chile-risk-active":""));
+   const name=state.lang==="es"?r.es:r.en;
+   line.append(el("strong",name),el("span",r.detected?tr("Señal modelo · ","Model signal · ")+(r.value||tr("Posible","Possible")):tr("Sin umbral detectado","No model threshold crossed")));
+   host.append(line);
+  }
+  const official=el("div",null,"chile-risk-item chile-risk-official");
+  official.append(el("strong",tr("Marejadas · Armada","Ocean swell · Navy")),el("span",tr("Estado no comprobado · abrir fuente oficial","Status not checked · see official source")));
+  host.append(official);
+  const uv=el("div",null,"chile-risk-item chile-risk-official");
+  uv.append(el("strong",tr("Radiación UV","UV radiation")),el("span",tr("Pronóstico UV en horario; no es alerta oficial","UV forecast shown by hour; not an official warning")));
+  host.append(uv);
+ }
 }
 function strip(){
  const days=state.forecast?.days||[],host=$("dayStripItems");host.replaceChildren();
