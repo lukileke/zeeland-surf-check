@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id),Live=window.FaroChileLive;
-const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,cameras:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,cache:new Map(),serial:0,page:0};
+const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,cameras:null,videoLab:null,coastMap:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,cache:new Map(),serial:0,page:0};
 const tr=(es,en)=>state.lang==="es"?es:en,ok=x=>typeof x==="number"&&Number.isFinite(x),num=(x,d=1)=>ok(x)?x.toFixed(d):"—";
 const el=(tag,value,cls)=>{const x=document.createElement(tag);if(value!==undefined&&value!==null)x.textContent=String(value);if(cls)x.className=cls;return x};
 const txt=(id,value)=>{$(id).textContent=value},clear=id=>$(id).replaceChildren(),add=(x,...nodes)=>{x.append(...nodes);return x};
@@ -13,6 +13,19 @@ const band=n=>!ok(n)?"":n>=8?"brand-band-high":n>=6?"brand-band-regular":n>=4?"b
 const scoreTone=n=>!ok(n)?"":(n>=8.5?"tone-great":n>=7?"tone-good":n>=5?"tone-fair":n>=3?"tone-poor":"tone-low")+" "+band(n);
 // These are *relative model signals*, never validated observed surf quality.
 const grade=n=>!ok(n)?tr("Sin datos","No data"):n>=8.5?tr("Excelente","Excellent"):n>=7?tr("Bueno","Good"):n>=5?tr("Regular","Fair"):n>=3?tr("Malo","Poor"):tr("Muy malo","Very poor");
+const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
+const waveSizeLabel=h=>!ok(h)?"—":h<.5?tr("Pequeñas","Small"):h<1.2?tr("Medianas","Medium"):h<2?tr("Grandes","Large"):tr("Muy grandes","Very large");
+function waveBars(h){
+ const x=el("div",null,"chile-wave-bars "+waveSize(h));
+ x.setAttribute("role","img");
+ x.setAttribute("aria-label",tr("Indicador de oleaje oceánico: ","Offshore model wave indicator: ")+num(h)+" m");
+ const count=ok(h)?Math.max(1,Math.min(8,Math.round(h/.25))):0;
+ for(let i=0;i<8;i++){
+  const b=el("span",null,i<count?"on":"");
+  b.style.height=(7+i*2)+"px";x.append(b);
+ }
+ return x;
+}
 const spot=()=>state.config?.pilots?.[state.selected], profile=()=>state.profiles?.profiles?.[spot()?.id];
 const regionRecord=()=>state.registry?.spots?.find(s=>s.id===spot()?.id);
 const localRead=(s,spotId=spot()?.id)=>window.FaroChileSpotIntelligence&&state.intelligence&&spotId?
@@ -354,6 +367,45 @@ function betterWindow(s,local){
  const next=candidates[0].t;
  return tr("Mejor candidata para revisar: ","Better option to check: ")+dateLabel(next.date)+" · "+sessionTime(next)+".";
 }
+function waveExplanation(s){
+ const host=$("chileWaveHow");host.replaceChildren();
+ if(!s){host.append(el("p",tr("Sin datos para esta ventana.","No data for this window.")));return}
+ const local=localRead(s);
+ const facts=[
+  [tr("ALTURA OCEÁNICA","OFFSHORE HEIGHT"),num(s.totalWaveHeightM)+" m",
+   tr("El modelo estima oleaje en una celda marina, no la pared donde surfeas.",
+    "The model estimates waves at a marine grid cell, not the face at your break.")],
+  [tr("SWELL PRINCIPAL","PRIMARY SWELL"),num(s.swellHeightM)+" m · "+num(s.swellPeriodS)+" s · "+Live.cardinal(s.swellDirection),
+   tr("El período y la dirección condicionan cómo puede llegar la energía al spot. No basta la altura total.",
+    "Period and bearing affect how swell may approach the break. Total height alone is not enough.")],
+  [tr("VIENTO Y RACHAS","WIND & GUSTS"),num(s.windKmh,0)+" / "+num(s.gustKmh,0)+" km/h",
+   tr("El viento puede ordenar o desordenar la superficie según dirección y fuerza; el mapa muestra de dónde viene.",
+    "Wind can help or disturb the surface depending on bearing and strength; the map shows the incoming direction.")]
+ ];
+ for(const [heading,value,copy]of facts){
+  const row=el("div",null,"chile-wave-how-row");
+  row.append(el("span",heading),el("strong",value),el("p",copy));host.append(row);
+ }
+ if(local?.swell?.state||local?.wind?.state){
+  const signal=el("p",null,"chile-wave-how-signal");
+  signal.textContent=tr("Para este sector: ","For this sector: ")+
+   (local.swell.state==="convergent"?tr("swell respaldado por las guías","swell fits the guides"):
+    local.swell.state==="disputed"?tr("guías divididas sobre el swell","swell guidance differs"):
+    local.swell.state==="outside"?tr("swell fuera de las referencias","swell outside guide ranges"):
+    tr("swell sin contrastar","swell not yet assessed"))+" · "+
+   (local.wind.state==="convergent"?tr("viento respaldado","wind fits the guides"):
+    local.wind.state==="disputed"?tr("viento discutido entre guías","wind guidance differs"):
+    local.wind.state==="outside"?tr("viento fuera de referencias","wind outside guide ranges"):
+    tr("viento sin contrastar","wind not yet assessed"))+".";
+  host.append(signal);
+ }
+}
+function updateCoastMap(){
+ const s=selection();
+ state.coastMap?.update({spot:spot(),spots:state.config?.pilots?.filter(p=>
+  ["CL-VS:la-boca-concon","CL-VS:renaca","CL-VS:ritoque"].includes(p.id)),slot:s,
+  local:localRead(s),lang:state.lang});
+}
 function vibeUI(s){
  const info=Live.vibe(s,state.lang),meta=s?.scoreMeta,local=localRead(s);
  const actionable=local?.status==="guide_compared"&&local.decision;
@@ -366,6 +418,16 @@ function vibeUI(s){
  txt("chileVibeRead",actionable?local.read:info.description);
  txt("chileVibeAction",actionable?local.decision.action+" "+(betterWindow(s,local)||""):
   tr("Revisa otra franja con datos completos.","Check another complete forecast window."));
+ const why=$("chileVibeExplained");why.replaceChildren();
+ const factors=actionable?[
+  [tr("Swell y período","Swell & period"),num(s.swellHeightM)+" m · "+num(s.swellPeriodS)+" s"],
+  [tr("Viento","Wind"),num(s.windKmh,0)+" km/h · "+Live.cardinal(s.windDirection)],
+  [tr("Factor decisivo","Decisive factor"),local.decision.reason]
+ ]:[];
+ if(factors.length){
+  why.append(el("small",tr("DE DÓNDE SALE ESTE FARO VIBE","WHY FARO CHOSE THIS VIBE"),"chile-vibe-evidence-title"));
+  for(const [label,val]of factors){const item=el("div",null,"chile-vibe-factor");item.append(el("span",label),el("strong",val));why.append(item)}
+ }
  const tags=$("chileVibeEvidence");tags.replaceChildren();
  if(actionable){
   for(const e of local.evidenceLabels.slice(0,3))tags.append(el("span",e.label,"chile-signal-tag "+
@@ -385,6 +447,10 @@ function outlook(){
   opportunity?.priority>=3?tr("MEJOR VENTANA","BEST WINDOW"):
    tr("VENTANA PARA EVALUAR","WINDOW TO REVIEW"));
  txt("dayWave",s?num(s.totalWaveHeightM)+" m":"—");
+ txt("dayWaveLabel",s?waveSizeLabel(s.totalWaveHeightM):"—");
+ const meter=$("dayWaveMeter");meter.replaceChildren();
+ if(s)meter.append(waveBars(s.totalWaveHeightM));
+ waveExplanation(s);
  txt("dayPeriod",s?num(s.swellPeriodS)+" s":"—");
  txt("dayWind",s?num(s.windKmh,0)+" km/h":"—");
  const uvMax=ok(d.uvMax)?d.uvMax:null;
@@ -458,19 +524,30 @@ function session(){
  const s=selection(),d=state.forecast?.days?.[state.day],main=$("sessionAtGlance"),ess=$("sessionEssentials");
  main.replaceChildren();ess.replaceChildren();
  if(!s){main.append(el("p",tr("No hay ventana futura con luz y score experimental disponible. Puedes elegir manualmente otra franja.","No upcoming daylight window with experimental fit. Select another window to inspect model data."),"muted"));return}
+ const heading=el("div",null,"chile-session-overline");
+ heading.append(el("span",tr("VENTANA SELECCIONADA","SELECTED WINDOW"),"chile-session-eyebrow"),
+  el("span",sessionTime(s),"chile-session-hours"));
+ const local=localRead(s);
+ if(local?.vibe?.label)heading.append(el("span",local.vibe.label,"chile-session-vibe"));
+ main.append(heading);
  const top=el("div",null,"chile-session-head");
  const score=el("div",null,"chile-session-rating "+scoreTone(s.score));
- score.append(el("small",tr("COMPATIBILIDAD · MODELO","MODEL COMPATIBILITY"),"chile-session-label"));
+ score.append(el("small",tr("SURF QUALITY · MODELO","SURF QUALITY · MODEL"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
  score.append(big,el("span",grade(s.score),"chile-session-label"));
- score.append(el("small",tr("Índice modelado · experimental","Model estimate · experimental"),"chile-session-origin"));
+ score.append(el("small",tr("Índice experimental","Experimental index"),"chile-session-origin"));
  const wave=el("div",null,"chile-session-wave");
- wave.append(el("small",tr("ALTURA MODELO OFFSHORE","OFFSHORE MODEL HEIGHT")),el("strong",num(s.totalWaveHeightM)+" m"),el("small",tr("NO altura rompiente","NOT breaking wave height")));
+ wave.append(el("small",tr("ALTURA DE OLAS · MODELO","MODEL WAVE HEIGHT"),"chile-session-label"),
+  el("strong",num(s.totalWaveHeightM)+" m"),waveBars(s.totalWaveHeightM),
+  el("span",waveSizeLabel(s.totalWaveHeightM),"chile-wave-size-tag"));
  top.append(score,wave);main.append(top);
  const meta=el("div",null,"chile-session-meta");
- meta.append(el("div",tr("Swell ","Swell ")+num(s.swellHeightM)+" m · "+num(s.swellPeriodS)+" s"));
- meta.append(el("div",tr("Desde ","From ")+Live.cardinal(s.swellDirection)+" · "+num(s.swellDirection,0)+"°"));
- meta.append(el("div",tr("Viento ","Wind ")+num(s.windKmh,0)+" km/h"));
+ for(const [label,value]of [[tr("PERÍODO","PERIOD"),num(s.swellPeriodS)+" s"],
+  [tr("SWELL DESDE","SWELL FROM"),Live.cardinal(s.swellDirection)+" · "+num(s.swellDirection,0)+"°"],
+  [tr("VIENTO","WIND"),num(s.windKmh,0)+" km/h"]]){
+  const block=el("div",null,"chile-session-mini");
+  block.append(el("small",label),el("strong",value));meta.append(block);
+ }
  main.append(meta);
  const essentials=[
   "🧥 "+wetsuit(s),"🌊 "+num(s.waterTemperatureC)+" °C","🌡 "+num(s.temperatureC)+" °C",
@@ -519,7 +596,7 @@ function session(){
 function render(){
  if(!state.forecast)return;
  txt("updated",tr("Modelo consultado ","Model fetched ")+new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(state.forecast.model.fetchedAt))+" · CL");
- risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();if(state.tab==="board")match();
+ risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();updateCoastMap();if(state.tab==="board")match();
 }
 async function refresh(force=false){
  if(!state.config)return;
@@ -614,9 +691,14 @@ async function initialize(){
     $("dayStripItems").replaceChildren();
     $("slots").replaceChildren();
     $("sessionAtGlance").replaceChildren();
+    for(const id of ["dayWave","dayWaveLabel","dayPeriod","dayWind","chileVibeTag","chileVibeRead",
+      "chileVibeAction","chileVibeHeadline"])txt(id,"—");
+    $("dayWaveMeter").replaceChildren();
+    $("chileWaveHow").replaceChildren();
+    $("chileVibeExplained").replaceChildren();
     txt("chileDecisionHeadline",tr("Cargando este spot…","Loading this spot…"));
     txt("chileDecisionDriver","");txt("bestTime","—");
-    renderDNA();renderCameras();void refresh();
+    renderDNA();renderCameras();updateCoastMap();void refresh();
    }
  });
  for(const [id,move]of [["dayPrev",-1],["dayNext",1]])$(id).addEventListener("click",()=>{
@@ -634,7 +716,22 @@ async function initialize(){
   for(const s of state.config.pilots)if(!state.profiles.profiles?.[s.id]||!state.registry.spots.find(r=>r.id===s.id))throw Error("Unattributed pilot "+s.id);
   const requested=new URLSearchParams(location.search).get("spot");
   state.selected=Math.max(0,state.config.pilots.findIndex(s=>s.id===requested));
-  picker();renderDNA();risk(null);await refresh();
+  picker();
+  if(window.FaroChileVideoLab)state.videoLab=window.FaroChileVideoLab.init({
+   container:$("faroVideoLab"),spotId:()=>spot()?.id
+  });
+  if(window.FaroChileCoastMap)state.coastMap=window.FaroChileCoastMap.create({
+   container:$("chileCoastMap"),disclosure:$("coastMapExpand"),
+   getCurrent:()=>({spot:spot(),spots:state.config.pilots.filter(p=>
+    ["CL-VS:la-boca-concon","CL-VS:renaca","CL-VS:ritoque"].includes(p.id)),
+    slot:selection(),local:localRead(selection()),lang:state.lang}),
+   onSelectSpot:id=>{
+    if(spot()?.id===id)return;
+    $("chileSpotSelect").value=id;
+    $("chileSpotSelect").dispatchEvent(new Event("change",{bubbles:true}));
+   }
+  });
+  renderDNA();risk(null);await refresh();
  }catch(err){
   txt("updated",tr("Error cargando FARO Chile: ","FARO Chile loading error: ")+String(err.message||err));
   txt("status",tr("SIN DATOS","NO DATA"));risk(null);
