@@ -163,7 +163,20 @@ function screenRisk(config,weather,locale="es"){
   reasons.push(tr("Lluvia intensa modelada","Modelled heavy rain"));
  }
  const unknown=!samples.length||[maxGust,maxWind,maxRain].every(x=>!finite(x));
- return {level:unknown?"unknown":risk,reasons,maxGust,maxWind,maxRain,thunder,
+ const signals=[
+  {id:"wind",detected:finite(maxGust)&&maxGust>=h.cautionGustKmh||finite(maxWind)&&maxWind>=h.dangerMeanWindKmh,
+   severity:finite(maxGust)&&maxGust>=h.dangerGustKmh||finite(maxWind)&&maxWind>=h.dangerMeanWindKmh?"danger":"caution",
+   value:finite(maxGust)?Math.round(maxGust)+" km/h":null,
+   es:"Viento y rachas",en:"Wind and gusts",source:"open_meteo_model"},
+  {id:"thunder",detected:thunder,severity:"danger",
+   value:null,es:"Tormentas eléctricas",en:"Thunderstorms",source:"open_meteo_model"},
+  {id:"rain",detected:finite(maxRain)&&maxRain>=h.cautionRainHourlyMm||finite(rainDaily)&&rainDaily>=h.cautionRain24hMm,
+   severity:"caution",value:finite(maxRain)?maxRain.toFixed(1)+" mm/h":null,
+   es:"Lluvia intensa",en:"Heavy rainfall",source:"open_meteo_model"}
+ ];
+ return {level:unknown?"unknown":risk,reasons,maxGust,maxWind,maxRain,thunder,signals,
+  coastalSwell:{officialStatus:"not_checked",autoChecked:false,source:"armada"},
+  uv:{officialStatus:"not_checked",autoChecked:false,source:"dmc"},
   type:"model_risk_screen",officialStatus:"not_checked",issuedAt:null,forecastHours:hours,
   label:unknown?tr("Riesgo modelo sin datos","No model risk data"):reasons.join(" · ")||
    tr("Sin señales de umbral en el modelo","No model thresholds crossed")};
