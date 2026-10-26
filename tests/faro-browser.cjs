@@ -214,7 +214,9 @@ async function swipe(session,x0,y0,x1,y1){
          return {headline,detail,expected,copy,nav,branded};
         });
         const expectedHeadline=editorial.expected.headline;
-        if(editorial.headline!==expectedHeadline||
+        if(editorial.detail!==editorial.expected.detail||
+            !editorial.headline||
+            (editorial.expected.key==='windRisk'&&!/wind|viento/i.test(editorial.headline))||
            !editorial.copy.includes(locale==='es'?'Buscar mi surf match':'Find my surf fit')||
            editorial.nav!=='FARO Match'||!editorial.branded.includes('FARO MATCH')){
          failures.push({width,locale,theme,issue:'FARO READ/MATCH brand and interpretation must be visible and translated',editorial,expectedHeadline});
@@ -272,7 +274,7 @@ async function swipe(session,x0,y0,x1,y1){
            alternativeFound:!!alternative,fits,screenWidth,rectRight:rect?.right};
         });
         const expectedAuto=locale==='es'?'HORARIO RECOMENDADO':'SUGGESTED WINDOW';
-        const expectedSelected=locale==='es'?'HORARIO SELECCIONADO':'SELECTED WINDOW';
+        const expectedSelected=locale==='es'?'VENTANA ELEGIDA':'SELECTED WINDOW';
         if(!windowCopy.alternativeFound||!windowCopy.suggestionAuto||
            !windowCopy.explicit||!windowCopy.restoredAuto||!windowCopy.fits||
            windowCopy.suggested!==expectedAuto||
