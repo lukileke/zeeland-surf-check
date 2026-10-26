@@ -777,7 +777,7 @@ let h=m.wave_height?.[i],period=m.wave_period?.[i],wd=m.wave_direction?.[i],wind
  updateDailyEditorial(null);
 }
 function selectArea(i){area=i;spot=0;forecastWindowChosenByUser=false;autoSelectBestOnLoad=true;resetSpotForecast();render();load()}
-function selectSpot(i){spot=i;forecastWindowChosenByUser=false;autoSelectBestOnLoad=true;resetSpotForecast();render();load()}function scoreTone(v){const grade=v>=8.5?'tone-great':v>=7?'tone-good':v>=5?'tone-fair':v>=3?'tone-poor':'tone-low';const band=v>=8?'brand-band-high':v>=6?'brand-band-regular':v>=4?'brand-band-mid':v>=2?'brand-band-low':'brand-band-verylow';return grade+' '+band}
+function selectSpot(i){spot=i;forecastWindowChosenByUser=false;autoSelectBestOnLoad=true;resetSpotForecast();render();load()}function scoreTone(v){const grade=v>=8.5?'tone-great':v>=7?'tone-good':v>=5?'tone-fair':v>=3?'tone-poor':'tone-low';const band=v>=7.5?'brand-band-high':v>=5?'brand-band-regular':v>=2.5?'brand-band-mid':'brand-band-low';return grade+' '+band}
 function surfScoreLabel(v){return v>=8.5?'Excellent':v>=7?'Good':v>=5?'Fair':v>=3?'Poor':'Very poor'}
 function updateDailyEditorial(best){
  const root=$('dailyOverview'),strip=$('daySignalMetrics');
