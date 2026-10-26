@@ -146,7 +146,7 @@ function fixture(){
    const hints=await page.locator('#chileVibeEvidence').textContent();
    assert.match(hints,/guías divididas|guides disagree/i,'Conflicting La Boca guide evidence remains accessible');
    await page.locator('#chileSpotSelect').selectOption('CL-VS:renaca');
-   await page.waitForFunction(()=>document.getElementById('chileCameraSources')?.textContent?.includes('Windmaster'),{timeout:12000});
+   await page.waitForFunction(()=>document.getElementById('chileCameraSources')?.textContent?.includes('Windmaster · Reñaca'),{timeout:12000});
    assert.match(await page.locator('#chileCameraSources').textContent(),/offline|OFFLINE|Señal no confirmada/);
    await page.waitForFunction(()=>document.getElementById('chileVibeAction')?.textContent?.includes('Reñaca Norte'),{timeout:12000});
    const renacaAction=await page.locator('#chileVibeAction').textContent();
