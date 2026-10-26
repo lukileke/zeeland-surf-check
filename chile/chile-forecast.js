@@ -607,7 +607,17 @@ async function initialize(){
  $("refreshForecast").addEventListener("click",()=>refresh(true));
  $("chileSpotSelect").addEventListener("change",()=>{
   const i=state.config.pilots.findIndex(x=>x.id===$("chileSpotSelect").value);
-  if(i>=0){state.selected=i;state.day=0;state.hour=null;renderDNA();void refresh()}
+  if(i>=0){
+    state.selected=i;state.day=0;state.hour=null;state.forecast=null;
+    // Never present prior-spot conditions as if they belong to a newly
+    // selected beach while a provider request is still in flight.
+    $("dayStripItems").replaceChildren();
+    $("slots").replaceChildren();
+    $("sessionAtGlance").replaceChildren();
+    txt("chileDecisionHeadline",tr("Cargando este spot…","Loading this spot…"));
+    txt("chileDecisionDriver","");txt("bestTime","—");
+    renderDNA();renderCameras();void refresh();
+   }
  });
  for(const [id,move]of [["dayPrev",-1],["dayNext",1]])$(id).addEventListener("click",()=>{
   state.page=Math.max(0,Math.min(4,state.page+move));strip();
