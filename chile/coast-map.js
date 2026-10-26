@@ -24,7 +24,7 @@ function loadLeaflet(){
  return loader;
 }
 const deg=x=>typeof x==="number"&&Number.isFinite(x);
-function bearingFromArrow(value){return deg(value)?((value+180)%360):null}
+function bearingFromArrow(value){return deg(value)?(((value+180)%360)+360)%360:null}
 function stateLabel(value,lang){
  const es=lang!=="en";
  return value==="convergent"?(es?"Guías coinciden":"Guides agree"):
@@ -139,6 +139,7 @@ function create(opts){
   }
   if(!spot){append("p","faro-map-summary",es?"Selecciona un spot.":"Select a spot.");return}
   append("strong","faro-map-spot",spot.name||spot.shortName);
+  if(slot?.date&&slot?.label)append("p","faro-map-grid-note",slot.date+" · "+slot.label+" · America/Santiago");
   if(!slot?.modelComplete){
    append("p","faro-map-summary",es?"Todavía no hay condiciones horarias completas para este spot.":"Hourly model values are not yet complete.");return;
   }
@@ -159,6 +160,16 @@ function create(opts){
    cards.push([es?"SWELL SECUNDARIO · DESDE":"SECONDARY SWELL · FROM",
     dir(slot.secondarySwell.fromDeg)+" · "+slot.secondarySwell.heightM.toFixed(1)+" m",
     (es?"Período ":"Period ")+(deg(slot.secondarySwell.periodS)?slot.secondarySwell.periodS.toFixed(0)+" s":"—")]);
+  }
+  if(deg(slot.tertiarySwell?.heightM)&&deg(slot.tertiarySwell?.fromDeg)){
+   cards.push([es?"SWELL TERCIARIO · DESDE":"TERTIARY SWELL · FROM",
+    dir(slot.tertiarySwell.fromDeg)+" · "+slot.tertiarySwell.heightM.toFixed(1)+" m",
+    (es?"Período ":"Period ")+(deg(slot.tertiarySwell.periodS)?slot.tertiarySwell.periodS.toFixed(0)+" s":"—")]);
+  }
+  if(deg(slot.windSeaHeightM)&&deg(slot.windSeaDirection)){
+   cards.push([es?"MAR DE VIENTO · DESDE":"WIND SEA · FROM",
+    dir(slot.windSeaDirection)+" · "+slot.windSeaHeightM.toFixed(1)+" m",
+    es?"Componente del modelo, no un swell adicional":"Model wind-wave component, not an extra swell"]);
   }
   for(const [label,value,meta]of cards){
    const c=append("div","faro-map-reading",null,row);append("small","",label,c);append("strong","",value,c);append("span","",meta,c);
