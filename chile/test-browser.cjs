@@ -59,6 +59,8 @@ function fixture(){
    await context.route('**/api.open-meteo.com/**',route=>route.fulfill({json:weather}));
    await context.route('**/fonts.googleapis.com/**',route=>route.abort());
    await context.route('**/fonts.gstatic.com/**',route=>route.abort());
+   // Exercise the first-party geographic map independently of external CDN uptime.
+   await context.route('**/unpkg.com/**',route=>route.abort());
    const page=await context.newPage();
    const scriptErrors=[];
    page.on('pageerror',err=>scriptErrors.push(err.message));
@@ -120,17 +122,37 @@ function fixture(){
    assert.ok(await page.locator('a[href="https://marejadas.uv.cl/CL15CCN01"]').count(),
     'Officially identified university La Boca coastal model needs provenance link');
    assert.equal(await page.locator('#chileRiskDisclosure').count(),1);
-   // Only load map tiles after explicit expansion; mocked CDN failure
-   // must degrade to accurate bearing details without blocking the forecast.
+   // Desktop must show map directly. Mobile can expand it on demand.
+   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),width>=1120,
+    'Map opens as a prominent element on desktop, not a buried dropdown');
    assert.equal(await page.locator('#coastMapExpand .leaflet-container').count(),0);
-   await page.route('**/unpkg.com/**',route=>route.abort());
    await page.locator('#coastMapExpand').evaluate(el=>el.open=true);
-   await page.waitForFunction(()=>document.getElementById('chileCoastMap')?.textContent?.includes('La Boca'),{timeout:8000});
+   await page.waitForFunction(()=>document.querySelector('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:la-boca-concon"]'),{timeout:8000});
+   assert.equal(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot]').count(),3,
+    'All 3 published coastal reference positions must render without external CDNs');
+   const arrowCount=await page.locator('#chileCoastMap .faro-map-schematic line[stroke="#137d9f"], #chileCoastMap .faro-map-schematic line[stroke="#ba7628"]').count();
+   assert.equal(arrowCount,2,'Model swell and wind travel vectors must be visible');
+   if(width>=1120){
+    const sessionBounds=await page.locator('#dayview > .session-section').boundingBox();
+    const mapBounds=await page.locator('#coastMapExpand').boundingBox();
+    assert.ok(sessionBounds&&mapBounds,'Session and map must both occupy desktop grid');
+    assert.ok(Math.abs(sessionBounds.y-mapBounds.y)<25,'Map must be beside session, not auto-placed below');
+    assert.ok(mapBounds.x>sessionBounds.x+sessionBounds.width-20,'Map must occupy right desktop column');
+    const font=await page.locator('#dayWave').evaluate(el=>getComputedStyle(el).fontFamily);
+    assert.match(font,/Manrope|faro-text|system-ui/i,'Model wave size must use Zeeland number font, not Archivo Black');
+   }
    const mapText=await page.locator('#chileCoastMap').textContent();
    assert.match(mapText,/La Boca/);
    assert.match(mapText,/SWELL/);
    assert.match(mapText,/VIENTO|WIND/);
    assert.match(mapText,/OpenStreetMap/,'Map must show attribution and limits');
+   // Switch spot by selecting the georeferenced map pin, not just the dropdown.
+   if(width>=1120){
+    await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:renaca"]').click();
+    await page.waitForFunction(()=>document.getElementById('chileSpotSelect')?.value==='CL-VS:renaca',{timeout:6000});
+    await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
+    await page.waitForFunction(()=>document.getElementById('chileSpotSelect')?.value==='CL-VS:la-boca-concon',{timeout:6000});
+   }
    await page.locator('#coastMapExpand').evaluate(el=>el.open=false);
    const cam=page.locator('#cameraExpand');
    await cam.evaluate(el=>el.open=true);
