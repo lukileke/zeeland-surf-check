@@ -36,6 +36,15 @@ Archivos clave:
 
 **P2 — FARO Match calibrado por spot:** cruzar tipo de tabla y nivel con una calidad física objetiva y exposiciones locales, manteniendo la evaluación de seguridad independiente. Validar en La Boca y Reñaca antes de expandir hacia otras regiones.
 
+
+### Integridad del pronóstico · iteración P1 (rama de revisión)
+
+- Una ventana de 2 h se considera **completa** únicamente si los valores básicos de oleaje total, swell primario, período, dirección y viento existen para **ambas horas coincidentes**. Si faltan entradas no hay score de esa ventana; no se promedian como dos horas los datos de una sola.
+- El detalle técnico ofrece **horas completas / horas previstas**, distancia de la celda de oleaje y de la celda atmosférica a la **referencia costera documentada**, además del estado de dicha referencia. Esa distancia **no** es una medición desde la rompiente real.
+- Si faltan códigos meteorológicos, lluvia o viento, FARO indica **riesgo no evaluado** en lugar de prometer que no se detectaron alertas. Las ventanas sin evaluación suficiente no participan automáticamente en «mejor hora».
+- Se añade una prueba de regresión de Chile al flujo de GitHub Actions; sigue pendiente **verificación en dispositivo y datos de proveedor**, calibración con observaciones y conexión legal y técnica a alertas vigentes.
+- **Fuentes:** las variables de Open-Meteo representan predicciones de grilla marina de resolución limitada; el punto de 20 m de la Universidad de Valparaíso no está integrado ni equivale a altura rompiente. La OMM identifica un posible feed CAP de DMC, pero no se ha verificado disponibilidad/CORS ni licencias. Por tanto el estado oficial permanece «no comprobado».
+
 ## Structure
 - [`regions.json`](regions.json) — all **16 Chilean regions**, including empty or inland ones
 - [`regions/`](regions/) — **one JSON record per region**, with documented/candidate surf areas
