@@ -144,3 +144,8 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 #chileVibeDetails .chile-vibe-more{padding-top:13px}
 #chileVibeDetails .chile-vibe-more>p:last-child{font-size:11px;color:var(--faro-quiet);margin-bottom:0}
 @media(max-width:620px){.chile-risk-signals{grid-template-columns:1fr 1fr;gap:7px}.chile-risk-item{padding:9px}.chile-risk-item strong{font-size:11px}.chile-risk-item span{font-size:10px}}
+
+/* One interpretation, progressive disclosure: VIBE tag first; FARO READ inside. */
+.chile-vibe-summary .chile-vibe-help{font-size:12px;font-weight:700;letter-spacing:0;color:var(--faro-quiet);flex:1;text-align:right;min-width:0}
+#chileVibeDetails .chile-vibe-more>.faro-read-title{display:block;font-size:clamp(18px,2.6vw,23px);margin:2px 0 9px;line-height:1.35;color:var(--fg)}
+@media(max-width:620px){.chile-vibe-summary .chile-vibe-help{font-size:11px;text-align:left}.chile-vibe-summary{flex-wrap:wrap}}
