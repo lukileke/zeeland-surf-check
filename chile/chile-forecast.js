@@ -8,7 +8,8 @@ const el=(tag,value,cls)=>{const x=document.createElement(tag);if(value!==undefi
 const txt=(id,value)=>{$(id).textContent=value},clear=id=>$(id).replaceChildren(),add=(x,...nodes)=>{x.append(...nodes);return x};
 const h=n=>String(n).padStart(2,"0");
 const band=n=>!ok(n)?"":n>=8?"brand-band-high":n>=6?"brand-band-regular":n>=4?"brand-band-mid":n>=2?"brand-band-low":"brand-band-verylow";
-const grade=n=>!ok(n)?tr("Sin datos","No data"):n<2?tr("Muy malo","Very poor"):n<4?tr("Malo","Poor"):n<6?tr("Regular","Fair"):n<8?tr("Prometedor","Promising"):tr("Excelente","Excellent");
+// These are *relative model signals*, never validated observed surf quality.
+const grade=n=>!ok(n)?tr("Sin datos","No data"):n<2?tr("Señal muy baja","Very low signal"):n<4?tr("Señal baja","Low signal"):n<6?tr("Señal variable","Mixed signal"):n<8?tr("Señal favorable","Favourable signal"):tr("Señal alta","High signal");
 const spot=()=>state.config?.pilots?.[state.selected], profile=()=>state.profiles?.profiles?.[spot()?.id];
 const regionRecord=()=>state.registry?.spots?.find(s=>s.id===spot()?.id);
 function now(){
@@ -216,6 +217,12 @@ function renderDNA(){
 function risk(hazard){
  const container=$("faroSafetyCenter");container.classList.remove("danger","caution","chile-model-danger","chile-model-caution");
  const level=hazard?.level||"unknown";
+ // A model signal is not an official alert. Do not display an alarming,
+ // content-free banner in calm modelled conditions. Permanent official-source
+ // access remains in the quieter Before You Go disclosure.
+ const raised=level==="danger"||level==="caution";
+ container.hidden=!raised;
+ if(!raised){$("chileRiskDisclosure").open=false;return}
  if(level==="danger")container.classList.add("danger","chile-model-danger");
  if(level==="caution")container.classList.add("caution","chile-model-caution");
  txt("chileRiskGrade",level==="danger"?tr("RIESGO MODELO","MODEL RISK"):level==="caution"?tr("PRECAUCIÓN","CAUTION"):tr("FUENTES OFICIALES","OFFICIAL SOURCES"));
@@ -247,7 +254,7 @@ function strip(){
   button.type="button";button.setAttribute("aria-pressed",String(i===state.day));
   button.append(el("span",i===0?tr("Hoy","Today"):Live.formatDay(d.date,state.lang),"chile-chip-day"));
   button.append(el(s?"strong":"span",s?num(s.score):"—",s?"chile-chip-number":"chile-chip-empty"));
-  button.append(el("span",s?grade(s.score)+" · β":tr("Sin ventana","No daylight window"),"chile-chip-grade"));
+  button.append(el("span",s?grade(s.score):tr("Sin ventana","No daylight window"),"chile-chip-grade"));
   button.append(el("small",s?sessionTime(s):tr("No evaluado","Not evaluated"),"chile-chip-time"));
   button.addEventListener("click",()=>{state.day=i;state.hour=null;render()});host.append(button);
  }
@@ -344,7 +351,7 @@ function session(){
  if(!s){main.append(el("p",tr("No hay ventana futura con luz y score experimental disponible. Puedes elegir manualmente otra franja.","No upcoming daylight window with experimental fit. Select another window to inspect model data."),"muted"));return}
  const top=el("div",null,"chile-session-head");
  const score=el("div",null,"chile-session-rating "+band(s.score));
- score.append(el("small",tr("SPOT FIT MODELO · β","MODEL SPOT FIT · β"),"chile-session-label"));
+ score.append(el("small",tr("COMPATIBILIDAD · MODELO","MODEL COMPATIBILITY"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
  score.append(big,el("span",grade(s.score),"chile-session-label"));
  const wave=el("div",null,"chile-session-wave");
@@ -413,7 +420,7 @@ async function refresh(force=false){
  try{
   const data=await Live.fetchSpot(state.config,spot(),state.profiles,fetch,state.lang);
   state.cache.set(id,{forecast:data,at:Date.now()});if(serial!==state.serial)return;
-  state.forecast=data;txt("status","MODELO · BETA");render();
+  state.forecast=data;txt("status",tr("MODELO · EXPERIMENTAL","EXPERIMENTAL MODEL"));render();
  }catch(err){
   if(serial!==state.serial)return;
   state.forecast=null;txt("status",tr("SIN CONEXIÓN","OFFLINE"));
@@ -444,12 +451,12 @@ async function rankings(){
  }
  list.sort((a,b)=>b.s.score-a.s.score||a.day.date.localeCompare(b.day.date));
  host.replaceChildren();
- txt("rankingstatus",tr("Compatibilidad experimental · β","Experimental spot fit · β"));
+ txt("rankingstatus",tr("Compatibilidad modelada · sin calibrar","Modelled compatibility · uncalibrated"));
  if(!list.length){host.append(el("p",tr("Sin comparaciones suficientes por ahora.","Not enough comparable model values."),"muted"));return}
  for(const item of list.slice(0,12)){
   const b=el("button",null,"highlight chile-ranking "+band(item.s.score));b.type="button";
   const line=el("div",null,"chile-rank-layout"),data=el("div");
-  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",Live.vibe(item.s,state.lang).label+" · β"));
+  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",Live.vibe(item.s,state.lang).label));
   line.append(data,el("strong",num(item.s.score)));b.append(line);
   b.addEventListener("click",()=>{
    state.selected=state.config.pilots.findIndex(s=>s.id===item.model.spot.id);

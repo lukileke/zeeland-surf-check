@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../faro-spot-signals.css?v=1">
 <link rel="stylesheet" href="../faro-desktop.css?v=1">
 <link rel="stylesheet" href="../faro-country.css?v=1">
-<link rel="stylesheet" href="chile-forecast.css?v=1">
+<link rel="stylesheet" href="chile-forecast.css?v=2">
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=2">
 </head>
 <body>
@@ -37,7 +37,7 @@
   <div class="top-actions">
    <button class="language-toggle" id="languageToggle" type="button" aria-label="Cambiar idioma">EN</button>
    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">☀ Claro</button>
-   <span id="status" class="pill faro-cl-status" aria-live="polite">MODELO · BETA</span>
+   <span id="status" class="pill faro-cl-status" aria-live="polite">MODELO EXPERIMENTAL</span>
   </div>
  </div>
  <nav class="app-nav" aria-label="FARO">
@@ -54,7 +54,7 @@
  </nav>
 
  <!-- OFFICIAL STATUS IS NEVER INFERRED FROM THRESHOLD SCREENING -->
- <section id="faroSafetyCenter" class="faro-safety-center advisory" aria-label="Alertas de Valparaíso">
+ <section id="faroSafetyCenter" class="faro-safety-center advisory" aria-label="Riesgos meteorológicos modelados en Valparaíso" hidden>
   <details class="faro-safety-disclosure" id="chileRiskDisclosure">
    <summary class="faro-safety-summary">
     <span class="faro-safety-top"><strong class="faro-safety-kicker" data-es="RIESGOS COSTEROS" data-en="COASTAL HAZARDS">RIESGOS COSTEROS</strong><span class="faro-safety-severity" id="chileRiskGrade" data-es="FUENTES OFICIALES" data-en="OFFICIAL SOURCES">FUENTES OFICIALES</span></span>
@@ -132,7 +132,17 @@
    </section>
    <section class="forecast-section session-section" aria-label="Sesión seleccionada">
     <div id="sessionAtGlance" class="session-glance"><p class="muted" data-es="Selecciona una ventana para ver sus condiciones." data-en="Select a time window for details.">Selecciona una ventana para ver sus condiciones.</p></div>
-    <div class="session-essentials"><small data-es="ANTES DE IR" data-en="BEFORE YOU GO">ANTES DE IR</small><div id="sessionEssentials" class="essentials-tags"></div></div>
+    <div class="session-essentials"><small data-es="ANTES DE IR" data-en="BEFORE YOU GO">ANTES DE IR</small><div id="sessionEssentials" class="essentials-tags"></div>
+     <details id="chileOfficialSources" class="chile-official-sources">
+      <summary><span data-es="Revisar avisos oficiales" data-en="Check official notices">Revisar avisos oficiales</span><span class="chile-official-state" data-es="Estado no verificado" data-en="Not automatically verified">Estado no verificado</span><span aria-hidden="true">⌄</span></summary>
+      <p data-es="FARO no comprueba automáticamente los avisos de marejadas ni las alertas meteorológicas o territoriales. Un modelo sin señales de riesgo no confirma que no existan avisos." data-en="FARO does not automatically check official swell, weather or territorial warnings. No risk flagged by a model does not confirm there are no official notices.">FARO no comprueba automáticamente los avisos de marejadas ni las alertas meteorológicas o territoriales. Un modelo sin señales de riesgo no confirma que no existan avisos.</p>
+      <div class="chile-source-links">
+       <a href="https://meteoarmada.directemar.cl/" target="_blank" rel="noopener noreferrer">Armada · Marejadas ↗</a>
+       <a href="https://senapred.cl/alertas/" target="_blank" rel="noopener noreferrer">SENAPRED ↗</a>
+       <a href="https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml" target="_blank" rel="noopener noreferrer">DMC ↗</a>
+      </div>
+     </details>
+    </div>
     <details class="daylight-disclosure"><summary><span data-es="☀ Luz solar y horarios" data-en="☀ Daylight & timing">☀ Luz solar y horarios</span><span class="daylight-leave" id="daylightBrief">—</span><span class="daylight-arrow">⌄</span></summary>
      <div class="metric"><div data-es="🌅 Amanecer" data-en="🌅 Sunrise">🌅 Amanecer<b id="rise">—</b></div><div data-es="🌇 Atardecer" data-en="🌇 Sunset">🌇 Atardecer<b id="set">—</b></div><div data-es="🏄 Salir antes de" data-en="🏄 Suggested cut-off">🏄 Salir antes de<b id="cutoff">—</b></div></div>
     </details>
@@ -188,6 +198,6 @@
 </main>
 <script src="valparaiso-score-lab.js"></script>
 <script src="faro-chile-live.js?v=3"></script>
-<script src="chile-forecast.js?v=4"></script>
+<script src="chile-forecast.js?v=5"></script>
 </body>
 </html>

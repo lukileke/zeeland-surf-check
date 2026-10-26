@@ -156,3 +156,14 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 .chile-day-uv #dayUVAdvice{color:var(--faro-quiet);font-size:11px;line-height:1.45}
 .chile-day-uv[data-uv="high"],.chile-day-uv[data-uv="very-high"],.chile-day-uv[data-uv="extreme"]{border-left-color:#d28444}
 @media(max-width:620px){.chile-day-uv{margin:9px 0 16px;gap:5px 10px}.chile-day-uv #dayUVAdvice{font-size:10px}}
+
+/* FARO Chile / meaningful safety hierarchy: model risk only when flagged. */
+#faroSafetyCenter[hidden]{display:none!important}
+#dayview .chile-official-sources{margin:13px 0 0;border-top:1px solid var(--faro-line);padding-top:11px;background:none;max-width:100%;min-width:0}
+#dayview .chile-official-sources summary{display:flex;align-items:center;gap:9px;flex-wrap:wrap;cursor:pointer;list-style:none;color:var(--fg);font-size:12px;font-weight:750;line-height:1.45}
+#dayview .chile-official-sources summary::-webkit-details-marker{display:none}
+#dayview .chile-official-sources .chile-official-state{margin-left:auto;color:var(--faro-quiet);font-size:11px;font-weight:600}
+#dayview .chile-official-sources p{font-size:12px;color:var(--faro-quiet);line-height:1.6;max-width:65ch;margin:10px 0}
+#dayview .chile-official-sources .chile-source-links{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+#dayview .chile-official-sources .chile-source-links a{font-size:12px}
+@media(max-width:420px){#dayview .chile-official-sources summary{gap:6px}#dayview .chile-official-sources .chile-official-state{font-size:10px}}
