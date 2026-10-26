@@ -106,7 +106,7 @@ function init(options={}){
  const t=(es,en)=>document.documentElement.lang==="en"?en:es;
  const section=make("section",target,{className:"chile-video-lab"});
  const top=make("div",section,{className:"chile-lab-header"});
- make("strong",top,{}, "◎ FARO OBSERVATION LAB");
+ make("strong",top,{}, " FARO OBSERVATION LAB");
  make("small",top,{},t("Vídeo local + comparación con forecast archivado","Local video + archived forecast comparison"));
  const lead=make("p",section,{className:"chile-lab-tip"},
  t("Abre un vídeo propio/autorizado o registra lo que observas en una cámara externa. Nada se graba ni se transmite a FARO.",
