@@ -25,7 +25,7 @@ function sessionTime(s){return s?h(s.hour)+":00–"+h(s.hour+2)+":00":"—"}
 function bestRemaining(day){
  if(!day)return null;
  const present=now();
- return day.slots.filter(s=>s.daylight.eligible&&ok(s.score)&&Live.slotRisk(s,state.config)!=="danger"&&(day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
+ return day.slots.filter(s=>s.daylight.eligible&&ok(s.score)&&!["danger","unknown"].includes(Live.slotRisk(s,state.config))&&(day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
   .sort((a,b)=>b.score-a.score||a.hour-b.hour)[0]||null;
 }
 function selection(){
@@ -121,7 +121,7 @@ function risk(hazard){
   for(const r of rows){
    const line=el("div",null,"chile-risk-item "+(r.detected?"chile-risk-active":""));
    const name=state.lang==="es"?r.es:r.en;
-   line.append(el("strong",name),el("span",r.detected?tr("Señal modelo · ","Model signal · ")+(r.value||tr("Posible","Possible")):tr("Sin umbral detectado","No model threshold crossed")));
+   line.append(el("strong",name),el("span",!r.evaluated?tr("Sin datos para evaluar","Insufficient model data"):r.detected?tr("Señal modelo · ","Model signal · ")+(r.value||tr("Posible","Possible")):tr("Sin umbral detectado","No model threshold crossed")));
    host.append(line);
   }
   const official=el("div",null,"chile-risk-item chile-risk-official");
@@ -175,13 +175,14 @@ function slots(){
  const container=$("slots");container.replaceChildren();
  const day=state.forecast?.days?.[state.day];if(!day)return;
  for(const s of day.slots){
-  const dangerous=Live.slotRisk(s,state.config)==="danger";
-  const eligible=s.daylight.eligible&&ok(s.score)&&!dangerous;
+  const slotSafety=Live.slotRisk(s,state.config);
+  const dangerous=slotSafety==="danger",unknownRisk=slotSafety==="unknown";
+  const eligible=s.daylight.eligible&&ok(s.score)&&!dangerous&&!unknownRisk;
   const button=el("button",null,(eligible?band(s.score):"chile-unavailable")+(selection()?.hour===s.hour?" selected":""));
   button.type="button";button.setAttribute("aria-pressed",String(selection()?.hour===s.hour));button.disabled=!s.modelComplete;
   button.append(el("span",h(s.hour)+"–"+h(s.hour+2),"chile-slot-hour"));
   button.append(el("strong",eligible?num(s.score):"—","chile-slot-score"));
-  button.append(el("small",dangerous?tr("⚠ Riesgo modelo","⚠ Model risk"):eligible?Live.vibe(s,state.lang).label:s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
+  button.append(el("small",dangerous?tr("⚠ Riesgo modelo","⚠ Model risk"):unknownRisk?tr("⚠ Riesgo sin evaluar","⚠ Risk unassessed"):eligible?Live.vibe(s,state.lang).label:s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
  session();
@@ -258,6 +259,9 @@ function session(){
  const out=cut===null?"—":h(Math.floor(cut/60))+":"+h(cut%60);
  txt("cutoff",out);txt("daylightBrief",tr("Salida sugerida ","Suggested exit ")+out);
  const content=$("detail");content.replaceChildren();
+ const grid=state.forecast?.model?.marineGrid,metGrid=state.forecast?.model?.weatherGrid;
+ const coverage=state.forecast?.model?.coverage;
+ const coordinateStatus=state.forecast?.model?.referencePointStatus||"unverified";
  content.append(basicTable([
   [tr("Oleaje total del modelo","Model total waves"),num(s.totalWaveHeightM)+" m"],
   [tr("Altura del swell primario","Primary swell height"),num(s.swellHeightM)+" m"],
@@ -268,8 +272,13 @@ function session(){
   [tr("Precipitación ventana","Rain in window"),num(s.precipitationMm)+" mm"],
   [tr("Índice UV","UV index"),num(s.uvIndex)+" · "+s.uv.name],
   [tr("Nubosidad","Cloud cover"),num(s.cloudPercent,0)+" %"],
-  [tr("Temperatura aire","Air temperature"),num(s.temperatureC)+" °C"]
+  [tr("Temperatura aire","Air temperature"),num(s.temperatureC)+" °C"],
+  [tr("Ventana · cobertura del modelo","Window · model coverage"),s.coverage?.complete?tr("2/2 horas válidas","2/2 valid hours"):tr("Datos incompletos","Incomplete data")],
+  [tr("Ventanas completas · 7 días","Complete windows · 7 days"),coverage?(coverage.completeSlots+"/"+coverage.totalSlots):"—"],
+  [tr("Celda oceánica a referencia costera","Marine grid to coastal reference"),ok(grid?.distanceKm)?num(grid.distanceKm)+" km":tr("No disponible","Unavailable")],
+  [tr("Celda meteorológica a referencia costera","Weather grid to coastal reference"),ok(metGrid?.distanceKm)?num(metGrid.distanceKm)+" km":tr("No disponible","Unavailable")]
  ]));
+ content.append(el("p",tr("Distancias desde una referencia costera, NO desde una rompiente georreferenciada. Estado de referencia: ","Distances from a coastal reference, NOT a surveyed breaking wave. Reference status: ")+coordinateStatus+". "+tr("La hora de consulta no es la hora de emisión del modelo.","Fetch time is not model issue time."),"muted"));
  content.append(el("p",tr("Fuente Open-Meteo. Una celda marina cercana NO representa una ola rompiendo en este banco ni una marea óptima. Sin estado automático de avisos oficiales.","Open-Meteo model. Nearby marine grid cells do NOT give breaking wave height or optimal tide. No automatically checked official notices."),"muted"));
  const UV=el("div","UV "+num(s.uvIndex)+": "+(s.uv.protection||tr("Sin dato","Unavailable")),"chile-uv-note chile-uv-"+s.uv.category);content.append(UV);
  link(content,tr("DMC · Radiación UV oficial","DMC · Official UV forecast"),"https://www.meteochile.gob.cl/PortalDMC-web/otros_pronosticos/radiacion_uv.xhtml");
