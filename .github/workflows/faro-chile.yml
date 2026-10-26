@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - 'chile/**'
+      - 'faro-icon-system.js'
+      - 'faro-icon-system.css'
+      - 'assets/icons/**'
       - '.github/workflows/faro-chile.yml'
   pull_request:
     paths:
@@ -30,6 +33,8 @@ jobs:
           node --check chile/faro-coastal-lens.js
           node --check chile/video-observation-lab.js
           node --check chile/calibrate-observations.cjs
+          node --check faro-icon-system.js
+          node --check chile/train-breaking-priors.cjs
       - name: Confirm regional model and score invariants
         run: |
           node chile/test-valparaiso-score.js
@@ -41,3 +46,4 @@ jobs:
           node chile/test-video-observation.cjs
           node chile/test-coastal-lens.cjs
           node chile/test-calibrate-observations.cjs
+          node chile/test-real-breaking-priors.cjs
