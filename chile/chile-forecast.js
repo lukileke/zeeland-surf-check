@@ -731,6 +731,9 @@ async function initialize(){
     $("chileSpotSelect").dispatchEvent(new Event("change",{bubbles:true}));
    }
   });
+  // Desktop previews are part of the primary forecast hierarchy.
+  // Mobile keeps map detail optional, with a local geolocated SVG fallback.
+  if(window.matchMedia("(min-width: 1120px)").matches)$("coastMapExpand").open=true;
   renderDNA();risk(null);await refresh();
  }catch(err){
   txt("updated",tr("Error cargando FARO Chile: ","FARO Chile loading error: ")+String(err.message||err));
