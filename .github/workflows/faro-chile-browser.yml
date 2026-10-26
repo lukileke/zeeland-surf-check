@@ -1,0 +1,26 @@
+name: FARO Chile browser regression
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'chile/**'
+      - '.github/workflows/faro-chile-browser.yml'
+  pull_request:
+    paths:
+      - 'chile/**'
+      - '.github/workflows/faro-chile-browser.yml'
+jobs:
+  chile-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Use hosted Chrome with Playwright
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          google-chrome --version
+      - name: Check Valparaíso UX, UTC, sources and overflow
+        run: node chile/test-browser.cjs

@@ -20,6 +20,9 @@ for(const p of config.pilots){
  const query=L.buildUrls(p,config);
  assert.ok(query.marine.includes('cell_selection=sea')&&query.marine.includes('swell_wave_height'));
  assert.ok(query.weather.includes('uv_index')&&query.weather.includes('precipitation'));
+ assert.equal(new URL(query.marine).searchParams.get("timeformat"),"unixtime");
+ assert.equal(new URL(query.weather).searchParams.get("timeformat"),"unixtime");
+ assert.ok(new URL(query.marine).searchParams.get("hourly").includes("secondary_swell_wave_height"));
 }
 const fmtParts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:config.timezone,
  day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(p=>[p.type,p.value]));
@@ -105,4 +108,56 @@ assert.equal(L.daylight({hour:4},nowDate+'T07:10',nowDate+'T20:10',40).eligible,
 assert.equal(L.boardFit(best,'mid','intermediate','flow','es',result.hazard).safetyAssessed,false);
 assert.equal(config.faroVibeTerms.disallowedChileanLabels.includes('Vidriado'),true);
 assert.equal(config.faroVibeTerms.restrictedTags[0].term,'Campana');
-console.log('FARO Chile: Valparaiso model coverage, coastal-grid provenance, missing data, hazards, UV and tentative match passed.');
+// A truly UTC input: winter in Valparaiso (UTC-4), seven complete local days.
+const epochStart=Date.parse("2026-05-10T04:00:00Z")/1000;
+const epochTimes=Array.from({length:168},(_,i)=>epochStart+i*3600);
+const epochMarine=JSON.parse(JSON.stringify(marine)),epochWeather=JSON.parse(JSON.stringify(weather));
+epochMarine.hourly.time=epochTimes;epochWeather.hourly.time=epochTimes;
+for(const [name,value] of [["secondary_swell_wave_height",.35],["secondary_swell_wave_period",12],
+ ["secondary_swell_wave_direction",260],["tertiary_swell_wave_height",.1],
+ ["tertiary_swell_wave_period",14],["tertiary_swell_wave_direction",245]]){
+ epochMarine.hourly[name]=epochTimes.map(()=>value);
+}
+epochWeather.daily.time=Array.from({length:7},(_,d)=>epochStart+d*86400);
+epochWeather.daily.sunrise=Array.from({length:7},(_,d)=>epochStart+d*86400+7*3600+10*60);
+epochWeather.daily.sunset=Array.from({length:7},(_,d)=>epochStart+d*86400+18*3600+10*60);
+const utcResult=L.extract(config,config.pilots[0],epochMarine,epochWeather,profile,'es');
+assert.equal(utcResult.model.timeBasis,'epoch_utc');
+assert.equal(utcResult.model.validFrom,'2026-05-10T04:00:00.000Z');
+assert.equal(utcResult.days[0].date,'2026-05-10');
+assert.equal(utcResult.days[0].sunrise,'2026-05-10T07:10');
+assert.equal(utcResult.days[0].slots[0].validTimesUtc[0],'2026-05-10T10:00:00.000Z');
+assert.equal(utcResult.days[0].slots[0].secondarySwell.heightM,.35);
+assert.equal(utcResult.days[0].slots[0].tertiarySwell.periodS,14);
+assert.equal(utcResult.model.coverage.completeSlots,56);
+const mismatched=JSON.parse(JSON.stringify(epochMarine));
+mismatched.hourly.time[6]=epochTimes[6]+3600;
+assert.equal(L.extract(config,config.pilots[0],mismatched,epochWeather,profile,'es').days[0].slots[0].score,null,
+ 'Marine and weather UTC instants may not be joined simply because wall-clock labels agree');
+assert.equal(L.wallClock(Date.parse('2026-04-05T02:30:00Z')/1000,'America/Santiago'),
+ L.wallClock(Date.parse('2026-04-05T03:30:00Z')/1000,'America/Santiago'),
+ 'Chilean winter transition repeats a local clock time');
+(async()=>{
+ let requestedFallback=false;
+ const fakeFetch=async uri=>{
+  const url=new URL(uri);
+  if(url.hostname==='marine-api.open-meteo.com'){
+   if(url.searchParams.get("hourly").includes("secondary_swell_wave_height"))
+    return {ok:false,status:400};
+   requestedFallback=true;
+   const fallbackMarine=JSON.parse(JSON.stringify(epochMarine));
+   for(const key of Object.keys(fallbackMarine.hourly)){
+    if(key.startsWith("secondary_")||key.startsWith("tertiary_"))delete fallbackMarine.hourly[key];
+   }
+   return {ok:true,json:async()=>fallbackMarine};
+  }
+  if(url.hostname==='api.open-meteo.com')return {ok:true,json:async()=>epochWeather};
+  throw Error("Unexpected provider "+url);
+ };
+ const fallback=await L.fetchSpot(config,config.pilots[0],profile,fakeFetch,'es');
+ assert.equal(requestedFallback,true);
+ assert.equal(fallback.model.optionalSwellFallback,true);
+ assert.equal(fallback.days[0].slots[0].secondarySwell,null);
+ assert.ok(fallback.days[0].best?.score>0,'Optional partitions must not disable primary surf guidance');
+ console.log('FARO Chile: UTC/DST, 7-day windows, optional partitions with fallback, risk and provenance checks passed.');
+})().catch(e=>{console.error(e);process.exitCode=1});
