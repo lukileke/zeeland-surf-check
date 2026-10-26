@@ -91,7 +91,7 @@ The offline joiner `camera-learning.cjs` pairs:
 - `validAtUtc`: forecast valid instant near observed time (default ±60 min);
 - `spotId`, `cameraId`, licensed and privacy-processed asset ID, labels and model variables.
 
-Requires both **issued and ingested times before observation**. This intentionally excludes models without a documented issue time rather than laundering a fetch timestamp into issue time. The current Open-Meteo response is recorded with `issueAt:null`; therefore the automatic model-learning gate will reject it unless we create a qualified vintage policy / provider dataset with documented issuance. Existing live FARO scores are NOT a safe training history; they change with each update.
+**Strict default:** requires both model issue time and FARO ingestion time before the observed wave time. **Explicit fallback:** `--allow-unknown-issue-time` accepts only frozen snapshots actually retrieved BEFORE the observation, marks `forecastVintageStatus:retrieved_pre_observation_issue_unknown`, and never fabricates a model issue date. It is lower-quality provenance and should be reported separately in validation. Existing live FARO scores are NOT a safe training history; they change with each update.
 
 ### Evaluation, not vanity accuracy
 - Baseline 0: existing guide/score thresholds.
@@ -107,7 +107,7 @@ No scraping or session-cookie replay, private API extraction, automated browser 
 
 ## Current code and how to use it
 - `camera-sources.json`: per-camera access and rights gate. Lineup entries marked **not granted**.
-- `camera-learning.cjs`: offline JSONL pairer, exports `pair`; refuses unlicensed cameras, late-issued or late-ingested forecasts, incomplete labels, mismatched spots, bad UTC. Uses the **most recent eligible prior issued** forecast and strict ±60-minute target validity.
+- `camera-learning.cjs`: offline JSONL pairer, exports `pair`; refuses unlicensed cameras, late-issued or late-ingested forecasts, incomplete labels, mismatched spots, bad UTC. Uses the **most recently ingested eligible frozen snapshot**, strict ±60-minute valid-time matching, and explicit weaker provenance when `--allow-unknown-issue-time` is supplied.
 - `test-camera-learning.cjs`: synthetic rights, future leakage, group holdout, missing labels, matched spots and risk-free read tests; NO copyrighted imagery.
 - When an owner explicitly grants permission, add **document ID**, `trainingRights:"written_training_permission_verified"`, `automatedCapturePermitted:true`, and `privacyPolicyReviewed:true` to an *authorised local-only* config. Do not publish private agreements, credentials, video or raw private images in GitHub.
 - Example CLI with consented local files:
@@ -115,7 +115,7 @@ No scraping or session-cookie replay, private API extraction, automated browser 
   node chile/camera-learning.cjs --catalog /private/approved-cameras.json --observations /private/manual-labels.jsonl --forecasts /private/frozen-forecast-snapshots.jsonl --out /private/paired-training-set.json
   ```
 - Outputs a record bundle including explicit `train`/`holdout` groups only when at least five independent *provisional* temporal groups exist; below that all rows remain `research_only_not_train_ready`.
-- A single hypothetical/fixture test proves **code correctness**, not forecast skill, rights or camera availability.
+- Current `camera-sources.json` intentionally blocks ALL third-party camera training. A unit test with synthetic owned-camera data proves **code correctness**, not forecast skill, real camera rights or availability. Add `--allow-unknown-issue-time` for a frozen Open-Meteo snapshot captured before observed footage while retaining the explicit lower-quality vintage flag.
 
 ## Partnership and data requests (no messages sent)
 1. Lineup at **aloha@lineup.surf**: permission for non-identifying 10-minute clips or periodic frames from La Boca; training, evaluation, derived stats and attribution; request fixed field-of-view parameters, timestamps, viewing angle; explicitly explain research use and public/private model boundaries.
