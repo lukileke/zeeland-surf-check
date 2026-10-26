@@ -133,3 +133,26 @@ No scraping or session-cookie replay, private API extraction, automated browser 
 - Image-based runup detection (Coastal Engineering 2024) https://www.sciencedirect.com/science/article/pii/S0378383924001480
 - Nearshore data-driven correction (Applied Ocean Research 2024) https://doi.org/10.1016/j.apor.2024.104282
 - Fixed-camera breaking-wave depth inversion (2026 research **preprint, not peer reviewed**) https://eartharxiv.org/repository/view/15662/
+
+
+## Actualización 26/10/2026 · Archivo de pronósticos que realmente se emitieron ANTES de observar
+
+**Nuevo ejecutable:** `chile/archive-forecast.mjs`. Captura los 3 pilotos de Valparaíso desde Open-Meteo marine + weather a horas UTC reales cada seis horas mediante [GitHub Actions](../.github/workflows/faro-chile-forecast-archive.yml), con ejecución inicial al integrar el workflow en main. Los snapshots van a `research-data/chile/forecast-snapshots/YYYY/MM/` como JSON inmutable por hora de consulta. El esquema `1.0.0` conserva para cada uno:
+- ubicación del punto costero y **coordenada real de la celda marina y meteorológica**;
+- tiempo UTC `validAtUtc` de cada pronóstico; `fetchedAtUtc` y `ingestedAtUtc` del congelamiento;
+- `issuedAtUtc:null` explícito porque Open-Meteo forecast live NO documenta la fecha de emisión de cada modelo en esta respuesta. NO falsificarla;
+- swell principal y, si están disponibles, secundario/terciario, viento, viento marino, marea **modelada a MSL** si la API la devuelve; NO confundirla con nivel medido por SHOA ni referenciarla a la cota del banco;
+- lluvia, rachas, UV y procedencia. Si una variable opcional falta queda `null`, no cero;
+- `cameraFramesCollected:false` / `observedWaveData:false`, sin imágenes ni cuentas personales.
+
+**Límites contractuales:** el servicio gratuito de Open-Meteo solo puede utilizarse sin fines comerciales. Aunque los datos utilizan CC BY 4.0, el **acceso gratuito a la API está sujeto a condiciones no comerciales**. Migrar a endpoint con licencia comercial antes de anuncios, suscripciones, comercialización o uso comercial del pipeline. Ver https://open-meteo.com/en/terms y https://open-meteo.com/en/docs/marine-weather-api.
+
+**Activación operativa:** el workflow debe demostrar un primer ciclo exitoso y un JSON bajo `research-data/`; definirlo en código no significa que exista historial. GitHub puede retrasar cron o desactivar workflows programados tras inactividad; revisar Actions y permisos `contents:write`. Cada ciclo toma un snapshot nuevo, sin descargar cámaras ni inventar observaciones; las predicciones históricas ya publicadas no pueden ser reconstruidas con `past_days` como si fueran un archivo de predicciones anteriores.
+
+**Importante:** el dataset de investigación seguirá sin entrenarse hasta contar con observaciones reales. Si las nuevas tomas son en vídeo de Lineup, se necesitará autorización explícita para captura, copia y ML; no hay forma legítima de convertir la cámara de acceso gratuito en una API privada.
+
+## Nuevas bases para comparar oleaje observado
+- **Universidad de Valparaíso:** https://marejadas.uv.cl/CL15CCN01, https://oleaje.uv.cl/descargas.html: el Atlas contiene informes de calibración de WaveWatch III, comparación con boyas y altimetría satelital, y análisis de sesgo. Esto fundamenta una corrección de modelado, pero no es medición en la rompiente.
+- **SHOA / CENDHOC:** https://cendhoc.shoa.cl/solicitudes registra solicitudes científicas de nivel del mar, olas y corrientes. De ser necesarias series académicas, existen formularios y compromiso de uso; una finalidad comercial puede tener requisitos diferentes.
+- **DGA hidrometría:** https://dga.mop.gob.cl/sistema-hidrometrico-en-linea/ presenta registros de caudales, calidad del agua y turbiedad según estación. Para La Boca interesaría identificar una estación de caudal del Aconcagua y la distancia/tiempo de propagación antes de modelar la influencia de la descarga del río sobre las condiciones locales.
+- **Validación local:** la cámara debería entregar olas observadas y métricas de formación; la lectura de guías locales proporciona hipótesis físicas, pero no debe ser la etiqueta objetivo de entrenamiento.
