@@ -14,7 +14,7 @@ Surface one instantly readable answer: **from where are waves arriving relative 
 - show selected **time window** and model update provenance, not a frozen generic picture.
 
 **Stage B · geolocated sample map** · partially implemented with Leaflet and OSM, while surveyed coastline geometry remains future work:
-- **Current:** Leaflet 1.9.4 and OSM tiles loaded only when the user expands the map; retain OSM attribution and respect tile usage policy. Later consider MapLibre and a licensed production tile provider.
+- **Current:** Leaflet 1.9.4 and OSM tiles initialise when the map section opens. Mobile keeps it collapsed by default; desktop currently auto-opens this section at ≥1120 px. Retain attribution, verify public tile usage limits, and replace with a licensed production provider at scale.
 - modest zoom focused on the break (not a map of an arbitrary town centroid);
 - **Current:** a swell travel vector at the API-returned offshore marine grid point, with numeric FROM bearing, height and period, not a decorative icon; wind direction read separately in the adjoining compass. Beach pins are documented approximate coastal references, NOT verified surf-bank markers; no shoreline polyline.
 - When the marine grid is unavailable use a labelled relative-coordinate schematic or Stage A. No fictional coastline, bathymetry or nearshore rays.
