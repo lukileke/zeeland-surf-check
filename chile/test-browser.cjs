@@ -51,7 +51,7 @@ function fixture(){
  try{
   await new Promise(ok=>setTimeout(ok,800));
   const {marine,weather}=fixture();
-  browser=await chromium.launch({headless:true});
+  browser=await chromium.launch({headless:true,channel:'chrome'});
   for(const width of [375,430,1366]){
    const context=await browser.newContext({viewport:{width,height:840},deviceScaleFactor:1});
    await context.route('**/marine-api.open-meteo.com/**',route=>route.fulfill({json:marine}));
