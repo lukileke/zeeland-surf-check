@@ -358,12 +358,18 @@ function session(){
   [tr("Altura del swell primario","Primary swell height"),num(s.swellHeightM)+" m"],
   [tr("Período swell","Swell period"),num(s.swellPeriodS)+" s"],
   [tr("Dirección swell · DESDE","Swell · FROM"),Live.cardinal(s.swellDirection)+" · "+num(s.swellDirection,0)+"°"],
+  ...[["secondarySwell",tr("Swell secundario","Secondary swell")],["tertiarySwell",tr("Swell terciario","Tertiary swell")]].map(([key,label])=>{
+   const part=s[key];return [label,part?num(part.heightM)+" m · "+num(part.periodS)+" s · "+Live.cardinal(part.fromDeg)+" ("+num(part.fromDeg,0)+"°)":tr("No disponible en este modelo","Not available from this model")];
+  }),
   [tr("Viento · DESDE","Wind · FROM"),Live.cardinal(s.windDirection)+" · "+num(s.windDirection,0)+"°"],
   [tr("Rachas","Gusts"),num(s.gustKmh,0)+" km/h"],
   [tr("Precipitación ventana","Rain in window"),num(s.precipitationMm)+" mm"],
   [tr("Índice UV","UV index"),num(s.uvIndex)+" · "+s.uv.name],
   [tr("Nubosidad","Cloud cover"),num(s.cloudPercent,0)+" %"],
   [tr("Temperatura aire","Air temperature"),num(s.temperatureC)+" °C"],
+  [tr("Validez UTC de esta ventana","UTC valid time for window"),s.validTimesUtc?.length?s.validTimesUtc.join(" / "):tr("No disponible","Unavailable")],
+  [tr("Reloj de datos","Timestamp basis"),state.forecast?.model?.timeBasis==="epoch_utc"?"UTC · IANA "+state.config.timezone:tr("Hora local no verificada","Unverified local time")],
+  [tr("Swell opcional","Optional swell"),state.forecast?.model?.optionalSwellFallback?tr("Proveedor no admitió particiones; se usó el pronóstico principal","Provider rejected partitions; primary model used"):tr("Solo componentes disponibles","Available components only")],
   [tr("Ventana · cobertura del modelo","Window · model coverage"),s.coverage?.complete?tr("2/2 horas válidas","2/2 valid hours"):tr("Datos incompletos","Incomplete data")],
   [tr("Ventanas completas · 7 días","Complete windows · 7 days"),coverage?(coverage.completeSlots+"/"+coverage.totalSlots):"—"],
   [tr("Celda oceánica a referencia costera","Marine grid to coastal reference"),ok(grid?.distanceKm)?num(grid.distanceKm)+" km":tr("No disponible","Unavailable")],
