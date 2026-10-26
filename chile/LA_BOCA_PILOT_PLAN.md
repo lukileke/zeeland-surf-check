@@ -1,17 +1,36 @@
-# FARO Chile · Primera activación controlada (La Boca → Reñaca)
-**26 de octubre de 2026 · Plan operativo v1.1 · Atlas beta público; pronósticos chilenos DESACTIVADOS**
+# FARO Chile · Puertas de validación (La Boca → Reñaca)
+**Actualizado 26 octubre 2026 · Primer modo Valparaíso con modelos actualizados; score local y alertas oficiales NO validados**
 
-FARO ya dispone de un catálogo de 16 regiones, 73 lugares candidatos y un FARO Lab experimental con perfiles documentados para La Boca, Ritoque, Reñaca norte, Maitencillo y Papagayo. Nada de eso constituye todavía un pronóstico publicado ni una calibración de la ola rompiente. Este documento convierte la investigación en **tareas con entregables y criterios de salida**.
+El diseño de Zeeland es la referencia común para ambas ubicaciones. La primera vista chilena **ya tiene pronóstico modelado** para La Boca, Reñaca, Ritoque y Maitencillo: consulta Open-Meteo, muestra /10 experimental por spot, FARO VIBE desplegable con lectura sencilla, Spot DNA, Best of Week, Match, UV y detección de ciertos riesgos meteorológicos del modelo. Papagayo continúa en el laboratorio únicamente.
 
-## Decisión de producto
-**Primera playa: La Boca de Concón.** Segunda fase: Reñaca Norte. No activar todo Chile de una vez. Mantener Zeeland sin cambios. Hemos publicado un selector de país y un atlas chileno **rotulado BETA sin pronóstico en directo**. Hasta superar los criterios de salida, el motor de predicción chileno, las clasificaciones en vivo y los widgets chilenos siguen desactivados; el modo Zeeland permanece independiente.
+El término «en vivo» se aplica a **datos modelados actualizados**, no a cámaras, mediciones directas del banco ni calidad de ola calibrada. Los puntos utilizados son coordenadas costeras documentadas como referencias y el modelo puede muestrear celdas oceánicas lejanas. Sigue pendiente la validación de observaciones del oleaje rompiente.
 
-### Ya implementado (sin pronóstico en vivo)
-- [x] Selector ZEELAND LIVE / CHILE BETA en la web, con URLs independientes.
-- [x] Chile browseable por 16 regiones y 73 spots candidatos; Valparaíso tiene 21 lugares.
-- [x] Acceso desde el atlas a los cinco perfiles de investigación en FARO Lab con spot preseleccionado.
-- [x] Estilos y logotipos para claro/oscuro; misma paleta de scores para los experimentos.
-- [x] Protección frente a activar accidentalmente puntuaciones u horarios en vivo de Chile.
+### Implementado y separado por prioridad
+**P0, hecho:**
+- [x] Selector de país y experiencia visual heredada de Zeeland; navegación Forecast / Best of Week / FARO Match
+- [x] Región Valparaíso con 4 spots piloto y sus perfiles locales basados en guías
+- [x] Pronóstico por horas, luz diurna y siete días desde Open-Meteo
+- [x] Swell/oleaje total offshore distinguido de ola rompiente; prototipo de brújula vectorial sin costa ficticia
+- [x] FARO VIBE tag desplegable que incluye FARO READ (sin duplicidad)
+- [x] Spot Insight transformado en Spot DNA con fuente, precauciones y compatibilidad viento/swell de la ventana
+- [x] UV modelado con bandas OMS, antes de ir y detalle; vínculo a pronóstico oficial DMC
+- [x] Aviso visual compacto, cribado modelado de viento/tormenta/lluvia y fuentes oficiales sin falso estado «sin avisos»
+- [x] Español/inglés; «Glassy», «Picadas», «Campana» solo cuando se valide; no «vidriado» ni «cerrón»
+- [x] Atlas nacional de investigación preservado de manera separada
+
+**P1, falta antes de afirmar «calidad real»:**
+- [ ] Probar en Safari y datos públicos recibidos (validez, tasas CORS, disponibilidad de swell por modelo y cambios de hora)
+- [ ] Comprobar punto exacto de cada banco y distancia a la celda oceánica usada
+- [ ] Conectar avisos *oficiales* vigentes Armada/DMC/SENAPRED con identidad/territorio/sello temporal/expiración, si un feed autorizable existe
+- [ ] Contrastar marea SHOA y modelo cercano de Universidad de Valparaíso; verificar licencias y campos de referencia
+- [ ] Recolectar ≥ 30–50 observaciones exploratorias con diversidad de estados del mar, incluyendo casos malos, separando entrenamiento y validación
+- [ ] Estimar error, sesgo y confianza de score por spot, y recién entonces retirar el límite experimental o presentar cifras más precisas
+
+**P2, expansión:**
+- [ ] Añadir sectorización de La Boca/Reñaca cuando se disponga de evidencia geomorfológica, no inventar microspots
+- [ ] Desplegar resto de Valparaíso de manera progresiva, luego otras regiones
+- [ ] Integrar widgets Chile solo después de resolver zonas horarias, caché por país y alertas, sin afectar Scriptable NL
+- [ ] Mapa geolocalizado de swell sobre costa verificada, sin suponer refracción automática
 
 ### Puerta 0 — Identificar el lugar EXACTO
 Entregables:
