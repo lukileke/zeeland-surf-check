@@ -1,0 +1,180 @@
+{
+  "models": [
+    {
+      "schemaVersion": "1.0.0",
+      "stationId": "46026",
+      "source": "https://www.ndbc.noaa.gov/data/realtime2/46026.txt",
+      "dataSource": "NOAA NDBC observation, not forecast",
+      "retrievedAtUtc": "2026-10-26T19:44:23.315782+00:00",
+      "target": "observed WVHT at +3 h (m)",
+      "horizonHours": 3,
+      "sampleHours": 1099,
+      "usableSupervisedExamples": 1093,
+      "researchOnly": true,
+      "deployed": false,
+      "surfQualityValidated": false,
+      "cameraModelTrained": false,
+      "notes": "Observational autoregression at US buoy; not Chile and not breaking-wave surfability",
+      "status": "real_buoy_model_trained",
+      "features": [
+        "height_t",
+        "height_minus1h",
+        "height_minus2h",
+        "height_minus3h",
+        "period_t",
+        "wind_t",
+        "sin_swell_from",
+        "cos_swell_from",
+        "sin_wind_from",
+        "cos_wind_from"
+      ],
+      "trainExamples": 686,
+      "validationExamples": 116,
+      "holdoutExamples": 195,
+      "trainLastAtUtc": "2026-10-09T16:00:00+00:00",
+      "holdoutFirstAtUtc": "2026-10-18T13:00:00+00:00",
+      "holdoutLastAtUtc": "2026-10-26T15:00:00+00:00",
+      "ridge": {
+        "MAE_m": 0.115,
+        "RMSE_m": 0.1497
+      },
+      "persistence": {
+        "MAE_m": 0.1228,
+        "RMSE_m": 0.1653
+      },
+      "constant": {
+        "MAE_m": 0.3875,
+        "RMSE_m": 0.4548
+      },
+      "beatsPersistence": true,
+      "model": {
+        "coefficients": [
+          1.5988778054862842,
+          0.3556185059409283,
+          0.04943027435572408,
+          -0.002037390585023989,
+          -0.012291323828698025,
+          0.011162502477717627,
+          0.04844757803736789,
+          -0.009050155425404785,
+          0.0004909994512736671,
+          -0.0030557659248063957,
+          0.0019070891863057363
+        ],
+        "center": [
+          1.6043017456359103,
+          1.6061097256857855,
+          1.607793017456359,
+          1.6094763092269326,
+          6.374438902743142,
+          5.196384039900249,
+          -0.8407400221871276,
+          0.24302021781747607,
+          -0.6105657424092569,
+          0.5463152769976948
+        ],
+        "scale": [
+          0.44101257747169137,
+          0.443293137681361,
+          0.44552190477241643,
+          0.4477193245532274,
+          0.8710436008011032,
+          2.307777026736294,
+          0.13505406858973923,
+          0.46460497993681965,
+          0.34846784186346186,
+          0.45532324287497816
+        ],
+        "regularisation": 0.1
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "stationId": "46042",
+      "source": "https://www.ndbc.noaa.gov/data/realtime2/46042.txt",
+      "dataSource": "NOAA NDBC observation, not forecast",
+      "retrievedAtUtc": "2026-10-26T19:44:29.878295+00:00",
+      "target": "observed WVHT at +3 h (m)",
+      "horizonHours": 3,
+      "sampleHours": 1099,
+      "usableSupervisedExamples": 1079,
+      "researchOnly": true,
+      "deployed": false,
+      "surfQualityValidated": false,
+      "cameraModelTrained": false,
+      "notes": "Observational autoregression at US buoy; not Chile and not breaking-wave surfability",
+      "status": "real_buoy_model_trained",
+      "features": [
+        "height_t",
+        "height_minus1h",
+        "height_minus2h",
+        "height_minus3h",
+        "period_t",
+        "wind_t",
+        "sin_swell_from",
+        "cos_swell_from",
+        "sin_wind_from",
+        "cos_wind_from"
+      ],
+      "trainExamples": 677,
+      "validationExamples": 114,
+      "holdoutExamples": 192,
+      "trainLastAtUtc": "2026-10-09T21:00:00+00:00",
+      "holdoutFirstAtUtc": "2026-10-18T16:00:00+00:00",
+      "holdoutLastAtUtc": "2026-10-26T15:00:00+00:00",
+      "ridge": {
+        "MAE_m": 0.1477,
+        "RMSE_m": 0.185
+      },
+      "persistence": {
+        "MAE_m": 0.1536,
+        "RMSE_m": 0.1983
+      },
+      "constant": {
+        "MAE_m": 0.5021,
+        "RMSE_m": 0.5819
+      },
+      "beatsPersistence": true,
+      "model": {
+        "coefficients": [
+          1.9033501896333733,
+          0.1631729875557785,
+          0.12487704404932533,
+          0.09372667877152144,
+          0.06824222336468534,
+          0.04504179297749424,
+          0.07613313995973534,
+          0.019743089938341087,
+          0.01947007174225672,
+          -0.005012992955415702,
+          -0.01316992669773343
+        ],
+        "center": [
+          1.909102402022756,
+          1.911567635903919,
+          1.91346396965866,
+          1.9161820480404552,
+          6.86826801517067,
+          6.1321112515802785,
+          -0.7725377209832553,
+          0.42908626153917995,
+          -0.5129869540789969,
+          0.7141171114607165
+        ],
+        "scale": [
+          0.5416641757340276,
+          0.5442860947004776,
+          0.5480215060365358,
+          0.5523400052477366,
+          1.007900853478887,
+          2.5826280419951,
+          0.13952916700483317,
+          0.4467684650591017,
+          0.31007703173194306,
+          0.3615706991116167
+        ],
+        "regularisation": 100.0
+      }
+    }
+  ]
+}
