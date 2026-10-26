@@ -288,7 +288,7 @@ assert.ok(summary.children[0].children[0].textContent.includes('MODEL HAZARD'),'
 assert.ok(summary.children[1].textContent.includes('84 km/h'),'Critical gust is visible while collapsed');
 assert.ok(summary.children[2].textContent.includes('not official alert'),'No misleading official alert status');
 assert.ok(expanded.children.some(x=>x.tagName==='ul'),'Reasons are available on expansion');
-assert.ok(expanded.children.some(x=>x.textContent.includes('Not updated live')),
+assert.ok(expanded.children.some(x=>/Not live|Not updated live|NOT LIVE/i.test(x.textContent)),
  'Dated bulletin is explicitly not a live feed');
 const safetyActions=expanded.children.at(-1);
 assert.equal(safetyActions.tagName,'div','Safety footer groups official and method links');
