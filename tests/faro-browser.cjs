@@ -218,6 +218,14 @@ async function swipe(session,x0,y0,x1,y1){
            editorial.nav!=='FARO Match'||!editorial.branded.includes('FARO MATCH')){
          failures.push({width,locale,theme,issue:'FARO READ/MATCH brand and interpretation must be visible and translated',editorial,expectedHeadline});
         }
+        // The FARO READ card now uses a native disclosure to keep the
+        // mobile editorial view compact. Expand before testing its action.
+        const editorialDetails=page.locator('#faroRead details.faro-read-details');
+        if(await editorialDetails.count()){
+         await editorialDetails.locator('summary').click();
+         assert.equal(await editorialDetails.evaluate(el=>el.open),true,
+          'Native FARO READ expands before its personal-match CTA can be used');
+        }
         await page.locator('#faroRead .faro-read-match').click();
         const contextFromForecast=await page.evaluate(()=>({
          boardVisible:!document.querySelector('#boardPage').classList.contains('hide'),
