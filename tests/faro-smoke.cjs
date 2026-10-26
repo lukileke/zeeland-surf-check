@@ -109,7 +109,7 @@ assert.ok(css.includes('.faro-safety-summary'),'Click/tap target styled');
 assert.ok(css.includes('.faro-safety-expanded'),'Expanded explanation styled');
 
 assert.ok(html.indexOf('id="faroSafetyCenter"')<html.indexOf('id="forecastPage"'),'Safety banner not trapped inside Forecast');
-assert.ok(html.includes('src="faro-safety.js"'),'Dedicated safety module loads');
+assert.ok(/<script\s+src="faro-safety\.js(?:\?v=\d+)?"[^>]*><\/script>/.test(html),'Dedicated safety module loads');
 assert.ok(html.includes('gust:w')===false,'Gusts not accidentally fabricated as constants');
 assert.ok(html.includes('gust:scores.reduce('),'Entire two-hour window uses worst gust');
 assert.ok(css.includes('.faro-safety-center.danger'),'Severe alert is visible separately from score');
@@ -120,7 +120,7 @@ assert.ok(css.includes('#datehead{text-transform:capitalize'),'Localized weekday
 assert.ok(!html.includes('faro-safety-region-select'),'Zeeland UI never exposes a country selector');
 assert.ok(!safetySource.includes('faro-alert-country'),'Legacy alert-country choice cannot affect Zeeland warnings');
 
-assert.ok(html.includes('src="faro-spot-evidence.js"'),'Local beach-level evidence module loaded');
+assert.ok(/<script\s+src="faro-spot-evidence\.js(?:\?v=\d+)?"[^>]*><\/script>/.test(html),'Local beach-level evidence module loaded');
 assert.ok(html.includes('marine.hourly.swell_wave_height'),'Shadow-only features read separate swell height');
 assert.ok(html.includes('weather.hourly.wind_gusts_10m'),'Shadow-only features read wind gust ratio');
 assert.ok(html.includes('<span class="quality-pill">'),'Forecast and ranking use consistent quality tags');
