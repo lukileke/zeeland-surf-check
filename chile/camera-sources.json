@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "0.1.0",
+  "updatedAt": "2026-10-26",
+  "policy": "Links are for viewers. Free-to-watch is not permission to capture, store, embed, scrape, republish, or train on imagery.",
+  "sources": [
+    {
+      "id": "lineup-la-boca-1",
+      "spotId": "CL-VS:la-boca-concon",
+      "name": "La Boca · Lineup cámara 1",
+      "view": "Boca Surf",
+      "page": "https://lineup.surf/es/spots/chile/valparaiso/concon/la-boca-concon-1758/camera1",
+      "type": "surf_camera",
+      "viewerAccess": "free_account_required",
+      "feedLiveVerified": false,
+      "trainingRights": "not_granted",
+      "automatedCapturePermitted": false,
+      "allowEmbedding": false,
+      "partner": "Boca Surf / Lineup",
+      "notes": "Lineup FAQ states free registered viewers can watch camera 1; no verified archival/computer-vision licence."
+    },
+    {
+      "id": "lineup-la-boca-2",
+      "spotId": "CL-VS:la-boca-concon",
+      "name": "La Boca · Lineup cámara 2",
+      "view": "Surf Academy Concón",
+      "page": "https://lineup.surf/es/spots/chile/valparaiso/concon/la-boca-concon-1758/camera2",
+      "type": "surf_camera",
+      "viewerAccess": "premium_subscription",
+      "feedLiveVerified": false,
+      "trainingRights": "not_granted",
+      "automatedCapturePermitted": false,
+      "allowEmbedding": false,
+      "partner": "Surf Academy Concón / Lineup",
+      "notes": "Cam Rewind/downloads Premium, not an automatic right to train AI."
+    },
+    {
+      "id": "windmaster-renaca",
+      "spotId": "CL-VS:renaca",
+      "name": "Windmaster · Reñaca webcam",
+      "page": "https://windmaster.cl/webcams/",
+      "type": "surf_context_camera",
+      "viewerAccess": "public_page_currently_offline",
+      "feedLiveVerified": false,
+      "trainingRights": "not_granted",
+      "automatedCapturePermitted": false,
+      "allowEmbedding": false,
+      "notes": "Page displayed OFFLINE on 2026-10-26. Check operating status. Location and bank framing unverified."
+    },
+    {
+      "id": "windmaster-playa-amarilla",
+      "spotId": "CL-VS:la-boca-concon",
+      "name": "Windmaster · Playa Amarilla (not La Boca)",
+      "page": "https://www.windmaster.cl/old/web/webcam/0/webcams.html",
+      "type": "regional_context_camera",
+      "viewerAccess": "historic_page_unverified",
+      "feedLiveVerified": false,
+      "trainingRights": "not_granted",
+      "automatedCapturePermitted": false,
+      "allowEmbedding": false,
+      "notes": "Three older vistas from Playa Amarilla, including toward Quintero/Ritoque, not a direct measurement of the La Boca break."
+    },
+    {
+      "id": "uv-renaca-model",
+      "spotId": "CL-VS:renaca",
+      "name": "UV Marejadas · Reñaca Norte 20 m",
+      "page": "https://marejadas.uv.cl/CL15VAS04",
+      "type": "coastal_model_not_camera",
+      "viewerAccess": "public_page",
+      "trainingRights": "data_reuse_unknown",
+      "automatedCapturePermitted": false,
+      "allowEmbedding": false,
+      "notes": "Nearshore model at ~20 m is not ground-truth camera imagery."
+    },
+    {
+      "id": "uv-la-boca-model",
+      "spotId": "CL-VS:la-boca-concon",
+      "name": "UV Marejadas · La Boca 20 m",
+      "page": "https://marejadas.uv.cl/CL15CCN01",
+      "type": "coastal_model_not_camera",
+      "viewerAccess": "public_page",
+      "trainingRights": "data_reuse_unknown",
+      "automatedCapturePermitted": false,
+      "allowEmbedding": false,
+      "notes": "Nearshore model at ~20 m is not ground-truth camera imagery."
+    }
+  ],
+  "capture": {
+    "status": "blocked_pending_written_permission",
+    "outreachTarget": "Lineup (aloha@lineup.surf), Boca Surf and Surf Academy Concón",
+    "requestedPermissions": [
+      "automated time-bounded image capture",
+      "storage and retention",
+      "machine-learning training and evaluation",
+      "derived anonymised metrics",
+      "review by host/provider",
+      "licence scope, transfer, and deletion"
+    ],
+    "privacyControls": [
+      "mask people and land-side public areas",
+      "analyse only surf-zone ROI",
+      "no facial recognition, tracking individuals or crowd re-identification",
+      "document storage retention and deletion",
+      "avoid publicising sensitive access points"
+    ],
+    "preferredFallback": "A FARO-operated fixed camera with host permission or footage expressly donated for ML training"
+  }
+}
