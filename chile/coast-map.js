@@ -249,7 +249,8 @@ function create(opts){
    buttons[key].textContent=label;buttons[key].classList.toggle("active",key===mode);
    buttons[key].setAttribute("aria-pressed",String(key===mode));
   }
-  exposureFlag.caption.textContent=es?"Orientación":"Exposure";
+  exposureFlag.caption.textContent=mode==="wind"?
+   (es?"Guía de viento":"Wind guide"):(es?"Guía de swell":"Swell guide");
   motionFlag.caption.textContent=es?"Movimiento":"Motion";
   motionFlag.input.checked=motion;exposureFlag.input.checked=exposure;
   viewport.classList.toggle("faro-lens-motion",motion&&!reduced()&&deg(slot.swellDirection));
@@ -267,7 +268,9 @@ function create(opts){
   shape("circle",{cx:40,cy:40,r:22,fill:"none",stroke:"#c0d8d9","stroke-dasharray":"2 4"});
   const north=shape("text",{x:40,y:12,"text-anchor":"middle","font-size":10,"font-weight":800,fill:"#315b62"});
   north.textContent="N";
-  const ranges=v.profiles?.[v.spot?.id]?.waveFromDeg||[];
+  // Match the displayed guide to the active data layer.
+  const localGuide=v.profiles?.[v.spot?.id]||{};
+  const ranges=(mode==="wind"?localGuide.windFromDeg:localGuide.waveFromDeg)||[];
   if(exposure)for(const r of ranges.filter(r=>r.length===2&&r.every(deg))){
    let [a,b]=r;const width=((b-a+360)%360)||360,steps=Math.ceil(width/8);
    const points=[[40,40]];
