@@ -167,25 +167,9 @@ function create(opts){
  function describe(){
   const v=latest||p(),lang=v.lang||"es",es=lang!=="en",spot=v.spot,slot=v.slot,local=v.local;
   brief.replaceChildren();
-  const lensApi=root.FaroChileCoastalLens;
-  const lensRead=lensApi?.reading(slot,local,lang);
-  if(lensRead){
-   const lens=append("section","faro-lens-module",null);
-   const hdr=append("div","faro-lens-title",null,lens);
-   append("strong","",es?"SWELL COMPASS":"SWELL COMPASS",hdr);
-   append("span","",es?"Lectura de la franja":"Selected time",hdr);
-   const inner=append("div","faro-lens-inner",null,lens);
-   if(lensRead.available)inner.append(lensApi.compass(lensRead,lang));
-   else append("p","faro-map-summary",lensRead.explanation,inner);
-   const detail=append("div","faro-lens-detail",null,inner);
-   for(const n of lensRead.notes){
-    const k=append("div","faro-lens-legend "+n.kind,null,detail);
-    append("small","",n.title,k);
-    append("strong","",n.value,k);
-    append("span","",n.detail,k);
-   }
-   append("p","faro-lens-caption",lensRead.preview||"",lens);
-  }
+  // The detailed swell compass is already available separately in SWELL COMPASS.
+  // Avoid a duplicate giant rose above the selected spot details.
+  append("strong","faro-lens-reading-heading",es?"LECTURA DEL MAR · MODELO":"OFFSHORE READ · MODEL");
   if(!spot){append("p","faro-map-summary",es?"Selecciona un spot.":"Select a spot.");return}
   append("strong","faro-map-spot",spot.name||spot.shortName);
   if(slot?.date&&slot?.label)append("p","faro-map-grid-note",slot.date+" · "+slot.label+" · America/Santiago");
@@ -356,7 +340,9 @@ function create(opts){
   const grid=document.createElement("div");grid.className="faro-lens-beaches-grid";comparison.append(grid);
   for(const sp of v.spots||[]){
    const bounds=v.profiles?.[sp.id]?.waveFromDeg||[];
+   const windBounds=v.profiles?.[sp.id]?.windFromDeg||[];
    const status=guideClass(slot.swellDirection,bounds);
+   const windState=guideClass(slot.windDirection,windBounds);
    const button=document.createElement("button");button.type="button";
    button.className="faro-lens-beach"+(v.spot?.id===sp.id?" is-current":"");
    button.dataset.guide=status;button.setAttribute("aria-pressed",String(v.spot?.id===sp.id));
@@ -367,6 +353,12 @@ function create(opts){
     (es?"Fuera del rango guía":"Outside guide range"):
     (es?"Orientación no disponible":"Orientation unavailable");
    button.append(name,info);
+   const wind=document.createElement("small");wind.className="faro-lens-wind-guide";
+   wind.textContent=(es?"Viento: ":"Wind: ")+(windState==="inside"?(es?"dentro de guía":"within guide"):
+    windState==="edge"?(es?"cerca de guía":"near guide"):
+    windState==="outside"?(es?"fuera de guía":"outside guide"):
+    (es?"sin referencia":"not assessed"));
+   button.append(wind);
    button.addEventListener("click",()=>{if(v.spot?.id!==sp.id)opts.onSelectSpot?.(sp.id)});
    grid.append(button);
   }
@@ -503,7 +495,6 @@ function create(opts){
      bounds.extend([atmosphere.lat,atmosphere.lon]);
     map.fitBounds(bounds,{padding:[85,90],maxZoom:12,animate:false});
    }else map.setView(coast,13,{animate:false});
-   opened=true;
   }
  }
  async function open(){
