@@ -493,3 +493,23 @@ html #chileCoastMap .faro-map-spot{
 @media(prefers-reduced-motion:reduce){
  html .faro-meter-bars>span,html .faro-wave-instrument .wave-bars>span{transition:none!important}
 }
+
+/* SHARED ACCESSIBILITY CONTRACT · FARO NL + CL
+   Keyboard focus is visible independently of colour, reduced motion preserved.
+   Small navigation targets keep minimum usable space on touch interfaces. */
+html :is(button,a,select,summary,input,textarea):focus-visible{
+ outline:2px solid var(--faro-selection,#167c87)!important;
+ outline-offset:3px!important;
+}
+html :is(#dayStripItems, .slots, .day-strip, .faro-journey-nav) button:focus-visible{
+ outline-width:3px!important;outline-offset:2px!important;
+}
+@media(pointer:coarse){
+ html :is(.app-nav button,.day-strip-arrow,.forecast-refresh,.language-toggle,.theme-toggle){
+  min-height:40px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html:focus-within{scroll-behavior:auto!important}
+ html :is(button,a,summary){transition-duration:0.01ms!important}
+}
