@@ -146,9 +146,9 @@ function create(opts){
   if(deg(grid?.lat)&&deg(grid?.lon)){
    const q=project({latitude:grid.lat,longitude:grid.lon});
    shape("circle",{cx:q.x,cy:q.y,r:7,fill:"#137d9f",stroke:"#fff","stroke-width":2});
-   if(deg(current.slot?.swellDirection))ray(q.x,q.y,current.slot.swellDirection,"#137d9f",0);
-   if(deg(current.slot?.secondarySwell?.fromDeg))ray(q.x,q.y,current.slot.secondarySwell.fromDeg,"#8384b8",-7);
-   if(deg(current.slot?.tertiarySwell?.fromDeg))ray(q.x,q.y,current.slot.tertiarySwell.fromDeg,"#95a5b0",7);
+   if(mode!=="wind"&&deg(current.slot?.swellDirection))ray(q.x,q.y,current.slot.swellDirection,"#137d9f",0);
+   if(mode==="swell"&&deg(current.slot?.secondarySwell?.fromDeg))ray(q.x,q.y,current.slot.secondarySwell.fromDeg,"#8384b8",-7);
+   if(mode==="swell"&&deg(current.slot?.tertiarySwell?.fromDeg))ray(q.x,q.y,current.slot.tertiarySwell.fromDeg,"#95a5b0",7);
    shape("text",{x:q.x+11,y:q.y-14,fill:"#235363","font-family":"sans-serif",
     "font-size":12,"font-weight":800,stroke:"#dceef1","stroke-width":3,"paint-order":"stroke"},
     es?"Celda del modelo":"Model grid cell");
@@ -156,7 +156,7 @@ function create(opts){
   if(deg(atmosphere?.lat)&&deg(atmosphere?.lon)){
    const q=project({latitude:atmosphere.lat,longitude:atmosphere.lon});
    shape("circle",{cx:q.x,cy:q.y,r:6,fill:"#ca8b4a",stroke:"#fff","stroke-width":2});
-   if(deg(current.slot?.windDirection))ray(q.x,q.y,current.slot.windDirection,"#ba7628",0);
+   if(mode!=="swell"&&deg(current.slot?.windDirection))ray(q.x,q.y,current.slot.windDirection,"#ba7628",0);
   }
   shape("rect",{x:28,y:351,width:11,height:6,rx:2,fill:"#137d9f"});
   shape("text",{x:46,y:358,fill:"#234c5c","font-family":"sans-serif","font-size":11},es?"Swell, viaje del modelo":"Swell model travel");
@@ -403,77 +403,48 @@ function create(opts){
   return L.divIcon({className:"faro-leaflet-marker",html:base.outerHTML,
    iconSize:[112,36],iconAnchor:[56,18]});
  }
- function vectorSvg(slot){
-  const ns="http://www.w3.org/2000/svg";
-  const svg=document.createElementNS(ns,"svg");svg.setAttribute("viewBox","0 0 132 132");
-  svg.classList.add("faro-map-vector-rose");svg.setAttribute("role","img");
-  svg.setAttribute("aria-label","Offshore swell component travel directions, referenced to true north");
-  const node=(tag,attrs,parent=svg)=>{
-   const e=document.createElementNS(ns,tag);
-   for(const [k,v]of Object.entries(attrs))e.setAttribute(k,String(v));
-   parent.append(e);return e;
-  };
-  node("circle",{cx:66,cy:66,r:51,fill:"#f7ffff",stroke:"#b4d3d6","stroke-width":1});
-  node("circle",{cx:66,cy:66,r:35,fill:"none",stroke:"#b4d3d6","stroke-width":1,"stroke-dasharray":"3 5"});
-  for(const degVal of [0,90,180,270]){
-   const radians=degVal*Math.PI/180;
-   node("circle",{cx:66+Math.sin(radians)*51,cy:66-Math.cos(radians)*51,r:2,fill:"#87aeb1"});
-  }
-  const N=node("text",{x:66,y:10,"text-anchor":"middle",fill:"#32666f","font-size":10,"font-weight":850});N.textContent="N";
-  const vectors=[
-   {deg:slot?.swellDirection,colour:"#2b94b8",width:4.5,extent:45,offset:0},
-   {deg:slot?.secondarySwell?.fromDeg,colour:"#8384b8",width:3,extent:36,offset:-6,dash:"3 4"},
-   {deg:slot?.tertiarySwell?.fromDeg,colour:"#95a5b0",width:2,extent:29,offset:6,dash:"2 5"}
-  ];
-  for(const v of vectors){
-   const bearing=bearingFromArrow(v.deg);if(bearing===null)continue;
-   const g=node("g",{transform:"translate(66 66) rotate("+bearing+")"});
-   const line=node("line",{x1:v.offset,y1:8,x2:v.offset,y2:-v.extent,
-    stroke:v.colour,"stroke-width":v.width,"stroke-linecap":"round"},g);
-   if(v.dash)line.setAttribute("stroke-dasharray",v.dash);
-   node("path",{d:"M "+(v.offset-5)+" "+(-v.extent+9)+" L "+v.offset+" "+(-v.extent-1)+
-    " L "+(v.offset+5)+" "+(-v.extent+9),fill:"none",
-    stroke:v.colour,"stroke-width":v.width,"stroke-linejoin":"round","stroke-linecap":"round"},g);
-  }
-  node("circle",{cx:66,cy:66,r:5,fill:"#275e68",stroke:"#fff","stroke-width":2});
-  return svg;
+ function modelGridIcon(L,slot){
+  const shell=document.createElement("div");shell.className="faro-lens-map-pin is-swell";
+  shell.append(document.createElement("b"));
+  const arrow=document.createElement("span");arrow.className="faro-lens-arrow";arrow.textContent="↑";
+  const bearing=bearingFromArrow(slot?.swellDirection);
+  if(bearing!==null)arrow.style.transform="rotate("+bearing+"deg)";
+  shell.append(arrow);
+  return L.divIcon({className:"faro-map-grid-marker",html:shell.outerHTML,iconSize:[48,48],iconAnchor:[24,24]});
  }
- function modelGridIcon(L,slot,lang){
-  const es=lang!=="en",wrap=document.createElement("div");
-  wrap.className="faro-map-vector-panel";
-  wrap.append(vectorSvg(slot));
-  const label=document.createElement("span");label.className="faro-map-vector-caption";
-  const h=deg(slot?.swellHeightM)?slot.swellHeightM.toFixed(1)+" m":"—";
-  const period=deg(slot?.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s":"—";
-  label.textContent=(es?"SWELL · ":"SWELL · ")+h+" · "+period;
-  wrap.append(label);
-  return L.divIcon({className:"faro-map-grid-marker",html:wrap.outerHTML,
-   iconSize:[154,151],iconAnchor:[66,66]});
- }
- function windGridIcon(L,slot,lang){
-  const es=lang!=="en",wrap=document.createElement("div");
-  wrap.className="faro-map-wind-chip";
-  const ns="http://www.w3.org/2000/svg",svg=document.createElementNS(ns,"svg");
-  svg.setAttribute("viewBox","0 0 24 24");svg.setAttribute("aria-hidden","true");
+ function windGridIcon(L,slot){
+  const shell=document.createElement("div");shell.className="faro-lens-map-pin is-wind";
+  shell.append(document.createElement("b"));
+  const arrow=document.createElement("span");arrow.className="faro-lens-arrow";arrow.textContent="↑";
   const bearing=bearingFromArrow(slot?.windDirection);
-  if(bearing!==null){
-   const g=document.createElementNS(ns,"g");
-   g.setAttribute("transform","rotate("+bearing+" 12 12)");
-   const line=document.createElementNS(ns,"path");
-   line.setAttribute("d","M12 20 V4 M7 9 L12 4 L17 9");
-   line.setAttribute("fill","none");line.setAttribute("stroke","#9a642f");
-   line.setAttribute("stroke-width","2.2");line.setAttribute("stroke-linecap","round");
-   line.setAttribute("stroke-linejoin","round");g.append(line);svg.append(g);
+  if(bearing!==null)arrow.style.transform="rotate("+bearing+"deg)";
+  shell.append(arrow);
+  return L.divIcon({className:"faro-map-wind-marker",html:shell.outerHTML,iconSize:[44,44],iconAnchor:[22,22]});
+ }
+ function modelPopup(marine){
+  const v=latest||p(),s=v.slot||{},es=v.lang!=="en",node=document.createElement("div");
+  node.className="faro-lens-sample-popup";
+  const title=document.createElement("strong");title.textContent=marine?
+   (es?"CELDA MARINA · MODELO":"MARINE GRID · MODEL"):
+   (es?"CELDA ATMOSFÉRICA · MODELO":"ATMOSPHERIC GRID · MODEL");node.append(title);
+  const items=marine?[
+   ["Swell principal",s.swellHeightM,s.swellPeriodS,s.swellDirection],
+   ...(s.secondarySwell?[["Swell secundario",s.secondarySwell.heightM,s.secondarySwell.periodS,s.secondarySwell.fromDeg]]:[]),
+   ...(s.tertiarySwell?[["Swell terciario",s.tertiarySwell.heightM,s.tertiarySwell.periodS,s.tertiarySwell.fromDeg]]:[])
+  ]:[["Viento",s.windKmh,null,s.windDirection]];
+  for(const [name,h,t,d] of items){
+   if(!deg(h))continue;
+   const item=document.createElement("p");
+   item.textContent=name+" · "+h.toFixed(marine?1:0)+(marine?" m":" km/h")+
+    (deg(t)?" · "+t.toFixed(0)+" s":"")+(deg(d)?" · "+(es?"desde ":"from ")+Math.round(d)+"°":"");
+   node.append(item);
   }
-  wrap.append(svg);
-  const info=document.createElement("div");
-  const title=document.createElement("strong");title.textContent=es?"VIENTO · MODELO":"WIND · MODEL";
-  const body=document.createElement("small");
-  body.textContent=(deg(slot?.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—")+" · "+
-    (es?"desde ":"from ")+(deg(slot?.windDirection)?Math.round(slot.windDirection)+"°":"—");
-  info.append(title,body);wrap.append(info);
-  return L.divIcon({className:"faro-map-wind-marker",html:wrap.outerHTML,
-   iconSize:[155,46],iconAnchor:[12,34]});
+  const sample=marine?v.marineGrid:v.weatherGrid;
+  const note=document.createElement("small");note.textContent=(deg(sample?.distanceKm)?
+   sample.distanceKm.toFixed(1)+" km "+(es?"de referencia":"from coastal reference"):
+    es?"Distancia sin verificar":"Distance unavailable")+
+   " · "+(es?"Modelo; no es medición de rompiente":"Model; not breaking-surf measurement");
+  node.append(note);return node;
  }
  function update(data){
   latest=data||p();describe();drawSchematic();drawUi();
@@ -495,10 +466,13 @@ function create(opts){
   if(hasGrid){
    const pos=[grid.lat,grid.lon];
    if(!modelGridMarker){
-    modelGridMarker=L.marker(pos,{title:"Offshore marine model grid point",interactive:false,keyboard:false});
+    modelGridMarker=L.marker(pos,{title:"Marine grid sample",interactive:true,keyboard:true});
     modelGridMarker.addTo(map);
    }else modelGridMarker.setLatLng(pos);
-   modelGridMarker.setIcon(modelGridIcon(L,latest.slot,latest.lang));
+   modelGridMarker.setIcon(modelGridIcon(L,latest.slot));
+   modelGridMarker.bindPopup(modelPopup(true),{maxWidth:300});
+   modelGridMarker.setOpacity(mode==="wind"?0:1);
+   if(modelGridMarker.getElement())modelGridMarker.getElement().style.pointerEvents=mode==="wind"?"none":"auto";
    modelGridMarker.setZIndexOffset(250);
   }else if(modelGridMarker){
    map.removeLayer(modelGridMarker);modelGridMarker=null;
@@ -508,10 +482,13 @@ function create(opts){
   if(hasWindGrid){
    const pos=[atmosphere.lat,atmosphere.lon];
    if(!windGridMarker){
-    windGridMarker=L.marker(pos,{title:"Atmospheric model grid point",interactive:false,keyboard:false});
+    windGridMarker=L.marker(pos,{title:"Atmospheric grid sample",interactive:true,keyboard:true});
     windGridMarker.addTo(map);
    }else windGridMarker.setLatLng(pos);
-   windGridMarker.setIcon(windGridIcon(L,latest.slot,latest.lang));
+   windGridMarker.setIcon(windGridIcon(L,latest.slot));
+   windGridMarker.bindPopup(modelPopup(false),{maxWidth:300});
+   windGridMarker.setOpacity(mode==="swell"?0:1);
+   if(windGridMarker.getElement())windGridMarker.getElement().style.pointerEvents=mode==="swell"?"none":"auto";
    windGridMarker.setZIndexOffset(260);
   }else if(windGridMarker){
    map.removeLayer(windGridMarker);windGridMarker=null;
