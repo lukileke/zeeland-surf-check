@@ -234,7 +234,8 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
    Calm editorial wayfinding, no emoji, no speculative icon artwork.
    Mobile tap targets >= 44 CSS px; keyboard navigation remains explicit.
 */
-#forecastPage .faro-journey-nav{
+#forecastPage > .faro-journey-nav{
+ grid-column:1/-1!important;grid-row:auto!important;width:100%!important;
  display:flex;align-items:center;flex-wrap:wrap;column-gap:7px;row-gap:8px;
  box-sizing:border-box;min-width:0;padding:10px 2px 13px;
  border-bottom:1px solid var(--faro-editorial-hairline,var(--border));margin:0 0 10px;
