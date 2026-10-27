@@ -304,6 +304,10 @@ function create(opts){
    "Flechas = dirección de viaje · se conserva la brújula al hacer zoom":
    "Arrows = travel direction · compass remains visible on zoom";
   legend.append(extra);
+  const beachKey=document.createElement("span");beachKey.className="faro-lens-map-status";
+  beachKey.textContent=es?"Puntos en playas = coincidencia angular de guía, no calidad":
+   "Beach dots = guide bearing alignment, not surf quality";
+  legend.append(beachKey);
   comparison.replaceChildren();
   const heading=document.createElement("div");heading.className="faro-lens-beaches-header";
   const title=document.createElement("strong");title.textContent=es?"¿QUÉ PASA EN CADA PLAYA?":"READ EACH BEACH";
@@ -360,10 +364,12 @@ function create(opts){
   detail.append(foot);details.append(detail);
  }
 
- function markerIcon(L,spot,selected){
+ function markerIcon(L,spot,selected,guideStatus){
   // A named beach reference pin, not a wave-front observation.
   const base=document.createElement("div");
-  base.className=selected?"faro-map-pin is-current":"faro-map-pin";
+  base.className="faro-map-pin"+(selected?" is-current":"")+" guide-"+guideStatus;
+  const dot=document.createElement("i");dot.className="faro-map-guide-dot";
+  dot.setAttribute("aria-hidden","true");base.append(dot);
   const name=document.createElement("span");name.className="faro-map-pin-name";
   name.textContent=spot.shortName||spot.name;base.append(name);
   return L.divIcon({className:"faro-leaflet-marker",html:base.outerHTML,
@@ -456,7 +462,10 @@ function create(opts){
     });
     markers.set(sp.id,m);
    }
-   markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel));
+   const profile=latest.profiles?.[sp.id]||{};
+   const status=mode==="wind"?guideClass(latest.slot?.windDirection,profile.windFromDeg):
+    guideClass(latest.slot?.swellDirection,profile.waveFromDeg);
+   markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,status));
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
   }
   const grid=latest.marineGrid;
