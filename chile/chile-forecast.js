@@ -13,13 +13,14 @@ const band=n=>!ok(n)?"":n>=8?"brand-band-high":n>=6?"brand-band-regular":n>=4?"b
 const scoreTone=n=>!ok(n)?"":(n>=8?"tone-great":n>=6?"tone-good":n>=4?"tone-fair":n>=2?"tone-poor":"tone-low")+" "+band(n);
 // These are *relative model signals*, never validated observed surf quality.
 const grade=n=>!ok(n)?tr("Sin datos","No data"):n>=8.5?tr("Excelente","Excellent"):n>=7?tr("Bueno","Good"):n>=5?tr("Regular","Fair"):n>=3?tr("Malo","Poor"):tr("Muy malo","Very poor");
+const gradeClass=n=>!ok(n)?"faro-grade-unavailable":n>=8.5?"faro-grade-excellent":n>=7?"faro-grade-good":n>=5?"faro-grade-fair":n>=3?"faro-grade-poor":"faro-grade-very-poor";
 const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
 const waveSizeLabel=h=>!ok(h)?"—":h<.5?tr("Pequeñas","Small"):h<1.2?tr("Medianas","Medium"):h<2?tr("Grandes","Large"):tr("Muy grandes","Very large");
 function waveBars(h){
- const x=el("div",null,"chile-wave-bars "+waveSize(h));
+ const x=el("div",null,"chile-wave-bars faro-meter-bars "+waveSize(h));
  x.setAttribute("role","img");
  x.setAttribute("aria-label",tr("Indicador de oleaje oceánico: ","Offshore model wave indicator: ")+num(h)+" m");
- const count=ok(h)?Math.max(1,Math.min(8,Math.round(h/.25))):0;
+ const count=ok(h)?Math.max(0,Math.min(8,Math.round(h/.25))):0;
  for(let i=0;i<8;i++){
   const b=el("span",null,i<count?"on":"");
   b.style.height=(7+i*2)+"px";x.append(b);
@@ -344,7 +345,7 @@ function strip(){
   button.type="button";button.setAttribute("aria-pressed",String(i===state.day));
   button.append(el("span",i===0?tr("Hoy","Today"):Live.formatDay(d.date,state.lang),"chile-chip-day"));
   button.append(el(s?"strong":"span",s?num(s.score):"—",s?"chile-chip-number":"chile-chip-empty"));
-  button.append(el("span",s?grade(s.score):tr("Sin ventana","No daylight window"),"chile-chip-grade"));
+  button.append(el("span",s?grade(s.score):tr("Sin ventana","No daylight window"),"chile-chip-grade faro-grade "+gradeClass(s?.score)));
   button.append(el("small",s?sessionTime(s):tr("No evaluado","Not evaluated"),"chile-chip-time"));
   button.addEventListener("click",()=>{state.day=i;state.hour=null;render()});host.append(button);
  }
@@ -412,6 +413,7 @@ function updateCoastMap(){
  const s=selection();
  state.coastMap?.update({spot:spot(),spots:state.config?.pilots||[],slot:s,
   marineGrid:state.forecast?.model?.marineGrid||null,
+  weatherGrid:state.forecast?.model?.weatherGrid||null,
   local:localRead(s),lang:state.lang,cameras:state.cameras?.sources||[]});
 }
 function vibeUI(s){
@@ -486,7 +488,7 @@ function slots(){
   button.type="button";button.setAttribute("aria-pressed",String(selection()?.hour===s.hour));button.disabled=!s.modelComplete;
   button.append(el("span",h(s.hour)+"–"+h(s.hour+2),"chile-slot-hour"));
   button.append(el("strong",eligible?num(s.score):"—","chile-slot-score"));
- if(eligible)button.append(el("span",grade(s.score),"chile-slot-quality"));
+ if(eligible)button.append(el("span",grade(s.score),"chile-slot-quality faro-grade "+gradeClass(s.score)));
   button.append(el("small",dangerous?tr(" Riesgo modelo"," Model risk"):unknownRisk?tr(" Riesgo sin evaluar"," Risk unassessed"):Live.slotRisk(s,state.config)==="caution"?tr(" Precaución"," Caution"):eligible?(localRead(s)?.decision?.shortLabel||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
@@ -540,18 +542,18 @@ function session(){
  main.replaceChildren();ess.replaceChildren();
  if(!s){main.append(el("p",tr("No hay ventana futura con luz y score experimental disponible. Puedes elegir manualmente otra franja.","No upcoming daylight window with experimental fit. Select another window to inspect model data."),"muted"));return}
  const heading=el("div",null,"chile-session-overline");
- heading.append(el("span",tr("VENTANA SELECCIONADA","SELECTED WINDOW"),"chile-session-eyebrow"),
+ heading.append(el("span",tr("TU VENTANA","YOUR WINDOW"),"chile-session-eyebrow"),
   el("span",sessionTime(s),"chile-session-hours"));
  const local=localRead(s);
  if(local?.vibe?.label)heading.append(el("span",local.vibe.label,"chile-session-vibe"));
  main.append(heading);
- const top=el("div",null,"chile-session-head");
+ const top=el("div",null,"chile-session-head faro-session-instrument");
  const score=el("div",null,"chile-session-rating "+scoreTone(s.score));
  score.append(el("small",tr("SURF QUALITY · MODELO","SURF QUALITY · MODEL"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
- score.append(big,el("span",grade(s.score),"chile-session-label"));
+ score.append(big,el("span",grade(s.score),"chile-session-label faro-grade "+gradeClass(s.score)));
  score.append(el("small",tr("Índice experimental","Experimental index"),"chile-session-origin"));
- const wave=el("div",null,"chile-session-wave");
+ const wave=el("div",null,"chile-session-wave faro-wave-panel");
  wave.append(el("small",tr("ALTURA DE OLAS · MODELO","MODEL WAVE HEIGHT"),"chile-session-label"),
   el("strong",num(s.totalWaveHeightM)+" m"),waveBars(s.totalWaveHeightM),
   el("span",waveSizeLabel(s.totalWaveHeightM),"chile-wave-size-tag"));
@@ -564,6 +566,18 @@ function session(){
   block.append(el("small",label),el("strong",value));meta.append(block);
  }
  main.append(meta);
+ // Data-derived editorial hint, never a claim that we observed the local surf.
+ const line=el("p",null,"faro-session-editorial");
+ if(ok(s.windKmh)&&s.windKmh>=30)line.textContent=tr(
+  "El viento se hace notar en esta ventana. Revisa el mar antes de entrar.",
+  "Wind is a defining factor in this window. Check the sea before paddling out.");
+ else if(ok(s.swellPeriodS)&&s.swellPeriodS>=10)line.textContent=tr(
+  "Un pulso de período largo llega desde mar abierto. El banco decidirá cómo rompe.",
+  "Longer-period energy is arriving offshore. The sandbank will decide how it breaks.");
+ else line.textContent=tr(
+  "Una lectura del mar para elegir tu momento. Comprueba las olas reales antes de salir.",
+  "A read on the sea to help choose your moment. Check the actual waves before you go.");
+ main.append(line);
  const essentials=[
   ["wetsuit",wetsuit(s)],
   ["water-temperature",num(s.waterTemperatureC)+" °C"],
@@ -752,6 +766,7 @@ async function initialize(){
    container:$("chileCoastMap"),disclosure:$("coastMapExpand"),
    getCurrent:()=>({spot:spot(),spots:state.config.pilots,
     slot:selection(),marineGrid:state.forecast?.model?.marineGrid||null,
+  weatherGrid:state.forecast?.model?.weatherGrid||null,
     local:localRead(selection()),lang:state.lang,
     cameras:state.cameras?.sources||[]}),
    onSelectSpot:id=>{

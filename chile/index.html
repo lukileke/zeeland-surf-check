@@ -27,7 +27,7 @@
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=2">
 <!-- Final Chile-only layout contract after all shared FARO theme layers -->
 <link rel="stylesheet" href="chile-visual-contract.css?v=2">
-<link rel="stylesheet" href="../assets/faro-visual-system-v2.css?v=3">
+<link rel="stylesheet" href="../assets/faro-visual-system-v2.css?v=4">
 </head>
 <body>
 <main>
@@ -110,7 +110,8 @@
      <div class="day-signal-metric chile-day-wave-feature">
       <div class="chile-wave-feature-head"><span data-faro-icon="wave-height" aria-hidden="true"></span><small data-es="OLAS · MODELO OCEÁNICO" data-en="WAVES · OFFSHORE MODEL">OLAS · MODELO OCEÁNICO</small></div>
       <div class="chile-wave-feature-number"><strong id="dayWave">—</strong><span id="dayWaveLabel" class="chile-wave-size-tag">—</span></div>
-      <div id="dayWaveMeter" class="chile-wave-bars" role="img" aria-label="Altura modelada">—</div>
+      <div id="dayWaveMeter" class="chile-wave-bars faro-wave-instrument" aria-label="Medidor de altura oceánica modelada">—</div>
+      <div class="faro-wave-meter-axis" aria-hidden="true"><span>0 m</span><span>2 m+</span></div>
       <details class="chile-wave-explain" id="chileWaveExplain">
        <summary data-es="¿Qué significa este tamaño?" data-en="What does this height mean?">¿Qué significa este tamaño?</summary>
        <div id="chileWaveHow" class="chile-wave-how">—</div>
@@ -166,7 +167,7 @@
     </details>
    </section>
    <details id="coastMapExpand" class="forecast-expand faro-map-disclosure">
-    <summary><span data-faro-icon="map"></span><span class="forecast-accordion-title" data-es=" La costa en vivo · swell y viento" data-en=" Coastal conditions · swell & wind"> La costa en vivo · swell y viento</span><span class="forecast-accordion-meta" data-es="Mapa de los tres spots · cambia con el horario" data-en="Three surf spots · follows your selected window">Mapa de los tres spots · cambia con el horario</span></summary>
+    <summary><span data-faro-icon="map"></span><span class="forecast-accordion-title" data-es=" COASTAL LENS · lee el mar" data-en=" COASTAL LENS · read the sea"> COASTAL LENS · lee el mar</span><span class="forecast-accordion-meta" data-es="Cuatro spots · swell por componentes y viento" data-en="Four spots · swell partitions and wind">Cuatro spots · swell por componentes y viento</span></summary>
     <div id="chileCoastMap" class="chile-coast-map"></div>
    </details>
    <details id="spotInsightExpand" class="forecast-expand">
@@ -234,7 +235,7 @@
 <script src="faro-spot-intelligence.js?v=2"></script>
 <script src="video-observation-lab.js?v=1"></script>
 <script src="faro-coastal-lens.js?v=1"></script>
-<script src="coast-map.js?v=3"></script>
-<script src="chile-forecast.js?v=14"></script>
+<script src="coast-map.js?v=4"></script>
+<script src="chile-forecast.js?v=15"></script>
 </body>
 </html>

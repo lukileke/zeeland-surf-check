@@ -24,8 +24,8 @@ function contrast(a,b){
  return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
 }
 test('same final FARO stylesheet loaded in Zeeland and Chile',()=>{
- assert.match(nl,/href="assets\/faro-visual-system-v2\.css\?v=3"/);
- assert.match(cl,/href="\.\.\/assets\/faro-visual-system-v2\.css\?v=3"/);
+ assert.match(nl,/href="assets\/faro-visual-system-v2\.css\?v=4"/);
+ assert.match(cl,/href="\.\.\/assets\/faro-visual-system-v2\.css\?v=4"/);
  assert.ok(nl.indexOf('faro-visual-system-v2.css')>nl.indexOf('faro-desktop.css'));
  assert.ok(cl.indexOf('faro-visual-system-v2.css')>cl.indexOf('chile-visual-contract.css'));
 });
@@ -46,10 +46,17 @@ test('one immutable FARO palette across LIGHT, DARK and Scriptable',()=>{
   assert.ok(css.includes('html:not([data-theme="light"]) .brand-band-'+band));
  }
 });
-test('selection and label colour do not pretend to be the rating',()=>{
+test('selection remains coastal teal; coloured verbal pills are distinct from numeric band pigments',()=>{
  assert.match(css,/\.day-chip\.selected\[class\*="brand-band-"\][^{]*\{\s*border:2px solid var\(--faro-selection\)/);
- assert.match(css,/\.chile-chip-grade\)[^{]*\{\s*color:var\(--fg\)/);
- assert.match(css,/\.chile-chip-number\)/);
+ for(const grade of ['very-poor','poor','fair','good','excellent','unavailable']){
+  assert.ok(css.includes('faro-grade-'+grade),'missing semantic grade '+grade);
+ }
+ assert.match(nl,/function faroGradeClass\(v\)/);
+ assert.match(chileJs,/const gradeClass=n=>/);
+ assert.match(css,/\.faro-grade\{/);
+ assert.match(css,/--faro-grade-tone/);
+ assert.ok(css.includes('.quality-pill.faro-grade'));
+ assert.ok(css.includes('.chile-chip-grade.faro-grade'));
 });
 test('score hue thresholds consistent across country and Scriptable widget',()=>{
  assert.match(nl,/v>=8\?'tone-great':v>=6\?'tone-good':v>=4\?'tone-fair':v>=2\?'tone-poor'/);
@@ -83,6 +90,24 @@ test('every future training source retains explicit rights and zero observed vid
  }
  assert.ok(sources.sources.some(x=>x.id==='int-vwbt9000'&&x.ingestedClipCount===0));
  assert.ok(sources.sources.some(x=>x.id==='usgs-coastal-segmentation'&&x.trainingAllowed===true));
+});
+test('wave height indicators are enclosed, based on actual model height and do not mark 0 m as a positive bin',()=>{
+ assert.match(nl,/faro-wave-instrument/);
+ assert.match(nl,/MODEL HEIGHT · VISUAL SCALE/);
+ assert.match(nl,/Math\.max\(0,Math\.min\(8,Math\.round\(b\.s\.h\/.25\)\)\)/);
+ assert.match(cl,/id="dayWaveMeter" class="chile-wave-bars faro-wave-instrument"/);
+ assert.match(chileJs,/Math\.max\(0,Math\.min\(8,Math\.round\(h\/.25\)\)\)/);
+ assert.match(css,/html #dayview \.session-glance \.hero-wave-meter/);
+});
+test('coastal lens displays real swell partitions and separate atmospheric grid',()=>{
+ const mapSource=read('chile/coast-map.js');
+ assert.match(mapSource,/vectorSvg\(slot\)/);
+ assert.match(mapSource,/secondarySwell\?\.fromDeg/);
+ assert.match(mapSource,/tertiarySwell\?\.fromDeg/);
+ assert.match(mapSource,/windGridMarker=L\.marker\(pos/);
+ assert.match(mapSource,/weatherGrid/);
+ assert.match(chileJs,/weatherGrid:state\.forecast\?\.model\?\.weatherGrid/);
+ assert.match(mapSource,/not refraction rays or live imagery/);
 });
 test('no emoji content remains in primary Zeeland forecast templates',()=>{
  assert.ok(!nl.includes('.emoji'));
