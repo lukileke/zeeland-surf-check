@@ -24,8 +24,8 @@ function contrast(a,b){
  return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
 }
 test('same final FARO stylesheet loaded in Zeeland and Chile',()=>{
- assert.match(nl,/href="assets\/faro-visual-system-v2\.css\?v=3"/);
- assert.match(cl,/href="\.\.\/assets\/faro-visual-system-v2\.css\?v=3"/);
+ assert.match(nl,/href="assets\/faro-visual-system-v2\.css\?v=4"/);
+ assert.match(cl,/href="\.\.\/assets\/faro-visual-system-v2\.css\?v=4"/);
  assert.ok(nl.indexOf('faro-visual-system-v2.css')>nl.indexOf('faro-desktop.css'));
  assert.ok(cl.indexOf('faro-visual-system-v2.css')>cl.indexOf('chile-visual-contract.css'));
 });
