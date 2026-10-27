@@ -24,8 +24,8 @@ function contrast(a,b){
  return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
 }
 test('same final FARO stylesheet loaded in Zeeland and Chile',()=>{
- assert.match(nl,/href="assets\/faro-visual-system-v2\.css\?v=4"/);
- assert.match(cl,/href="\.\.\/assets\/faro-visual-system-v2\.css\?v=4"/);
+ assert.match(nl,/href="assets\/faro-visual-system-v2\.css\?v=5"/);
+ assert.match(cl,/href="\.\.\/assets\/faro-visual-system-v2\.css\?v=5"/);
  assert.ok(nl.indexOf('faro-visual-system-v2.css')>nl.indexOf('faro-desktop.css'));
  assert.ok(cl.indexOf('faro-visual-system-v2.css')>cl.indexOf('chile-visual-contract.css'));
 });
@@ -76,7 +76,8 @@ test('all four pilot spots and actual marine grid used; no fabricated shore vect
  assert.match(chileJs,/marineGrid:state\.forecast\?\.model\?\.marineGrid/);
  const mapSource=read('chile/coast-map.js');
  assert.match(mapSource,/modelGridMarker=L\.marker\(pos/);
- assert.match(mapSource,/L\.latLngBounds\(coast,\[grid\.lat,grid\.lon\]\)/);
+ assert.match(mapSource,/L\.latLngBounds\(coast,coast\)/);
+ assert.match(mapSource,/bounds\.extend\(\[item\.lat,item\.lon\]\)/);
  assert.doesNotMatch(mapSource,/a\.textContent="↑"/);
  assert.match(mapSource,/Sin simulación de refracción ni altura rompiente/);
 });

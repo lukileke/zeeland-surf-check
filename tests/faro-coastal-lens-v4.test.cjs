@@ -39,6 +39,7 @@ test('compass stays attached to viewport, not to moving model grid marker',()=>{
  assert.match(code,/compassDock\.replaceChildren\(\)/);
  assert.match(css,/\.faro-lens-compass-dock\{pointer-events:none!important;position:absolute!important;\s*z-index:1100!important/);
  assert.match(code,/lastCentered!==latest\.spot\.id/);
+ assert.match(code,/frameMap\(false\)/);
  assert.doesNotMatch(code,/\bopened=true/);
 });
 test('layers are genuine selective controls and point markers remain clickable',()=>{
@@ -57,8 +58,8 @@ test('motion respects reduced-motion, exposure is only an editorial guide',()=>{
  assert.match(code,/Sin simulación de refracción ni altura rompiente/);
 });
 test('asset version and shared Zeeland colours remain unaffected',()=>{
- assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=2"/);
- assert.match(html,/src="coast-map\.js\?v=6"/);
- assert.match(html,/src="chile-forecast\.js\?v=17"/);
- assert.match(html,/faro-visual-system-v2\.css\?v=4/);
+ assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=3"/);
+ assert.match(html,/src="coast-map\.js\?v=7"/);
+ assert.match(html,/src="chile-forecast\.js\?v=18"/);
+ assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });

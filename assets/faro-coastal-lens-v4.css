@@ -228,3 +228,132 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
 @media(prefers-reduced-motion:reduce){
  #chileCoastMap .faro-lens-motion .faro-lens-map-pin::after{animation:none!important}
 }
+
+/* ── FARO UX JOURNEY · 27 OCT 2026 ────────────────────────────────────────
+   A surfer's route: when -> where -> spot knowledge -> what it looks like.
+   Calm editorial wayfinding, no emoji, no speculative icon artwork.
+   Mobile tap targets >= 44 CSS px; keyboard navigation remains explicit.
+*/
+#forecastPage > .faro-journey-nav{
+ grid-column:1/-1!important;grid-row:auto!important;width:100%!important;
+ display:flex;align-items:center;flex-wrap:wrap;column-gap:7px;row-gap:8px;
+ box-sizing:border-box;min-width:0;padding:10px 2px 13px;
+ border-bottom:1px solid var(--faro-editorial-hairline,var(--border));margin:0 0 10px;
+}
+#forecastPage .faro-journey-kicker{
+ font:900 10px/1.3 var(--faro-text,Manrope,system-ui);
+ letter-spacing:.10em;color:var(--faro-selection);margin-right:10px;
+ white-space:nowrap;
+}
+#forecastPage .faro-journey-nav [data-jump]{
+ appearance:none;min-height:44px;min-width:80px;display:inline-flex;
+ justify-content:center;align-items:center;text-align:center;
+ border:1px solid var(--faro-editorial-hairline,var(--border))!important;
+ border-radius:999px!important;background:var(--panel)!important;
+ padding:9px 13px!important;
+ color:var(--fg)!important;white-space:nowrap;
+ font:850 11px/1.25 var(--faro-text,Manrope,system-ui);
+ transition:border-color .15s ease,background-color .15s ease;
+ cursor:pointer;
+}
+#forecastPage .faro-journey-nav [data-jump]:hover{
+ border-color:var(--faro-selection)!important;
+ background:var(--faro-ed-shell,var(--panel))!important;
+}
+/* Map: one obvious view reset; exploration controls are secondary */
+#chileCoastMap .faro-lens-controls{
+ justify-content:flex-start!important;
+ gap:9px 10px!important;
+}
+#chileCoastMap .faro-lens-controls .faro-lens-recenter{
+ appearance:none;cursor:pointer;display:inline-flex;align-items:center;
+ justify-content:center;min-height:44px;min-width:115px;
+ padding:9px 13px;border-radius:10px;
+ color:var(--fg)!important;background:var(--panel)!important;
+ border:1px solid var(--faro-editorial-hairline,var(--border))!important;
+ font:850 11px/1.3 var(--faro-text,Manrope,system-ui);
+ white-space:normal;text-align:center;
+}
+#chileCoastMap .faro-lens-recenter:hover:not(:disabled){
+ border-color:var(--faro-selection)!important;
+ background:var(--faro-ed-shell,var(--panel))!important;
+}
+#chileCoastMap .faro-lens-recenter:disabled{opacity:.55;cursor:default}
+#chileCoastMap .faro-lens-controls .faro-lens-options{
+ margin-left:auto;min-width:0;position:relative;
+ border:1px solid var(--faro-editorial-hairline,var(--border))!important;
+ border-radius:10px!important;background:var(--panel);
+}
+#chileCoastMap .faro-lens-options>summary{
+ list-style:none;min-height:42px;box-sizing:border-box;
+ display:flex;align-items:center;gap:8px;padding:8px 12px;
+ cursor:pointer;color:var(--fg);
+ font:800 11px/1.25 var(--faro-text,Manrope,system-ui);
+}
+#chileCoastMap .faro-lens-options>summary::-webkit-details-marker{display:none}
+#chileCoastMap .faro-lens-options>summary::after{
+ content:"+";display:inline-block;color:var(--faro-selection);
+ font-size:15px;line-height:1;font-weight:900
+}
+#chileCoastMap .faro-lens-options[open]>summary::after{content:"−"}
+#chileCoastMap .faro-lens-options .faro-lens-flags{
+ display:flex;flex-wrap:wrap;gap:8px 14px;
+ min-width:0;padding:3px 12px 12px;
+}
+#chileCoastMap .faro-lens-options .faro-lens-flag{
+ min-height:31px;display:inline-flex;align-items:center;gap:8px;
+}
+#chileCoastMap .faro-lens-flag input{width:17px;height:17px}
+#chileCoastMap .faro-lens-segments button{min-height:42px!important}
+#chileCoastMap .faro-lens-status{
+ display:block;margin:-4px 0 0;padding:9px 12px;border-radius:9px;
+ color:var(--muted);background:var(--faro-ed-shell,var(--panel));
+ border:1px solid var(--faro-editorial-hairline,var(--border));
+ font:650 11px/1.5 var(--faro-text,Manrope,system-ui);
+}
+#chileCoastMap .faro-lens-status:empty{display:none}
+/* Focus visibility is not colour-only and accessible in both themes */
+#forecastPage .faro-journey-nav [data-jump]:focus-visible,
+#chileCoastMap .faro-lens-controls button:focus-visible,
+#chileCoastMap .faro-lens-options>summary:focus-visible,
+#chileCoastMap .faro-lens-flag:focus-within{
+ outline:3px solid var(--faro-selection)!important;
+ outline-offset:3px!important;
+}
+#forecastPage .faro-detail-hub-grid>details:focus-within,
+#forecastPage .chile-method-disclaimer:focus-within{
+ outline:2px solid var(--faro-selection);outline-offset:3px;
+}
+#forecastPage .faro-detail-hub-grid>details.forecast-expand>summary{
+ cursor:pointer;min-height:65px!important;
+}
+#forecastPage .faro-detail-hub-heading h3{max-width:30ch}
+#chileCoastMap .faro-lens-footer-legend>small{
+ color:var(--muted);margin-left:auto
+}
+@media(max-width:760px){
+ #forecastPage .faro-journey-nav{flex-wrap:nowrap;overflow-x:auto;
+  overscroll-behavior-inline:contain;scroll-snap-type:x proximity;
+  -webkit-overflow-scrolling:touch;padding-bottom:13px;
+ }
+ #forecastPage .faro-journey-nav [data-jump]{scroll-snap-align:start;flex:none}
+ #forecastPage .faro-journey-kicker{flex:none}
+ #chileCoastMap .faro-lens-controls .faro-lens-options{margin-left:0}
+}
+@media(max-width:440px){
+ #chileCoastMap .faro-lens-controls{display:grid!important;
+  grid-template-columns:1fr 1fr;align-items:stretch;gap:8px!important}
+ #chileCoastMap .faro-lens-controls .faro-lens-segments{grid-column:1/-1}
+ #chileCoastMap .faro-lens-controls .faro-lens-recenter{
+  grid-column:1;min-width:0;width:100%;
+ }
+ #chileCoastMap .faro-lens-controls .faro-lens-options{
+  grid-column:2;width:100%;margin:0
+ }
+ #chileCoastMap .faro-lens-options .faro-lens-flags{
+  flex-direction:column;align-items:flex-start;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #forecastPage .faro-journey-nav [data-jump]{transition:none!important}
+}
