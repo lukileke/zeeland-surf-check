@@ -39,6 +39,20 @@ const guideClass=(value,ranges)=>{
  const d=distanceToGuide(value,ranges);
  return d===null?"unknown":d===0?"inside":d<=25?"edge":"outside";
 };
+// The colour grades directional GUIDE compatibility; it is not a surf-quality model.
+// Wind above 30 km/h receives an explicit caution even if direction aligns.
+function directionalFit(value,ranges,speed,wind=false){
+ const fit=guideClass(value,ranges);
+ return wind&&deg(speed)&&speed>=30&&fit!=="unknown"?"strong":fit;
+}
+function fitCopy(fit,lang){
+ const es=lang!=="en";
+ return fit==="inside"?(es?"Dirección favorable según guía":"Guide-favoured direction"):
+  fit==="edge"?(es?"Cerca del rango guía":"Near guide range"):
+  fit==="outside"?(es?"Fuera del rango guía":"Outside guide range"):
+  fit==="strong"?(es?"Viento ≥30 km/h · precaución":"Wind ≥30 km/h · caution"):
+  (es?"Sin rango evaluable":"Guide not assessed");
+}
 function stateLabel(value,lang){
  const es=lang!=="en";
  return value==="convergent"?(es?"Guías coinciden":"Guides agree"):
@@ -50,7 +64,7 @@ function create(opts){
  const d=opts.disclosure;
  if(!host||!d)return null;
  let map=null,markers=new Map(),modelGridMarker=null,windGridMarker=null,latest=null,loadError=false;
- let mode="combined",exposure=false,motion=false,inspected="marine",lastCentered=null,pendingSampleFit=false;
+ let mode="combined",mapView="beach",exposure=false,motion=false,inspected="marine",lastCentered=null,pendingSampleFit=false,beachVectorMarker=null;
  const reduced=()=>typeof root.matchMedia==="function"&&root.matchMedia("(prefers-reduced-motion: reduce)").matches;
  const controls=document.createElement("div");controls.className="faro-lens-controls";host.append(controls);
  const modes=document.createElement("div");modes.className="faro-lens-segments";
@@ -68,7 +82,10 @@ function create(opts){
  const flags=document.createElement("div");flags.className="faro-lens-flags";advanced.append(flags);
  const recenter=document.createElement("button");recenter.type="button";
  recenter.className="faro-lens-recenter";recenter.dataset.action="reframe";
- recenter.addEventListener("click",()=>frameMap(true));controls.append(recenter);
+ recenter.addEventListener("click",()=>{
+  mapView=mapView==="beach"?"region":"beach";
+  frameMap(true);update(latest);
+ });controls.append(recenter);
  const status=document.createElement("p");status.className="faro-lens-status";status.setAttribute("role","status");host.append(status);
  function flag(type,onChange){
   const label=document.createElement("label");label.className="faro-lens-flag";
@@ -174,6 +191,9 @@ function create(opts){
  function append(tag,cls,text,parent=brief){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.append(n);return n}
  function describe(){
   const v=latest||p(),es=v.lang!=="en",spot=v.spot,slot=v.slot||{},local=v.local;
+  const profile=v.profiles?.[spot?.id]||{};
+  const swellFit=directionalFit(slot.swellDirection,profile.waveFromDeg);
+  const windFit=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
   brief.replaceChildren();
   details.replaceChildren();
   const header=append("div","faro-lens-read-heading",null,brief);
@@ -181,18 +201,19 @@ function create(opts){
   append("span","",(spot?.shortName||"FARO")+" · "+(slot.label||""),header);
   const row=append("div","faro-lens-quick-metrics",null,brief);
   if(spot&&slot.modelComplete){
-   for(const [key,label,value,sub,color] of [
-     ["swell",es?"SWELL PRINCIPAL":"PRIMARY SWELL",
-      deg(slot.swellHeightM)?slot.swellHeightM.toFixed(1)+" m":"—",
-      (deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s · ":"")+
-       (es?"desde ":"from ")+(deg(slot.swellDirection)?Math.round(slot.swellDirection)+"°":"—"),"#147f9e"],
-     ["wind",es?"VIENTO":"WIND",
-      deg(slot.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—",
-      (es?"desde ":"from ")+(deg(slot.windDirection)?Math.round(slot.windDirection)+"°":"—"),"#b87932"]
+   for(const [key,label,value,sub,fit] of [
+    ["swell",es?"SWELL PRINCIPAL":"PRIMARY SWELL",
+     deg(slot.swellHeightM)?slot.swellHeightM.toFixed(1)+" m":"—",
+     (deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s · ":"")+
+      (es?"desde ":"from ")+(deg(slot.swellDirection)?Math.round(slot.swellDirection)+"°":"—"),swellFit],
+    ["wind",es?"VIENTO":"WIND",
+     deg(slot.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—",
+     (es?"desde ":"from ")+(deg(slot.windDirection)?Math.round(slot.windDirection)+"°":"—"),windFit]
    ]){
     const tile=append("div","faro-lens-quick-metric is-"+key,null,row);
-    tile.style.setProperty("--signal",color);
+    tile.dataset.fit=fit;
     append("small","",label,tile);append("strong","",value,tile);append("span","",sub,tile);
+    append("em","faro-lens-local-fit",fitCopy(fit,v.lang),tile);
    }
   }else append("p","faro-map-summary",es?"Aún no hay una franja de modelo completa.":
    "A complete model window is not available.",row);
@@ -242,8 +263,12 @@ function create(opts){
  function drawUi(){
   const v=latest||p(),slot=v.slot||{},es=v.lang!=="en",dir=x=>deg(x)?Math.round(x)+"°":"—";
   advancedSummary.textContent=es?"Opciones del mapa":"Map options";
-  recenter.textContent=es?"Encuadrar playa y mar":"Fit beach + sea";
-  recenter.setAttribute("aria-label",es?"Reencuadrar playa y puntos del modelo":"Reframe beach and model sample points");
+  recenter.textContent=mapView==="beach"?(es?"Ver región":"Regional view"):
+   (es?"Volver a playa":"Beach focus");
+  recenter.setAttribute("aria-label",mapView==="beach"?
+   (es?"Mostrar celdas oceánicas y atmosféricas en contexto regional":"Show marine and wind model cells in regional context"):
+   (es?"Acercar el mapa a la playa seleccionada":"Zoom into the selected beach"));
+  recenter.setAttribute("aria-pressed",String(mapView==="region"));
   recenter.disabled=!map;
   for(const [key,label] of Object.entries({combined:es?"Combinado":"Combined",swell:"Swell",wind:es?"Viento":"Wind"})){
    buttons[key].textContent=label;buttons[key].classList.toggle("active",key===mode);
@@ -299,22 +324,27 @@ function create(opts){
   compassDock.append(windCaption);
   compassDock.setAttribute("aria-label",(es?"Brújula fija, swell desde ":"Fixed compass, swell from ")+dir(slot.swellDirection)+
    (es?", viento desde ":", wind from ")+dir(slot.windDirection));
-  // Tiny legend below map, no floating cards blocking the coast.
+  // The legend uses the same signal colour as the beach arrow, never a
+  // fixed ocean/wind pigment that could contradict the directional assessment.
   legend.replaceChildren();
+  const localProfile=v.profiles?.[v.spot?.id]||{};
+  const swFit=directionalFit(slot.swellDirection,localProfile.waveFromDeg);
+  const wiFit=directionalFit(slot.windDirection,localProfile.windFromDeg,slot.windKmh,true);
+  const palette={inside:"#2b8968",edge:"#a67e2c",outside:"#b66049",strong:"#a84b47",unknown:"#5b7882"};
   const entries=[];
   if(mode!=="wind"){
-   entries.push(["#167fa0",es?"Swell principal":"Primary swell",false]);
+   entries.push([palette[swFit],es?"Swell · "+fitCopy(swFit,v.lang):"Swell · "+fitCopy(swFit,v.lang),false]);
    // Secondary and tertiary partitions are read in the detail panel,
    // not drawn on this map. Never claim dashed overlays that are absent.
   }
-  if(mode!=="swell")entries.push(["#ba7628",es?"Viento":"Wind",false]);
+  if(mode!=="swell")entries.push([palette[wiFit],(es?"Viento":"Wind")+" · "+fitCopy(wiFit,v.lang),false]);
   for(const [color,label,dashed] of entries){
    const item=document.createElement("span");item.className="faro-lens-legend-key";
    const line=document.createElement("i");line.style.borderTop="3px "+(dashed?"dashed ":"solid ")+color;
    item.append(line,document.createTextNode(label));legend.append(item);
   }
   const extra=document.createElement("small");extra.textContent=es?
-   "Rumbos del modelo · no refracción local":"Model bearings · not local refraction";
+   "Colores = compatibilidad direccional con la guía; no son una puntuación del surf":"Colours = directional guide compatibility, not a surf rating";
   legend.append(extra);
   const beachKey=document.createElement("span");beachKey.className="faro-lens-map-status";
   beachKey.textContent=es?"Puntos en playas = coincidencia angular de guía, no calidad":
@@ -371,6 +401,57 @@ function create(opts){
   return L.divIcon({className:"faro-leaflet-marker",html:base.outerHTML,
    iconSize:[112,36],iconAnchor:[56,18]});
  }
+ // A fixed-size, north-up directional instrument anchored to the selected
+ // coastal reference. Arrows encode bearing only; these are not rays of swell
+ // refraction or a prediction of local breaking-wave height.
+ function beachVectorIcon(L,data){
+  const slot=data.slot||{},profile=data.profiles?.[data.spot?.id]||{};
+  const swFit=directionalFit(slot.swellDirection,profile.waveFromDeg);
+  const wiFit=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
+  const palette={inside:"#2b8968",edge:"#a67e2c",outside:"#b66049",strong:"#a84b47",unknown:"#5b7882"};
+  const holder=document.createElement("div");holder.className="faro-beach-vectors";
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 248 208");
+  svg.classList.add("faro-beach-vector-svg");holder.append(svg);
+  function make(tag,attrs,parent=svg){
+   const e=document.createElementNS(NS,tag);
+   for(const [key,value]of Object.entries(attrs))e.setAttribute(key,String(value));
+   parent.append(e);return e;
+  }
+  function vector(from,fit,name,endX,endY,len){
+   const az=bearingFromArrow(from);if(az===null)return;
+   const a=az*Math.PI/180,ux=Math.sin(a),uy=-Math.cos(a);
+   const startX=endX-ux*len,startY=endY-uy*len;
+   const mx=(startX+endX)/2,my=(startY+endY)/2;
+   const deflect=name==="SWELL"?-4:4;
+   const ctrlX=mx-uy*deflect,ctrlY=my+ux*deflect;
+   const colour=palette[fit];
+   const g=make("g",{"data-vector":name,"data-fit":fit});
+   const round=x=>Number(x.toFixed(1));
+   make("path",{d:"M "+round(startX)+" "+round(startY)+" Q "+
+    round(ctrlX)+" "+round(ctrlY)+" "+round(endX)+" "+round(endY),
+    fill:"none",stroke:colour,"stroke-width":name==="SWELL"?5:3.3,
+    "stroke-linecap":"round"},g);
+   make("circle",{cx:round(startX),cy:round(startY),r:name==="SWELL"?3.7:3.0,
+    fill:colour,stroke:"#fff","stroke-width":1.2},g);
+   const bx=endX-ux*12,by=endY-uy*12,pX=-uy,pY=ux,half=name==="SWELL"?6.5:5;
+   make("path",{d:"M "+round(endX)+" "+round(endY)+" L "+
+    round(bx+pX*half)+" "+round(by+pY*half)+" L "+
+    round(bx-pX*half)+" "+round(by-pY*half)+" Z",
+    fill:colour,stroke:"#fff","stroke-width":1.1},g);
+   // Label anchored near the origin, not floating by an offshore model grid.
+   const tx=Math.max(25,Math.min(223,startX-ux*14));
+   const ty=Math.max(19,Math.min(197,startY-uy*14-3));
+   const label=make("text",{x:round(tx),y:round(ty),"text-anchor":"middle",
+    fill:colour,stroke:"#fff","stroke-width":3,"paint-order":"stroke",
+    "font-family":"Manrope,Arial,sans-serif","font-size":10.5,
+    "font-weight":900},g);
+   label.textContent=name==="WIND"&&data.lang!=="en"?"VIENTO":name;
+  }
+  if(mode!=="wind")vector(slot.swellDirection,swFit,"SWELL",107,91,72);
+  if(mode!=="swell")vector(slot.windDirection,wiFit,"WIND",143,119,54);
+  return L.divIcon({className:"faro-beach-vectors-anchor",html:holder.outerHTML,
+   iconSize:[248,208],iconAnchor:[124,104]});
+ }
  function modelGridIcon(L,slot){
   const shell=document.createElement("div");shell.className="faro-lens-map-pin is-swell";
   shell.append(document.createElement("b"));
@@ -424,27 +505,27 @@ function create(opts){
   node.append(note);return node;
  }
  function frameMap(force){
-  if(!map||!latest?.spot||!deg(latest.spot.latitude)||!deg(latest.spot.longitude))return false;
-  const L=root.L,sp=latest.spot,coast=[sp.latitude,sp.longitude];
-  // A regional map is useful only if actual sample points are within a
-  // defensible local vicinity; distant model grids are NOT the beach.
-  const bounds=L.latLngBounds(coast,coast);
-  let samples=0;
-  for(const item of [latest.marineGrid,latest.weatherGrid]){
-   if(deg(item?.lat)&&deg(item?.lon)&&deg(item?.distanceKm)&&item.distanceKm<=60){
-    bounds.extend([item.lat,item.lon]);samples++;
+  const sp=latest?.spot;
+  if(!map||!sp||!deg(sp.latitude)||!deg(sp.longitude))return false;
+  const coast=[sp.latitude,sp.longitude],L=root.L;
+  // The selected beach controls the default zoom; offshore model sampling
+  // coordinates are available separately via Regional view.
+  if(mapView==="beach"){
+   map.setView(coast,viewport.clientWidth&&viewport.clientWidth<520?14:15,{animate:false});
+  }else{
+   const bounds=L.latLngBounds(coast,coast);let samples=0;
+   for(const grid of [latest.marineGrid,latest.weatherGrid]){
+    if(deg(grid?.lat)&&deg(grid?.lon)&&deg(grid?.distanceKm)&&grid.distanceKm<=60){
+     bounds.extend([grid.lat,grid.lon]);samples++;
+    }
    }
+   if(samples)map.fitBounds(bounds,{
+    padding:viewport.clientWidth&&viewport.clientWidth<520?[43,48]:[65,72],
+    maxZoom:12,animate:false
+   });
+   else map.setView(coast,12,{animate:false});
   }
-  const mobile=viewport.clientWidth&&viewport.clientWidth<520;
-  if(samples)map.fitBounds(bounds,{
-   padding:mobile?[45,48]:[65,72],maxZoom:12,animate:false
-  });
-  else map.setView(coast,13,{animate:false});
-  lastCentered=sp.id;
-  // A beach switch may arrive before the asynchronous model-grid result.
-  // Allow exactly one follow-up framing when the first nearby grid arrives.
-  pendingSampleFit=samples===0&&!force;
-  status.textContent="";
+  lastCentered=sp.id;pendingSampleFit=false;status.textContent="";
   return true;
  }
  function update(data){
@@ -465,6 +546,19 @@ function create(opts){
    markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,status));
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
   }
+  const beach=latest.spot;
+  if(beach&&deg(beach.latitude)&&deg(beach.longitude)){
+   const pos=[beach.latitude,beach.longitude];
+   if(!beachVectorMarker){
+    beachVectorMarker=L.marker(pos,{interactive:false,keyboard:false,
+     zIndexOffset:65,title:"Directional compatibility at selected beach"}).addTo(map);
+   }else beachVectorMarker.setLatLng(pos);
+   beachVectorMarker.setIcon(beachVectorIcon(L,latest));
+   beachVectorMarker.setOpacity(mapView==="beach"?1:0);
+   if(beachVectorMarker.getElement())beachVectorMarker.getElement().style.pointerEvents="none";
+  }else if(beachVectorMarker){
+   map.removeLayer(beachVectorMarker);beachVectorMarker=null;
+  }
   const grid=latest.marineGrid;
   const hasGrid=deg(grid?.lat)&&deg(grid?.lon);
   if(hasGrid){
@@ -475,8 +569,9 @@ function create(opts){
    }else modelGridMarker.setLatLng(pos);
    modelGridMarker.setIcon(modelGridIcon(L,latest.slot));
    modelGridMarker.bindPopup(modelPopup(true),{maxWidth:300});
-   modelGridMarker.setOpacity(mode==="wind"?0:1);
-   if(modelGridMarker.getElement())modelGridMarker.getElement().style.pointerEvents=mode==="wind"?"none":"auto";
+   modelGridMarker.setOpacity(mapView==="region"&&mode!=="wind"?1:0);
+   if(modelGridMarker.getElement())modelGridMarker.getElement().style.pointerEvents=
+    mapView==="region"&&mode!=="wind"?"auto":"none";
    modelGridMarker.setZIndexOffset(250);
   }else if(modelGridMarker){
    map.removeLayer(modelGridMarker);modelGridMarker=null;
@@ -491,19 +586,18 @@ function create(opts){
    }else windGridMarker.setLatLng(pos);
    windGridMarker.setIcon(windGridIcon(L,latest.slot));
    windGridMarker.bindPopup(modelPopup(false),{maxWidth:300});
-   windGridMarker.setOpacity(mode==="swell"?0:1);
-   if(windGridMarker.getElement())windGridMarker.getElement().style.pointerEvents=mode==="swell"?"none":"auto";
+   windGridMarker.setOpacity(mapView==="region"&&mode!=="swell"?1:0);
+   if(windGridMarker.getElement())windGridMarker.getElement().style.pointerEvents=
+    mapView==="region"&&mode!=="swell"?"auto":"none";
    windGridMarker.setZIndexOffset(260);
   }else if(windGridMarker){
    map.removeLayer(windGridMarker);windGridMarker=null;
   }
-  // Frame once on a beach change. If the selected beach loaded before its
-  // model grid, frame again only for the *first* nearby sample to arrive.
-  // Subsequent hourly changes preserve the surfer's pan and zoom.
-  const nearbySample=[grid,atmosphere].some(item=>
-   deg(item?.lat)&&deg(item?.lon)&&deg(item?.distanceKm)&&item.distanceKm<=60);
-  if(latest.spot&&(lastCentered!==latest.spot.id||(pendingSampleFit&&nearbySample)))
-   frameMap(false);
+  // Switching beach always returns to its local close-up; subsequent
+  // hourly changes leave the user's pan and zoom untouched.
+  if(latest.spot&&lastCentered!==latest.spot.id){
+   mapView="beach";frameMap(false);drawUi();
+  }
  }
  async function open(){
   if(loadError)return;
@@ -515,7 +609,7 @@ function create(opts){
    map=L.map(viewport,{scrollWheelZoom:false,zoomControl:true,attributionControl:true});
    map.on("dragstart",()=>{pendingSampleFit=false;});
    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    maxZoom:15,minZoom:9,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    maxZoom:17,minZoom:9,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
    }).addTo(map);
    map.setView([-32.918807,-71.512047],13);
    update(p());status.textContent="";
@@ -533,8 +627,9 @@ function create(opts){
  update(p());
  if(d.open)void open();
  return {update,getMap:()=>map,setMode:x=>{if(buttons[x]){mode=x;update(latest)}},
-  getState:()=>({mode,exposure,motion,lastCentered})};
+  setMapView:x=>{if(["beach","region"].includes(x)){mapView=x;frameMap(true);update(latest)}},
+  getState:()=>({mode,mapView,exposure,motion,lastCentered})};
 }
-root.FaroChileCoastMap=Object.freeze({create,bearingFromArrow,stateLabel,distanceToGuide,guideClass});
+root.FaroChileCoastMap=Object.freeze({create,bearingFromArrow,stateLabel,distanceToGuide,guideClass,directionalFit,fitCopy});
 if(typeof module!=="undefined"&&module.exports)module.exports=root.FaroChileCoastMap;
 })(typeof window!=="undefined"?window:globalThis);

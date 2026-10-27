@@ -46,8 +46,8 @@ test('layers are genuine selective controls and point markers remain clickable',
  for(const mode of ['combined','swell','wind'])assert.ok(code.includes('"'+mode+'"'));
  assert.match(code,/modelGridMarker\.bindPopup\(modelPopup\(true\)/);
  assert.match(code,/windGridMarker\.bindPopup\(modelPopup\(false\)/);
- assert.match(code,/modelGridMarker\.setOpacity\(mode==="wind"\?0:1\)/);
- assert.match(code,/windGridMarker\.setOpacity\(mode==="swell"\?0:1\)/);
+ assert.match(code,/modelGridMarker\.setOpacity\(mapView==="region"&&mode!=="wind"\?1:0\)/);
+ assert.match(code,/windGridMarker\.setOpacity\(mapView==="region"&&mode!=="swell"\?1:0\)/);
  assert.doesNotMatch(code,/faro-lens-partitions/);
  assert.match(code,/One primary travel arrow/);
 });
@@ -58,8 +58,8 @@ test('motion respects reduced-motion, exposure is only an editorial guide',()=>{
  assert.match(code,/Sin simulación de refracción ni altura rompiente/);
 });
 test('asset version and shared Zeeland colours remain unaffected',()=>{
- assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=3"/);
- assert.match(html,/src="coast-map\.js\?v=7"/);
+ assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=4"/);
+ assert.match(html,/src="coast-map\.js\?v=8"/);
  assert.match(html,/src="chile-forecast\.js\?v=18"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });
