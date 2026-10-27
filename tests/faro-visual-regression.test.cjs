@@ -101,7 +101,7 @@ test('wave height indicators are enclosed, based on actual model height and do n
 });
 test('coastal lens displays real swell partitions and separate atmospheric grid',()=>{
  const mapSource=read('chile/coast-map.js');
- assert.match(mapSource,/vectorSvg\(slot\)/);
+ assert.match(mapSource,/faro-lens-partitions/);
  assert.match(mapSource,/secondarySwell\?\.fromDeg/);
  assert.match(mapSource,/tertiarySwell\?\.fromDeg/);
  assert.match(mapSource,/windGridMarker=L\.marker\(pos/);
