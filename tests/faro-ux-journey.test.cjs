@@ -35,6 +35,8 @@ test('advanced model display is progressively disclosed and legends match shown 
  assert.doesNotMatch(map,/faro-lens-partitions/);
  assert.match(map,/technicalSummary\.textContent=es\?"Modelo, detalles y limitaciones"/);
  assert.match(map,/comparison\.open=wasOpen/);
+ assert.match(map,/mode==="wind"\?localGuide\.windFromDeg:localGuide\.waveFromDeg/);
+ assert.match(map,/Guía de viento/);
 });
 test('map load error retains fixed compass and declares schematic fallback',()=>{
  assert.match(map,/viewport\.replaceChildren\(schematic,compassDock\)/);
@@ -46,6 +48,7 @@ test('controls have minimum 44 px touch targets and clear focus treatment',()=>{
  assert.match(css,/\.faro-journey-nav \[data-jump\]\{[\s\S]*?min-height:44px/);
  assert.match(css,/\.faro-lens-controls \.faro-lens-recenter\{[\s\S]*?min-height:44px/);
  assert.match(css,/\.faro-lens-options>summary\{[\s\S]*?min-height:42px/);
+ assert.match(css,/#forecastPage > \.faro-journey-nav\{\s*grid-column:1\/-1!important/);
  assert.match(css,/outline:3px solid var\(--faro-selection\)!important/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
