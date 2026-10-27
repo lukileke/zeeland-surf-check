@@ -4,55 +4,88 @@
  * Coloured numerals are quality; blue is physical wave/swell data.
  * SVG artwork will be supplied by Maria; no emoji/decorative icons.
  */
+/* FARO SCORING CONTRACT v3
+ * ONE set of five colour values shared by light, dark, NL, CL and iOS.
+ * Theme changes surrounding surfaces, never the quality pigments.
+ * Labels (Poor/Fair/Good) and active selection use separate neutral ink.
+ * Keep this as the ONLY normative score colour definition.
+ */
 :root{
- --faro-score-0:#ef9b77;--faro-score-1:#efbd6e;--faro-score-2:#e0cc73;
- --faro-score-3:#b1d574;--faro-score-4:#8cc584;
+ --faro-score-0:#ef9b77; /* 0.0–1.9 copper */
+ --faro-score-1:#efbd6e; /* 2.0–3.9 amber */
+ --faro-score-2:#e0cc73; /* 4.0–5.9 sand */
+ --faro-score-3:#b1d574; /* 6.0–7.9 lime */
+ --faro-score-4:#8cc584; /* 8.0–10 olive */
+ --faro-score-color:var(--fg);
  --faro-wave:#69b8d2;--faro-wind:#d9b47b;
  --faro-reading-measure:64ch;--faro-corner:16px;
- --surf-low:var(--faro-score-0);--surf-poor:var(--faro-score-1);
- --surf-fair:var(--faro-score-2);--surf-good:var(--faro-score-3);
+ --surf-low:var(--faro-score-0);
+ --surf-poor:var(--faro-score-1);
+ --surf-fair:var(--faro-score-2);
+ --surf-good:var(--faro-score-3);
  --surf-great:var(--faro-score-4);
 }
 html[data-theme="light"]{
- --faro-score-0:#a94a33;--faro-score-1:#91601d;--faro-score-2:#79651b;
- --faro-score-3:#4c712b;--faro-score-4:#2f6c43;
  --faro-wave:#176b94;--faro-wind:#91601d;
 }
 html:not([data-theme="light"]){
- --faro-score-0:#ef9b77;--faro-score-1:#efbd6e;--faro-score-2:#e0cc73;
- --faro-score-3:#b1d574;--faro-score-4:#8cc584;
+ --faro-wave:#69b8d2;--faro-wind:#d9b47b;
 }
-html[data-theme="light"] .brand-band-verylow,html:not([data-theme="light"]) .brand-band-verylow{--brand-score-color:var(--faro-score-0);--brand-score-ink:var(--faro-score-0)}
-html[data-theme="light"] .brand-band-low,html:not([data-theme="light"]) .brand-band-low{--brand-score-color:var(--faro-score-1);--brand-score-ink:var(--faro-score-1)}
-html[data-theme="light"] .brand-band-mid,html:not([data-theme="light"]) .brand-band-mid{--brand-score-color:var(--faro-score-2);--brand-score-ink:var(--faro-score-2)}
-html[data-theme="light"] .brand-band-regular,html:not([data-theme="light"]) .brand-band-regular{--brand-score-color:var(--faro-score-3);--brand-score-ink:var(--faro-score-3)}
-html[data-theme="light"] .brand-band-high,html:not([data-theme="light"]) .brand-band-high{--brand-score-color:var(--faro-score-4);--brand-score-ink:var(--faro-score-4)}
-/* The score-band token always wins over the older tone-* CSS aliases. */
+/* Score bands, attached to their OWN node, not a container ancestor. */
+html .brand-band-verylow{--brand-score-color:var(--faro-score-0);--brand-score-ink:var(--faro-score-0)}
+html .brand-band-low{--brand-score-color:var(--faro-score-1);--brand-score-ink:var(--faro-score-1)}
+html .brand-band-mid{--brand-score-color:var(--faro-score-2);--brand-score-ink:var(--faro-score-2)}
+html .brand-band-regular{--brand-score-color:var(--faro-score-3);--brand-score-ink:var(--faro-score-3)}
+html .brand-band-high{--brand-score-color:var(--faro-score-4);--brand-score-ink:var(--faro-score-4)}
+/* Resolve conflicts with historic tone-* aliases and Chile component styles. */
 html :is(#forecastPage,#dayview,#bestPage,#boardPage)
  :is(.day-chip,.score-tint,.score,.hero-score,.score-feature,.daily-verdict,
- .chile-session-rating,.chile-ranking,.slots>button)[class*="brand-band-"]{
+     .chile-session-rating,.chile-ranking,.slots>button)[class*="brand-band-"]{
  --tone:var(--brand-score-ink)!important;
  --quality-ink:var(--brand-score-ink)!important;
  --quality-accent:var(--brand-score-ink)!important;
  --quality-border:var(--brand-score-ink)!important;
  --cl-score-numeral:var(--brand-score-ink)!important;
 }
-html #forecastPage .day-chip[class*="brand-band-"] :is(strong,.day-chip-score,.chile-chip-number),
-html #dayview .slots button[class*="brand-band-"] :is(b,.chile-slot-score,.chile-slot-quality),
+/* Full specificity is necessary: previous styles use !important + IDs +
+ * a theme attribute and the final source order alone does not win. */
+html[data-theme="light"] #forecastPage #dayStripItems .day-chip[class*="brand-band-"] > strong,
+html:not([data-theme="light"]) #forecastPage #dayStripItems .day-chip[class*="brand-band-"] > strong,
+html #forecastPage #dayStripItems .day-chip[class*="brand-band-"] :is(.day-chip-score,.chile-chip-number),
+html #forecastPage .picker .score-chip[class*="brand-band-"],
+html #dayview .hourly-section .slots button[class*="brand-band-"] :is(b,.chile-slot-score),
+html #dayview .session-glance .hero-score[class*="brand-band-"] .hero-score-value,
+html #bestPage .hero-rank .hero-score[class*="brand-band-"] .hero-score-value,
 html #dayview .chile-session-rating[class*="brand-band-"] .chile-session-score,
-html #bestPage .chile-ranking[class*="brand-band-"] strong,
+html #bestPage .highlight.chile-ranking[class*="brand-band-"] strong,
+html #bestPage .rank-list .score-tint[class*="brand-band-"],
 html #boardPage .faro-result-scores .score-tint[class*="brand-band-"],
-html :is(#forecastPage,#bestPage) .hero-score[class*="brand-band-"] .hero-score-value{
+html #forecastPage .day-chip[class*="brand-band-"] .day-chip-number,
+html :is(#dayview,#bestPage) .score-feature[class*="brand-band-"] .value{
  color:var(--brand-score-ink)!important;
 }
-html #forecastPage .day-chip[class*="brand-band-"] .day-chip-grade{
- border-color:var(--brand-score-ink)!important;color:var(--fg)!important;
- background:color-mix(in srgb,var(--brand-score-ink) 10%,transparent)!important;
+/* A selection is interaction status, never a quality rating.
+ * All selected tiles use FARO's coast-teal stroke regardless of score. */
+html #forecastPage #dayStripItems .day-chip.selected[class*="brand-band-"]{
+ border:2px solid var(--faro-selection)!important;
+ background:var(--faro-raised,var(--panel))!important;
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--faro-selection) 16%,transparent)!important;
 }
-html #forecastPage .day-chip.selected[class*="brand-band-"]{
- border-color:var(--brand-score-ink)!important;
- box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--brand-score-ink) 30%,transparent)!important;
+/* The quality word has ordinary text colour and a quiet neutral pill.
+ * Do not repeat numeric quality pigments on verbal ratings. */
+html #forecastPage #dayStripItems .day-chip[class*="brand-band-"]
+ :is(.day-chip-grade,.chile-chip-grade){
+ color:var(--fg)!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ background:var(--tile)!important;
+ box-shadow:none!important;
 }
+html #dayview :is(.hero-score,.chile-session-rating)[class*="brand-band-"]
+ :is(.quality-pill,.chile-session-label){
+ color:var(--fg)!important;
+ border-color:var(--faro-line,var(--border))!important;
+}
+/* Physical swell height is not the quality score; keep its hue separate. */
 html #forecastPage .day-signal-metric:first-child strong,
 html :is(#forecastPage,#dayview) .wave-size{
  color:var(--faro-wave)!important;
