@@ -24,19 +24,32 @@ function contrast(a,b){
  return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
 }
 test('same final FARO stylesheet loaded in Zeeland and Chile',()=>{
- assert.match(nl,/href="assets\/faro-visual-system-v2\.css\?v=2"/);
- assert.match(cl,/href="\.\.\/assets\/faro-visual-system-v2\.css\?v=2"/);
+ assert.match(nl,/href="assets\/faro-visual-system-v2\.css\?v=3"/);
+ assert.match(cl,/href="\.\.\/assets\/faro-visual-system-v2\.css\?v=3"/);
  assert.ok(nl.indexOf('faro-visual-system-v2.css')>nl.indexOf('faro-desktop.css'));
  assert.ok(cl.indexOf('faro-visual-system-v2.css')>cl.indexOf('chile-visual-contract.css'));
 });
-test('five brand bands have sufficient contrast in both themes',()=>{
- const light=['a94a33','91601d','79651b','4c712b','2f6c43'];
- const dark=['ef9b77','efbd6e','e0cc73','b1d574','8cc584'];
- for(let i=0;i<5;i++){
-  assert.match(css,new RegExp('--faro-score-'+i+':'));
-  assert.ok(contrast(light[i],'f6f9f8')>=4.5,'light band '+i+' fails WCAG AA');
-  assert.ok(contrast(dark[i],'101517')>=4.5,'dark band '+i+' fails WCAG AA');
+test('one immutable FARO palette across LIGHT, DARK and Scriptable',()=>{
+ const canonical=['#ef9b77','#efbd6e','#e0cc73','#b1d574','#8cc584'];
+ // There must be exactly 5 pigment definitions. No second set for light.
+ const defs=[...css.matchAll(/--faro-score-([0-4]):(#[a-f0-9]{6})/gi)]
+   .map(m=>({index:Number(m[1]),hex:m[2].toLowerCase()}));
+ assert.equal(defs.length,5,'duplicated theme-specific score pigment overrides');
+ assert.deepEqual(defs.map(x=>x.hex),canonical);
+ const widget=read('zeeland-widget.js');
+ for(const hex of canonical){
+  assert.ok(widget.includes('new Color("'+hex+'")'),'widget mismatch '+hex);
  }
+ assert.doesNotMatch(css,/html\[data-theme="light"\]\s*\{[^}]*--faro-score-/);
+ for(const band of ['verylow','low','mid','regular','high']){
+  assert.ok(css.includes('html[data-theme="light"] .brand-band-'+band));
+  assert.ok(css.includes('html:not([data-theme="light"]) .brand-band-'+band));
+ }
+});
+test('selection and label colour do not pretend to be the rating',()=>{
+ assert.match(css,/\.day-chip\.selected\[class\*="brand-band-"\][^{]*\{\s*border:2px solid var\(--faro-selection\)/);
+ assert.match(css,/\.chile-chip-grade\)[^{]*\{\s*color:var\(--fg\)/);
+ assert.match(css,/\.chile-chip-number\)/);
 });
 test('score hue thresholds consistent across country and Scriptable widget',()=>{
  assert.match(nl,/v>=8\?'tone-great':v>=6\?'tone-good':v>=4\?'tone-fair':v>=2\?'tone-poor'/);
