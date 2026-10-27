@@ -324,22 +324,27 @@ function create(opts){
   compassDock.append(windCaption);
   compassDock.setAttribute("aria-label",(es?"Brújula fija, swell desde ":"Fixed compass, swell from ")+dir(slot.swellDirection)+
    (es?", viento desde ":", wind from ")+dir(slot.windDirection));
-  // Tiny legend below map, no floating cards blocking the coast.
+  // The legend uses the same signal colour as the beach arrow, never a
+  // fixed ocean/wind pigment that could contradict the directional assessment.
   legend.replaceChildren();
+  const localProfile=v.profiles?.[v.spot?.id]||{};
+  const swFit=directionalFit(slot.swellDirection,localProfile.waveFromDeg);
+  const wiFit=directionalFit(slot.windDirection,localProfile.windFromDeg,slot.windKmh,true);
+  const palette={inside:"#2b8968",edge:"#a67e2c",outside:"#b66049",strong:"#a84b47",unknown:"#5b7882"};
   const entries=[];
   if(mode!=="wind"){
-   entries.push(["#167fa0",es?"Swell principal":"Primary swell",false]);
+   entries.push([palette[swFit],es?"Swell · "+fitCopy(swFit,v.lang):"Swell · "+fitCopy(swFit,v.lang),false]);
    // Secondary and tertiary partitions are read in the detail panel,
    // not drawn on this map. Never claim dashed overlays that are absent.
   }
-  if(mode!=="swell")entries.push(["#ba7628",es?"Viento":"Wind",false]);
+  if(mode!=="swell")entries.push([palette[wiFit],(es?"Viento":"Wind")+" · "+fitCopy(wiFit,v.lang),false]);
   for(const [color,label,dashed] of entries){
    const item=document.createElement("span");item.className="faro-lens-legend-key";
    const line=document.createElement("i");line.style.borderTop="3px "+(dashed?"dashed ":"solid ")+color;
    item.append(line,document.createTextNode(label));legend.append(item);
   }
   const extra=document.createElement("small");extra.textContent=es?
-   "Rumbos del modelo · no refracción local":"Model bearings · not local refraction";
+   "Colores = compatibilidad direccional con la guía; no son una puntuación del surf":"Colours = directional guide compatibility, not a surf rating";
   legend.append(extra);
   const beachKey=document.createElement("span");beachKey.className="faro-lens-map-status";
   beachKey.textContent=es?"Puntos en playas = coincidencia angular de guía, no calidad":
