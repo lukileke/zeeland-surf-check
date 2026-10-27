@@ -40,6 +40,28 @@ html[data-theme="light"]{
 html:not([data-theme="light"]){
  --faro-wave:#69b8d2;--faro-wind:#d9b47b;
 }
+/* FARO interaction hue is coastal teal, distinct from physical waves
+ * (blue) and from numeric surf quality (five copper-to-olive pigments). */
+html[data-theme="light"]{--faro-selection:#176d78}
+html:not([data-theme="light"]){--faro-selection:#90cdd1}
+html main>.app-nav button.active,
+html main>.app-nav button[aria-pressed="true"]{
+ border-color:var(--faro-selection)!important;
+ color:var(--fg)!important;
+}
+html #forecastPage .picker summary b,
+html #forecastPage .chile-spot-picker select{
+ color:var(--fg)!important;
+}
+html #forecastPage .picker[open] summary,
+html #forecastPage .picker summary:focus-visible{
+ border-color:var(--faro-selection)!important;
+ outline-color:var(--faro-selection)!important;
+}
+html[data-theme="light"] #dayview .session-glance::before,
+html[data-theme="light"] #bestPage .highlight.hero-rank::before{
+ background:var(--faro-selection)!important;
+}
 /* Score bands, attached to their OWN node, not a container ancestor. */
 html[data-theme="light"] .brand-band-verylow,
 html:not([data-theme="light"]) .brand-band-verylow{
