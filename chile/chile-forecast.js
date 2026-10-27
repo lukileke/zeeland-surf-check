@@ -20,7 +20,7 @@ function waveBars(h){
  const x=el("div",null,"chile-wave-bars faro-meter-bars "+waveSize(h));
  x.setAttribute("role","img");
  x.setAttribute("aria-label",tr("Indicador de oleaje oceánico: ","Offshore model wave indicator: ")+num(h)+" m");
- const count=ok(h)?Math.max(1,Math.min(8,Math.round(h/.25))):0;
+ const count=ok(h)?Math.max(0,Math.min(8,Math.round(h/.25))):0;
  for(let i=0;i<8;i++){
   const b=el("span",null,i<count?"on":"");
   b.style.height=(7+i*2)+"px";x.append(b);
