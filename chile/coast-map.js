@@ -369,32 +369,7 @@ function create(opts){
   shell.append(arrow);
   // Secondary and tertiary partitions remain in model details and popup.
   // Never draw intersecting arrows from the same model sample.
- if(mode==="swell"){
-   // Compact model-component fan anchored at ONE marine sample location.
-   // Dashed strokes indicate separate partitions, never refracted pathways.
-   arrow.style.opacity="0";
-   const svg=document.createElementNS(NS,"svg");
-   svg.setAttribute("viewBox","0 0 82 82");svg.classList.add("faro-lens-partitions");
-   const parts=[
-    {from:slot?.swellDirection,color:"#147c9d",length:32,width:3.5,dash:null,offset:0},
-    {from:slot?.secondarySwell?.fromDeg,color:"#8384b8",length:25,width:2.5,dash:"3 4",offset:-4},
-    {from:slot?.tertiarySwell?.fromDeg,color:"#95a5b0",length:19,width:2,dash:"2 5",offset:4}
-   ];
-   for(const part of parts){
-    const az=bearingFromArrow(part.from);if(az===null)continue;
-    const g=document.createElementNS(NS,"g");g.setAttribute("transform","rotate("+az+" 41 41)");
-    const line=document.createElementNS(NS,"line");
-    for(const [k,v] of Object.entries({x1:41+part.offset,y1:41,x2:41+part.offset,y2:41-part.length,
-      stroke:part.color,"stroke-width":part.width,"stroke-linecap":"round"}))line.setAttribute(k,String(v));
-    if(part.dash)line.setAttribute("stroke-dasharray",part.dash);
-    g.append(line);
-    const head=document.createElementNS(NS,"path");head.setAttribute("d","M"+(36+part.offset)+" "+(46-part.length)+
-      " L"+(41+part.offset)+" "+(40-part.length)+" L"+(46+part.offset)+" "+(46-part.length));
-    head.setAttribute("fill","none");head.setAttribute("stroke",part.color);
-    head.setAttribute("stroke-width",String(part.width));g.append(head);svg.append(g);
-   }
-   shell.append(svg);
-  }
+  // One primary travel arrow in the marine sample pin; partitions in details.
   return L.divIcon({className:"faro-map-grid-marker",html:shell.outerHTML,iconSize:[48,48],iconAnchor:[24,24]});
  }
  function windGridIcon(L,slot){
