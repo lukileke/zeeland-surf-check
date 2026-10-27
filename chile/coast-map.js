@@ -279,7 +279,121 @@ function create(opts){
    "Puntos de referencia, no bancos exactos. El marcador de swell está en la celda oceánica real del modelo cuando se conoce. Flecha = rumbo de viaje (dirección DESDE +180°), no refracción ni altura rompiente. © OpenStreetMap contributors.":
    "Reference points, not exact surf banks. The swell marker is placed at the actual offshore model grid cell where known. Arrow = travel bearing (FROM +180°), not refraction or breaking height. © OpenStreetMap contributors.";
  }
- function drawUi(){}
+ function drawUi(){
+  const v=latest||p(),slot=v.slot||{},es=v.lang!=="en",dir=x=>deg(x)?Math.round(x)+"°":"—";
+  for(const [key,label] of Object.entries({combined:es?"Combinado":"Combined",swell:"Swell",wind:es?"Viento":"Wind"})){
+   buttons[key].textContent=label;buttons[key].classList.toggle("active",key===mode);
+   buttons[key].setAttribute("aria-pressed",String(key===mode));
+  }
+  exposureFlag.caption.textContent=es?"Orientación":"Exposure";
+  motionFlag.caption.textContent=es?"Movimiento":"Motion";
+  motionFlag.input.checked=motion;exposureFlag.input.checked=exposure;
+  viewport.classList.toggle("faro-lens-motion",motion&&!reduced());
+  // The compass is attached to viewport, NOT to the model sample map marker.
+  // It therefore cannot vanish when a zoom/pan moves a marine grid outside view.
+  compassDock.replaceChildren();
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 80 80");
+  svg.setAttribute("aria-hidden","true");compassDock.append(svg);
+  function shape(tag,attrs={},parent=svg){
+   const node=document.createElementNS(NS,tag);
+   for(const [k,val] of Object.entries(attrs))node.setAttribute(k,String(val));
+   parent.append(node);return node;
+  }
+  shape("circle",{cx:40,cy:40,r:32,fill:"#f4faf9",stroke:"#a8c6c8"});
+  shape("circle",{cx:40,cy:40,r:22,fill:"none",stroke:"#c0d8d9","stroke-dasharray":"2 4"});
+  const north=shape("text",{x:40,y:12,"text-anchor":"middle","font-size":10,"font-weight":800,fill:"#315b62"});
+  north.textContent="N";
+  const ranges=v.profiles?.[v.spot?.id]?.waveFromDeg||[];
+  if(exposure)for(const r of ranges.filter(r=>r.length===2&&r.every(deg))){
+   let [a,b]=r;const width=((b-a+360)%360)||360,steps=Math.ceil(width/8);
+   const points=[[40,40]];
+   for(let i=0;i<=steps;i++){
+    const angle=(a+(i/steps)*width)*Math.PI/180;
+    points.push([40+30*Math.sin(angle),40-30*Math.cos(angle)]);
+   }
+   shape("polygon",{points:points.map(pair=>pair.join(",")).join(" "),fill:"#55aab3","fill-opacity":.23});
+  }
+  const needle=(bearing,col,thickness)=>{
+   const direction=bearingFromArrow(bearing);
+   if(direction===null)return;
+   const g=shape("g",{transform:"rotate("+direction+" 40 40)"});
+   shape("path",{d:"M40 54 V24 M35 30 L40 23 L45 30",fill:"none",stroke:col,
+    "stroke-width":thickness,"stroke-linecap":"round","stroke-linejoin":"round"},g);
+  };
+  if(mode!=="wind")needle(slot.swellDirection,"#147c9d",3.5);
+  if(mode!=="swell")needle(slot.windDirection,"#b97730",2.4);
+  shape("circle",{cx:40,cy:40,r:2.5,fill:"#244b52"});
+  const caption=document.createElement("span");caption.className="faro-lens-compass-caption";
+  caption.textContent=(es?"NORTE · ":"NORTH · ")+(v.spot?.shortName||"FARO");
+  compassDock.append(caption);
+  compassDock.setAttribute("aria-label",(es?"Brújula fija, swell desde ":"Fixed compass, swell from ")+dir(slot.swellDirection)+
+   (es?", viento desde ":", wind from ")+dir(slot.windDirection));
+  // Tiny legend below map, no floating cards blocking the coast.
+  legend.replaceChildren();
+  const entries=[];
+  if(mode!=="wind"){
+   entries.push(["#167fa0",es?"Swell principal":"Primary swell",false]);
+   if(mode==="swell"&&deg(slot.secondarySwell?.fromDeg))entries.push(["#8384b8",es?"Secundario":"Secondary",true]);
+   if(mode==="swell"&&deg(slot.tertiarySwell?.fromDeg))entries.push(["#95a5b0",es?"Terciario":"Tertiary",true]);
+  }
+  if(mode!=="swell")entries.push(["#ba7628",es?"Viento":"Wind",false]);
+  for(const [color,label,dashed] of entries){
+   const item=document.createElement("span");item.className="faro-lens-legend-key";
+   const line=document.createElement("i");line.style.borderTop="3px "+(dashed?"dashed ":"solid ")+color;
+   item.append(line,document.createTextNode(label));legend.append(item);
+  }
+  const extra=document.createElement("small");extra.textContent=es?
+   "Flechas = dirección de viaje · se conserva la brújula al hacer zoom":
+   "Arrows = travel direction · compass remains visible on zoom";
+  legend.append(extra);
+  comparison.replaceChildren();
+  const heading=document.createElement("div");heading.className="faro-lens-beaches-header";
+  const title=document.createElement("strong");title.textContent=es?"¿QUÉ PASA EN CADA PLAYA?":"READ EACH BEACH";
+  const blurb=document.createElement("small");blurb.textContent=es?
+   "Comparación con orientaciones publicadas, no simulación de rompiente":
+   "Published guide orientations, not a breaking-wave simulation";
+  heading.append(title,blurb);comparison.append(heading);
+  const grid=document.createElement("div");grid.className="faro-lens-beaches-grid";comparison.append(grid);
+  for(const sp of v.spots||[]){
+   const bounds=v.profiles?.[sp.id]?.waveFromDeg||[];
+   const status=guideClass(slot.swellDirection,bounds);
+   const button=document.createElement("button");button.type="button";
+   button.className="faro-lens-beach"+(v.spot?.id===sp.id?" is-current":"");
+   button.dataset.guide=status;button.setAttribute("aria-pressed",String(v.spot?.id===sp.id));
+   const name=document.createElement("strong");name.textContent=sp.shortName||sp.name;
+   const info=document.createElement("small");info.textContent=status==="inside"?
+    (es?"Dentro del rango guía":"Within guide range"):status==="edge"?
+    (es?"Cerca del rango guía":"Near guide range"):status==="outside"?
+    (es?"Fuera del rango guía":"Outside guide range"):
+    (es?"Orientación no disponible":"Orientation unavailable");
+   button.append(name,info);
+   button.addEventListener("click",()=>{if(v.spot?.id!==sp.id)opts.onSelectSpot?.(sp.id)});
+   grid.append(button);
+  }
+  const caveat=document.createElement("p");caveat.className="faro-lens-uncertainty";
+  caveat.textContent=es?
+   "Comparación regional de rumbo, sin corregir por bancos, sombra costera, profundidad o refracción. Selecciona la playa para cargar su propio pronóstico.":
+   "Regional directional comparison only. Does not resolve local sandbanks, sheltering, bathymetry or refraction. Choose a beach to load its own forecast.";
+  comparison.append(caveat);
+  const marine=v.marineGrid,atmos=v.weatherGrid;
+  details.replaceChildren();
+  const detail=document.createElement("div");detail.className="faro-lens-selected-row";
+  const headline=document.createElement("strong");headline.textContent=es?"LECTURA DEL MODELO":"MODEL POINT READOUT";
+  const values=document.createElement("span");
+  values.textContent=(deg(slot.swellHeightM)?slot.swellHeightM.toFixed(1)+" m · ":"")+
+   (deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s · ":"")+
+   (es?"swell desde ":"swell from ")+dir(slot.swellDirection)+"   /   "+
+   (es?"viento ":"wind ")+(deg(slot.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—")+
+   " · "+dir(slot.windDirection);
+  detail.append(headline,values);
+  const foot=document.createElement("small");
+  foot.textContent=(es?"Muestra marina ":"Marine sample ")+
+   (deg(marine?.distanceKm)?marine.distanceKm.toFixed(1)+" km":"—")+" · "+
+   (es?"atmósfera ":"atmosphere ")+(deg(atmos?.distanceKm)?atmos.distanceKm.toFixed(1)+" km":"—")+
+   (es?" de cada referencia costera · Modelo, no observación":" from each coastal reference · Model, not observation");
+  detail.append(foot);details.append(detail);
+ }
+
  function markerIcon(L,spot,selected){
   // A named beach reference pin, not a wave-front observation.
   const base=document.createElement("div");
