@@ -119,3 +119,12 @@ html #chileCoastMap .faro-map-reading{border:1px solid var(--faro-editorial-hair
 @media(prefers-reduced-motion:reduce){
  #chileCoastMap .faro-lens-motion .faro-lens-map-pin::after{animation:none!important}
 }
+/* Partition vectors are small model-grid glyphs, not wave paths or isochrons. */
+#chileCoastMap .faro-lens-partitions{
+ position:absolute;width:82px;height:82px;left:50%;top:50%;
+ transform:translate(-50%,-50%);overflow:visible;pointer-events:none;
+ filter:drop-shadow(0 1px 1px #fff);
+}
+#chileCoastMap .faro-lens-map-pin.is-swell:has(.faro-lens-partitions){
+ background:color-mix(in srgb,#e9f7f8 88%,transparent);
+}
