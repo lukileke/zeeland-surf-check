@@ -4,7 +4,7 @@
 ## Brand source of truth
 1. Zeeland is the **canonical presentation**, not Chile. Shared logo: original designer FARO rescue-ring O, in light and dark assets. Headline: Archivo Black; UI/body: Manrope. No emojis or improvised illustrative icons. For María's assets use `assets/faro-icon-manifest.json` and her 68-item brief only.
 2. Surfaces: atmospheric coastal neutrals; quality score is a 5-step copper→amber→sand→lime→olive sequence; sea measurements are blue, wind directional overlay ochre, and danger warnings follow a SEPARATE safety palette. Do not colour wave height as though it were quality.
-3. The hue of a numeric /10 score is a strict interval **[0,2), [2,4), [4,6), [6,8), [8,10]** in BOTH countries and Scriptable. Words such as Poor/Fair/Good may have different thresholds by design; do not infer a numeric band from a verbal label.
+3. The hue of a numeric /10 score uses **[0,2), [2,4), [4,6), [6,8), [8,10]** in both countries and Scriptable. The five EXACT hex colours are `#ef9b77 / #efbd6e / #e0cc73 / #b1d574 / #8cc584` in LIGHT AND DARK. Do not darken the light palette. Words such as Poor/Fair/Good have separate classification thresholds and are rendered in neutral text; selected cards and keyboard focus always use the coastal-teal interaction stroke.
 4. CSS cascade: `assets/faro-visual-system-v2.css` is the final-loaded normative layer for both countries. Future refactors should migrate old selectors there and remove duplicated rules in `faro-ui.css`, `faro-brand.css`, `faro-colours.css` and the Chile override, rather than add more patch stylesheets. Do not collapse scientific caveats into marketing tags.
 
 ## Information architecture
@@ -33,7 +33,7 @@
 ```sh
 node --test tests/faro-visual-regression.test.cjs
 ```
-This test guards source invariants, colour contrast, maths and provenance only, not actual browser layout. Production rollout also needs browser/device screenshots and manual accessibility inspection.
+This test guards source invariants, fixed score pigments, navigation selection, maths and provenance only, not actual browser layout or WCAG contrast of bright pigments on white. Production rollout also needs browser/device screenshots and manual accessibility inspection.
 
 ## Current known limitations
 - The project still has historical CSS selectors and `!important` rules that should be progressively consolidated; the new final CSS contract stops most visible conflicts but does not automatically remove technical debt.
