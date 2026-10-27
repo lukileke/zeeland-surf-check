@@ -710,6 +710,21 @@ async function initialize(){
   setLanguage();state.cache.clear();void refresh(true);
  });
  $("themeToggle").addEventListener("click",()=>setTheme(true));
+ // Four direct, keyboard-accessible jumps. Disclosures open before scrolling;
+ // no hidden target or dead anchor, and motion preferences are respected.
+ for(const button of document.querySelectorAll(".faro-journey-nav [data-jump]")){
+  button.addEventListener("click",()=>{
+   const target=$(button.dataset.jump);if(!target)return;
+   if(target.tagName==="DETAILS")target.open=true;
+   const motion=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+   const section=target.closest(".hourly-section")||target;
+   section.scrollIntoView({behavior:motion,block:"start"});
+   if(target.tagName==="DETAILS"){
+    const head=target.querySelector("summary");
+    if(head){head.setAttribute("tabindex","-1");head.focus({preventScroll:true})}
+   }
+  });
+ }
  const dnaButton=$("openSpotDNA"),dnaDisclosure=$("spotInsightExpand");
  if(dnaButton&&dnaDisclosure){
   dnaButton.addEventListener("click",()=>{
