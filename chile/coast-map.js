@@ -25,6 +25,20 @@ function loadLeaflet(){
 }
 const deg=x=>typeof x==="number"&&Number.isFinite(x);
 function bearingFromArrow(value){return deg(value)?(((value+180)%360)+360)%360:null}
+function distanceToGuide(value,ranges){
+ if(!deg(value)||!Array.isArray(ranges))return null;
+ const valid=ranges.filter(r=>Array.isArray(r)&&r.length===2&&r.every(deg));
+ if(!valid.length)return null;
+ const wrap=a=>((a%360)+360)%360,gap=(a,b)=>Math.abs(((wrap(a)-wrap(b)+540)%360)-180);
+ return Math.min(...valid.map(([a,b])=>{
+  const x=wrap(value),lo=wrap(a),hi=wrap(b);
+  return (lo<=hi?x>=lo&&x<=hi:x>=lo||x<=hi)?0:Math.min(gap(x,lo),gap(x,hi));
+ }));
+}
+const guideClass=(value,ranges)=>{
+ const d=distanceToGuide(value,ranges);
+ return d===null?"unknown":d===0?"inside":d<=25?"edge":"outside";
+};
 function stateLabel(value,lang){
  const es=lang!=="en";
  return value==="convergent"?(es?"Guías coinciden":"Guides agree"):
@@ -35,10 +49,37 @@ function create(opts){
  const host=opts.container;const p=()=>opts.getCurrent?.()||{};
  const d=opts.disclosure;
  if(!host||!d)return null;
- let map=null,markers=new Map(),modelGridMarker=null,windGridMarker=null,opened=false,latest=null,loadError=false;
+ let map=null,markers=new Map(),modelGridMarker=null,windGridMarker=null,latest=null,loadError=false;
+ let mode="combined",exposure=false,motion=false,inspected="marine",lastCentered=null;
+ const reduced=()=>typeof root.matchMedia==="function"&&root.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const controls=document.createElement("div");controls.className="faro-lens-controls";host.append(controls);
+ const modes=document.createElement("div");modes.className="faro-lens-segments";
+ modes.setAttribute("role","group");modes.setAttribute("aria-label","Map model layer");
+ controls.append(modes);
+ const buttons={};
+ for(const id of ["combined","swell","wind"]){
+  const button=document.createElement("button");button.type="button";button.dataset.layer=id;
+  button.addEventListener("click",()=>{mode=id;update(latest)});
+  buttons[id]=button;modes.append(button);
+ }
+ const flags=document.createElement("div");flags.className="faro-lens-flags";controls.append(flags);
+ function flag(type,onChange){
+  const label=document.createElement("label");label.className="faro-lens-flag";
+  const input=document.createElement("input");input.type="checkbox";
+  const caption=document.createElement("span");label.append(input,caption);flags.append(label);
+  input.addEventListener("change",()=>onChange(input.checked));return {input,caption};
+ }
+ const exposureFlag=flag("exposure",x=>{exposure=x;update(latest)});
+ const motionFlag=flag("motion",x=>{motion=x&&!reduced();update(latest)});
+ if(reduced())motionFlag.input.disabled=true;
  const section=document.createElement("div");section.className="faro-map-wrap";host.append(section);
  const viewport=document.createElement("div");viewport.className="faro-map-viewport";viewport.setAttribute("aria-label","Valparaíso · mapa de spots");section.append(viewport);
+ const compassDock=document.createElement("div");compassDock.className="faro-lens-compass-dock";
+ compassDock.setAttribute("role","img");viewport.append(compassDock);
  const brief=document.createElement("div");brief.className="faro-map-brief";brief.setAttribute("aria-live","polite");section.append(brief);
+ const legend=document.createElement("div");legend.className="faro-lens-footer-legend";host.append(legend);
+ const comparison=document.createElement("section");comparison.className="faro-lens-beaches";host.append(comparison);
+ const details=document.createElement("div");details.className="faro-lens-selected-detail";host.append(details);
  const attr=document.createElement("p");attr.className="faro-map-note";attr.textContent="";section.append(attr);
  // Always render an accurate relative-coordinate fallback BEFORE requesting
  // any external map library or tiles. This is a lat/lon reference-point plot,
@@ -238,6 +279,7 @@ function create(opts){
    "Puntos de referencia, no bancos exactos. El marcador de swell está en la celda oceánica real del modelo cuando se conoce. Flecha = rumbo de viaje (dirección DESDE +180°), no refracción ni altura rompiente. © OpenStreetMap contributors.":
    "Reference points, not exact surf banks. The swell marker is placed at the actual offshore model grid cell where known. Arrow = travel bearing (FROM +180°), not refraction or breaking height. © OpenStreetMap contributors.";
  }
+ function drawUi(){}
  function markerIcon(L,spot,selected){
   // A named beach reference pin, not a wave-front observation.
   const base=document.createElement("div");
@@ -320,7 +362,7 @@ function create(opts){
    iconSize:[155,46],iconAnchor:[12,34]});
  }
  function update(data){
-  latest=data||p();describe();drawSchematic();
+  latest=data||p();describe();drawSchematic();drawUi();
   if(!map)return;
   const L=root.L,sel=latest.spot?.id;
   for(const sp of (latest.spots||[]).filter(s=>Number.isFinite(s.latitude)&&Number.isFinite(s.longitude))){
@@ -360,7 +402,8 @@ function create(opts){
   }else if(windGridMarker){
    map.removeLayer(windGridMarker);windGridMarker=null;
   }
-  if(latest.spot&&deg(latest.spot.latitude)&&deg(latest.spot.longitude)){
+  if(latest.spot&&deg(latest.spot.latitude)&&deg(latest.spot.longitude)&&lastCentered!==latest.spot.id){
+   lastCentered=latest.spot.id;
    const coast=[latest.spot.latitude,latest.spot.longitude];
    // Display both actual model sample and documented beach reference if nearby.
    if(hasGrid&&deg(grid.distanceKm)&&grid.distanceKm<=25){
@@ -396,8 +439,9 @@ function create(opts){
  d.addEventListener("toggle",()=>{if(d.open)void open();});
  update(p());
  if(d.open)void open();
- return {update,getMap:()=>map};
+ return {update,getMap:()=>map,setMode:x=>{if(buttons[x]){mode=x;update(latest)}},
+  getState:()=>({mode,exposure,motion,lastCentered})};
 }
-root.FaroChileCoastMap=Object.freeze({create,bearingFromArrow,stateLabel});
+root.FaroChileCoastMap=Object.freeze({create,bearingFromArrow,stateLabel,distanceToGuide,guideClass});
 if(typeof module!=="undefined"&&module.exports)module.exports=root.FaroChileCoastMap;
 })(typeof window!=="undefined"?window:globalThis);
