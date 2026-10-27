@@ -11,11 +11,11 @@
  --score-lime:#6E9E43;
  --score-olive:#547642;
  /* Single shared score ink palette across both themes. */
- --score-copper-night:#F0A46D;
- --score-amber-night:#F0BF69;
- --score-sand-night:#E3D471;
- --score-lime-night:#B0DB75;
- --score-olive-night:#96C67A;
+ --score-copper-night:var(--faro-score-0);
+ --score-amber-night:var(--faro-score-1);
+ --score-sand-night:var(--faro-score-2);
+ --score-lime-night:var(--faro-score-3);
+ --score-olive-night:var(--faro-score-4);
  --brand-score-verylow:var(--score-copper);
  --brand-score-low:var(--score-amber);
  --brand-score-mid:var(--score-sand);
@@ -23,34 +23,34 @@
  --brand-score-high:var(--score-olive);
 }
 html[data-theme="light"] .brand-band-verylow{
- --brand-score-color:var(--score-copper);--brand-score-ink:var(--score-copper-night);
+ --brand-score-color:var(--faro-score-0);--brand-score-ink:var(--faro-score-0);
 }
 html[data-theme="light"] .brand-band-low{
- --brand-score-color:var(--score-amber);--brand-score-ink:var(--score-amber-night);
+ --brand-score-color:var(--faro-score-1);--brand-score-ink:var(--faro-score-1);
 }
 html[data-theme="light"] .brand-band-mid{
- --brand-score-color:var(--score-sand);--brand-score-ink:var(--score-sand-night);
+ --brand-score-color:var(--faro-score-2);--brand-score-ink:var(--faro-score-2);
 }
 html[data-theme="light"] .brand-band-regular{
- --brand-score-color:var(--score-lime);--brand-score-ink:var(--score-lime-night);
+ --brand-score-color:var(--faro-score-3);--brand-score-ink:var(--faro-score-3);
 }
 html[data-theme="light"] .brand-band-high{
- --brand-score-color:var(--score-olive);--brand-score-ink:var(--score-olive-night);
+ --brand-score-color:var(--faro-score-4);--brand-score-ink:var(--faro-score-4);
 }
 html:not([data-theme="light"]) .brand-band-verylow{
- --brand-score-color:var(--score-copper);--brand-score-ink:var(--score-copper-night);
+ --brand-score-color:var(--faro-score-0);--brand-score-ink:var(--faro-score-0);
 }
 html:not([data-theme="light"]) .brand-band-low{
- --brand-score-color:var(--score-amber);--brand-score-ink:var(--score-amber-night);
+ --brand-score-color:var(--faro-score-1);--brand-score-ink:var(--faro-score-1);
 }
 html:not([data-theme="light"]) .brand-band-mid{
- --brand-score-color:var(--score-sand);--brand-score-ink:var(--score-sand-night);
+ --brand-score-color:var(--faro-score-2);--brand-score-ink:var(--faro-score-2);
 }
 html:not([data-theme="light"]) .brand-band-regular{
- --brand-score-color:var(--score-lime);--brand-score-ink:var(--score-lime-night);
+ --brand-score-color:var(--faro-score-3);--brand-score-ink:var(--faro-score-3);
 }
 html:not([data-theme="light"]) .brand-band-high{
- --brand-score-color:var(--score-olive);--brand-score-ink:var(--score-olive-night);
+ --brand-score-color:var(--faro-score-4);--brand-score-ink:var(--faro-score-4);
 }
 :is(#forecastPage,#dayview,#bestPage,#boardPage)
  :is(.day-chip,.score-tint,.hero-score,.score,.daily-verdict)[class*="brand-band-"]{
