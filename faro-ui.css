@@ -1520,16 +1520,16 @@ html[data-theme="light"] #bestPage .hero-rank .hero-score.tone-fair .hero-score-
 /* FARO COASTAL / V15 semantic grade consistency
    Category controls both numerical ink and subtle quality pill.
    Selection (teal) is independent of quality; sea height stays blue. */
-html[data-theme="light"] .tone-great{--quality-ink:#086c4e;--quality-wash:#dff4e8;--quality-border:#a8d8bb}
-html[data-theme="light"] .tone-good{--quality-ink:#176449;--quality-wash:#e4f4e9;--quality-border:#afdbc5}
-html[data-theme="light"] .tone-fair{--quality-ink:#65561e;--quality-wash:#f7edcc;--quality-border:#e5ce83}
-html[data-theme="light"] .tone-poor{--quality-ink:#943f2f;--quality-wash:#f8e9e2;--quality-border:#e7c1b4}
-html[data-theme="light"] .tone-low{--quality-ink:#873147;--quality-wash:#f8e7eb;--quality-border:#e6b9c8}
-html:not([data-theme="light"]) .tone-great{--quality-ink:#75d9ad;--quality-wash:#213c35;--quality-border:#386a55}
-html:not([data-theme="light"]) .tone-good{--quality-ink:#83d6a8;--quality-wash:#233c33;--quality-border:#386450}
-html:not([data-theme="light"]) .tone-fair{--quality-ink:#ead17a;--quality-wash:#36372b;--quality-border:#70603b}
-html:not([data-theme="light"]) .tone-poor{--quality-ink:#f4a08a;--quality-wash:#432e2b;--quality-border:#875446}
-html:not([data-theme="light"]) .tone-low{--quality-ink:#ef9eb2;--quality-wash:#452d39;--quality-border:#7f4b64}
+html[data-theme="light"] .tone-great{--quality-ink:var(--faro-score-4);--quality-wash:#dff4e8;--quality-border:#a8d8bb}
+html[data-theme="light"] .tone-good{--quality-ink:var(--faro-score-3);--quality-wash:#e4f4e9;--quality-border:#afdbc5}
+html[data-theme="light"] .tone-fair{--quality-ink:var(--faro-score-2);--quality-wash:#f7edcc;--quality-border:#e5ce83}
+html[data-theme="light"] .tone-poor{--quality-ink:var(--faro-score-1);--quality-wash:#f8e9e2;--quality-border:#e7c1b4}
+html[data-theme="light"] .tone-low{--quality-ink:var(--faro-score-0);--quality-wash:#f8e7eb;--quality-border:#e6b9c8}
+html:not([data-theme="light"]) .tone-great{--quality-ink:var(--faro-score-4);--quality-wash:#213c35;--quality-border:#386a55}
+html:not([data-theme="light"]) .tone-good{--quality-ink:var(--faro-score-3);--quality-wash:#233c33;--quality-border:#386450}
+html:not([data-theme="light"]) .tone-fair{--quality-ink:var(--faro-score-2);--quality-wash:#36372b;--quality-border:#70603b}
+html:not([data-theme="light"]) .tone-poor{--quality-ink:var(--faro-score-1);--quality-wash:#432e2b;--quality-border:#875446}
+html:not([data-theme="light"]) .tone-low{--quality-ink:var(--faro-score-0);--quality-wash:#452d39;--quality-border:#7f4b64}
 #forecastPage .day-chip[class*="tone-"] strong,
 #bestPage .hero-score[class*="tone-"] .hero-score-value,
 #dayview .session-glance .hero-score[class*="tone-"] .hero-score-value,
