@@ -396,6 +396,57 @@ function create(opts){
   return L.divIcon({className:"faro-leaflet-marker",html:base.outerHTML,
    iconSize:[112,36],iconAnchor:[56,18]});
  }
+ // A fixed-size, north-up directional instrument anchored to the selected
+ // coastal reference. Arrows encode bearing only; these are not rays of swell
+ // refraction or a prediction of local breaking-wave height.
+ function beachVectorIcon(L,data){
+  const slot=data.slot||{},profile=data.profiles?.[data.spot?.id]||{};
+  const swFit=directionalFit(slot.swellDirection,profile.waveFromDeg);
+  const wiFit=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
+  const palette={inside:"#2b8968",edge:"#a67e2c",outside:"#b66049",strong:"#a84b47",unknown:"#5b7882"};
+  const holder=document.createElement("div");holder.className="faro-beach-vectors";
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 248 208");
+  svg.classList.add("faro-beach-vector-svg");holder.append(svg);
+  function make(tag,attrs,parent=svg){
+   const e=document.createElementNS(NS,tag);
+   for(const [key,value]of Object.entries(attrs))e.setAttribute(key,String(value));
+   parent.append(e);return e;
+  }
+  function vector(from,fit,name,endX,endY,len){
+   const az=bearingFromArrow(from);if(az===null)return;
+   const a=az*Math.PI/180,ux=Math.sin(a),uy=-Math.cos(a);
+   const startX=endX-ux*len,startY=endY-uy*len;
+   const mx=(startX+endX)/2,my=(startY+endY)/2;
+   const deflect=name==="SWELL"?-4:4;
+   const ctrlX=mx-uy*deflect,ctrlY=my+ux*deflect;
+   const colour=palette[fit];
+   const g=make("g",{"data-vector":name,"data-fit":fit});
+   const round=x=>Number(x.toFixed(1));
+   make("path",{d:"M "+round(startX)+" "+round(startY)+" Q "+
+    round(ctrlX)+" "+round(ctrlY)+" "+round(endX)+" "+round(endY),
+    fill:"none",stroke:colour,"stroke-width":name==="SWELL"?5:3.3,
+    "stroke-linecap":"round"},g);
+   make("circle",{cx:round(startX),cy:round(startY),r:name==="SWELL"?3.7:3.0,
+    fill:colour,stroke:"#fff","stroke-width":1.2},g);
+   const bx=endX-ux*12,by=endY-uy*12,pX=-uy,pY=ux,half=name==="SWELL"?6.5:5;
+   make("path",{d:"M "+round(endX)+" "+round(endY)+" L "+
+    round(bx+pX*half)+" "+round(by+pY*half)+" L "+
+    round(bx-pX*half)+" "+round(by-pY*half)+" Z",
+    fill:colour,stroke:"#fff","stroke-width":1.1},g);
+   // Label anchored near the origin, not floating by an offshore model grid.
+   const tx=Math.max(25,Math.min(223,startX-ux*14));
+   const ty=Math.max(19,Math.min(197,startY-uy*14-3));
+   const label=make("text",{x:round(tx),y:round(ty),"text-anchor":"middle",
+    fill:colour,stroke:"#fff","stroke-width":3,"paint-order":"stroke",
+    "font-family":"Manrope,Arial,sans-serif","font-size":10.5,
+    "font-weight":900},g);
+   label.textContent=name==="WIND"&&data.lang!=="en"?"VIENTO":name;
+  }
+  if(mode!=="wind")vector(slot.swellDirection,swFit,"SWELL",107,91,72);
+  if(mode!=="swell")vector(slot.windDirection,wiFit,"WIND",143,119,54);
+  return L.divIcon({className:"faro-beach-vectors-anchor",html:holder.outerHTML,
+   iconSize:[248,208],iconAnchor:[124,104]});
+ }
  function modelGridIcon(L,slot){
   const shell=document.createElement("div");shell.className="faro-lens-map-pin is-swell";
   shell.append(document.createElement("b"));
@@ -489,6 +540,19 @@ function create(opts){
     guideClass(latest.slot?.swellDirection,profile.waveFromDeg);
    markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,status));
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
+  }
+  const beach=latest.spot;
+  if(beach&&deg(beach.latitude)&&deg(beach.longitude)){
+   const pos=[beach.latitude,beach.longitude];
+   if(!beachVectorMarker){
+    beachVectorMarker=L.marker(pos,{interactive:false,keyboard:false,
+     zIndexOffset:65,title:"Directional compatibility at selected beach"}).addTo(map);
+   }else beachVectorMarker.setLatLng(pos);
+   beachVectorMarker.setIcon(beachVectorIcon(L,latest));
+   beachVectorMarker.setOpacity(mapView==="beach"?1:0);
+   if(beachVectorMarker.getElement())beachVectorMarker.getElement().style.pointerEvents="none";
+  }else if(beachVectorMarker){
+   map.removeLayer(beachVectorMarker);beachVectorMarker=null;
   }
   const grid=latest.marineGrid;
   const hasGrid=deg(grid?.lat)&&deg(grid?.lon);
