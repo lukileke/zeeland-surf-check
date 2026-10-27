@@ -414,6 +414,7 @@ function updateCoastMap(){
  state.coastMap?.update({spot:spot(),spots:state.config?.pilots||[],slot:s,
   marineGrid:state.forecast?.model?.marineGrid||null,
   weatherGrid:state.forecast?.model?.weatherGrid||null,
+  profiles:state.profiles?.profiles||{},
   local:localRead(s),lang:state.lang,cameras:state.cameras?.sources||[]});
 }
 function vibeUI(s){
@@ -771,6 +772,7 @@ async function initialize(){
    getCurrent:()=>({spot:spot(),spots:state.config.pilots,
     slot:selection(),marineGrid:state.forecast?.model?.marineGrid||null,
   weatherGrid:state.forecast?.model?.weatherGrid||null,
+  profiles:state.profiles?.profiles||{},
     local:localRead(selection()),lang:state.lang,
     cameras:state.cameras?.sources||[]}),
    onSelectSpot:id=>{

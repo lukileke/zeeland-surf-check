@@ -1,0 +1,147 @@
+/* FARO Coastal Lens v4 · dedicated presentation, 27 Oct 2026.
+   Zeeland editorial vocabulary, mobile-first, not a copy of Surfline.
+   An orientation cue is NOT validated coastal shadowing/refraction. */
+#chileCoastMap{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;min-width:0!important}
+#chileCoastMap .faro-lens-controls{display:flex;justify-content:space-between;align-items:center;gap:9px 14px;flex-wrap:wrap;min-width:0}
+#chileCoastMap .faro-lens-segments{display:inline-flex;gap:3px;align-items:center;padding:4px;
+ border:1px solid var(--faro-editorial-hairline,var(--border));border-radius:12px;
+ background:var(--tile,var(--panel));max-width:100%;min-width:0}
+#chileCoastMap .faro-lens-segments button{appearance:none;background:transparent!important;border:0!important;
+ color:var(--muted)!important;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:800;
+ letter-spacing:.01em;cursor:pointer;line-height:1.2;white-space:nowrap}
+#chileCoastMap .faro-lens-segments button.active{background:var(--faro-selection)!important;color:var(--tile,var(--panel))!important;
+ box-shadow:0 2px 9px #0b39401c!important}
+html[data-theme="light"] #chileCoastMap .faro-lens-segments button.active{color:#fff!important;background:#176d78!important}
+html:not([data-theme="light"]) #chileCoastMap .faro-lens-segments button.active{background:#9edce0!important;color:#173337!important}
+#chileCoastMap .faro-lens-segments button:focus-visible,#chileCoastMap button.faro-lens-beach:focus-visible{
+ outline:2px solid var(--faro-selection)!important;outline-offset:2px}
+#chileCoastMap .faro-lens-flags{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+#chileCoastMap .faro-lens-flag{display:flex;gap:5px;align-items:center;color:var(--muted);cursor:pointer;
+ font-size:11px;font-weight:750;white-space:nowrap}
+#chileCoastMap .faro-lens-flag input{width:14px;height:14px;accent-color:var(--faro-selection);cursor:pointer}
+html #chileCoastMap .faro-map-wrap{display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ gap:13px!important;min-width:0!important}
+html #chileCoastMap .faro-map-viewport{box-sizing:border-box!important;height:clamp(312px,32vw,435px)!important;
+ min-width:0!important;position:relative!important;isolation:isolate!important;
+ border:1px solid var(--faro-editorial-hairline,var(--border))!important;border-radius:17px!important;
+ overflow:hidden!important;background:#c4dce0!important;box-shadow:none!important}
+#chileCoastMap .leaflet-tile-pane{filter:saturate(.56) contrast(.95) brightness(1.04)}
+html:not([data-theme="light"]) #chileCoastMap .leaflet-tile-pane{filter:saturate(.60) contrast(.94) brightness(.91)}
+#chileCoastMap .faro-lens-compass-dock{pointer-events:none!important;position:absolute!important;z-index:1100!important;
+ right:11px;top:12px;width:80px;display:grid;justify-items:center;gap:0;
+ border-radius:14px;padding:6px 6px 4px;
+ background:#f4faf9ee;border:1px solid #9ebfc2;box-shadow:0 5px 20px #153e4850}
+#chileCoastMap .faro-lens-compass-dock svg{width:80px;height:80px;display:block;overflow:visible}
+#chileCoastMap .faro-lens-compass-caption{font:800 9px/1.3 var(--faro-text,Manrope,sans-serif);
+ color:#27525a;text-align:center;white-space:nowrap;max-width:92px;overflow:hidden;text-overflow:ellipsis}
+#chileCoastMap .faro-map-pin{border:1px solid #c7d9da!important;background:#f6fcfb!important;
+ color:#2b555d!important;border-radius:999px!important;padding:6px 9px!important;
+ box-shadow:0 3px 12px #244a4a25!important}
+#chileCoastMap .faro-map-pin:not(.is-current){opacity:.85;transform:scale(.87)}
+#chileCoastMap .faro-map-pin.is-current{background:#134c61!important;color:#fff!important;
+ border:2px solid #fbffff!important;opacity:1!important;transform:none!important;
+ box-shadow:0 0 0 2px #137b94a0,0 4px 14px #18384355!important}
+#chileCoastMap .faro-map-pin-name{font-size:11px;font-weight:850}
+#chileCoastMap .faro-map-grid-marker,#chileCoastMap .faro-map-wind-marker{background:transparent!important;border:0!important}
+#chileCoastMap .faro-lens-map-pin{--lens-bearing:0deg;box-sizing:border-box;position:relative;
+ width:42px;height:42px;display:grid;place-items:center;border-radius:50%;
+ border:2px solid #fff;background:#e7f4f5e8;box-shadow:0 2px 8px #183f4c40;
+ color:#167e9f;overflow:visible}
+#chileCoastMap .faro-lens-map-pin.is-wind{width:38px;height:38px;background:#fff4e1ed;color:#a76626;
+ border:2px solid #fff}
+#chileCoastMap .faro-lens-map-pin b{width:7px;height:7px;border-radius:50%;position:absolute;top:50%;left:50%;
+ transform:translate(-50%,-50%);background:currentColor}
+#chileCoastMap .faro-lens-arrow{font-size:25px;font-family:Arial,system-ui!important;font-weight:850;line-height:1;
+ display:inline-block;transform-origin:center center}
+#chileCoastMap .faro-lens-map-pin.is-wind .faro-lens-arrow{font-size:22px}
+#chileCoastMap .faro-lens-footer-legend{display:flex;align-items:center;gap:7px 16px;flex-wrap:wrap;
+ padding:0 2px;color:var(--muted);font-size:11px;line-height:1.4}
+#chileCoastMap .faro-lens-legend-key{display:inline-flex;gap:6px;align-items:center;font-weight:800;color:var(--fg)}
+#chileCoastMap .faro-lens-legend-key i{width:18px;display:inline-block;flex:0 0 18px;height:1px}
+#chileCoastMap .faro-lens-footer-legend>small{font-size:10px;color:var(--muted);margin-left:auto}
+html #chileCoastMap .faro-map-brief{display:grid!important;gap:11px!important;padding:0!important;grid-template-columns:minmax(0,1fr)!important}
+#chileCoastMap .faro-lens-reading-heading{font:850 10px/1.4 var(--faro-text,Manrope,sans-serif);
+ color:var(--faro-selection);letter-spacing:.105em}
+html #chileCoastMap .faro-map-readings{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+html #chileCoastMap .faro-map-reading{border:1px solid var(--faro-editorial-hairline,var(--border))!important;
+ background:var(--faro-ed-shell,var(--panel))!important;box-shadow:none!important;min-width:0!important}
+#chileCoastMap .faro-lens-selected-detail{display:grid;gap:5px;border:1px solid var(--faro-editorial-hairline,var(--border));
+ background:var(--faro-ed-shell,var(--panel));border-radius:13px;padding:13px 14px;min-width:0}
+#chileCoastMap .faro-lens-selected-row{display:grid;gap:6px}
+#chileCoastMap .faro-lens-selected-row>strong{font-size:10px;letter-spacing:.1em;color:var(--faro-selection)}
+#chileCoastMap .faro-lens-selected-row>span{font-size:13px;font-weight:800;line-height:1.5;color:var(--fg)}
+#chileCoastMap .faro-lens-selected-row>small{font-size:11px;line-height:1.5;color:var(--muted)}
+#chileCoastMap .faro-lens-beaches{display:grid;gap:9px;margin-top:2px;min-width:0}
+#chileCoastMap .faro-lens-beaches-header{display:grid;gap:4px}
+#chileCoastMap .faro-lens-beaches-header strong{font:850 11px/1.4 var(--faro-text,Manrope,sans-serif);
+ letter-spacing:.075em;color:var(--fg)}
+#chileCoastMap .faro-lens-beaches-header small{font-size:11px;color:var(--muted);line-height:1.45}
+#chileCoastMap .faro-lens-beaches-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#chileCoastMap button.faro-lens-beach{appearance:none!important;display:grid;gap:3px;align-content:center;
+ min-width:0;min-height:72px;padding:10px 12px!important;text-align:left!important;
+ border:1px solid var(--faro-editorial-hairline,var(--border))!important;border-radius:12px!important;
+ background:var(--panel)!important;box-shadow:none!important;color:var(--fg)!important;cursor:pointer}
+#chileCoastMap button.faro-lens-beach.is-current{border-color:var(--faro-selection)!important;
+ background:var(--faro-ed-shell,var(--panel))!important}
+#chileCoastMap .faro-lens-beach strong{font-size:13px;font-weight:850;line-height:1.4}
+#chileCoastMap .faro-lens-beach small{font-size:10px;line-height:1.45;color:var(--muted)}
+#chileCoastMap .faro-lens-beach[data-guide="inside"] small:first-of-type{color:var(--faro-grade-good,#426e35)!important}
+#chileCoastMap .faro-lens-beach[data-guide="outside"] small:first-of-type{color:var(--faro-grade-poor,#955a1e)!important}
+#chileCoastMap .faro-lens-beach[data-guide="edge"] small:first-of-type{color:var(--faro-grade-fair,#7c681f)!important}
+#chileCoastMap .faro-lens-uncertainty{margin:0;font-size:11px;line-height:1.65;color:var(--muted);max-width:75ch}
+#chileCoastMap .faro-lens-sample-popup{display:grid;gap:5px;color:#193b45;font:600 12px/1.5 var(--faro-text,Manrope,system-ui)}
+#chileCoastMap .faro-lens-sample-popup strong{font-size:11px;font-weight:900;color:#15566b}
+#chileCoastMap .faro-lens-sample-popup p{margin:0}
+#chileCoastMap .faro-lens-sample-popup small{font-size:10px;line-height:1.4;color:#46646c}
+#chileCoastMap .faro-map-note{font-size:10px;line-height:1.6;margin:0!important;color:var(--muted)}
+#chileCoastMap .faro-lens-map-pin.is-swell::after{content:"";position:absolute;left:50%;top:50%;
+ width:4px;height:4px;background:#167e9f;border-radius:50%;opacity:0;
+ transform:rotate(var(--lens-bearing)) translateY(0)}
+#chileCoastMap .faro-lens-motion .faro-lens-map-pin.is-swell::after{
+ animation:faroLensDot 2.8s ease-out infinite}
+@keyframes faroLensDot{0%{opacity:0;transform:rotate(var(--lens-bearing)) translateY(-6px)}
+ 25%{opacity:.7}100%{opacity:0;transform:rotate(var(--lens-bearing)) translateY(-19px)}}
+@media(max-width:760px){
+ #chileCoastMap .faro-lens-controls{align-items:flex-start}
+ html #chileCoastMap .faro-map-viewport{height:330px!important}
+ #chileCoastMap .faro-lens-compass-dock{right:7px;top:7px;transform:scale(.82);transform-origin:top right}
+ #chileCoastMap .faro-lens-footer-legend>small{margin-left:0;flex:0 0 100%}
+}
+@media(max-width:430px){
+ #chileCoastMap .faro-lens-segments{width:100%;display:flex}
+ #chileCoastMap .faro-lens-segments button{flex:1 1 auto;padding:9px 7px}
+ #chileCoastMap .faro-lens-flags{width:100%;justify-content:flex-start}
+ html #chileCoastMap .faro-map-viewport{height:300px!important}
+ html #chileCoastMap .faro-map-readings{grid-template-columns:minmax(0,1fr)!important}
+ #chileCoastMap .faro-lens-beaches-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #chileCoastMap button.faro-lens-beach{padding:9px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #chileCoastMap .faro-lens-motion .faro-lens-map-pin::after{animation:none!important}
+}
+/* Partition vectors are small model-grid glyphs, not wave paths or isochrons. */
+#chileCoastMap .faro-lens-partitions{
+ position:absolute;width:82px;height:82px;left:50%;top:50%;
+ transform:translate(-50%,-50%);overflow:visible;pointer-events:none;
+ filter:drop-shadow(0 1px 1px #fff);
+}
+#chileCoastMap .faro-lens-map-pin.is-swell:has(.faro-lens-partitions){
+ background:color-mix(in srgb,#e9f7f8 88%,transparent);
+}
+
+/* Advanced marine components remain discoverable, never dominant by default. */
+#chileCoastMap .faro-lens-advanced{padding:4px 0;border-top:1px solid var(--faro-editorial-hairline,var(--border))}
+#chileCoastMap .faro-lens-advanced summary{font-size:11px;font-weight:850;color:var(--faro-selection);
+ cursor:pointer;list-style:revert;padding:8px 2px}
+#chileCoastMap .faro-lens-advanced-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#chileCoastMap .faro-lens-advanced-grid p{padding:7px 9px;border-radius:9px;background:var(--faro-ed-shell,var(--panel));
+ margin:0;font-size:11px;line-height:1.5;color:var(--fg)}
+@media(max-width:430px){#chileCoastMap .faro-lens-advanced-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Model-guide directional fit at nearby beach markers, not surf quality. */
+#chileCoastMap .faro-map-guide-dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+ flex:0 0 7px;background:#839596;box-shadow:0 0 0 1px #fff5}
+#chileCoastMap .faro-map-pin.guide-inside .faro-map-guide-dot{background:#5fbb95}
+#chileCoastMap .faro-map-pin.guide-edge .faro-map-guide-dot{background:#e6b35e}
+#chileCoastMap .faro-map-pin.guide-outside .faro-map-guide-dot{background:#d48d6e}
+#chileCoastMap .faro-lens-map-status{font-size:10px;line-height:1.4;color:var(--muted)}
