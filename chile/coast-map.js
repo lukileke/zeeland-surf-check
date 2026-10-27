@@ -191,6 +191,9 @@ function create(opts){
  function append(tag,cls,text,parent=brief){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.append(n);return n}
  function describe(){
   const v=latest||p(),es=v.lang!=="en",spot=v.spot,slot=v.slot||{},local=v.local;
+  const profile=v.profiles?.[spot?.id]||{};
+  const swellFit=directionalFit(slot.swellDirection,profile.waveFromDeg);
+  const windFit=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
   brief.replaceChildren();
   details.replaceChildren();
   const header=append("div","faro-lens-read-heading",null,brief);
@@ -198,18 +201,19 @@ function create(opts){
   append("span","",(spot?.shortName||"FARO")+" · "+(slot.label||""),header);
   const row=append("div","faro-lens-quick-metrics",null,brief);
   if(spot&&slot.modelComplete){
-   for(const [key,label,value,sub,color] of [
-     ["swell",es?"SWELL PRINCIPAL":"PRIMARY SWELL",
-      deg(slot.swellHeightM)?slot.swellHeightM.toFixed(1)+" m":"—",
-      (deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s · ":"")+
-       (es?"desde ":"from ")+(deg(slot.swellDirection)?Math.round(slot.swellDirection)+"°":"—"),"#147f9e"],
-     ["wind",es?"VIENTO":"WIND",
-      deg(slot.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—",
-      (es?"desde ":"from ")+(deg(slot.windDirection)?Math.round(slot.windDirection)+"°":"—"),"#b87932"]
+   for(const [key,label,value,sub,fit] of [
+    ["swell",es?"SWELL PRINCIPAL":"PRIMARY SWELL",
+     deg(slot.swellHeightM)?slot.swellHeightM.toFixed(1)+" m":"—",
+     (deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s · ":"")+
+      (es?"desde ":"from ")+(deg(slot.swellDirection)?Math.round(slot.swellDirection)+"°":"—"),swellFit],
+    ["wind",es?"VIENTO":"WIND",
+     deg(slot.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—",
+     (es?"desde ":"from ")+(deg(slot.windDirection)?Math.round(slot.windDirection)+"°":"—"),windFit]
    ]){
     const tile=append("div","faro-lens-quick-metric is-"+key,null,row);
-    tile.style.setProperty("--signal",color);
+    tile.dataset.fit=fit;
     append("small","",label,tile);append("strong","",value,tile);append("span","",sub,tile);
+    append("em","faro-lens-local-fit",fitCopy(fit,v.lang),tile);
    }
   }else append("p","faro-map-summary",es?"Aún no hay una franja de modelo completa.":
    "A complete model window is not available.",row);
