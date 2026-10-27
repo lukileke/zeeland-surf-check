@@ -107,7 +107,7 @@ test('coastal lens displays real swell partitions and separate atmospheric grid'
  assert.match(mapSource,/windGridMarker=L\.marker\(pos/);
  assert.match(mapSource,/weatherGrid/);
  assert.match(chileJs,/weatherGrid:state\.forecast\?\.model\?\.weatherGrid/);
- assert.match(mapSource,/no refracción ni altura rompiente/);
+ assert.match(mapSource,/Sin simulación de refracción ni altura rompiente/);
 });
 test('no emoji content remains in primary Zeeland forecast templates',()=>{
  assert.ok(!nl.includes('.emoji'));
