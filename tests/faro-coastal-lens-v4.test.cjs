@@ -61,5 +61,5 @@ test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=3"/);
  assert.match(html,/src="coast-map\.js\?v=7"/);
  assert.match(html,/src="chile-forecast\.js\?v=18"/);
- assert.match(html,/faro-visual-system-v2\.css\?v=4/);
+ assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });
