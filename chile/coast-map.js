@@ -177,66 +177,40 @@ function create(opts){
    append("p","faro-map-summary",es?"Todavía no hay condiciones horarias completas para este spot.":"Hourly model values are not yet complete.");return;
   }
   const dir=x=>deg(x)?Math.round(x)+"°":"—";
-  const row=append("div","faro-map-readings");
-  const cards=[
-   [es?"OLEAJE TOTAL · DESDE":"TOTAL WAVES · FROM",
-    dir(slot.totalWaveDirection)+" · "+(deg(slot.totalWaveHeightM)?slot.totalWaveHeightM.toFixed(1)+" m":"—"),
-    es?"Modelo mar abierto · no altura rompiente":"Offshore model · not breaking height"],
-   [es?" SWELL · DESDE":" SWELL · FROM",
-    dir(slot.swellDirection)+" · "+(deg(slot.swellHeightM)?slot.swellHeightM.toFixed(1)+" m":"—"),
-    es?"Período "+(deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s":"—"):"Period "+(deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s":"—")],
-   [es?" VIENTO · DESDE":" WIND · FROM",
-    dir(slot.windDirection)+" · "+(deg(slot.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—"),
-    deg(slot.gustKmh)?(es?"Rachas ":"Gusts ")+slot.gustKmh.toFixed(0)+" km/h":""]
-  ];
-  if(deg(slot.secondarySwell?.heightM)&&deg(slot.secondarySwell?.fromDeg)){
-   cards.push([es?"SWELL SECUNDARIO · DESDE":"SECONDARY SWELL · FROM",
-    dir(slot.secondarySwell.fromDeg)+" · "+slot.secondarySwell.heightM.toFixed(1)+" m",
-    (es?"Período ":"Period ")+(deg(slot.secondarySwell.periodS)?slot.secondarySwell.periodS.toFixed(0)+" s":"—")]);
+  // Decision-first data, like a surf map, not a second technical report.
+  const summary=append("div","faro-map-readings");
+  for(const [name,value,sub] of [
+    [es?"SWELL PRINCIPAL":"PRIMARY SWELL",
+      (deg(slot.swellHeightM)?slot.swellHeightM.toFixed(1)+" m":"—")+
+       " · "+(deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s":"—"),
+      (es?"Desde ":"From ")+dir(slot.swellDirection)],
+    [es?"VIENTO":"WIND",
+      (deg(slot.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—"),
+      (es?"Desde ":"From ")+dir(slot.windDirection)]
+  ]){
+   const card=append("div","faro-map-reading",null,summary);
+   append("small","",name,card);append("strong","",value,card);append("span","",sub,card);
   }
-  if(deg(slot.tertiarySwell?.heightM)&&deg(slot.tertiarySwell?.fromDeg)){
-   cards.push([es?"SWELL TERCIARIO · DESDE":"TERTIARY SWELL · FROM",
-    dir(slot.tertiarySwell.fromDeg)+" · "+slot.tertiarySwell.heightM.toFixed(1)+" m",
-    (es?"Período ":"Period ")+(deg(slot.tertiarySwell.periodS)?slot.tertiarySwell.periodS.toFixed(0)+" s":"—")]);
+  const partitions=[
+    [es?"Oleaje total":"Total sea",slot.totalWaveHeightM,slot.totalWaveDirection,slot.totalWavePeriodS],
+    [es?"Swell secundario":"Secondary swell",slot.secondarySwell?.heightM,slot.secondarySwell?.fromDeg,slot.secondarySwell?.periodS],
+    [es?"Swell terciario":"Tertiary swell",slot.tertiarySwell?.heightM,slot.tertiarySwell?.fromDeg,slot.tertiarySwell?.periodS],
+    [es?"Mar de viento":"Wind sea",slot.windSeaHeightM,slot.windSeaDirection,null]
+  ].filter(x=>deg(x[1]));
+  if(partitions.length){
+   const more=append("details","faro-lens-advanced");
+   append("summary","",es?"Más componentes del modelo":"More model components",more);
+   const body=append("div","faro-lens-advanced-grid",null,more);
+   for(const [label,height,from,period]of partitions){
+    append("p","",label+": "+height.toFixed(1)+" m"+
+      (deg(period)?" · "+period.toFixed(0)+" s":"")+
+      (deg(from)?" · "+(es?"desde ":"from ")+dir(from):""),body);
+   }
   }
-  if(deg(slot.windSeaHeightM)&&deg(slot.windSeaDirection)){
-   cards.push([es?"MAR DE VIENTO · DESDE":"WIND SEA · FROM",
-    dir(slot.windSeaDirection)+" · "+slot.windSeaHeightM.toFixed(1)+" m",
-    es?"Componente del modelo, no un swell adicional":"Model wind-wave component, not an extra swell"]);
-  }
-  for(const [label,value,meta]of cards){
-   const c=append("div","faro-map-reading",null,row);append("small","",label,c);append("strong","",value,c);append("span","",meta,c);
-  }
-  const grid=v.marineGrid;
-  if(deg(grid?.lat)&&deg(grid?.lon)){
+  if(deg(v.marineGrid?.distanceKm))
    append("p","faro-map-grid-note",
-    (es?"Celda marina del modelo: ":"Offshore model cell: ")+grid.lat.toFixed(3)+", "+grid.lon.toFixed(3)+
-    (deg(grid.distanceKm)?" · "+grid.distanceKm.toFixed(1)+" km "+(es?"de la referencia costera":"from coastal reference"):""));
-  }
-  // Each arrow is a modelled component vector. Swell and atmospheric
-  // samples may come from distinct geographic grid points.
-  const legends=[
-   ["var(--faro-primary-swell)",es?"Swell principal":"Primary swell",""],
-   ...(deg(slot.secondarySwell?.fromDeg)?[["var(--faro-secondary-swell)",es?"Secundario":"Secondary","is-secondary"]]:[]),
-   ...(deg(slot.tertiarySwell?.fromDeg)?[["var(--faro-tertiary-swell)",es?"Terciario":"Tertiary","is-tertiary"]]:[]),
-   ["var(--faro-atmosphere)",es?"Viento":"Wind",""]
-  ];
-  const legend=append("div","faro-map-vector-legend");
-  legend.setAttribute("aria-label",es?"Leyenda de componentes oceanográficos":"Oceanographic component legend");
-  for(const [colour,label,variant]of legends){
-   const t=append("span",variant,null,legend);
-   const i=document.createElement("i");i.style.setProperty("--legend",colour);
-   t.append(i,document.createTextNode(label));
-  }
-  const atmospheric=v.weatherGrid;
-  append("p","faro-map-location-note",
-    es?"Las flechas de swell nacen de la celda marina; el viento se muestra en su celda atmosférica si está disponible. No son rayos de refracción ni imágenes en directo.":
-       "Swell vectors originate at the marine grid sample; wind is shown at its atmospheric sample when available. These are not refraction rays or live imagery.");
-  if(deg(atmospheric?.distanceKm)){
-   append("p","faro-map-grid-note",
-    (es?"Viento · celda atmosférica a ":"Wind · atmospheric grid cell ")+atmospheric.distanceKm.toFixed(1)+
+    (es?"Celda marina ":"Marine grid ")+v.marineGrid.distanceKm.toFixed(1)+
     (es?" km de la referencia costera":" km from coastal reference"));
-  }
   const evidence=append("div","faro-map-evidence");
   append("span","",es?"Swell: "+stateLabel(local?.swell?.state,lang):"Swell: "+stateLabel(local?.swell?.state,lang),evidence);
   append("span","",es?"Viento: "+stateLabel(local?.wind?.state,lang):"Wind: "+stateLabel(local?.wind?.state,lang),evidence);
