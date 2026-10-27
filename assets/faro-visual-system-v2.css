@@ -25,6 +25,15 @@
  --surf-good:var(--faro-score-3);
  --surf-great:var(--faro-score-4);
 }
+/* Repeat semantic aliases at equal/higher specificity than older theme
+ * overrides. The palette VALUES remain one source in :root. */
+html[data-theme="light"],html:not([data-theme="light"]){
+ --surf-low:var(--faro-score-0);
+ --surf-poor:var(--faro-score-1);
+ --surf-fair:var(--faro-score-2);
+ --surf-good:var(--faro-score-3);
+ --surf-great:var(--faro-score-4);
+}
 html[data-theme="light"]{
  --faro-wave:#176b94;--faro-wind:#91601d;
 }
@@ -32,11 +41,31 @@ html:not([data-theme="light"]){
  --faro-wave:#69b8d2;--faro-wind:#d9b47b;
 }
 /* Score bands, attached to their OWN node, not a container ancestor. */
-html .brand-band-verylow{--brand-score-color:var(--faro-score-0);--brand-score-ink:var(--faro-score-0)}
-html .brand-band-low{--brand-score-color:var(--faro-score-1);--brand-score-ink:var(--faro-score-1)}
-html .brand-band-mid{--brand-score-color:var(--faro-score-2);--brand-score-ink:var(--faro-score-2)}
-html .brand-band-regular{--brand-score-color:var(--faro-score-3);--brand-score-ink:var(--faro-score-3)}
-html .brand-band-high{--brand-score-color:var(--faro-score-4);--brand-score-ink:var(--faro-score-4)}
+html[data-theme="light"] .brand-band-verylow,
+html:not([data-theme="light"]) .brand-band-verylow{
+ --brand-score-color:var(--faro-score-0);
+ --brand-score-ink:var(--faro-score-0);
+}
+html[data-theme="light"] .brand-band-low,
+html:not([data-theme="light"]) .brand-band-low{
+ --brand-score-color:var(--faro-score-1);
+ --brand-score-ink:var(--faro-score-1);
+}
+html[data-theme="light"] .brand-band-mid,
+html:not([data-theme="light"]) .brand-band-mid{
+ --brand-score-color:var(--faro-score-2);
+ --brand-score-ink:var(--faro-score-2);
+}
+html[data-theme="light"] .brand-band-regular,
+html:not([data-theme="light"]) .brand-band-regular{
+ --brand-score-color:var(--faro-score-3);
+ --brand-score-ink:var(--faro-score-3);
+}
+html[data-theme="light"] .brand-band-high,
+html:not([data-theme="light"]) .brand-band-high{
+ --brand-score-color:var(--faro-score-4);
+ --brand-score-ink:var(--faro-score-4);
+}
 /* Resolve conflicts with historic tone-* aliases and Chile component styles. */
 html :is(#forecastPage,#dayview,#bestPage,#boardPage)
  :is(.day-chip,.score-tint,.score,.hero-score,.score-feature,.daily-verdict,
