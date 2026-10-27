@@ -400,7 +400,10 @@ function create(opts){
   shell.append(document.createElement("b"));
   const arrow=document.createElement("span");arrow.className="faro-lens-arrow";arrow.textContent="↑";
   const bearing=bearingFromArrow(slot?.swellDirection);
-  if(bearing!==null)arrow.style.transform="rotate("+bearing+"deg)";
+  if(bearing!==null){
+   arrow.style.transform="rotate("+bearing+"deg)";
+   shell.style.setProperty("--lens-bearing",bearing+"deg");
+  }
   shell.append(arrow);
   return L.divIcon({className:"faro-map-grid-marker",html:shell.outerHTML,iconSize:[48,48],iconAnchor:[24,24]});
  }
@@ -409,7 +412,10 @@ function create(opts){
   shell.append(document.createElement("b"));
   const arrow=document.createElement("span");arrow.className="faro-lens-arrow";arrow.textContent="↑";
   const bearing=bearingFromArrow(slot?.windDirection);
-  if(bearing!==null)arrow.style.transform="rotate("+bearing+"deg)";
+  if(bearing!==null){
+   arrow.style.transform="rotate("+bearing+"deg)";
+   shell.style.setProperty("--lens-bearing",bearing+"deg");
+  }
   shell.append(arrow);
   return L.divIcon({className:"faro-map-wind-marker",html:shell.outerHTML,iconSize:[44,44],iconAnchor:[22,22]});
  }
