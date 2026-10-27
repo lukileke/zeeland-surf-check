@@ -83,3 +83,11 @@ La interfaz científica y los nuevos assets deben conservar permisos y procedenc
 - Selección y foco: teal costero `#176d78` (claro) o `#90cdd1` (oscuro); NO indican calidad. Altura de ola y swell emplean azules físicos independientes; avisos mantienen la paleta de seguridad.
 - Se retiraron los cambios de tinta por tema de `faro-ui.css`, `faro-brand.css` y `faro-colours.css`, y se renovaron las versiones de carga para evitar CSS de caché.
 - **Pendiente:** verificar en Safari iPhone/escritorio la legibilidad de los pigmentos claros sobre fondos blancos. Se priorizó mantener el mismo pigmento como se solicitó; no se puede asumir contraste WCAG AA por ello. Las comprobaciones estáticas no sustituyen la inspección visual.
+
+## FARO Coastal Editorial Sprint · 27 October 2026
+
+**Respaldo anterior:** [branch inmutable de referencia](https://github.com/lukileke/zeeland-surf-check/tree/backup/faro-pre-editorial-2026-10-27) (`38b0938f4625284a23f4661e723df68491978e07`). [Documentación completa, comparativa y reversión](docs/FARO_EDITORIAL_SPRINT_2026_10_27.md).
+
+Las versiones NL y CL utilizan ahora un medidor de altura offshore encuadrado, un sistema de colores para **etiquetas verbales** diferente de los cinco pigmentos del **score numérico**, una ventana de sesión con jerarquía editorial y una Coastal Lens con vectores de múltiples swells y viento en las celdas correctas de mar/atmósfera. La medición de altura sigue siendo oceánica (no ola rompiente). La línea de trabajo conserva el motor científico y el sistema de iconos diseñados por María sin sustituirlos por emojis o iconos simulados.
+
+**Estado de QA:** comprobaciones de sintaxis y regresión sobre el código fuente; pruebas visuales reales de escritorio/iPhone y confirmación de Pages pendientes. El modelo no recibe ningún entrenamiento visual nuevo con este sprint.
