@@ -137,3 +137,11 @@ html #chileCoastMap .faro-map-reading{border:1px solid var(--faro-editorial-hair
 #chileCoastMap .faro-lens-advanced-grid p{padding:7px 9px;border-radius:9px;background:var(--faro-ed-shell,var(--panel));
  margin:0;font-size:11px;line-height:1.5;color:var(--fg)}
 @media(max-width:430px){#chileCoastMap .faro-lens-advanced-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Model-guide directional fit at nearby beach markers, not surf quality. */
+#chileCoastMap .faro-map-guide-dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+ flex:0 0 7px;background:#839596;box-shadow:0 0 0 1px #fff5}
+#chileCoastMap .faro-map-pin.guide-inside .faro-map-guide-dot{background:#5fbb95}
+#chileCoastMap .faro-map-pin.guide-edge .faro-map-guide-dot{background:#e6b35e}
+#chileCoastMap .faro-map-pin.guide-outside .faro-map-guide-dot{background:#d48d6e}
+#chileCoastMap .faro-lens-map-status{font-size:10px;line-height:1.4;color:var(--muted)}
