@@ -542,7 +542,7 @@ function session(){
  main.replaceChildren();ess.replaceChildren();
  if(!s){main.append(el("p",tr("No hay ventana futura con luz y score experimental disponible. Puedes elegir manualmente otra franja.","No upcoming daylight window with experimental fit. Select another window to inspect model data."),"muted"));return}
  const heading=el("div",null,"chile-session-overline");
- heading.append(el("span",tr("TU VENTANA","YOUR WINDOW"),"chile-session-eyebrow"),
+ heading.append(el("span",state.hour===null?tr("SELECCIÓN FARO","FARO PICK"):tr("TU VENTANA","YOUR WINDOW"),"chile-session-eyebrow"),
   el("span",sessionTime(s),"chile-session-hours"));
  const local=localRead(s);
  if(local?.vibe?.label)heading.append(el("span",local.vibe.label,"chile-session-vibe"));
@@ -568,7 +568,11 @@ function session(){
  main.append(meta);
  // Data-derived editorial hint, never a claim that we observed the local surf.
  const line=el("p",null,"faro-session-editorial");
- if(ok(s.windKmh)&&s.windKmh>=30)line.textContent=tr(
+ const modelRisk=Live.slotRisk(s,state.config);
+ if(modelRisk==="danger"||modelRisk==="unknown")line.textContent=tr(
+  "No recomendamos elegir esta franja sin comprobar primero los riesgos y avisos oficiales.",
+  "Do not choose this window without checking the risks and official advisories first.");
+ else if(ok(s.windKmh)&&s.windKmh>=30)line.textContent=tr(
   "El viento se hace notar en esta ventana. Revisa el mar antes de entrar.",
   "Wind is a defining factor in this window. Check the sea before paddling out.");
  else if(ok(s.swellPeriodS)&&s.swellPeriodS>=10)line.textContent=tr(
