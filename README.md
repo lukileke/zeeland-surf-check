@@ -18,7 +18,7 @@ The website presents **ZEELAND · LIVE / CHILE · MODELO**. Zeeland retains its 
 ## Key features
 
 - Seven-day forecasts with two-hour windows and daylight checks
-- Five numeric score-colour bands with **the same numeric thresholds but theme-adjusted contrast inks**; FARO VIBE is the visible wave-character tag, and tapping it reveals FARO READ rather than duplicating the interpretation
+- Five numeric score-colour bands with **the same five numerical thresholds AND identical score pigment values in both themes**; FARO VIBE is the visible wave-character tag, and tapping it reveals FARO READ rather than duplicating the interpretation
 - FARO Match for optional board/riding-style preferences
 - Spot Insight: twelve named FARO sectors, local beach-guide evidence, conservative sector context, official/local source links
 - Spot Fit: independently adjustable wind, wave-direction, tide-uncertainty and evidence signals for each sector. [Calibration guide](FARO_SPOT_FIT_GUIDE.md)
@@ -71,8 +71,15 @@ La interfaz científica y los nuevos assets deben conservar permisos y procedenc
 
 ## Iteración 26-10-2026 · Marca, mapa y primeros datos visuales
 
-- **Zeeland como identidad base:** actualizada la cascada con un stylesheet final común, mismas cinco bandas numéricas de score (0–2–4–6–8–10), tintas de contraste claro/oscuro, jerarquía responsive, tipografía y superficies. Las categorías verbales Poor/Fair/Good son una dimensión distinta de las cinco bandas numéricas.
+- **Zeeland como identidad base:** actualizada la cascada con un stylesheet final común, mismas cinco bandas numéricas de score (0–2–4–6–8–10), tintas de score idénticas en ambos temas (sin oscurecer las del modo claro), jerarquía responsive, tipografía y superficies. Las categorías verbales Poor/Fair/Good son una dimensión distinta de las cinco bandas numéricas.
 - **Sin iconografía inventada:** eliminadas las referencias visuales residuales `.emoji` de las vistas Zeeland y símbolos de enlace improvisados; los SVG decorativos siguen pendientes del [brief de 68 piezas para María](docs/FARO_MARIA_ICON_BRIEF_68.md). Las flechas basadas en ángulos del modelo son representaciones matemáticas, no iconos de marca.
 - **Mapa de Chile:** ahora incorpora los cuatro pilotos, sitúa el vector de swell en la celda marina que entrega Open-Meteo y muestra orientación, tamaño/período, fecha/hora y particiones disponibles. No muestra propagación refractada ni marejada costera medida.
 - **Registro de datos para visión:** [fuentes y licencias](chile/research/visual-source-registry.v1.json), [plantilla CSV de observaciones](chile/research/visual-observations.v1.csv) y [protocolo de derechos, sincronización y validación](chile/research/VISUAL_DATA_PROTOCOL.md). **0 clips locales recopilados o entrenados** hasta conseguir material autorizado; la existencia de 9.000 vídeos publicados por terceros NO equivale a que FARO los haya descargado.
 - **Pruebas:** [regresiones automatizables](tests/faro-visual-regression.test.cjs) y [contrato visual responsive](docs/FARO_VISUAL_QA_CONTRACT.md). Se ha verificado estáticamente la sintaxis de los scripts, las escalas y los rumbos; faltan capturas y prueba real de UX en Safari iOS y escritorio antes de declarar terminada la revisión visual.
+
+### Contrato cromático v3 (27-10-2026)
+
+- Única paleta de calidad numérica para Zeeland, Chile, escritorio, móvil y Scriptable: `#ef9b77`, `#efbd6e`, `#e0cc73`, `#b1d574`, `#8cc584`, con cortes 0/2/4/6/8/10. **Ni el modo claro ni la selección alteran estos pigmentos**.
+- Selección y foco: teal costero `#176d78` (claro) o `#90cdd1` (oscuro); NO indican calidad. Altura de ola y swell emplean azules físicos independientes; avisos mantienen la paleta de seguridad.
+- Se retiraron los cambios de tinta por tema de `faro-ui.css`, `faro-brand.css` y `faro-colours.css`, y se renovaron las versiones de carga para evitar CSS de caché.
+- **Pendiente:** verificar en Safari iPhone/escritorio la legibilidad de los pigmentos claros sobre fondos blancos. Se priorizó mantener el mismo pigmento como se solicitó; no se puede asumir contraste WCAG AA por ello. Las comprobaciones estáticas no sustituyen la inspección visual.
