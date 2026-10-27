@@ -28,7 +28,7 @@
 <!-- Final Chile-only layout contract after all shared FARO theme layers -->
 <link rel="stylesheet" href="chile-visual-contract.css?v=2">
 <link rel="stylesheet" href="../assets/faro-visual-system-v2.css?v=4">
-<link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=1">
+<link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=2">
 </head>
 <body>
 <main>
@@ -171,6 +171,13 @@
     <summary><span data-faro-icon="map"></span><span class="forecast-accordion-title" data-es=" COASTAL LENS · lectura del mar" data-en=" COASTAL LENS · read the sea"> COASTAL LENS · lectura del mar</span><span class="forecast-accordion-meta" data-es="Cuatro spots · swell por componentes y viento" data-en="Four spots · swell partitions and wind">Cuatro spots · swell por componentes y viento</span></summary>
     <div id="chileCoastMap" class="chile-coast-map"></div>
    </details>
+   <section class="faro-detail-hub" aria-labelledby="faroExploreHeading">
+    <header class="faro-detail-hub-heading">
+      <div><small data-es="SIGUE EXPLORANDO" data-en="KEEP EXPLORING">SIGUE EXPLORANDO</small>
+      <h3 id="faroExploreHeading" data-es="Conoce la costa. Prepara tu sesión." data-en="Know the coast. Plan your session.">Conoce la costa. Prepara tu sesión.</h3></div>
+      <p data-es="Los detalles cuando los necesitas. La lectura del mar va primero." data-en="The details when you need them. The ocean read comes first.">Los detalles cuando los necesitas. La lectura del mar va primero.</p>
+    </header>
+    <div class="faro-detail-hub-grid">
    <details id="spotInsightExpand" class="forecast-expand">
     <summary><span data-faro-icon="spot-dna"></span><span class="forecast-accordion-title" data-es=" Spot DNA · Identidad del spot" data-en=" Spot DNA · Local break profile"> Spot DNA · Identidad del spot</span><span id="spotInsightContextTag" class="forecast-accordion-meta" data-es="Condiciones y carácter" data-en="Local character">Condiciones y carácter</span></summary>
     <div id="spotinsight" class="insight-panel"><p class="muted">—</p></div>
@@ -199,6 +206,8 @@
      <a href="field-observations-template.csv" class="faro-safety-link" data-es="Plantilla CSV avanzada" data-en="Advanced CSV template">Plantilla CSV avanzada</a>
     </div>
    </details>
+    </div>
+   </section>
   </div>
   <details class="chile-method-disclaimer">
    <summary data-es="Fuentes y límites del pronóstico" data-en="Forecast sources and limitations">Fuentes y límites del pronóstico</summary>
@@ -225,9 +234,22 @@
    <p class="muted" data-es="Un score alto nunca significa que la playa sea segura para tu nivel." data-en="A high score never means a beach is safe for your ability.">Un score alto nunca significa que la playa sea segura para tu nivel.</p>
   </div>
  </section>
- <footer class="chile-footer">
-  <span data-es="FARO · Modelo actualizado, compatibilidad experimental. Marejadas y avisos oficiales no sincronizados." data-en="FARO · Updated model, experimental fit. Official alerts are not automatically checked.">FARO · Modelo actualizado, compatibilidad experimental. Marejadas y avisos oficiales no sincronizados.</span>
-  <span><a href="atlas.html" data-es="Atlas de 73 spots" data-en="73-spot atlas">Atlas de 73 spots</a> · <a href="lab.html" data-es="Laboratorio" data-en="Lab">Laboratorio</a> · <a href="LA_BOCA_PILOT_PLAN.md" data-es="Método y fuentes" data-en="Methods & sources">Método y fuentes</a> · <a href="CAMERA_AI_RESEARCH.md" data-es="Cámaras e IA" data-en="Cameras & AI">Cámaras e IA</a></span>
+ <footer class="chile-footer faro-footer-v2">
+  <div class="faro-footer-brand">
+   <strong>FARO <span>· READ THE COAST</span></strong>
+   <p data-es="Una lectura del mar para decidir cuándo salir. Pronósticos modelados, sin garantía de seguridad ni ola rompiente."
+      data-en="A read on the sea to help you decide when to paddle out. Modelled forecasts, not a safety or breaking-wave guarantee.">Una lectura del mar para decidir cuándo salir. Pronósticos modelados, sin garantía de seguridad ni ola rompiente.</p>
+  </div>
+  <nav class="faro-footer-nav" aria-label="FARO research and resources">
+   <div><small data-es="EXPLORAR" data-en="EXPLORE">EXPLORAR</small>
+    <a href="atlas.html" data-es="Atlas de spots" data-en="Spot atlas">Atlas de spots</a>
+    <a href="lab.html" data-es="Laboratorio FARO" data-en="FARO Lab">Laboratorio FARO</a></div>
+   <div><small data-es="CIENCIA Y DATOS" data-en="SCIENCE & DATA">CIENCIA Y DATOS</small>
+    <a href="LA_BOCA_PILOT_PLAN.md" data-es="Métodos y fuentes" data-en="Methods & sources">Métodos y fuentes</a>
+    <a href="CAMERA_AI_RESEARCH.md" data-es="Cámaras e IA" data-en="Cameras & AI">Cámaras e IA</a></div>
+  </nav>
+  <div class="faro-footer-legal" data-es="CHILE · MODELO EXPERIMENTAL · ALERTAS OFICIALES NO SINCRONIZADAS"
+       data-en="CHILE · EXPERIMENTAL MODEL · OFFICIAL ALERTS NOT SYNCHRONISED">CHILE · MODELO EXPERIMENTAL · ALERTAS OFICIALES NO SINCRONIZADAS</div>
  </footer>
 </main>
 <script src="valparaiso-score-lab.js"></script>
@@ -236,7 +258,7 @@
 <script src="faro-spot-intelligence.js?v=2"></script>
 <script src="video-observation-lab.js?v=1"></script>
 <script src="faro-coastal-lens.js?v=1"></script>
-<script src="coast-map.js?v=5"></script>
+<script src="coast-map.js?v=6"></script>
 <script src="chile-forecast.js?v=17"></script>
 </body>
 </html>

@@ -37,7 +37,7 @@ test('full four-beach comparison uses actual published guide profiles',()=>{
 test('compass stays attached to viewport, not to moving model grid marker',()=>{
  assert.match(code,/viewport\.append\(compassDock\)/);
  assert.match(code,/compassDock\.replaceChildren\(\)/);
- assert.match(css,/\.faro-lens-compass-dock\{pointer-events:none!important;position:absolute!important;z-index:1100!important/);
+ assert.match(css,/\.faro-lens-compass-dock\{pointer-events:none!important;position:absolute!important;\s*z-index:1100!important/);
  assert.match(code,/lastCentered!==latest\.spot\.id/);
  assert.doesNotMatch(code,/\bopened=true/);
 });
@@ -47,17 +47,18 @@ test('layers are genuine selective controls and point markers remain clickable',
  assert.match(code,/windGridMarker\.bindPopup\(modelPopup\(false\)/);
  assert.match(code,/modelGridMarker\.setOpacity\(mode==="wind"\?0:1\)/);
  assert.match(code,/windGridMarker\.setOpacity\(mode==="swell"\?0:1\)/);
- assert.match(code,/stroke-dasharray/);
+ assert.doesNotMatch(code,/faro-lens-partitions/);
+ assert.match(code,/One primary travel arrow/);
 });
 test('motion respects reduced-motion, exposure is only an editorial guide',()=>{
  assert.match(code,/prefers-reduced-motion: reduce/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.match(code,/Comparación regional de rumbo, sin corregir por bancos, sombra costera, profundidad o refracción/);
- assert.match(code,/no refracción ni altura rompiente/);
+ assert.match(code,/Sin simulación de refracción ni altura rompiente/);
 });
 test('asset version and shared Zeeland colours remain unaffected',()=>{
- assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=1"/);
- assert.match(html,/src="coast-map\.js\?v=5"/);
+ assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=2"/);
+ assert.match(html,/src="coast-map\.js\?v=6"/);
  assert.match(html,/src="chile-forecast\.js\?v=17"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=4/);
 });

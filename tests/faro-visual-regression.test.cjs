@@ -78,7 +78,7 @@ test('all four pilot spots and actual marine grid used; no fabricated shore vect
  assert.match(mapSource,/modelGridMarker=L\.marker\(pos/);
  assert.match(mapSource,/L\.latLngBounds\(coast,\[grid\.lat,grid\.lon\]\)/);
  assert.doesNotMatch(mapSource,/a\.textContent="↑"/);
- assert.match(mapSource,/no refracción ni altura rompiente/);
+ assert.match(mapSource,/Sin simulación de refracción ni altura rompiente/);
 });
 test('every future training source retains explicit rights and zero observed videos',()=>{
  assert.equal(sources.observedClipCount,0);
@@ -101,13 +101,13 @@ test('wave height indicators are enclosed, based on actual model height and do n
 });
 test('coastal lens displays real swell partitions and separate atmospheric grid',()=>{
  const mapSource=read('chile/coast-map.js');
- assert.match(mapSource,/faro-lens-partitions/);
+ assert.doesNotMatch(mapSource,/faro-lens-partitions/);
  assert.match(mapSource,/secondarySwell\?\.fromDeg/);
  assert.match(mapSource,/tertiarySwell\?\.fromDeg/);
  assert.match(mapSource,/windGridMarker=L\.marker\(pos/);
  assert.match(mapSource,/weatherGrid/);
  assert.match(chileJs,/weatherGrid:state\.forecast\?\.model\?\.weatherGrid/);
- assert.match(mapSource,/no refracción ni altura rompiente/);
+ assert.match(mapSource,/Sin simulación de refracción ni altura rompiente/);
 });
 test('no emoji content remains in primary Zeeland forecast templates',()=>{
  assert.ok(!nl.includes('.emoji'));
