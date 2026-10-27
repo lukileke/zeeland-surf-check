@@ -42,7 +42,7 @@ test('local vectors are geo-anchored to beach and rotated using FROM+180 directi
 test('model read and legend show guide-fit colours and cautions, never a measured break',()=>{
  assert.match(js,/tile\.dataset\.fit=fit/);
  assert.match(js,/append\("em","faro-lens-local-fit",fitCopy\(fit,v\.lang\),tile\)/);
- assert.match(js,/Rumbos del modelo · no refracción local/);
+ assert.match(js,/Colores = compatibilidad direccional con la guía/);
  assert.match(js,/compatibilidad direccional con la guía/);
  assert.match(css,/\.faro-lens-quick-metric\[data-fit="inside"\]/);
  assert.match(css,/\.faro-lens-quick-metric\[data-fit="strong"\]/);
