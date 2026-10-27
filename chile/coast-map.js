@@ -50,7 +50,7 @@ function create(opts){
  const d=opts.disclosure;
  if(!host||!d)return null;
  let map=null,markers=new Map(),modelGridMarker=null,windGridMarker=null,latest=null,loadError=false;
- let mode="combined",exposure=false,motion=false,inspected="marine",lastCentered=null;
+ let mode="combined",exposure=false,motion=false,inspected="marine",lastCentered=null,pendingSampleFit=false;
  const reduced=()=>typeof root.matchMedia==="function"&&root.matchMedia("(prefers-reduced-motion: reduce)").matches;
  const controls=document.createElement("div");controls.className="faro-lens-controls";host.append(controls);
  const modes=document.createElement("div");modes.className="faro-lens-segments";
@@ -438,6 +438,9 @@ function create(opts){
   });
   else map.setView(coast,13,{animate:false});
   lastCentered=sp.id;
+  // A beach switch may arrive before the asynchronous model-grid result.
+  // Allow exactly one follow-up framing when the first nearby grid arrives.
+  pendingSampleFit=samples===0&&!force;
   status.textContent="";
   return true;
  }
@@ -491,8 +494,13 @@ function create(opts){
   }else if(windGridMarker){
    map.removeLayer(windGridMarker);windGridMarker=null;
   }
-  // Centre only when changing beach; preserve deliberate pan/zoom as forecast hours change.
-  if(latest.spot&&lastCentered!==latest.spot.id)frameMap(false);
+  // Frame once on a beach change. If the selected beach loaded before its
+  // model grid, frame again only for the *first* nearby sample to arrive.
+  // Subsequent hourly changes preserve the surfer's pan and zoom.
+  const nearbySample=[grid,atmosphere].some(item=>
+   deg(item?.lat)&&deg(item?.lon)&&deg(item?.distanceKm)&&item.distanceKm<=60);
+  if(latest.spot&&(lastCentered!==latest.spot.id||(pendingSampleFit&&nearbySample)))
+   frameMap(false);
  }
  async function open(){
   if(loadError)return;
@@ -502,6 +510,7 @@ function create(opts){
    const L=await loadLeaflet();if(!d.open)return;
    schematic.remove();
    map=L.map(viewport,{scrollWheelZoom:false,zoomControl:true,attributionControl:true});
+   map.on("dragstart",()=>{pendingSampleFit=false;});
    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
     maxZoom:15,minZoom:9,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
    }).addTo(map);
