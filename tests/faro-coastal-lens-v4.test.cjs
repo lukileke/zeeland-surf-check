@@ -37,7 +37,7 @@ test('full four-beach comparison uses actual published guide profiles',()=>{
 test('compass stays attached to viewport, not to moving model grid marker',()=>{
  assert.match(code,/viewport\.append\(compassDock\)/);
  assert.match(code,/compassDock\.replaceChildren\(\)/);
- assert.match(css,/\.faro-lens-compass-dock\{pointer-events:none!important;position:absolute!important;z-index:1100!important/);
+ assert.match(css,/\.faro-lens-compass-dock\{pointer-events:none!important;position:absolute!important;\s*z-index:1100!important/);
  assert.match(code,/lastCentered!==latest\.spot\.id/);
  assert.doesNotMatch(code,/\bopened=true/);
 });
