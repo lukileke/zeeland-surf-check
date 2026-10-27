@@ -20,12 +20,13 @@ test('direct user journey has four unique valid target IDs and accessible button
  assert.match(ctrl,/head\.focus\(\{preventScroll:true\}\)/);
 });
 test('map has one-tap reframe and preserves manual zoom on hourly model updates',()=>{
- assert.match(map,/recenter\.addEventListener\("click",\(\)=>frameMap\(true\)\)/);
- assert.match(map,/pendingSampleFit/);
- assert.match(map,/lastCentered!==latest\.spot\.id\|\|\(pendingSampleFit&&nearbySample\)/);
+ assert.match(map,/recenter\.addEventListener\("click",\(\)=>\{/);
+ assert.match(map,/mapView=mapView==="beach"\?"region":"beach"/);
+ assert.match(map,/map\.setView\(coast,viewport\.clientWidth&&viewport\.clientWidth<520\?14:15/);
+ assert.match(map,/lastCentered!==latest\.spot\.id/);
  assert.match(map,/map\.on\("dragstart",\(\)=>\{pendingSampleFit=false;\}\)/);
- assert.match(map,/bounds\.extend\(\[item\.lat,item\.lon\]\)/);
- assert.match(map,/item\.distanceKm<=60/);
+ assert.match(map,/bounds\.extend\(\[grid\.lat,grid\.lon\]\)/);
+ assert.match(map,/grid\.distanceKm<=60/);
  assert.doesNotMatch(map,/map\.fitBounds\(bounds,\{padding:\[85,90\]/);
 });
 test('advanced model display is progressively disclosed and legends match shown overlays',()=>{
@@ -53,8 +54,8 @@ test('controls have minimum 44 px touch targets and clear focus treatment',()=>{
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
 test('asset versions are updated without overwriting Zeeland visual contract',()=>{
- assert.match(html,/faro-coastal-lens-v4\.css\?v=3/);
- assert.match(html,/coast-map\.js\?v=7/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=4/);
+ assert.match(html,/coast-map\.js\?v=8/);
  assert.match(html,/chile-forecast\.js\?v=18/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
  assert.match(read('index.html'),/faro-visual-system-v2\.css\?v=5/);
