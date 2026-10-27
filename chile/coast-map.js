@@ -246,7 +246,7 @@ function create(opts){
   exposureFlag.caption.textContent=es?"Orientación":"Exposure";
   motionFlag.caption.textContent=es?"Movimiento":"Motion";
   motionFlag.input.checked=motion;exposureFlag.input.checked=exposure;
-  viewport.classList.toggle("faro-lens-motion",motion&&!reduced());
+  viewport.classList.toggle("faro-lens-motion",motion&&!reduced()&&deg(slot.swellDirection));
   // The compass is attached to viewport, NOT to the model sample map marker.
   // It therefore cannot vanish when a zoom/pan moves a marine grid outside view.
   compassDock.replaceChildren();
