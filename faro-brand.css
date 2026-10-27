@@ -117,14 +117,14 @@ html[data-theme="light"] #forecastPage .day-strip-title strong{
 }
 /* Scale from PDF: interval is continuous regardless of the text grade.
    Contrast ink may be deeper than the swatch on very light surfaces. */
-.brand-band-low{--brand-score-color:var(--brand-score-low);--brand-score-ink:#9d541c}
-.brand-band-mid{--brand-score-color:var(--brand-score-mid);--brand-score-ink:#93600f}
-.brand-band-regular{--brand-score-color:var(--brand-score-regular);--brand-score-ink:#49771a}
-.brand-band-high{--brand-score-color:var(--brand-score-high);--brand-score-ink:#527530}
-html:not([data-theme="light"]) .brand-band-low{--brand-score-ink:#f2ae70}
-html:not([data-theme="light"]) .brand-band-mid{--brand-score-ink:#efbc62}
-html:not([data-theme="light"]) .brand-band-regular{--brand-score-ink:#a4d156}
-html:not([data-theme="light"]) .brand-band-high{--brand-score-ink:#a9d07b}
+.brand-band-low{--brand-score-color:var(--brand-score-low);--brand-score-ink:var(--faro-score-1)}
+.brand-band-mid{--brand-score-color:var(--brand-score-mid);--brand-score-ink:var(--faro-score-2)}
+.brand-band-regular{--brand-score-color:var(--brand-score-regular);--brand-score-ink:var(--faro-score-3)}
+.brand-band-high{--brand-score-color:var(--brand-score-high);--brand-score-ink:var(--faro-score-4)}
+html:not([data-theme="light"]) .brand-band-low{--brand-score-ink:var(--faro-score-1)}
+html:not([data-theme="light"]) .brand-band-mid{--brand-score-ink:var(--faro-score-2)}
+html:not([data-theme="light"]) .brand-band-regular{--brand-score-ink:var(--faro-score-3)}
+html:not([data-theme="light"]) .brand-band-high{--brand-score-ink:var(--faro-score-4)}
 html[data-theme="light"] :is(#forecastPage,#dayview,#bestPage,#boardPage)
  :is(.day-chip,.score-tint,.hero-score,.score,.daily-verdict)[class*="brand-band-"]{
  --quality-ink:var(--brand-score-ink)!important;
@@ -507,13 +507,13 @@ html:not([data-theme="light"]) #boardPage .faro-match-logic b{color:#a5baff}
  * Identical accent inks to dark mode, while the light canvas and
  * score numerals remain transparent. Selection remains a neutral stroke. */
 html[data-theme="light"]{
- --surf-great:#60c69e;--surf-good:#78cba0;--surf-fair:#ead17a;
- --surf-poor:#e9937f;--surf-low:#e68b95;
+ --surf-great:var(--faro-score-4);--surf-good:var(--faro-score-3);--surf-fair:var(--faro-score-2);
+ --surf-poor:var(--faro-score-1);--surf-low:var(--faro-score-0);
 }
-html[data-theme="light"] .brand-band-low{--brand-score-ink:#f2ae70}
-html[data-theme="light"] .brand-band-mid{--brand-score-ink:#efbc62}
-html[data-theme="light"] .brand-band-regular{--brand-score-ink:#a4d156}
-html[data-theme="light"] .brand-band-high{--brand-score-ink:#6b9347}
+html[data-theme="light"] .brand-band-low{--brand-score-ink:var(--faro-score-1)}
+html[data-theme="light"] .brand-band-mid{--brand-score-ink:var(--faro-score-2)}
+html[data-theme="light"] .brand-band-regular{--brand-score-ink:var(--faro-score-3)}
+html[data-theme="light"] .brand-band-high{--brand-score-ink:var(--faro-score-4)}
 /* Numerals are colour on paper, never dark tiles. */
 html[data-theme="light"] #forecastPage .day-chip[class*="brand-band-"] strong,
 html[data-theme="light"] #dayview .session-glance .hero-score[class*="brand-band-"] .hero-score-value,
