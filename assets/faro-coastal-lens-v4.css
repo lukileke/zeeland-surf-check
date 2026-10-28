@@ -926,3 +926,55 @@ html:not([data-theme="light"]) #chileCoastMap .faro-lens-beach[data-signal="unkn
 #chileCoastMap .faro-lens-footer-legend:has(.faro-region-legend-dot){
  row-gap:6px!important;
 }
+
+/* FARO Coastal Lens · selected-marker contrast and regional decluttering.
+   A selection must never obscure the meaning of S/W. The previous selected
+   data-fit rule had greater specificity than data-level, resulting in dark
+   ink on the teal selected pill even when both signals were favourable. */
+#chileCoastMap .faro-map-pin.is-current .faro-region-fit-tick[data-level]{
+ background:#f7fbf9!important;
+ border-width:1px!important;
+ border-style:solid!important;
+ box-shadow:0 1px 2px rgba(7,40,42,.16)!important;
+ min-width:20px!important;width:20px!important;height:20px!important;
+ font-size:10px!important;
+}
+#chileCoastMap .faro-map-pin.is-current .faro-region-fit-tick.is-wind[data-level]{
+ border-style:dashed!important;
+}
+#chileCoastMap .faro-map-pin.is-current .faro-region-fit-tick[data-level="favourable"]{
+ --faro-fit-ink:#225e4e!important;
+}
+#chileCoastMap .faro-map-pin.is-current .faro-region-fit-tick[data-level="mixed"]{
+ --faro-fit-ink:#72531b!important;
+}
+#chileCoastMap .faro-map-pin.is-current .faro-region-fit-tick[data-level="weak"]{
+ --faro-fit-ink:#80401c!important;
+}
+#chileCoastMap .faro-map-pin.is-current .faro-region-fit-tick[data-level="unfavourable"]{
+ --faro-fit-ink:#9a3834!important;
+}
+#chileCoastMap .faro-map-pin.is-current .faro-region-fit-tick[data-level="unknown"]{
+ --faro-fit-ink:#445f68!important;
+}
+/* Offset only the two geographically adjacent annotation labels.
+   The Leaflet anchors remain at their true coordinates; short connector
+   stems explicitly show the cartographic displacement to avoid overlap. */
+#chileCoastMap .faro-leaflet-marker{overflow:visible!important}
+#chileCoastMap[data-map-view="region"] .faro-map-pin.is-regional[data-spot-id="CL-VS:la-boca-concon"]{
+ transform:translateY(-22px)!important;
+}
+#chileCoastMap[data-map-view="region"] .faro-map-pin.is-regional[data-spot-id="CL-VS:renaca"]{
+ transform:translateY(22px)!important;
+}
+#chileCoastMap[data-map-view="region"] .faro-map-pin.is-regional[data-spot-id="CL-VS:la-boca-concon"]::after,
+#chileCoastMap[data-map-view="region"] .faro-map-pin.is-regional[data-spot-id="CL-VS:renaca"]::after{
+ content:"";position:absolute;left:50%;width:0;height:20px;
+ border-left:1px dashed rgba(18,100,117,.72);pointer-events:none;
+}
+#chileCoastMap[data-map-view="region"] .faro-map-pin.is-regional[data-spot-id="CL-VS:la-boca-concon"]::after{
+ bottom:-22px;
+}
+#chileCoastMap[data-map-view="region"] .faro-map-pin.is-regional[data-spot-id="CL-VS:renaca"]::after{
+ top:-22px;
+}

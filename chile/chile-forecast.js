@@ -3,6 +3,7 @@
 "use strict";
 const $=id=>document.getElementById(id),Live=window.FaroChileLive;
 const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,cameras:null,videoLab:null,coastMap:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,cache:new Map(),serial:0,page:0};
+let coastSwitchCleanup=null;
 const tr=(es,en)=>state.lang==="es"?es:en,ok=x=>typeof x==="number"&&Number.isFinite(x),num=(x,d=1)=>ok(x)?x.toFixed(d):"—";
 const el=(tag,value,cls)=>{const x=document.createElement(tag);if(value!==undefined&&value!==null)x.textContent=String(value);if(cls)x.className=cls;return x};
 const txt=(id,value)=>{$(id).textContent=value},clear=id=>$(id).replaceChildren(),add=(x,...nodes)=>{x.append(...nodes);return x};
@@ -677,23 +678,23 @@ function render(){
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
  state.videoLab?.refreshCameras();updateCoastMap();renderHourlyPreview();if(state.tab==="board")match();
 }
-async function refresh(force=false){
+async function refresh(force=false,onSettled=null){
  if(!state.config)return;
  const id=spot().id,serial=++state.serial,stored=state.cache.get(id);
- if(!force&&stored&&Date.now()-stored.at<15*60*1000){state.forecast=stored.forecast;render();return}
+ if(!force&&stored&&Date.now()-stored.at<15*60*1000){state.forecast=stored.forecast;render();onSettled?.();return}
  txt("updated",tr("Consultando modelos para ","Loading model for ")+spot().name+"…");
  txt("status",tr("ACTUALIZANDO…","UPDATING…"));
  try{
   const data=await Live.fetchSpot(state.config,spot(),state.profiles,fetch,state.lang);
   state.cache.set(id,{forecast:data,at:Date.now()});if(serial!==state.serial)return;
-  state.forecast=data;txt("status",tr("MODELO · EXPERIMENTAL","EXPERIMENTAL MODEL"));render();
+  state.forecast=data;txt("status",tr("MODELO · EXPERIMENTAL","EXPERIMENTAL MODEL"));render();onSettled?.();
  }catch(err){
   if(serial!==state.serial)return;
   state.forecast=null;txt("status",tr("SIN CONEXIÓN","OFFLINE"));
   txt("updated",tr("No se puede cargar el pronóstico: ","Cannot load forecast: ")+String(err.message||err));
   $("dayStripItems").replaceChildren(el("p",tr("No hay datos nuevos; no se muestran scores ficticios.","Fresh data unavailable; no fictional scores shown."),"muted"));
   $("slots").replaceChildren();$("sessionAtGlance").replaceChildren();
-  risk(null);
+  risk(null);onSettled?.();
  }
 }
 function picker(){
@@ -800,9 +801,37 @@ async function initialize(){
   const panel=$("coastMapExpand");panel.open=true;
   panel.scrollIntoView({block:"center",behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
  });
- $("chileSpotSelect").addEventListener("change",()=>{
+ $("chileSpotSelect").addEventListener("change",event=>{
   const i=state.config.pilots.findIndex(x=>x.id===$("chileSpotSelect").value);
   if(i>=0){
+    // Preserve the geographic reading position when a map marker initiated
+    // the change. The strips and session above the map otherwise collapse
+    // while fetching, triggering browser scroll anchoring and a visible jump.
+    if(coastSwitchCleanup){coastSwitchCleanup();coastSwitchCleanup=null;}
+    const fromCoast=event?.detail?.fromCoastMap===true;
+    const anchor=fromCoast?$("coastMapExpand"):null;
+    const anchorTop=anchor?.getBoundingClientRect().top;
+    const supportsAnchor=Number.isFinite(anchorTop);
+    const shelves=supportsAnchor?
+      ["#dayStrip",".day-outlook-section","#dayview>.hourly-section","#dayview>.session-section"]
+       .map(selector=>document.querySelector("#forecastPage "+selector))
+       .filter(Boolean).map(el=>({el,previous:el.style.minHeight,height:el.getBoundingClientRect().height})):[];
+    for(const {el,height} of shelves)el.style.minHeight=Math.ceil(height)+"px";
+    const keepCoastPosition=()=>{
+      if(!supportsAnchor)return;
+      const displacement=anchor.getBoundingClientRect().top-anchorTop;
+      if(Math.abs(displacement)>1)window.scrollBy({top:displacement,left:0,behavior:"instant"});
+    };
+    let settled=false;
+    const settleCoast=()=>{
+      if(settled)return;
+      settled=true;
+      for(const {el,previous} of shelves)el.style.minHeight=previous;
+      keepCoastPosition();
+      if(supportsAnchor)requestAnimationFrame(keepCoastPosition);
+      if(coastSwitchCleanup===settleCoast)coastSwitchCleanup=null;
+    };
+    if(supportsAnchor)coastSwitchCleanup=settleCoast;
     state.selected=i;state.day=0;state.hour=null;state.forecast=null;
     // Never present prior-spot conditions as if they belong to a newly
     // selected beach while a provider request is still in flight.
@@ -816,7 +845,9 @@ async function initialize(){
     $("chileVibeExplained").replaceChildren();
     txt("chileDecisionHeadline",tr("Cargando este spot…","Loading this spot…"));
     txt("chileDecisionDriver","");txt("bestTime","—");
-    renderDNA();renderCameras();updateCoastMap();void refresh();
+    renderDNA();renderCameras();updateCoastMap();
+    keepCoastPosition();
+    void refresh(false,settleCoast);
    }
  });
  for(const [id,move]of [["dayPrev",-1],["dayNext",1]])$(id).addEventListener("click",()=>{
@@ -850,7 +881,9 @@ async function initialize(){
    onSelectSpot:id=>{
     if(spot()?.id===id)return;
     $("chileSpotSelect").value=id;
-    $("chileSpotSelect").dispatchEvent(new Event("change",{bubbles:true}));
+    $("chileSpotSelect").dispatchEvent(new CustomEvent("change",{
+      bubbles:true,detail:{fromCoastMap:true}
+    }));
    }
   });
   // Desktop previews are part of the primary forecast hierarchy.
