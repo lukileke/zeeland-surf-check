@@ -59,7 +59,7 @@ test('wave height gauge uses a real capped 0–2 m+ scale, not an invented break
  assert.match(ctrl,/faro-wave-ruler-scale/);
  assert.match(ctrl,/faro-wave-ruler-mark/);
  assert.doesNotMatch(ctrl,/faro-gauge-position/);
- assert.match(ctrl,/not breaking surf/);
+ assert.match(ctrl,/not the breaking wave/);
  assert.match(html,/id="dayWaveMeter"/);
  assert.match(css,/\.faro-wave-ruler-scale/);
  assert.doesNotMatch(css,/\.faro-gauge-position/);
