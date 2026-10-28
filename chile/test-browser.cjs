@@ -65,7 +65,7 @@ function fixture(){
    const scriptErrors=[];
    page.on('pageerror',err=>scriptErrors.push(err.message));
    await page.goto('http://127.0.0.1:'+port+'/chile/',{waitUntil:'domcontentloaded'});
-   try{await page.waitForSelector('#dayStripItems .day-chip',{timeout:16000})}
+   try{await page.waitForSelector('#dayStripItems .day-chip',{state:'attached',timeout:16000})}
    catch(err){
     const debug=await page.evaluate(()=>({
      title:document.title,ready:document.readyState,
