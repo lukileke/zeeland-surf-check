@@ -111,6 +111,17 @@ function signalAssessment(kind,fit,slot={}){
  if(fit==="outside")return {level:"unfavourable",strength};
  return {level:fit==="inside"&&strength==="light"?"favourable":"mixed",strength};
 }
+// One evaluation for the HUD, regional markers and comparison list.
+ // Directional guide alignment and the overall signal remain separate data.
+function spotSignals(slot={},profile={}){
+ const swellFit=directionalFit(slot.swellDirection,profile.waveFromDeg);
+ const windFit=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
+ return {
+  swellFit,windFit,
+  swellSignal:signalAssessment("swell",swellFit,slot),
+  windSignal:signalAssessment("wind",windFit,slot)
+ };
+}
 function signalCopy(result,lang){
  const es=lang!=="en",s=result?.level;
  return s==="favourable"?(es?"Favorable":"Favourable"):
@@ -257,10 +268,7 @@ function create(opts){
  function describe(){
   const v=latest||p(),es=v.lang!=="en",spot=v.spot,slot=v.slot||{},local=v.local;
   const profile=v.profiles?.[spot?.id]||{};
-  const swellFit=directionalFit(slot.swellDirection,profile.waveFromDeg);
-  const windFit=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
-  const swellSignal=signalAssessment("swell",swellFit,slot);
-  const windSignal=signalAssessment("wind",windFit,slot);
+  const {swellFit,windFit,swellSignal,windSignal}=spotSignals(slot,profile);
   brief.replaceChildren();
   details.replaceChildren();
   const header=append("div","faro-lens-read-heading",null,brief);
@@ -364,8 +372,8 @@ function create(opts){
    regionalTitle.textContent=es?"CUATRO PLAYAS · UNA COSTA":"FOUR BEACHES · ONE COAST";
    const regionalText=document.createElement("span");
    regionalText.textContent=es?
-    "Selecciona una playa para acercarte. Los trazos comparan rumbos guía, no olas observadas.":
-    "Select a beach to zoom in. The marks compare guide bearings, not observed waves.";
+    "S/W muestran la lectura modelada de la franja seleccionada con la guía de cada playa. No son olas observadas.":
+    "S/W show model signals for the selected time window against each beach guide. Not observed waves.";
    regionSummary.append(regionalTitle,regionalText);
   }
   viewport.classList.toggle("faro-lens-motion",motion&&!reduced()&&
@@ -378,10 +386,7 @@ function create(opts){
   // does not obscure the selected spot and survives pan/zoom.
   compassDock.replaceChildren();
   const hudProfile=v.profiles?.[v.spot?.id]||{};
-  const swellFitHUD=directionalFit(slot.swellDirection,hudProfile.waveFromDeg);
-  const windFitHUD=directionalFit(slot.windDirection,hudProfile.windFromDeg,slot.windKmh,true);
-  const swellHUD=signalAssessment("swell",swellFitHUD,slot);
-  const windHUD=signalAssessment("wind",windFitHUD,slot);
+  const {swellSignal:swellHUD,windSignal:windHUD}=spotSignals(slot,hudProfile);
   compassDock.className="faro-lens-compass-dock faro-direction-hud";
   const hdr=document.createElement("div");hdr.className="faro-hud-heading";
   const hdrText=document.createElement("strong");
@@ -437,20 +442,22 @@ function create(opts){
     " · swell "+signalCopy(swellHUD,v.lang)+", wind "+signalCopy(windHUD,v.lang));
   legend.replaceChildren();
   if(mapView==="region"){
-   const guideLegend=[
-    ["#348d71",es?"Dentro de guía":"Within guide"],
-    ["#b38b42",es?"Cerca de guía":"Near guide"],
-    ["#be6959",es?"Fuera de guía":"Outside guide"]
+   const signalLegend=[
+    ["favourable",es?"Favorable":"Favourable"],
+    ["mixed",es?"Variable":"Mixed"],
+    ["weak",es?"Poca energía":"Low energy"],
+    ["unfavourable",es?"Desfavorable":"Unfavourable"],
+    ["unknown",es?"Sin evaluar":"Not assessed"]
    ];
-   for(const [colour,name]of guideLegend){
+   for(const [level,name]of signalLegend){
     const item=document.createElement("span");item.className="faro-lens-legend-key";
     const dot=document.createElement("i");dot.className="faro-region-legend-dot";
-    dot.style.backgroundColor=colour;
+    dot.dataset.level=level;
     item.append(dot,document.createTextNode(name));legend.append(item);
    }
    const note=document.createElement("small");note.textContent=es?
-    "Trazos: swell sólido · viento punteado. Sólo rumbo guía.":
-    "Solid = swell · dotted = wind. Guide bearings only.";
+    "S = swell · W = viento. Color = lectura conjunta; rango direccional en detalles.":
+    "S = swell · W = wind. Colour = combined signal; direction fit in details.";
    legend.append(note);
   }else{
    const colours={favourable:"#348d71",mixed:"#b38b42",weak:"#c98b55",
@@ -478,40 +485,34 @@ function create(opts){
   heading.append(title,blurb);comparison.append(heading);comparison.open=wasOpen;
   const grid=document.createElement("div");grid.className="faro-lens-beaches-grid";comparison.append(grid);
   for(const sp of v.spots||[]){
-   const bounds=v.profiles?.[sp.id]?.waveFromDeg||[];
-   const windBounds=v.profiles?.[sp.id]?.windFromDeg||[];
-   const status=guideClass(slot.swellDirection,bounds);
-   const windState=guideClass(slot.windDirection,windBounds);
+   const reading=spotSignals(slot,v.profiles?.[sp.id]||{});
+   const {swellFit,windFit,swellSignal,windSignal}=reading;
    const button=document.createElement("button");button.type="button";
    button.className="faro-lens-beach"+(v.spot?.id===sp.id?" is-current":"");
-   button.dataset.guide=status;button.setAttribute("aria-pressed",String(v.spot?.id===sp.id));
+   button.dataset.signal=swellSignal.level;button.setAttribute("aria-pressed",String(v.spot?.id===sp.id));
    const name=document.createElement("strong");name.textContent=sp.shortName||sp.name;
-   const info=document.createElement("small");info.textContent=status==="inside"?
-    (es?"Dentro del rango guía":"Within guide range"):status==="edge"?
-    (es?"Cerca del rango guía":"Near guide range"):status==="outside"?
-    (es?"Fuera del rango guía":"Outside guide range"):
-    (es?"Orientación no disponible":"Orientation unavailable");
+   const info=document.createElement("small");
+   info.textContent="S · "+signalCopy(swellSignal,v.lang)+" · "+fitCopy(swellFit,v.lang);
    button.append(name,info);
    const wind=document.createElement("small");wind.className="faro-lens-wind-guide";
-   wind.textContent=(es?"Viento: ":"Wind: ")+(windState==="inside"?(es?"dentro de guía":"within guide"):
-    windState==="edge"?(es?"cerca de guía":"near guide"):
-    windState==="outside"?(es?"fuera de guía":"outside guide"):
-    (es?"sin referencia":"not assessed"));
+   wind.dataset.level=windSignal.level;
+   wind.textContent="W · "+signalCopy(windSignal,v.lang)+" · "+fitCopy(windFit,v.lang);
    button.append(wind);
    button.addEventListener("click",()=>{if(v.spot?.id!==sp.id)opts.onSelectSpot?.(sp.id)});
    grid.append(button);
   }
   const caveat=document.createElement("p");caveat.className="faro-lens-uncertainty";
   caveat.textContent=es?
-   "Comparación regional de rumbo, sin corregir por bancos, sombra costera, profundidad o refracción. Selecciona la playa para cargar su propio pronóstico.":
-   "Regional directional comparison only. Does not resolve local sandbanks, sheltering, bathymetry or refraction. Choose a beach to load its own forecast.";
+   "Comparación regional de rumbo e intensidad usando la franja y los datos modelados seleccionados. No representa mediciones independientes de cada playa ni corrige por bancos, sombra costera, profundidad o refracción. Selecciona otra playa para cargar su pronóstico.":
+   "Regional direction-and-strength comparison based on the selected forecast window and model data. Not independently measured at each beach; does not resolve sandbanks, shelter, bathymetry or refraction. Select another beach to load its forecast.";
   comparison.append(caveat);
 
  }
 
- function markerIcon(L,spot,selected,swellFit,windFit){
-  // The coastline and named breaks remain the central map content.
-  // Micro-bars show only angular compatibility with published guides.
+ function markerIcon(L,spot,selected,reading){
+  // One visual signal assessment is shared with the HUD. The angular
+  // guide fit remains explicit in the accessible title, not in its colour.
+  const {swellFit,windFit,swellSignal,windSignal}=reading;
   const es=(latest?.lang||"es")!=="en";
   const label=fit=>fit==="inside"?(es?"dentro":"within"):
    fit==="edge"?(es?"cerca":"near"):
@@ -529,17 +530,22 @@ function create(opts){
   if(mapView==="region"){
    const tracks=document.createElement("span");tracks.className="faro-region-fit-tracks";
    tracks.setAttribute("aria-hidden","true");
-   for(const [kind,status]of [["swell",swellFit],["wind",windFit]]){
+   for(const [kind,fit,signal] of [
+    ["swell",swellFit,swellSignal],["wind",windFit,windSignal]
+   ]){
     if((mode==="swell"&&kind==="wind")||(mode==="wind"&&kind==="swell"))continue;
     const micro=document.createElement("span");micro.className="faro-region-fit-tick is-"+kind;
-    micro.dataset.fit=status;micro.textContent=kind==="swell"?"S":"W";
-    micro.title=(kind==="swell"?"Swell":"Wind")+" · "+label(status)+" guide";
+    micro.dataset.fit=fit;micro.dataset.level=signal.level;
+    micro.textContent=kind==="swell"?"S":"W";
+    micro.title=(kind==="swell"?"Swell":"Wind")+" · "+
+     signalCopy(signal,latest?.lang)+" · "+fitCopy(fit,latest?.lang);
     tracks.append(micro);
    }
    base.append(tracks);
-   const desc=(es?"Swell: ":"Swell: ")+label(swellFit)+
-    (es?" de guía · viento: ":" guide · wind: ")+label(windFit)+
-    (es?" de guía":" guide");
+   const desc="Swell: "+signalCopy(swellSignal,latest?.lang)+
+    " ("+label(swellFit)+" guide); "+
+    (es?"viento: ":"wind: ")+signalCopy(windSignal,latest?.lang)+
+    " ("+label(windFit)+" guide)";
    base.setAttribute("aria-label",(spot.shortName||spot.name)+". "+desc);
    base.title=desc;
   }
@@ -637,9 +643,8 @@ function create(opts){
     markers.set(sp.id,m);
    }
    const profile=latest.profiles?.[sp.id]||{};
-   const swellFit=guideClass(latest.slot?.swellDirection,profile.waveFromDeg);
-   const windFit=guideClass(latest.slot?.windDirection,profile.windFromDeg);
-   markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,swellFit,windFit));
+   const reading=spotSignals(latest.slot||{},profile);
+   markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,reading));
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
   }
   // Beach coordinates belong to the spot pin; signals live in the HUD.
@@ -740,6 +745,6 @@ function create(opts){
    frameMap(true);update(latest)}},
   getState:()=>({mode,mapView,exposure,motion,showSamples,lastCentered})};
 }
-root.FaroChileCoastMap=Object.freeze({create,bearingFromArrow,stateLabel,distanceToGuide,guideClass,directionalFit,fitCopy,signalAssessment});
+root.FaroChileCoastMap=Object.freeze({create,bearingFromArrow,stateLabel,distanceToGuide,guideClass,directionalFit,fitCopy,signalAssessment,spotSignals});
 if(typeof module!=="undefined"&&module.exports)module.exports=root.FaroChileCoastMap;
 })(typeof window!=="undefined"?window:globalThis);
