@@ -696,12 +696,17 @@ async function rankings(){
  list.sort((a,b)=>(localRead(b.s,b.model.spot.id)?.decision?.priority??2)-
  (localRead(a.s,a.model.spot.id)?.decision?.priority??2)||b.s.score-a.s.score||a.day.date.localeCompare(b.day.date));
  host.replaceChildren();
- txt("rankingstatus",tr("Compatibilidad modelada · sin calibrar","Modelled compatibility · uncalibrated"));
+ txt("rankingstatus",tr("Orden orientativo · los índices pueden alcanzar el techo experimental","Indicative order · scores may hit the experimental cap"));
  if(!list.length){host.append(el("p",tr("Sin comparaciones suficientes por ahora.","Not enough comparable model values."),"muted"));return}
  for(const item of list.slice(0,12)){
   const b=el("button",null,"highlight chile-ranking "+scoreTone(item.s.score));b.type="button";
   const line=el("div",null,"chile-rank-layout"),data=el("div");
-  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",(localRead(item.s,item.model.spot.id)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
+  data.append(el("span",item.model.spot.name,"chile-rank-name"),
+   el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),
+   el("small",(localRead(item.s,item.model.spot.id)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
+  if(item.s.scoreMeta?.capActive)
+   data.append(el("small",tr("Techo del índice provisional · no permite ordenar valores superiores",
+    "Provisional index cap · cannot distinguish higher potential"),"faro-score-cap-note"));
   line.append(data,el("strong",num(item.s.score)));b.append(line);
   b.addEventListener("click",()=>{
    state.selected=state.config.pilots.findIndex(s=>s.id===item.model.spot.id);
