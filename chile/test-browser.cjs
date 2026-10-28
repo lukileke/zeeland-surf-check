@@ -220,8 +220,8 @@ function fixture(){
     const sessionBounds=await page.locator('#dayview > .session-section').boundingBox();
     const mapBounds=await page.locator('#coastMapExpand').boundingBox();
     assert.ok(sessionBounds&&mapBounds,'Session and map must both occupy desktop grid');
-    assert.ok(Math.abs(sessionBounds.y-mapBounds.y)<25,'Map must be beside session, not auto-placed below');
-    assert.ok(mapBounds.x>sessionBounds.x+sessionBounds.width-20,'Map must occupy right desktop column');
+    assert.ok(mapBounds.y>=sessionBounds.y+sessionBounds.height-10,'Map must follow the selected session');
+    assert.ok(mapBounds.width>sessionBounds.width*1.45,'Map must use a full-width coastal reading area');
     const font=await page.locator('#dayWave').evaluate(el=>getComputedStyle(el).fontFamily);
     assert.match(font,/Manrope|faro-text|system-ui/i,'Model wave size must use Zeeland number font, not Archivo Black');
    }
@@ -233,6 +233,8 @@ function fixture(){
    assert.match(await page.locator('#faroHourlyPreview').textContent(),/COASTAL READ/);
    await page.locator('#faroHourlyGoLens').click();
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
+   assert.equal(await page.locator('#chileCoastMap .faro-lens-stage').count(),1,'Map and ocean read share a stage');
+   assert.equal(await page.locator('#chileCoastMap .faro-map-focus').count(),1,'Map has a selected-break label');
    const mapText=await page.locator('#chileCoastMap').textContent();
    assert.match(mapText,/La Boca/);
    assert.match(mapText,/SWELL/);
