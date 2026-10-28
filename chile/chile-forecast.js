@@ -385,6 +385,9 @@ function strip(){
   button.append(el("small",s?sessionTime(s):tr("No evaluado","Not evaluated"),"chile-chip-time"));
   button.addEventListener("click",()=>{state.day=i;state.hour=null;render()});host.append(button);
  }
+ const chosen=days[state.day],best=bestRemaining(chosen);
+ txt("dayStripSelected",chosen?
+   dateLabel(chosen.date)+" · "+(best?num(best.score)+"/10 · "+sessionTime(best):tr("Sin horario","No window")):"—");
  state.page=Math.min(state.page,Math.max(0,days.length-3));
  txt("dayStripCount",(state.page+1)+"–"+Math.min(days.length,state.page+3)+" / "+days.length);
  $("dayPrev").disabled=state.page===0;$("dayNext").disabled=state.page>=days.length-3;
@@ -674,6 +677,10 @@ function session(){
 }
 function render(){
  if(!state.forecast)return;
+ const session=selection();
+ txt("sessionDetailSummary",session?
+  sessionTime(session)+" · "+num(session.score)+"/10 · "+experimentalLabel(session):
+  tr("Sin ventana disponible","No available window"));
  txt("updated",tr("Modelo consultado ","Model fetched ")+new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(state.forecast.model.fetchedAt))+" · CL");
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
  state.videoLab?.refreshCameras();updateCoastMap();renderHourlyPreview();if(state.tab==="board")match();
@@ -838,6 +845,7 @@ async function initialize(){
     $("dayStripItems").replaceChildren();
     $("slots").replaceChildren();
     $("sessionAtGlance").replaceChildren();
+    txt("sessionDetailSummary",tr("Cargando spot…","Loading break…"));
     for(const id of ["dayWave","dayWaveLabel","dayPeriod","dayWind","chileVibeTag","chileVibeRead",
       "chileVibeAction","chileVibeHeadline"])txt(id,"—");
     $("dayWaveMeter").replaceChildren();
