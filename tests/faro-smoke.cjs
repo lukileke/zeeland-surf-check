@@ -363,6 +363,7 @@ const ctx={
  nlNow:()=>({date:'2026-10-23'}),
  pastWindow:()=>true,daylight:()=>({end:960}),enoughTimeRemaining:()=>false,
  scoreTone:()=> 'tone-fair',surfScoreLabel:()=> 'Fair',
+ faroGradeClass:()=> 'faro-grade-fair',
  pad:n=>String(n).padStart(2,'0'),requestAnimationFrame:fn=>fn()
 };
 const rail={
