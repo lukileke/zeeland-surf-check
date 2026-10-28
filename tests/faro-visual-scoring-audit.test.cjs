@@ -72,8 +72,8 @@ test('the lower sections are purposeful, discoverable and functional',()=>{
  assert.match(css,/\.faro-hub-group>details\.forecast-expand>summary/);
 });
 test('all new frontend script and CSS versions invalidate old cached prototypes',()=>{
- assert.match(html,/coast-map\.js\?v=13/);
+ assert.match(html,/coast-map\.js\?v=14/);
  assert.match(html,/chile-forecast\.js\?v=20/);
  assert.match(html,/valparaiso-score-lab\.js\?v=2/);
- assert.match(html,/faro-coastal-lens-v4\.css\?v=8/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=9/);
 });
