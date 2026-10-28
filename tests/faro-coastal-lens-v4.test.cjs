@@ -46,8 +46,8 @@ test('layers are genuine selective controls and point markers remain clickable',
  for(const mode of ['combined','swell','wind'])assert.ok(code.includes('"'+mode+'"'));
  assert.match(code,/modelGridMarker\.bindPopup\(modelPopup\(true\)/);
  assert.match(code,/windGridMarker\.bindPopup\(modelPopup\(false\)/);
- assert.match(code,/modelGridMarker\.setOpacity\(mapView==="region"&&showSamples&&mode!=="wind"\?1:0\)/);
- assert.match(code,/windGridMarker\.setOpacity\(mapView==="region"&&showSamples&&mode!=="swell"\?1:0\)/);
+ assert.match(code,/const displayMarine=mapView==="region"&&showSamples&&mode!=="wind"/);
+ assert.match(code,/const displayWind=mapView==="region"&&showSamples&&mode!=="swell"/);
  assert.doesNotMatch(code,/faro-lens-partitions/);
  assert.match(code,/One primary travel arrow/);
 });
