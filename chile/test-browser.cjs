@@ -248,7 +248,8 @@ function fixture(){
      for(const level of ['favourable','mixed','unfavourable']){
       const tick=document.createElement('span');
       tick.className='faro-region-fit-tick is-wind';
-      tick.dataset.fit='edge';tick.dataset.level=level;
+      tick.dataset.fit=level==='favourable'?'inside':level==='unfavourable'?'outside':'edge';
+      tick.dataset.level=level;
       tick.textContent='W';pin.append(tick);nodes[level]=tick;
      }
      host.append(pin);return {type,pin,nodes};
@@ -260,7 +261,10 @@ function fixture(){
       for(const {type,nodes} of pins){
        out[theme][type]={};
        for(const [level,el] of Object.entries(nodes)){
-        out[theme][type][level]=getComputedStyle(el).color;
+        const style=getComputedStyle(el);
+        out[theme][type][level]={
+         ink:style.color,bg:style.backgroundColor
+        };
        }
       }
      }
@@ -270,15 +274,26 @@ function fixture(){
     }
     return out;
    });
-   for(const type of ['regional','selected']){
-    assert.deepEqual(colours.light[type],{
-     favourable:'rgb(44, 110, 88)',mixed:'rgb(132, 109, 66)',
-     unfavourable:'rgb(154, 88, 82)'
-    },'Light regional badges use HUD semantic palette: '+type);
-    assert.deepEqual(colours.dark[type],{
-     favourable:'rgb(167, 211, 191)',mixed:'rgb(222, 199, 157)',
-     unfavourable:'rgb(226, 171, 160)'
-    },'Dark regional badges use HUD semantic palette: '+type);
+   for(const theme of ['light','dark']){
+    for(const level of ['favourable','mixed','unfavourable']){
+     const expected=theme==='light'?{
+      favourable:'rgb(44, 110, 88)',mixed:'rgb(132, 109, 66)',
+      unfavourable:'rgb(154, 88, 82)'
+     }:{
+      favourable:'rgb(167, 211, 191)',mixed:'rgb(222, 199, 157)',
+      unfavourable:'rgb(226, 171, 160)'
+     };
+     assert.equal(colours[theme].regional[level].ink,expected[level],
+      'Unselected regional tick must use the HUD palette for '+level);
+     const selectedInk={
+      favourable:'rgb(34, 94, 78)',mixed:'rgb(114, 83, 27)',
+      unfavourable:'rgb(154, 56, 52)'
+     }[level];
+     assert.equal(colours[theme].selected[level].ink,selectedInk,
+      'Selected tick text must be dark on white for legibility: '+theme+' '+level);
+     assert.equal(colours[theme].selected[level].bg,'rgb(247, 251, 249)',
+      'Selected S/W indicator must have an opaque light background');
+    }
    }
 
    const mapText=await page.locator('#chileCoastMap').textContent();
@@ -292,6 +307,34 @@ function fixture(){
    await page.locator('#chileCoastMap button.faro-map-shortcut').click();
    assert.equal(await page.locator('#fieldNotesExpand').evaluate(el=>el.open),true,
     'One-click coast-map action should reveal the private observation journal');
+   // Regression for the reported regional-map jump. The browser QA
+   // deliberately blocks Leaflet CDN so this uses the same georeferenced SVG
+   // fallback. Its regional state and forecast layout must still remain stable
+   // during a selection and asynchronous model refresh.
+   if(width===1180){
+    await page.locator('#fieldNotesExpand').evaluate(el=>el.open=false);
+    await page.locator('#chileCoastMap .faro-lens-selected-detail').evaluate(el=>el.open=false);
+    await page.locator('#chileCoastMap .faro-lens-recenter').evaluate(el=>el.disabled=false);
+    await page.locator('#chileCoastMap .faro-lens-recenter').click();
+    assert.equal(await page.locator('#chileCoastMap').getAttribute('data-map-view'),'region');
+    await page.locator('#coastMapExpand').evaluate(el=>el.scrollIntoView({block:'start',behavior:'instant'}));
+    const initialTop=await page.locator('#coastMapExpand').evaluate(el=>el.getBoundingClientRect().top);
+    await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:renaca"]').evaluate(el=>
+      el.dispatchEvent(new MouseEvent('click',{bubbles:true})));
+    await page.waitForFunction(()=>
+      document.getElementById('chileSpotSelect')?.value==='CL-VS:renaca'&&
+      document.querySelector('#chileCoastMap .faro-lens-read-heading')?.textContent?.includes('Reñaca'),
+      {timeout:12000});
+    assert.equal(await page.locator('#chileCoastMap').getAttribute('data-map-view'),'region',
+     'Selecting another beach must not silently revert to Beach focus');
+    const finalTop=await page.locator('#coastMapExpand').evaluate(el=>el.getBoundingClientRect().top);
+    assert.ok(Math.abs(finalTop-initialTop)<20,
+     'Regional map must remain anchored after async spot change: '+JSON.stringify({initialTop,finalTop}));
+    await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
+    await page.waitForFunction(()=>document.querySelector('#chileCoastMap .faro-lens-read-heading')?.textContent?.includes('La Boca'),{timeout:12000});
+    await page.locator('#chileCoastMap .faro-lens-recenter').evaluate(el=>el.disabled=false);
+    await page.locator('#chileCoastMap .faro-lens-recenter').click();
+   }
    // Switch spot by selecting the georeferenced map pin, not just the dropdown.
    if(width>=1120){
     await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:renaca"]').click();
