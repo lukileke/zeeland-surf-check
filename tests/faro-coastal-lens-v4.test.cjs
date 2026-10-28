@@ -83,6 +83,6 @@ test('regional click retains regional comparison and selected contrast overrides
 test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=13"/);
  assert.match(html,/src="coast-map\.js\?v=17"/);
- assert.match(html,/src="chile-forecast\.js\?v=22"/);
+ assert.match(html,/src="chile-forecast\.js\?v=23"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });

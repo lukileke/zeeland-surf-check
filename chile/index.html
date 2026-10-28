@@ -29,7 +29,7 @@
 <link rel="stylesheet" href="../assets/faro-visual-system-v2.css?v=5">
 <link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=13">
 <!-- Single Chile-specific layout contract, loaded after all visual layers. -->
-<link rel="stylesheet" href="chile-visual-contract.css?v=3">
+<link rel="stylesheet" href="chile-visual-contract.css?v=4">
 </head>
 <body>
 <main>
@@ -99,22 +99,32 @@
    <button type="button" data-jump="spotInsightExpand" data-es="03 · Spot DNA" data-en="03 · Spot DNA">03 · Spot DNA</button>
    <button type="button" data-jump="cameraExpand" data-es="04 · Cámaras" data-en="04 · Cameras">04 · Cámaras</button>
   </nav>
-  <section id="dayStrip" class="day-strip-wrap forecast-section" aria-label="Próximos siete días">
-   <div class="day-strip-title"><strong data-es="Próximos 7 días" data-en="Next 7 days">Próximos 7 días</strong><div class="day-strip-tools">
+  <details id="dayStrip" class="day-strip-wrap forecast-section faro-week-disclosure">
+   <summary class="faro-week-summary">
+    <span class="faro-week-summary-heading"><small data-es="EXPLORA MÁS DÍAS" data-en="EXPLORE OTHER DAYS">EXPLORA MÁS DÍAS</small><strong data-es="Pronóstico de los próximos 7 días" data-en="Next 7 days">Pronóstico de los próximos 7 días</strong></span>
+    <span id="dayStripSelected" class="faro-week-current" aria-live="polite">—</span>
+    <span class="faro-week-toggle" aria-hidden="true">+</span>
+   </summary>
+   <div class="faro-week-body"><div class="day-strip-title"><strong data-es="Próximos 7 días" data-en="Next 7 days">Próximos 7 días</strong><div class="day-strip-tools">
     <span id="dayStripCount" class="day-strip-count">1–3 / 7</span>
     <button id="dayPrev" type="button" class="day-strip-arrow" aria-label="Días anteriores">‹</button>
     <button id="dayNext" type="button" class="day-strip-arrow" aria-label="Días siguientes">›</button>
    </div></div>
    <p class="day-strip-deck" data-es="Mejor ventana con luz de cada día · Desliza para explorar" data-en="Best daylight window each day · Swipe to explore">Mejor ventana con luz de cada día · Desliza para explorar</p>
    <div id="dayStripItems" class="day-strip" role="group" aria-label="Seleccionar día"></div>
-   <div class="day-strip-progress" aria-hidden="true"><span id="dayStripProgress"></span></div>
-  </section>
+   <div class="day-strip-progress" aria-hidden="true"><span id="dayStripProgress"></span></div></div>
+  </details>
   <section class="forecast-section day-outlook-section" aria-label="Resumen diario">
    <div class="forecast-overview" id="dailyOverview">
     <div class="day-editorial-overline"><span data-es="EL PANORAMA DEL DÍA" data-en="THE DAILY TAKE">EL PANORAMA DEL DÍA</span> <span>·</span> VALPARAÍSO</div>
     <div class="row day-overview-row">
      <div class="day-identity"><h2 id="datehead">—</h2><div id="spotname">—</div></div>
      <div class="best-session-brief"><small id="bestTimeKicker">MEJOR VENTANA</small><div id="bestTime" class="best-time">—</div></div>
+    </div>
+    <!-- One immediate decision; expandable VIBE explains why and what next. -->
+    <div class="chile-decision-brief" id="chileDecisionBrief" aria-live="polite">
+     <strong id="chileDecisionHeadline">—</strong>
+     <span id="chileDecisionDriver">—</span>
     </div>
     <div class="chile-day-uv" id="dayUVBadge" role="note"><span id="dayUVLabel"> UV —</span><small id="dayUVAdvice">—</small></div>
     <div id="daySignalMetrics" class="day-signal-metrics">
@@ -131,11 +141,7 @@
      <div class="day-signal-metric"><span class="day-signal-icon" data-faro-icon="swell-period" aria-hidden="true"></span><div class="day-signal-figure"><small data-es="PERÍODO SWELL" data-en="SWELL PERIOD">PERÍODO SWELL</small><strong id="dayPeriod">—</strong></div></div>
      <div class="day-signal-metric"><span class="day-signal-icon" data-faro-icon="wind-speed" aria-hidden="true"></span><div class="day-signal-figure"><small data-es="VIENTO" data-en="WIND">VIENTO</small><strong id="dayWind">—</strong></div></div>
     </div>
-    <!-- One immediate decision; expandable VIBE explains why and what next. -->
-    <div class="chile-decision-brief" id="chileDecisionBrief" aria-live="polite">
-     <strong id="chileDecisionHeadline">—</strong>
-     <span id="chileDecisionDriver">—</span>
-    </div>
+
     <section class="faro-read chile-vibe" aria-label="FARO VIBE">
      <div class="faro-vibe-top"><span class="faro-vibe-brand"><span class="faro-vibe-mark" data-faro-icon="faro-read" aria-hidden="true"></span> FARO VIBE</span></div>
      <details id="chileVibeDetails" class="chile-vibe-details">
@@ -161,8 +167,22 @@
      </div>
    </section>
    <section class="forecast-section session-section" aria-label="Sesión seleccionada">
+    <details id="sessionDetailExpand" class="chile-session-disclosure">
+     <summary class="chile-session-toggle">
+      <span class="chile-session-toggle-name"><small data-es="SESIÓN ELEGIDA" data-en="SELECTED SESSION">SESIÓN ELEGIDA</small><strong data-es="Detalles y equipo" data-en="Details & gear">Detalles y equipo</strong></span>
+      <span id="sessionDetailSummary" class="chile-session-toggle-value" aria-live="polite">—</span>
+      <span class="chile-session-toggle-arrow" aria-hidden="true">+</span>
+     </summary>
+     <div class="chile-session-body">
     <div id="sessionAtGlance" class="session-glance"><p class="muted" data-es="Selecciona una ventana para ver sus condiciones." data-en="Select a time window for details.">Selecciona una ventana para ver sus condiciones.</p></div>
     <div class="session-essentials"><small data-es="ANTES DE IR" data-en="BEFORE YOU GO">ANTES DE IR</small><div id="sessionEssentials" class="essentials-tags"></div>
+    </div>
+    <details class="daylight-disclosure"><summary><span data-es=" Luz solar y horarios" data-en=" Daylight & timing"> Luz solar y horarios</span><span class="daylight-leave" id="daylightBrief">—</span><span class="daylight-arrow">⌄</span></summary>
+     <div class="metric"><div data-es=" Amanecer" data-en=" Sunrise"> Amanecer<b id="rise">—</b></div><div data-es=" Atardecer" data-en=" Sunset"> Atardecer<b id="set">—</b></div><div data-es=" Salir antes de" data-en=" Suggested cut-off"> Salir antes de<b id="cutoff">—</b></div></div>
+    </details>
+    </div>
+    </details>
+    <div class="chile-official-inline">
      <details id="chileOfficialSources" class="chile-official-sources">
       <summary><span data-es="Revisar avisos oficiales" data-en="Check official notices">Revisar avisos oficiales</span><span class="chile-official-state" data-es="Estado no verificado" data-en="Not automatically verified">Estado no verificado</span><span aria-hidden="true">⌄</span></summary>
       <p data-es="FARO no comprueba automáticamente los avisos de marejadas ni las alertas meteorológicas o territoriales. Un modelo sin señales de riesgo no confirma que no existan avisos." data-en="FARO does not automatically check official swell, weather or territorial warnings. No risk flagged by a model does not confirm there are no official notices.">FARO no comprueba automáticamente los avisos de marejadas ni las alertas meteorológicas o territoriales. Un modelo sin señales de riesgo no confirma que no existan avisos.</p>
@@ -173,9 +193,6 @@
       </div>
      </details>
     </div>
-    <details class="daylight-disclosure"><summary><span data-es=" Luz solar y horarios" data-en=" Daylight & timing"> Luz solar y horarios</span><span class="daylight-leave" id="daylightBrief">—</span><span class="daylight-arrow">⌄</span></summary>
-     <div class="metric"><div data-es=" Amanecer" data-en=" Sunrise"> Amanecer<b id="rise">—</b></div><div data-es=" Atardecer" data-en=" Sunset"> Atardecer<b id="set">—</b></div><div data-es=" Salir antes de" data-en=" Suggested cut-off"> Salir antes de<b id="cutoff">—</b></div></div>
-    </details>
    </section>
    <details id="coastMapExpand" class="forecast-expand faro-map-disclosure">
     <summary><span data-faro-icon="map"></span><span class="forecast-accordion-title" data-es=" COASTAL LENS · lectura del mar" data-en=" COASTAL LENS · read the sea"> COASTAL LENS · lectura del mar</span><span class="forecast-accordion-meta" data-es="Cuatro spots · swell por componentes y viento" data-en="Four spots · swell partitions and wind">Cuatro spots · swell por componentes y viento</span></summary>
@@ -287,6 +304,6 @@
 <script src="video-observation-lab.js?v=1"></script>
 <script src="faro-coastal-lens.js?v=1"></script>
 <script src="coast-map.js?v=17"></script>
-<script src="chile-forecast.js?v=22"></script>
+<script src="chile-forecast.js?v=23"></script>
 </body>
 </html>
