@@ -32,16 +32,33 @@ const scoreCaveat=session=>{
 const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
 const waveSizeLabel=h=>!ok(h)?"—":h<.5?tr("Pequeñas","Small"):h<1.2?tr("Medianas","Medium"):h<2?tr("Grandes","Large"):tr("Muy grandes","Very large");
 function waveBars(h){
- const x=el("div",null,"chile-wave-bars faro-meter-bars "+waveSize(h));
+ // Continuous editorial gauge with model-height progress; NOT wave-face height
+ // and not a fabricated graph of changing wave heights.
+ const x=el("div",null,"chile-wave-bars faro-meter-bars faro-wave-gauge "+waveSize(h));
  x.setAttribute("role","img");
- x.setAttribute("aria-label",tr("Indicador de oleaje oceánico: ","Offshore model wave indicator: ")+num(h)+" m");
+ x.setAttribute("aria-label",tr("Altura oceánica modelada: ","Offshore model height: ")+
+  num(h)+" m · "+tr("escala visual de 0 a 2 m o más",
+   "visual scale from 0 to 2 m or more"));
+ const fraction=ok(h)?Math.min(1,Math.max(0,h/2)):0;
+ x.style.setProperty("--faro-wave-progress",(fraction*100).toFixed(1)+"%");
+ const rail=el("div",null,"faro-gauge-rail");
+ rail.setAttribute("aria-hidden","true");
+ rail.append(el("span",null,"faro-gauge-fill"),el("span",null,"faro-gauge-position"));
+ x.append(rail);
+ const marks=el("div",null,"faro-gauge-ticks");
+ marks.setAttribute("aria-hidden","true");
  const count=ok(h)?Math.max(0,Math.min(8,Math.round(h/.25))):0;
  for(let i=0;i<8;i++){
-  const b=el("span",null,i<count?"on":"");
-  b.style.height=(7+i*2)+"px";x.append(b);
+  const tick=el("span",null,i<count?"on":"");
+  marks.append(tick);
  }
+ x.append(marks);
+ const caption=el("small",tr("Escala oceánica · no altura rompiente",
+  "Offshore scale · not breaking surf"),"faro-gauge-caption");
+ x.append(caption);
  return x;
 }
+
 const spot=()=>state.config?.pilots?.[state.selected], profile=()=>state.profiles?.profiles?.[spot()?.id];
 const regionRecord=()=>state.registry?.spots?.find(s=>s.id===spot()?.id);
 const localRead=(s,spotId=spot()?.id)=>window.FaroChileSpotIntelligence&&state.intelligence&&spotId?
