@@ -58,8 +58,8 @@ test('motion respects reduced-motion, exposure is only an editorial guide',()=>{
  assert.match(code,/Sin simulación de refracción ni altura rompiente/);
 });
 test('asset version and shared Zeeland colours remain unaffected',()=>{
- assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=4"/);
- assert.match(html,/src="coast-map\.js\?v=8"/);
+ assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=5"/);
+ assert.match(html,/src="coast-map\.js\?v=9"/);
  assert.match(html,/src="chile-forecast\.js\?v=18"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });
