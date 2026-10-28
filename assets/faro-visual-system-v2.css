@@ -513,3 +513,10 @@ html :is(#dayStripItems, .slots, .day-strip, .faro-journey-nav) button:focus-vis
  html:focus-within{scroll-behavior:auto!important}
  html :is(button,a,summary){transition-duration:0.01ms!important}
 }
+
+/* Dark-mode tab selection must use the same coastal teal as day selection,
+   not the legacy blue focus accent. Keep all selection affordances coherent. */
+html:not([data-theme="light"]) main>.app-nav button.active,
+html:not([data-theme="light"]) main>.app-nav button[aria-pressed="true"]{
+ border-color:var(--faro-selection)!important;
+}
