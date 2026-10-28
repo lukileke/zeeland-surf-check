@@ -152,7 +152,7 @@ function create(opts){
   mapView=mapView==="beach"?"region":"beach";
   if(mapView==="region")comparison.open=true;
   frameMap(true);update(latest);
- });controls.append(recenter);
+ });controls.insertBefore(recenter,advanced);
  const regionSummary=document.createElement("div");regionSummary.className="faro-lens-region-summary";
  regionSummary.hidden=true;host.append(regionSummary);
  const status=document.createElement("p");status.className="faro-lens-status";status.setAttribute("role","status");host.append(status);
@@ -170,12 +170,17 @@ function create(opts){
   update(latest);
  });
  if(reduced())motionFlag.input.disabled=true;
- const section=document.createElement("div");section.className="faro-map-wrap";host.append(section);
+ const stage=document.createElement("div");stage.className="faro-lens-stage";host.append(stage);
+ const section=document.createElement("div");section.className="faro-map-wrap";stage.append(section);
  const viewport=document.createElement("div");viewport.className="faro-map-viewport";viewport.setAttribute("aria-label","Valparaíso · mapa de spots");section.append(viewport);
  const compassDock=document.createElement("div");compassDock.className="faro-lens-compass-dock";
  compassDock.setAttribute("role","img");viewport.append(compassDock);
+ // A grounded spot label gives the map a clear visual anchor.
+ const focus=document.createElement("div");focus.className="faro-map-focus";focus.setAttribute("aria-hidden","true");
+ const focusLabel=document.createElement("small"),focusName=document.createElement("strong");
+ focus.append(focusLabel,focusName);viewport.append(focus);
+ const brief=document.createElement("div");brief.className="faro-map-brief";brief.setAttribute("aria-live","polite");stage.append(brief);
  const legend=document.createElement("div");legend.className="faro-lens-footer-legend";host.append(legend);
- const brief=document.createElement("div");brief.className="faro-map-brief";brief.setAttribute("aria-live","polite");host.append(brief);
  const comparison=document.createElement("details");comparison.className="faro-lens-beaches";host.append(comparison);
  const technical=document.createElement("details");technical.className="faro-lens-selected-detail";host.append(technical);
  const technicalSummary=document.createElement("summary");technical.append(technicalSummary);
@@ -349,6 +354,9 @@ function create(opts){
   motionFlag.input.checked=motion;exposureFlag.input.checked=exposure;
   samplesFlag.input.checked=showSamples;
   host.dataset.mapView=mapView;
+  focus.hidden=mapView==="region";
+  focusLabel.textContent=es?"SPOT SELECCIONADO":"SELECTED BREAK";
+  focusName.textContent=v.spot?.shortName||v.spot?.name||"—";
   regionSummary.hidden=mapView!=="region";
   regionSummary.replaceChildren();
   if(mapView==="region"){
@@ -716,7 +724,7 @@ function create(opts){
    requestAnimationFrame(()=>map?.invalidateSize({pan:false}));
   }catch(err){
    loadError=true;
-   if(!schematic.isConnected){viewport.replaceChildren(schematic,compassDock)}
+   if(!schematic.isConnected){viewport.replaceChildren(schematic,compassDock,focus)}
    status.textContent=p().lang==="en"?
     "Map tiles unavailable. Showing a schematic of model references.":
     "Mapa base no disponible. Se muestran las referencias del modelo.";

@@ -122,7 +122,7 @@ function fixture(){
    assert.ok(visual.scrollWidth<=visual.clientWidth+3,
     'Daily hero overflows viewport: '+JSON.stringify(visual));
 
-   assert.equal(await page.locator('#dayWaveMeter .chile-wave-bars span').count(),8,
+   assert.equal(await page.locator('#dayWaveMeter .faro-wave-ruler-mark').count(),8,
     'Zeeland-style wave-height scale must show all eight bars');
    assert.match(await page.locator('#dayWave').textContent(),/m/,'Daily hero must feature modelled wave height');
    assert.equal(await page.locator('#chileWaveExplain').count(),1);
@@ -131,7 +131,7 @@ function fixture(){
    assert.match(await page.locator('#chileWaveHow').textContent(),/VIENTO Y RACHAS|WIND & GUSTS/);
    assert.equal(await page.locator('#chileSessionVibe').count(),0);
    assert.equal(await page.locator('#sessionAtGlance .chile-session-overline').count(),1);
-   assert.equal(await page.locator('#sessionAtGlance .chile-session-head>.chile-session-wave .chile-wave-bars span').count(),8);
+   assert.equal(await page.locator('#sessionAtGlance .chile-session-head>.chile-session-wave .faro-wave-ruler-mark').count(),8);
    const qualityOf=v=>v>=8.5?'Excelente':v>=7?'Bueno':v>=5?'Regular':v>=3?'Malo':'Muy malo';
    const toneOf=v=>v>=8.5?'tone-great':v>=7?'tone-good':v>=5?'tone-fair':v>=3?'tone-poor':'tone-low';
    const firstChip=page.locator('#dayStripItems .day-chip').first();
@@ -146,11 +146,11 @@ function fixture(){
     const html=document.documentElement,prev=html.dataset.theme;
     html.dataset.theme="light";
     const expected={
-     "brand-band-verylow":"rgb(240, 164, 109)",
-     "brand-band-low":"rgb(240, 191, 105)",
-     "brand-band-mid":"rgb(227, 212, 113)",
-     "brand-band-regular":"rgb(176, 219, 117)",
-     "brand-band-high":"rgb(150, 198, 122)"
+     "brand-band-verylow":"rgb(239, 155, 119)",
+     "brand-band-low":"rgb(239, 189, 110)",
+     "brand-band-mid":"rgb(224, 204, 115)",
+     "brand-band-regular":"rgb(177, 213, 116)",
+     "brand-band-high":"rgb(140, 197, 132)"
     },out=[];
     const band=el=>[...el.classList].find(x=>x.startsWith("brand-band-"));
     try{
@@ -215,24 +215,27 @@ function fixture(){
      'Map must include published coastal reference '+id);
    }
    const arrowCount=await page.locator('#chileCoastMap .faro-map-schematic line[stroke="#137d9f"], #chileCoastMap .faro-map-schematic line[stroke="#ba7628"]').count();
-   assert.equal(arrowCount,2,'Model swell and wind travel vectors must be visible');
+   assert.equal(arrowCount,0,'Schematic must not invent swell rays from model grid points');
    if(width>=1120){
     const sessionBounds=await page.locator('#dayview > .session-section').boundingBox();
     const mapBounds=await page.locator('#coastMapExpand').boundingBox();
     assert.ok(sessionBounds&&mapBounds,'Session and map must both occupy desktop grid');
-    assert.ok(Math.abs(sessionBounds.y-mapBounds.y)<25,'Map must be beside session, not auto-placed below');
-    assert.ok(mapBounds.x>sessionBounds.x+sessionBounds.width-20,'Map must occupy right desktop column');
+    assert.ok(mapBounds.y>=sessionBounds.y+sessionBounds.height-10,'Map must follow the selected session');
+    assert.ok(mapBounds.width>sessionBounds.width*1.45,'Map must use a full-width coastal reading area');
     const font=await page.locator('#dayWave').evaluate(el=>getComputedStyle(el).fontFamily);
     assert.match(font,/Manrope|faro-text|system-ui/i,'Model wave size must use Zeeland number font, not Archivo Black');
    }
-   assert.equal(await page.locator('#coastMapExpand .faro-lens-compass-svg').count(),1,
-    'Compass must display actual bearing rose for swell and wind');
-   assert.equal(await page.locator('#coastMapExpand .faro-lens-compass-svg circle').count()>=3,true,
-    'Compass must show actual direction rings, not a decorative emoji');
-   assert.match(await page.locator('#coastMapExpand .faro-lens-module').textContent(),/SWELL COMPASS/);
+   assert.equal(await page.locator('#coastMapExpand .faro-direction-hud').count(),1,
+    'Map viewport must display a compact, accessible direction HUD');
+   assert.equal(await page.locator('#coastMapExpand .faro-direction-hud svg.faro-hud-arrow').count(),2,
+    'Combined layer must show two unambiguous travel-direction arrows');
+   assert.equal(await page.locator('#chileCoastMap .faro-lens-quick-metrics').count(),1,
+    'Coastal read must separate swell and wind measures from the map');
    assert.match(await page.locator('#faroHourlyPreview').textContent(),/COASTAL READ/);
    await page.locator('#faroHourlyGoLens').click();
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
+   assert.equal(await page.locator('#chileCoastMap .faro-lens-stage').count(),1,'Map and ocean read share a stage');
+   assert.equal(await page.locator('#chileCoastMap .faro-map-focus').count(),1,'Map has a selected-break label');
    const mapText=await page.locator('#chileCoastMap').textContent();
    assert.match(mapText,/La Boca/);
    assert.match(mapText,/SWELL/);
@@ -240,6 +243,7 @@ function fixture(){
    assert.match(mapText,/OpenStreetMap/,'Map must show attribution and limits');
    assert.ok(await page.locator('#chileCoastMap a[href*="lineup.surf"][href*="camera1"]').count(),
     'Map makes the original free-account La Boca surf camera discoverable');
+   await page.locator('#chileCoastMap .faro-lens-selected-detail').evaluate(el=>el.open=true);
    await page.locator('#chileCoastMap button.faro-map-shortcut').click();
    assert.equal(await page.locator('#fieldNotesExpand').evaluate(el=>el.open),true,
     'One-click coast-map action should reveal the private observation journal');

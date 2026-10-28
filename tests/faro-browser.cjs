@@ -156,20 +156,21 @@ async function swipe(session,x0,y0,x1,y1){
        });
        const clear='rgba(0, 0, 0, 0)';
        const paper=theme==='light'?'rgb(255, 255, 255)':'rgb(35, 67, 71)';
-       const selectedStroke=theme==='light'?'rgb(82, 106, 116)':'rgb(201, 216, 218)';
+       const selectedStroke=theme==='light'?'rgb(23, 109, 120)':'rgb(144, 205, 209)';
+       const timeStroke=theme==='light'?'rgb(82, 106, 116)':'rgb(201, 216, 218)';
        const passiveStroke=theme==='light'?'rgb(201, 216, 218)':'rgb(80, 112, 116)';
-       const navigationBlue=theme==='light'?'rgb(88, 120, 224)':'rgb(165, 186, 255)';
+       const navigationBlue=selectedStroke; // FARO coastal-teal selection, not old app blue.
        if(hierarchy.activeCount!==1||hierarchy.chosenBg!==paper||
            hierarchy.otherBg!==clear||hierarchy.chosenStroke!==selectedStroke||
            hierarchy.otherStroke!==passiveStroke||
-           hierarchy.otherBadge!==clear||
+           hierarchy.chosenBadge!==hierarchy.otherBadge||
            hierarchy.navOtherBg!==clear||
            hierarchy.navBg!==paper||
            hierarchy.navStroke!==navigationBlue||
            (theme==='light'&&hierarchy.heroBg!==paper)||
            (hierarchy.timeBg&&hierarchy.timeBg!==paper)||
            (hierarchy.otherTimeBg&&hierarchy.otherTimeBg!==clear)||
-           (hierarchy.timeStroke&&hierarchy.timeStroke!==selectedStroke)||
+           (hierarchy.timeStroke&&hierarchy.timeStroke!==timeStroke)||
            (hierarchy.otherTimeStroke&&hierarchy.otherTimeStroke!==passiveStroke)){
         failures.push({width,locale,theme,issue:'Selected scores need dark-grey borders and passive options need softer-grey borders',hierarchy,paper,selectedStroke,passiveStroke,navigationBlue});
        }
@@ -273,8 +274,8 @@ async function swipe(session,x0,y0,x1,y1){
          return {suggested,selected,restored,suggestionAuto,explicit,restoredAuto,
            alternativeFound:!!alternative,fits,screenWidth,rectRight:rect?.right};
         });
-        const expectedAuto=locale==='es'?'HORARIO RECOMENDADO':'SUGGESTED WINDOW';
-        const expectedSelected=locale==='es'?'VENTANA ELEGIDA':'SELECTED WINDOW';
+        const expectedAuto=locale==='es'?'SELECCIÓN FARO':'FARO PICK';
+        const expectedSelected=locale==='es'?'TU HORARIO':'YOUR WINDOW';
         if(!windowCopy.alternativeFound||!windowCopy.suggestionAuto||
            !windowCopy.explicit||!windowCopy.restoredAuto||!windowCopy.fits||
            windowCopy.suggested!==expectedAuto||

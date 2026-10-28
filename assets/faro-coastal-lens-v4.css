@@ -28,8 +28,8 @@ html #chileCoastMap .faro-map-viewport{box-sizing:border-box!important;position:
  height:clamp(315px,33vw,415px)!important;min-width:0;overflow:hidden!important;
  border:1px solid var(--faro-editorial-hairline,var(--border))!important;
  border-radius:17px!important;background:#c5dcdf!important;isolation:isolate;box-shadow:none!important}
-#chileCoastMap .leaflet-tile-pane{filter:saturate(.48) contrast(.92) brightness(1.05)}
-html:not([data-theme="light"]) #chileCoastMap .leaflet-tile-pane{filter:saturate(.55) contrast(.92) brightness(.93)}
+#chileCoastMap .leaflet-tile-pane{filter:saturate(.84) contrast(1.04) brightness(1.01)}
+html:not([data-theme="light"]) #chileCoastMap .leaflet-tile-pane{filter:saturate(.76) contrast(1.03) brightness(.94)}
 /* Compass is pinned to the viewport, independent of marine sampling coordinates.
    Combined mode only displays one needle; wind direction sits on a second line. */
 /* The compass and conditions are one compact, readable corner HUD.
@@ -852,3 +852,39 @@ html:not([data-theme="light"]) #chileCoastMap .faro-hud-row[data-level="unknown"
 }
 /* The text-plus-shape language remains useful in greyscale and colour vision
    deficiencies; avoid signal-coded standalone blue/yellow beach arrows. */
+
+/* Coastal lens: geographic focus, without implying observed wave quality. */
+#chileCoastMap .faro-map-viewport{background:#c7e3e7!important}
+#chileCoastMap .faro-map-pin.is-current{
+ background:#116b7c!important;color:#fff!important;border:2px solid #f4fbf9!important;
+ box-shadow:0 0 0 3px rgba(16,97,114,.58),0 0 0 10px rgba(19,108,129,.18),0 7px 22px rgba(14,49,60,.32)!important
+}
+#chileCoastMap .faro-leaflet-marker:focus-visible{outline:none!important}
+#chileCoastMap .faro-leaflet-marker:focus-visible .faro-map-pin{
+ outline:3px solid #136b80!important;outline-offset:6px!important
+}
+#chileCoastMap .faro-map-focus{
+ pointer-events:none;position:absolute;z-index:920;left:14px;bottom:16px;
+ display:grid;gap:4px;max-width:min(62%,245px);padding:10px 14px;border-radius:11px;
+ border:1px solid rgba(255,255,255,.72);background:rgba(247,252,250,.89);
+ color:#173e47;box-shadow:0 8px 24px rgba(12,46,56,.16);
+ backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px)
+}
+#chileCoastMap .faro-map-focus[hidden]{display:none!important}
+#chileCoastMap .faro-map-focus small{
+ font:850 9px/1.2 var(--faro-text,Manrope,system-ui);letter-spacing:.11em;color:#387786
+}
+#chileCoastMap .faro-map-focus strong{
+ font:850 clamp(13px,1.3vw,17px)/1.2 var(--faro-text,Manrope,system-ui);overflow-wrap:anywhere
+}
+html:not([data-theme="light"]) #chileCoastMap .faro-map-focus{
+ background:rgba(18,46,52,.85);border-color:rgba(172,217,215,.3)
+}
+html:not([data-theme="light"]) #chileCoastMap .faro-map-focus :is(strong,small){color:#edf8f6}
+#chileCoastMap .faro-lens-quick-metric{
+ border-left-width:3px!important;
+ background:color-mix(in srgb,var(--faro-ed-shell,var(--tile)) 78%,var(--panel))!important
+}
+@media(max-width:630px){
+ #chileCoastMap .faro-map-focus{left:10px;bottom:12px;max-width:64%;padding:9px 11px}
+}
