@@ -274,8 +274,8 @@ async function swipe(session,x0,y0,x1,y1){
          return {suggested,selected,restored,suggestionAuto,explicit,restoredAuto,
            alternativeFound:!!alternative,fits,screenWidth,rectRight:rect?.right};
         });
-        const expectedAuto=locale==='es'?'HORARIO RECOMENDADO':'SUGGESTED WINDOW';
-        const expectedSelected=locale==='es'?'VENTANA ELEGIDA':'SELECTED WINDOW';
+        const expectedAuto=locale==='es'?'SELECCIÓN FARO':'FARO PICK';
+        const expectedSelected=locale==='es'?'TU HORARIO':'YOUR WINDOW';
         if(!windowCopy.alternativeFound||!windowCopy.suggestionAuto||
            !windowCopy.explicit||!windowCopy.restoredAuto||!windowCopy.fits||
            windowCopy.suggested!==expectedAuto||
