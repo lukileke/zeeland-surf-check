@@ -380,26 +380,39 @@ function create(opts){
   hdrText.textContent=es?"DIRECCIÓN · MODELO":"DIRECTION · MODEL";
   const hdrNorth=document.createElement("span");hdrNorth.textContent="N ↑";
   hdr.append(hdrText,hdrNorth);compassDock.append(hdr);
-  const makeArrow=from=>{
+  const makeArrow=(from,kind)=>{
+   // A small current/wind notation, rather than a heavy clip-art arrow.
+   // Rotation remains data-driven; oceanographic FROM is converted to TO.
    const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 28 28");
    svg.setAttribute("aria-hidden","true");svg.classList.add("faro-hud-arrow");
-   const g=document.createElementNS(NS,"g");
-   g.setAttribute("transform","rotate("+(bearingFromArrow(from)??0)+" 14 14)");
-   svg.append(g);
-   const path=document.createElementNS(NS,"path");
-   path.setAttribute("d","M14 23 V5 M8.8 10.2 L14 5 L19.2 10.2");
-   for(const [key,value]of Object.entries({fill:"none",stroke:"currentColor",
-    "stroke-width":"2.5","stroke-linecap":"round","stroke-linejoin":"round"}))
-    path.setAttribute(key,value);
-   g.append(path);return svg;
+   svg.dataset.kind=kind;
+   const vector=document.createElementNS(NS,"g");
+   vector.setAttribute("transform","rotate("+(bearingFromArrow(from)??0)+" 14 14)");
+   svg.append(vector);
+   const add=(d,weight,opacity=1)=>{
+    const path=document.createElementNS(NS,"path");path.setAttribute("d",d);
+    for(const [key,value]of Object.entries({fill:"none",stroke:"currentColor",
+     "stroke-width":weight,"stroke-linecap":"round","stroke-linejoin":"round",
+     opacity}))path.setAttribute(key,value);
+    vector.append(path);
+   };
+   if(kind==="swell"){
+    add("M8 21 C11 18 14 13 15 5",1.8);
+    add("M10.4 9.4 L15 5 L18.1 10.6",1.8);
+    add("M7 22 Q10 20.6 12.5 21.1",1.15,.78);
+   }else{
+    add("M8.7 21.5 L15.4 5.3",1.55);
+    add("M10.9 8 L15.4 5.3 L17.7 10",1.55);
+    add("M7 18.2 L10.7 18.3",1.1,.78);
+    add("M8.3 15.4 L12.1 15.5",1.1,.78);
+   }
+   return svg;
   };
   const addSignal=(name,from,signal)=>{
    const item=document.createElement("div");item.className="faro-hud-row is-"+(name==="SWELL"?"swell":"wind");
    item.dataset.level=signal.level;
-   const palette={favourable:"#6bd0a3",mixed:"#ecc579",weak:"#e8a567",
-    unfavourable:"#e68f84",unknown:"#b1c3c8"};
-   item.style.setProperty("--faro-signal",palette[signal.level]);
-   item.append(makeArrow(from));
+   // Semantic colours live in CSS light/dark palettes, not inline paint.
+   item.append(makeArrow(from,name==="SWELL"?"swell":"wind"));
    const copy=document.createElement("div");copy.className="faro-hud-copy";
    const heading=document.createElement("strong");
    heading.textContent=name+" · "+(deg(from)?Math.round(from)+"°":"—");
