@@ -122,7 +122,7 @@ function fixture(){
    assert.ok(visual.scrollWidth<=visual.clientWidth+3,
     'Daily hero overflows viewport: '+JSON.stringify(visual));
 
-   assert.equal(await page.locator('#dayWaveMeter .chile-wave-bars span').count(),8,
+   assert.equal(await page.locator('#dayWaveMeter .faro-wave-ruler-mark').count(),8,
     'Zeeland-style wave-height scale must show all eight bars');
    assert.match(await page.locator('#dayWave').textContent(),/m/,'Daily hero must feature modelled wave height');
    assert.equal(await page.locator('#chileWaveExplain').count(),1);
@@ -131,7 +131,7 @@ function fixture(){
    assert.match(await page.locator('#chileWaveHow').textContent(),/VIENTO Y RACHAS|WIND & GUSTS/);
    assert.equal(await page.locator('#chileSessionVibe').count(),0);
    assert.equal(await page.locator('#sessionAtGlance .chile-session-overline').count(),1);
-   assert.equal(await page.locator('#sessionAtGlance .chile-session-head>.chile-session-wave .chile-wave-bars span').count(),8);
+   assert.equal(await page.locator('#sessionAtGlance .chile-session-head>.chile-session-wave .faro-wave-ruler-mark').count(),8);
    const qualityOf=v=>v>=8.5?'Excelente':v>=7?'Bueno':v>=5?'Regular':v>=3?'Malo':'Muy malo';
    const toneOf=v=>v>=8.5?'tone-great':v>=7?'tone-good':v>=5?'tone-fair':v>=3?'tone-poor':'tone-low';
    const firstChip=page.locator('#dayStripItems .day-chip').first();
