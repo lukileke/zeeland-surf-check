@@ -358,25 +358,40 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
  #forecastPage .faro-journey-nav [data-jump]{transition:none!important}
 }
 
-/* ── BEACH FOCUS · FARO COASTAL LENS ────────────────────────────────
-   Incident vectors anchor to selected beach. These illustrate ocean/wind
-   direction relative to guide ranges; they are NOT spatial wave trajectories.
-   Decorative artwork can be replaced by María's approved SVG language.
-*/
+/* BEACH INSTRUMENT · concentric local azimuths, original FARO UI primitive.
+   Attached to the named beach reference, never to offshore sampling position.
+   Wave and wind ticks use different rings, avoiding PowerPoint-style crossed
+   trajectories. The status tint represents *guide* alignment only. */
 #chileCoastMap .faro-beach-vectors-anchor{
  background:transparent!important;border:0!important;pointer-events:none!important;
- width:248px!important;height:208px!important;z-index:auto;
+ width:178px!important;height:204px!important;
 }
-#chileCoastMap .faro-beach-vectors{
- width:248px;height:208px;overflow:visible;pointer-events:none!important;
- filter:drop-shadow(0 2px 2px #183e4429);
+#chileCoastMap .faro-beach-instrument{
+ display:grid;justify-items:center;align-content:start;width:178px;height:204px;
+ pointer-events:none!important;filter:drop-shadow(0 5px 11px #14383b2e);
 }
-#chileCoastMap .faro-beach-vector-svg{
- display:block;width:248px;height:208px;overflow:visible;
+#chileCoastMap .faro-beach-instrument svg{
+ display:block;width:178px;height:178px;overflow:visible;
  pointer-events:none!important;
 }
-#chileCoastMap .faro-beach-vector-svg [data-vector]{
- pointer-events:none;opacity:.98;
+#chileCoastMap .faro-beach-instrument [data-vector]{pointer-events:none!important}
+#chileCoastMap .faro-beach-instrument-foot{
+ display:flex;gap:5px;justify-content:center;align-items:center;
+ margin-top:-1px;border:1px solid #b2cbcb;
+ border-radius:999px;padding:4px 8px;background:#f7fbfaef;
+ font:850 9px/1.3 var(--faro-text,Manrope,sans-serif);color:#254f57;
+ box-shadow:0 2px 8px #163c3c2b;
+}
+#chileCoastMap .faro-instrument-swell{color:#167e9d}
+#chileCoastMap .faro-instrument-wind{color:#a67531}
+#chileCoastMap .faro-instrument-wind:not(:first-child){
+ border-left:1px solid #bed0d0;padding-left:6px
+}
+#chileCoastMap .faro-map-viewport:not(.faro-map-regional) .faro-lens-compass-dock{
+ display:none!important
+}
+#chileCoastMap .faro-map-viewport.faro-map-regional .faro-lens-compass-dock{
+ transform:scale(.78);transform-origin:top right;right:9px;top:9px;opacity:.97;
 }
 /* The selected beach marker sits in front of the vector tips. */
 #chileCoastMap .faro-map-pin.is-current{
@@ -435,30 +450,3 @@ html:not([data-theme="light"]) #chileCoastMap .faro-lens-quick-metric[data-fit="
  #chileCoastMap .faro-lens-read-heading span{max-width:100%}
 }
 
-/* Beach-close directional overlay: no competing map-grid labels in beach mode. */
-#chileCoastMap .faro-beach-vectors-anchor,
-#chileCoastMap .faro-beach-vectors,
-#chileCoastMap .faro-beach-vector-svg{
- width:264px!important;height:226px!important;
- background:transparent!important;pointer-events:none!important;
-}
-#chileCoastMap .faro-beach-vectors{
- filter:drop-shadow(0 2px 2px #1c3b4222);
-}
-#chileCoastMap .faro-beach-vector-svg [data-vector]{
- pointer-events:none!important;
-}
-#chileCoastMap .faro-lens-compass-dock{
- transform:scale(.84);transform-origin:top right;
- right:9px;top:9px;opacity:.97;
-}
-@media(max-width:630px){
- #chileCoastMap .faro-beach-vectors-anchor,
- #chileCoastMap .faro-beach-vectors,
- #chileCoastMap .faro-beach-vector-svg{
-  width:264px!important;height:226px!important;
- }
- #chileCoastMap .faro-lens-compass-dock{
-  transform:scale(.75);transform-origin:top right;
- }
-}
