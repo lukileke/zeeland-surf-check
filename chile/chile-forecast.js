@@ -3,6 +3,7 @@
 "use strict";
 const $=id=>document.getElementById(id),Live=window.FaroChileLive;
 const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,cameras:null,videoLab:null,coastMap:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,cache:new Map(),serial:0,page:0};
+let coastSwitchCleanup=null;
 const tr=(es,en)=>state.lang==="es"?es:en,ok=x=>typeof x==="number"&&Number.isFinite(x),num=(x,d=1)=>ok(x)?x.toFixed(d):"—";
 const el=(tag,value,cls)=>{const x=document.createElement(tag);if(value!==undefined&&value!==null)x.textContent=String(value);if(cls)x.className=cls;return x};
 const txt=(id,value)=>{$(id).textContent=value},clear=id=>$(id).replaceChildren(),add=(x,...nodes)=>{x.append(...nodes);return x};
@@ -806,6 +807,7 @@ async function initialize(){
     // Preserve the geographic reading position when a map marker initiated
     // the change. The strips and session above the map otherwise collapse
     // while fetching, triggering browser scroll anchoring and a visible jump.
+    if(coastSwitchCleanup){coastSwitchCleanup();coastSwitchCleanup=null;}
     const fromCoast=event?.detail?.fromCoastMap===true;
     const anchor=fromCoast?$("coastMapExpand"):null;
     const anchorTop=anchor?.getBoundingClientRect().top;
@@ -820,11 +822,16 @@ async function initialize(){
       const displacement=anchor.getBoundingClientRect().top-anchorTop;
       if(Math.abs(displacement)>1)window.scrollBy({top:displacement,left:0,behavior:"instant"});
     };
+    let settled=false;
     const settleCoast=()=>{
+      if(settled)return;
+      settled=true;
       for(const {el,previous} of shelves)el.style.minHeight=previous;
       keepCoastPosition();
       if(supportsAnchor)requestAnimationFrame(keepCoastPosition);
+      if(coastSwitchCleanup===settleCoast)coastSwitchCleanup=null;
     };
+    if(supportsAnchor)coastSwitchCleanup=settleCoast;
     state.selected=i;state.day=0;state.hour=null;state.forecast=null;
     // Never present prior-spot conditions as if they belong to a newly
     // selected beach while a provider request is still in flight.
