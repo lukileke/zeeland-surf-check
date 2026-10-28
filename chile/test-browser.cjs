@@ -146,11 +146,11 @@ function fixture(){
     const html=document.documentElement,prev=html.dataset.theme;
     html.dataset.theme="light";
     const expected={
-     "brand-band-verylow":"rgb(240, 164, 109)",
-     "brand-band-low":"rgb(240, 191, 105)",
-     "brand-band-mid":"rgb(227, 212, 113)",
-     "brand-band-regular":"rgb(176, 219, 117)",
-     "brand-band-high":"rgb(150, 198, 122)"
+     "brand-band-verylow":"rgb(239, 155, 119)",
+     "brand-band-low":"rgb(239, 189, 110)",
+     "brand-band-mid":"rgb(224, 204, 115)",
+     "brand-band-regular":"rgb(177, 213, 116)",
+     "brand-band-high":"rgb(140, 197, 132)"
     },out=[];
     const band=el=>[...el.classList].find(x=>x.startsWith("brand-band-"));
     try{
