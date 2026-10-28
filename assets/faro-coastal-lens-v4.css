@@ -651,3 +651,18 @@ html #forecastPage .faro-wave-gauge:is(.size-xl) .faro-gauge-position{
 @media(prefers-reduced-motion:reduce){
  #chileCoastMap .faro-hud-arrow{animation:none!important}
 }
+
+/* Quick read and corner HUD share the same signal state, avoiding
+   contradictory good-direction/low-energy colour meanings. */
+#chileCoastMap .faro-lens-quick-metric[data-signal="favourable"]{--fit-tone:#348d71}
+#chileCoastMap .faro-lens-quick-metric[data-signal="mixed"]{--fit-tone:#b38b42}
+#chileCoastMap .faro-lens-quick-metric[data-signal="weak"]{--fit-tone:#c98b55}
+#chileCoastMap .faro-lens-quick-metric[data-signal="unfavourable"]{--fit-tone:#be6959}
+#chileCoastMap .faro-lens-quick-metric[data-signal="unknown"]{--fit-tone:#738b93}
+#chileCoastMap .faro-lens-quick-metric[data-signal]{
+ border-left-color:var(--fit-tone)!important;
+ background:color-mix(in srgb,var(--fit-tone) 7%,var(--panel))!important;
+}
+#chileCoastMap .faro-lens-quick-metric[data-signal] .faro-lens-local-fit{
+ color:var(--fit-tone)!important;font-weight:850;
+}
