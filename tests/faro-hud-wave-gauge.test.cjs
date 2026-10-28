@@ -54,15 +54,15 @@ test('directional travel arrows use FROM+180, live model inputs and text labels'
 });
 test('wave height gauge uses a real capped 0–2 m+ scale, not an invented breaker trace',()=>{
  assert.match(ctrl,/function waveBars\(h\)/);
- assert.match(ctrl,/Math\.min\(1,Math\.max\(0,h\/2\)\)/);
- assert.match(ctrl,/Math\.max\(0,Math\.min\(8,Math\.round\(h\/\.25\)\)\)/);
- assert.match(ctrl,/faro-gauge-rail/);
- assert.match(ctrl,/faro-gauge-ticks/);
- assert.match(ctrl,/faro-gauge-position/);
- assert.match(ctrl,/not breaking surf/);
+ assert.match(ctrl,/Math\.max\(0,Math\.min\(1,h\/2\)\)/);
+ assert.match(ctrl,/fraction>i\/8&&fraction<segmentEnd/);
+ assert.match(ctrl,/faro-wave-ruler-scale/);
+ assert.match(ctrl,/faro-wave-ruler-mark/);
+ assert.doesNotMatch(ctrl,/faro-gauge-position/);
+ assert.match(ctrl,/not the breaking wave/);
  assert.match(html,/id="dayWaveMeter"/);
- assert.match(css,/\.faro-wave-gauge \.faro-gauge-rail/);
- assert.match(css,/\.faro-gauge-position/);
+ assert.match(css,/\.faro-wave-ruler-scale/);
+ assert.doesNotMatch(css,/\.faro-gauge-position/);
 });
 test('MapLibre browser build is compatible with Leaflet adapter, with a retina fallback',()=>{
  assert.match(code,/maplibre-gl@5\.24\.0\/dist\/maplibre-gl\.js/);
@@ -72,8 +72,8 @@ test('MapLibre browser build is compatible with Leaflet adapter, with a retina f
  assert.match(code,/tiles\.openfreemap\.org\/styles\/positron/);
 });
 test('cache version and Field Notes row are present',()=>{
- assert.match(html,/faro-coastal-lens-v4\.css\?v=9/);
- assert.match(html,/coast-map\.js\?v=14/);
- assert.match(html,/chile-forecast\.js\?v=20/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=10/);
+ assert.match(html,/coast-map\.js\?v=15/);
+ assert.match(html,/chile-forecast\.js\?v=21/);
  assert.match(html,/data-faro-icon="field-notes"/);
 });

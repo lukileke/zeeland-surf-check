@@ -171,3 +171,27 @@ This update clarifies the assets needed for the redesigned **beach-first Regiona
 **No arrow rays from offshore model cells to a beach:** a single directional observation does not provide bathymetric refraction. In regional mode the four beaches are places to choose; model samples are optional, small and neutral. In local mode the directional model reading lives in a **translucent corner HUD**, away from the geographic reference pin. Dynamic bearings, wave strength and wind intensity must come from code.
 
 Source specification and accessible behaviour: [Coastal Atlas UX audit](FARO_COASTAL_ATLAS_UX_VISUAL_AUDIT_2026_10_28.md).
+
+## Editorial refinement · 28 October 2026
+The original 68-icon inventory is unchanged. The following are **specific refinements to previously requested components**, not additional placeholder or invented icons.
+
+**HUD directional arrows, P0**
+- Deliver one coherent family of two `28 × 28` viewBox SVGs: `direction-swell` and `direction-wind`.
+- Draw one continuous shaft and one **open chevron**. No extra tails, crossing decoration, fake wave-energy rays, double heads, or detached line fragments.
+- Use centred rotation at `(14, 14)`, `stroke-linecap="round"`, `stroke-linejoin="round"`, no static bearing or colour embedded. Suggested strokes: swell 2.2 units, wind 1.65 units.
+- Both assets must function with dynamic model **travel bearing** (`FROM + 180°`), CSS semantic colour, light/dark mode and monochrome accessibility.
+
+**Regional pin system, P0**
+- One selected and one ordinary coast-reference pin. Regional state chips should read **S** and **W**, with solid-outline versus dashed-outline treatment plus accessible descriptive names. Do not design floating turquoise or yellow model arrows for the default regional map.
+- Status (inside/near/outside guide) must remain distinguishable without colour. Group marker + status within one 144 × 38 CSS px icon footprint where feasible.
+- Model sampling cells, if explicitly enabled by the user, use discrete `M` and `A` provenance markers and are visually subordinate to named beaches.
+
+**Score + ocean wave module, P0**
+- Provide one cohesive mother card with two internal columns, not two separate rounded tiles. Left: experimental potential score (large number, semantic pill, calibration note). Right: **modelled offshore wave height** (large number, small static 0–2 m+ reference ruler).
+- The ruler is a **read-only informational instrument**. It may have eight quiet segments with partial opacity and printed `0 m, 1 m, 2 m+`, but absolutely no drag handle, slider thumb, pointer cursor, or visual affordance suggesting the value can be changed.
+- Numerical heights above 2 m remain visible; visual scale caps at 2 m+. Captions must explicitly distinguish offshore model height from the breaking wave.
+- The score `7.9/10` in Chile can be an experimental ceiling and **0 field-validation sessions** is presently documented. Do not redesign it as a verified local rating.
+
+**FARO aesthetic**
+- Keep teal / muted seafoam / coastal slate, calm editorial type hierarchy, restrained semantic colours and low-saturation strokes. Avoid stock weather pictograms and generic presentation-software arrows.
+- Return transparent SVG assets only; all blur/translucency is applied to UI panel materials, never baked into icon pixels. Make a light/dark prototype at 390 px and 1440 px.

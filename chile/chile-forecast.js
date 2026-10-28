@@ -32,31 +32,34 @@ const scoreCaveat=session=>{
 const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
 const waveSizeLabel=h=>!ok(h)?"—":h<.5?tr("Pequeñas","Small"):h<1.2?tr("Medianas","Medium"):h<2?tr("Grandes","Large"):tr("Muy grandes","Very large");
 function waveBars(h){
- // Continuous editorial gauge with model-height progress; NOT wave-face height
- // and not a fabricated graph of changing wave heights.
- const x=el("div",null,"chile-wave-bars faro-meter-bars faro-wave-gauge "+waveSize(h));
- x.setAttribute("role","img");
- x.setAttribute("aria-label",tr("Altura oceánica modelada: ","Offshore model height: ")+
-  num(h)+" m · "+tr("escala visual de 0 a 2 m o más",
-   "visual scale from 0 to 2 m or more"));
- const fraction=ok(h)?Math.min(1,Math.max(0,h/2)):0;
- x.style.setProperty("--faro-wave-progress",(fraction*100).toFixed(1)+"%");
- const rail=el("div",null,"faro-gauge-rail");
- rail.setAttribute("aria-hidden","true");
- rail.append(el("span",null,"faro-gauge-fill"),el("span",null,"faro-gauge-position"));
- x.append(rail);
- const marks=el("div",null,"faro-gauge-ticks");
- marks.setAttribute("aria-hidden","true");
- const count=ok(h)?Math.max(0,Math.min(8,Math.round(h/.25))):0;
+ // A passive oceanographic scale. The accessible number is the forecast
+ // Hs value, not a slider or an estimate of a breaking wave.
+ const gauge=el("div",null,"faro-wave-ruler "+waveSize(h));
+ const available=ok(h)&&h>=0;
+ const fraction=available?Math.max(0,Math.min(1,h/2)):0;
+ gauge.setAttribute("role","img");
+ gauge.setAttribute("aria-label",available?
+  tr("Altura oceánica modelada: ","Modelled offshore height: ")+num(h)+
+   tr(" metros; referencia visual de 0 a 2 metros o más",
+      " metres; visual reference from 0 to 2 metres or higher"):
+  tr("Altura oceánica no disponible","Offshore height unavailable"));
+ const scale=el("div",null,"faro-wave-ruler-scale");
+ scale.setAttribute("aria-hidden","true");
  for(let i=0;i<8;i++){
-  const tick=el("span",null,i<count?"on":"");
-  marks.append(tick);
+  const mark=el("span",null,"faro-wave-ruler-mark");
+  const segmentEnd=(i+1)/8;
+  mark.classList.toggle("is-filled",available&&fraction>=segmentEnd);
+  mark.classList.toggle("is-partial",available&&fraction>i/8&&fraction<segmentEnd);
+  scale.append(mark);
  }
- x.append(marks);
- const caption=el("small",tr("Escala oceánica · no altura rompiente",
-  "Offshore scale · not breaking surf"),"faro-gauge-caption");
- x.append(caption);
- return x;
+ gauge.append(scale);
+ const keys=el("div",null,"faro-wave-ruler-labels");
+ keys.setAttribute("aria-hidden","true");
+ keys.append(el("span","0 m"),el("span","1 m"),el("span","2 m+"));
+ gauge.append(keys);
+ gauge.append(el("small",tr("Altura en mar abierto · no la ola que rompe",
+  "Offshore height · not the breaking wave"),"faro-wave-ruler-caption"));
+ return gauge;
 }
 
 const spot=()=>state.config?.pilots?.[state.selected], profile=()=>state.profiles?.profiles?.[spot()?.id];
@@ -581,13 +584,15 @@ function session(){
  if(local?.vibe?.label)heading.append(el("span",local.vibe.label,"chile-session-vibe"));
  main.append(heading);
  const top=el("div",null,"chile-session-head faro-session-instrument");
+ top.setAttribute("aria-label",tr("Potencial modelado y altura en mar abierto",
+  "Modelled potential and offshore wave height"));
  const score=el("div",null,"chile-session-rating "+scoreTone(s.score));
  score.append(el("small",tr("POTENCIAL · GUÍA + MODELO","POTENTIAL · GUIDE + MODEL"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
  score.append(big,el("span",experimentalLabel(s),"chile-session-label faro-grade "+gradeClass(s.score)));
  score.append(el("small",scoreCaveat(s),"chile-session-origin faro-score-cap-context"));
  const wave=el("div",null,"chile-session-wave faro-wave-panel");
- wave.append(el("small",tr("ALTURA DE OLAS · MODELO","MODEL WAVE HEIGHT"),"chile-session-label"),
+ wave.append(el("small",tr("ALTURA EN MAR ABIERTO","OFFSHORE WAVE HEIGHT"),"chile-session-label"),
   el("strong",num(s.totalWaveHeightM)+" m"),waveBars(s.totalWaveHeightM),
   el("span",waveSizeLabel(s.totalWaveHeightM),"chile-wave-size-tag"));
  top.append(score,wave);main.append(top);
