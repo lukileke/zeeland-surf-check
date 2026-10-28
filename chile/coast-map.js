@@ -381,31 +381,23 @@ function create(opts){
   const hdrNorth=document.createElement("span");hdrNorth.textContent="N ↑";
   hdr.append(hdrText,hdrNorth);compassDock.append(hdr);
   const makeArrow=(from,kind)=>{
-   // A small current/wind notation, rather than a heavy clip-art arrow.
-   // Rotation remains data-driven; oceanographic FROM is converted to TO.
+   // A single geometric SVG language for both signals. One shaft and one
+   // open chevron, no decorative strokes, loose tails, or clip-art tips.
+   // Input direction is FROM; arrow points to travel bearing FROM + 180.
    const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 28 28");
    svg.setAttribute("aria-hidden","true");svg.classList.add("faro-hud-arrow");
    svg.dataset.kind=kind;
    const vector=document.createElementNS(NS,"g");
    vector.setAttribute("transform","rotate("+(bearingFromArrow(from)??0)+" 14 14)");
    svg.append(vector);
-   const add=(d,weight,opacity=1)=>{
-    const path=document.createElementNS(NS,"path");path.setAttribute("d",d);
-    for(const [key,value]of Object.entries({fill:"none",stroke:"currentColor",
-     "stroke-width":weight,"stroke-linecap":"round","stroke-linejoin":"round",
-     opacity}))path.setAttribute(key,value);
-    vector.append(path);
-   };
-   if(kind==="swell"){
-    add("M8 21 C11 18 14 13 15 5",1.8);
-    add("M10.4 9.4 L15 5 L18.1 10.6",1.8);
-    add("M7 22 Q10 20.6 12.5 21.1",1.15,.78);
-   }else{
-    add("M8.7 21.5 L15.4 5.3",1.55);
-    add("M10.9 8 L15.4 5.3 L17.7 10",1.55);
-    add("M7 18.2 L10.7 18.3",1.1,.78);
-    add("M8.3 15.4 L12.1 15.5",1.1,.78);
-   }
+   const path=document.createElementNS(NS,"path");
+   path.setAttribute("d","M9.5 11 L14 6.5 L18.5 11 M14 6.5 L14 22");
+   path.setAttribute("fill","none");
+   path.setAttribute("stroke","currentColor");
+   path.setAttribute("stroke-width",kind==="swell"?"2.2":"1.65");
+   path.setAttribute("stroke-linecap","round");
+   path.setAttribute("stroke-linejoin","round");
+   vector.append(path);
    return svg;
   };
   const addSignal=(name,from,signal)=>{
@@ -531,8 +523,10 @@ function create(opts){
    tracks.setAttribute("aria-hidden","true");
    for(const [kind,status]of [["swell",swellFit],["wind",windFit]]){
     if((mode==="swell"&&kind==="wind")||(mode==="wind"&&kind==="swell"))continue;
-    const micro=document.createElement("i");micro.className="faro-region-fit-tick is-"+kind;
-    micro.dataset.fit=status;tracks.append(micro);
+    const micro=document.createElement("span");micro.className="faro-region-fit-tick is-"+kind;
+    micro.dataset.fit=status;micro.textContent=kind==="swell"?"S":"W";
+    micro.title=(kind==="swell"?"Swell":"Wind")+" · "+label(status)+" guide";
+    tracks.append(micro);
    }
    base.append(tracks);
    const desc=(es?"Swell: ":"Swell: ")+label(swellFit)+
@@ -542,7 +536,7 @@ function create(opts){
    base.title=desc;
   }
   return L.divIcon({className:"faro-leaflet-marker",html:base.outerHTML,
-   iconSize:[124,38],iconAnchor:[62,19]});
+   iconSize:[144,38],iconAnchor:[72,19]});
  }
  function modelSampleIcon(L,kind){
   // Source coordinates, not breaking waves and never a directional arrow.
