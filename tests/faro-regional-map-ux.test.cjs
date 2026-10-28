@@ -15,7 +15,8 @@ test('the regional overview fits all four actual beach coordinates, NOT offshore
  assert.match(js,/for\(const beach of beaches\.slice\(1\)\)bounds\.extend\(\[beach\.latitude,beach\.longitude\]\)/);
  assert.match(js,/maxZoom:11,animate:false/);
  assert.match(js,/const coast=\[sp\.latitude,sp\.longitude\],L=root\.L/);
- assert.doesNotMatch(js,/bounds\.extend\(\[grid\.lat,grid\.lon\]\)/);
+ assert.match(js,/if\(showSamples\)for\(const grid of \[latest\.marineGrid,latest\.weatherGrid\]\)/);
+ assert.match(js,/grid\.distanceKm<=60/);
 });
 test('regional displays a distinct contextual reading rather than a local beach HUD',()=>{
  assert.match(js,/regionSummary\.hidden=mapView!=="region"/);
@@ -28,6 +29,7 @@ test('regional displays a distinct contextual reading rather than a local beach 
 test('marine and atmospheric point markers are optional technical detail, not standard regional pins',()=>{
  assert.match(js,/showSamples=false/);
  assert.match(js,/samplesFlag=flag\("samples"/);
+ assert.match(js,/if\(mapView==="region"\)frameMap\(true\)/);
  assert.match(js,/samplesFlag\.label\.hidden=mapView!=="region"/);
  assert.match(js,/modelGridMarker\.setOpacity\(mapView==="region"&&showSamples&&mode!=="wind"\?1:0\)/);
  assert.match(js,/windGridMarker\.setOpacity\(mapView==="region"&&showSamples&&mode!=="swell"\?1:0\)/);
