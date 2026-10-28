@@ -260,6 +260,8 @@ function create(opts){
   const profile=v.profiles?.[spot?.id]||{};
   const swellFit=directionalFit(slot.swellDirection,profile.waveFromDeg);
   const windFit=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
+  const swellSignal=signalAssessment("swell",swellFit,slot);
+  const windSignal=signalAssessment("wind",windFit,slot);
   brief.replaceChildren();
   details.replaceChildren();
   const header=append("div","faro-lens-read-heading",null,brief);
@@ -267,19 +269,19 @@ function create(opts){
   append("span","",(spot?.shortName||"FARO")+" · "+(slot.label||""),header);
   const row=append("div","faro-lens-quick-metrics",null,brief);
   if(spot&&slot.modelComplete){
-   for(const [key,label,value,sub,fit] of [
+   for(const [key,label,value,sub,fit,signal] of [
     ["swell",es?"SWELL PRINCIPAL":"PRIMARY SWELL",
      deg(slot.swellHeightM)?slot.swellHeightM.toFixed(1)+" m":"—",
      (deg(slot.swellPeriodS)?slot.swellPeriodS.toFixed(0)+" s · ":"")+
-      (es?"desde ":"from ")+(deg(slot.swellDirection)?Math.round(slot.swellDirection)+"°":"—"),swellFit],
+      (es?"desde ":"from ")+(deg(slot.swellDirection)?Math.round(slot.swellDirection)+"°":"—"),swellFit,swellSignal],
     ["wind",es?"VIENTO":"WIND",
      deg(slot.windKmh)?slot.windKmh.toFixed(0)+" km/h":"—",
-     (es?"desde ":"from ")+(deg(slot.windDirection)?Math.round(slot.windDirection)+"°":"—"),windFit]
+     (es?"desde ":"from ")+(deg(slot.windDirection)?Math.round(slot.windDirection)+"°":"—"),windFit,windSignal]
    ]){
     const tile=append("div","faro-lens-quick-metric is-"+key,null,row);
-    tile.dataset.fit=fit;
+    tile.dataset.fit=fit;tile.dataset.signal=signal.level;
     append("small","",label,tile);append("strong","",value,tile);append("span","",sub,tile);
-    append("em","faro-lens-local-fit",fitCopy(fit,v.lang),tile);
+    append("em","faro-lens-local-fit",signalCopy(signal,v.lang),tile);
    }
   }else append("p","faro-map-summary",es?"Aún no hay una franja de modelo completa.":
    "A complete model window is not available.",row);
