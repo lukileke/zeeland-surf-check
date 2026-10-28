@@ -36,7 +36,7 @@ test('advanced model display is progressively disclosed and legends match shown 
  assert.doesNotMatch(map,/faro-lens-partitions/);
  assert.match(map,/technicalSummary\.textContent=es\?"Modelo, detalles y limitaciones"/);
  assert.match(map,/comparison\.open=wasOpen/);
- assert.match(map,/mode==="wind"\?localGuide\.windFromDeg:localGuide\.waveFromDeg/);
+ assert.match(map,/mode==="wind"\?hudProfile\.windFromDeg:hudProfile\.waveFromDeg/);
  assert.match(map,/Guía de viento/);
 });
 test('map load error retains fixed compass and declares schematic fallback',()=>{
