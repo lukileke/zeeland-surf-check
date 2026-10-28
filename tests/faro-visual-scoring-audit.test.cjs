@@ -50,7 +50,7 @@ test('only a small viewport HUD remains, with no beach-obscuring disc',()=>{
  assert.match(map,/signalAssessment\("swell",swellFitHUD,slot\)/);
  assert.match(map,/signalAssessment\("wind",windFitHUD,slot\)/);
  assert.match(css,/\.faro-lens-compass-dock\.faro-direction-hud\{/);
- assert.match(css,/background:rgba\(243,251,250,\.72\)!important/);
+ assert.match(css,/background:rgba\(243,251,250,\.56\)!important/);
  assert.match(css,/backdrop-filter:blur\(12px\)/);
 });
 
@@ -72,8 +72,8 @@ test('the lower sections are purposeful, discoverable and functional',()=>{
  assert.match(css,/\.faro-hub-group>details\.forecast-expand>summary/);
 });
 test('all new frontend script and CSS versions invalidate old cached prototypes',()=>{
- assert.match(html,/coast-map\.js\?v=12/);
+ assert.match(html,/coast-map\.js\?v=13/);
  assert.match(html,/chile-forecast\.js\?v=20/);
  assert.match(html,/valparaiso-score-lab\.js\?v=2/);
- assert.match(html,/faro-coastal-lens-v4\.css\?v=7/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=8/);
 });
