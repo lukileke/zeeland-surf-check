@@ -519,6 +519,9 @@ function create(opts){
    fit==="outside"?(es?"fuera":"outside"):
    es?"sin referencia":"unavailable";
   const base=document.createElement("div");
+  // The geographic anchor remains at the actual coordinate. Named labels
+  // that otherwise collide use short, clearly connected cartographic offsets.
+  base.dataset.spotId=spot.id;
   base.className="faro-map-pin"+(selected?" is-current":"")+
    (mapView==="region"?" is-regional":" is-beach");
   base.dataset.swellFit=swellFit;
@@ -676,10 +679,13 @@ function create(opts){
   }else if(windGridMarker){
    map.removeLayer(windGridMarker);windGridMarker=null;
   }
-  // Switching beach always returns to its local close-up; subsequent
-  // hourly changes leave the user's pan and zoom untouched.
+  // Regional comparison is a deliberate user-selected mode: changing the
+  // highlighted beach must NOT silently switch to a close-up. The previous
+  // implementation changed CSS layout, collapsed regional notes and jumped
+  // the scroll position during async forecast refreshes.
   if(latest.spot&&lastCentered!==latest.spot.id){
-   mapView="beach";frameMap(false);drawUi();
+   if(mapView==="beach")frameMap(false);
+   else lastCentered=latest.spot.id;
   }
  }
  async function open(){
