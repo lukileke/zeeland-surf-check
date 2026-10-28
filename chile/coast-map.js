@@ -405,55 +405,63 @@ function create(opts){
  // coastal reference. Arrows encode bearing only; these are not rays of swell
  // refraction or a prediction of local breaking-wave height.
  function beachVectorIcon(L,data){
-  const slot=data.slot||{},profile=data.profiles?.[data.spot?.id]||{},es=data.lang!=="en";
-  const fits={
-   swell:directionalFit(slot.swellDirection,profile.waveFromDeg),
-   wind:directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true)
+  // Beach-centred instrument. Incoming azimuths are model FROM bearings;
+  // short inward-moving ticks sit in separate concentric lanes. They are
+  // NOT traced paths across the coast, measured break coordinates or refraction.
+  const slot=data.slot||{},profile=data.profiles?.[data.spot?.id]||{};
+  const swell=directionalFit(slot.swellDirection,profile.waveFromDeg);
+  const wind=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
+  const tones={inside:"#348d71",edge:"#a58032",outside:"#bd7052",strong:"#ad5151",unknown:"#68818b"};
+  const shell=document.createElement("div");shell.className="faro-beach-instrument";
+  shell.dataset.swell=swell;shell.dataset.wind=wind;
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 178 178");
+  svg.setAttribute("aria-hidden","true");shell.append(svg);
+  const add=(tag,attrs,parent=svg)=>{
+   const el=document.createElementNS(NS,tag);
+   for(const [k,v]of Object.entries(attrs))el.setAttribute(k,String(v));
+   parent.append(el);return el;
   };
-  const palette={inside:"#2b8968",edge:"#a67e2c",outside:"#b66049",strong:"#a84b47",unknown:"#5b7882"};
-  const holder=document.createElement("div");holder.className="faro-beach-vectors";
-  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 264 226");
-  svg.classList.add("faro-beach-vector-svg");svg.setAttribute("aria-hidden","true");holder.append(svg);
-  const make=(tag,attrs,parent=svg)=>{
-   const e=document.createElementNS(NS,tag);
-   for(const [key,value]of Object.entries(attrs))e.setAttribute(key,String(value));
-   parent.append(e);return e;
-  };
-  // The reference beach lies at SVG (132,113). Arrow tips stop BEFORE the
-  // beach pin, in two non-overlapping lanes. This is directional annotation
-  // at a beach reference, NOT a bathymetric wave-ray trajectory.
-  function vector(kind,from,fit,tipX,tipY,length){
-   const az=bearingFromArrow(from);if(az===null)return;
-   const rad=az*Math.PI/180,ux=Math.sin(rad),uy=-Math.cos(rad);
-   const startX=tipX-ux*length,startY=tipY-uy*length;
-   const color=palette[fit],isSwell=kind==="swell";
-   const g=make("g",{"data-vector":isSwell?"SWELL":"WIND","data-fit":fit});
-   const n=v=>Number(v.toFixed(1));
-   // Shadow/halo preserves legibility above muted coastlines and map labels.
-   const d="M "+n(startX)+" "+n(startY)+" L "+n(tipX)+" "+n(tipY);
-   make("path",{d,fill:"none",stroke:"#fff","stroke-width":isSwell?8:6,
-    "stroke-linecap":"round",opacity:.92},g);
-   make("path",{d,fill:"none",stroke:color,"stroke-width":isSwell?4.5:3,
-    "stroke-linecap":"round"},g);
-   const bx=tipX-ux*12,by=tipY-uy*12,px=-uy,py=ux;
-   const half=isSwell?6.3:5;
-   make("path",{d:"M "+n(tipX)+" "+n(tipY)+" L "+n(bx+px*half)+" "+n(by+py*half)+
-    " L "+n(bx-px*half)+" "+n(by-py*half)+" Z",fill:color,stroke:"#fff","stroke-width":1.6},g);
-   // Small fixed label at the vector origin. The numerical FROM bearing is
-   // shown separately in the model reading to avoid overprinting the map.
-   const tx=n(startX),ty=n(startY),w=isSwell?49:es?48:41;
-   make("rect",{x:tx-w/2,y:ty-22,width:w,height:18,rx:8,fill:"#f5fbfa",
-    stroke:color,"stroke-width":1.1},g);
-   const label=make("text",{x:tx,y:ty-9,"text-anchor":"middle",fill:color,
-    "font-family":"Manrope,Arial,sans-serif","font-size":10,"font-weight":900},g);
-   label.textContent=isSwell?"SWELL":es?"VIENTO":"WIND";
+  add("circle",{cx:89,cy:89,r:76,fill:"#f6fcfb","fill-opacity":".93",
+   stroke:"#a9c6c6","stroke-width":1.1});
+  add("circle",{cx:89,cy:89,r:62,fill:"none",stroke:"#b5d0d0",
+   "stroke-width":1,"stroke-dasharray":"2 5"});
+  add("circle",{cx:89,cy:89,r:40,fill:"none",stroke:"#cadbd9","stroke-width":1});
+  const north=add("text",{x:89,y:24,"text-anchor":"middle",fill:"#28545e",
+   "font-family":"Manrope,Arial,sans-serif","font-size":11,"font-weight":850});
+  north.textContent="N";
+  function spoke(from,colour,outer,inner,width,kind){
+   if(!deg(from))return;
+   const r=from*Math.PI/180,ux=Math.sin(r),uy=-Math.cos(r);
+   const x1=89+ux*outer,y1=89+uy*outer,x2=89+ux*inner,y2=89+uy*inner;
+   const round=v=>Number(v.toFixed(2));
+   const group=add("g",{"data-vector":kind});
+   add("line",{x1:round(x1),y1:round(y1),x2:round(x2),y2:round(y2),
+    stroke:"#fff","stroke-width":width+3,"stroke-linecap":"round"},group);
+   add("line",{x1:round(x1),y1:round(y1),x2:round(x2),y2:round(y2),
+    stroke:colour,"stroke-width":width,"stroke-linecap":"round"},group);
+   const baseX=x2+ux*7,baseY=y2+uy*7,px=-uy,py=ux;
+   add("path",{d:"M"+round(x2)+" "+round(y2)+" L"+round(baseX+px*4.3)+" "+
+    round(baseY+py*4.3)+" L"+round(baseX-px*4.3)+" "+round(baseY-py*4.3)+" Z",
+    fill:colour,stroke:"#fff","stroke-width":1.1},group);
+   add("circle",{cx:round(x1),cy:round(y1),r:width*.95,fill:colour,
+    stroke:"#fff","stroke-width":1.2},group);
   }
-  // Wider vector-tip separation prevents an X-shaped intersection at
-  // the active beach. Both still read as approaching the same reference.
-  if(mode!=="wind")vector("swell",slot.swellDirection,fits.swell,113,91,65);
-  if(mode!=="swell")vector("wind",slot.windDirection,fits.wind,151,135,48);
-  return L.divIcon({className:"faro-beach-vectors-anchor",
-   html:holder.outerHTML,iconSize:[264,226],iconAnchor:[132,113]});
+  if(mode!=="wind")spoke(slot.swellDirection,tones[swell],72,49,5.4,"swell");
+  if(mode!=="swell")spoke(slot.windDirection,tones[wind],37,20,3.8,"wind");
+  add("circle",{cx:89,cy:89,r:10,fill:"#184957",stroke:"#fff","stroke-width":2});
+  add("circle",{cx:89,cy:89,r:2.5,fill:"#e7f4f1"});
+  // Compact legible names outside the direction paths.
+  const foot=document.createElement("div");foot.className="faro-beach-instrument-foot";
+  const sw=document.createElement("span");sw.className="faro-instrument-swell";
+  sw.textContent=(deg(slot.swellDirection)?Math.round(slot.swellDirection)+"°":"—")+" SWELL";
+  const wi=document.createElement("span");wi.className="faro-instrument-wind";
+  wi.textContent=(deg(slot.windDirection)?Math.round(slot.windDirection)+"°":"—")+
+   (data.lang==="en"?" WIND":" VIENTO");
+  if(mode!=="wind")foot.append(sw);
+  if(mode!=="swell")foot.append(wi);
+  shell.append(foot);
+  return L.divIcon({className:"faro-beach-vectors-anchor",html:shell.outerHTML,
+   iconSize:[178,204],iconAnchor:[89,89]});
  }
  function modelGridIcon(L,slot){
   const shell=document.createElement("div");shell.className="faro-lens-map-pin is-swell";
