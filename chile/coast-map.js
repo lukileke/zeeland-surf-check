@@ -338,77 +338,69 @@ function create(opts){
   motionFlag.input.checked=motion;exposureFlag.input.checked=exposure;
   viewport.classList.toggle("faro-lens-motion",motion&&!reduced()&&deg(slot.swellDirection));
   viewport.classList.toggle("faro-map-regional",mapView==="region");
-  // The compass is attached to viewport, NOT to the model sample map marker.
-  // It therefore cannot vanish when a zoom/pan moves a marine grid outside view.
+  // A compact viewport HUD: it does not move with model sample positions,
+  // does not obscure the selected spot and survives pan/zoom.
   compassDock.replaceChildren();
-  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 80 80");
-  svg.setAttribute("aria-hidden","true");compassDock.append(svg);
-  function shape(tag,attrs={},parent=svg){
-   const node=document.createElementNS(NS,tag);
-   for(const [k,val] of Object.entries(attrs))node.setAttribute(k,String(val));
-   parent.append(node);return node;
-  }
-  shape("circle",{cx:40,cy:40,r:32,fill:"#f4faf9",stroke:"#a8c6c8"});
-  shape("circle",{cx:40,cy:40,r:22,fill:"none",stroke:"#c0d8d9","stroke-dasharray":"2 4"});
-  const north=shape("text",{x:40,y:12,"text-anchor":"middle","font-size":10,"font-weight":800,fill:"#315b62"});
-  north.textContent="N";
-  // Match the displayed guide to the active data layer.
-  const localGuide=v.profiles?.[v.spot?.id]||{};
-  const ranges=(mode==="wind"?localGuide.windFromDeg:localGuide.waveFromDeg)||[];
-  if(exposure)for(const r of ranges.filter(r=>r.length===2&&r.every(deg))){
-   let [a,b]=r;const width=((b-a+360)%360)||360,steps=Math.ceil(width/8);
-   const points=[[40,40]];
-   for(let i=0;i<=steps;i++){
-    const angle=(a+(i/steps)*width)*Math.PI/180;
-    points.push([40+30*Math.sin(angle),40-30*Math.cos(angle)]);
-   }
-   shape("polygon",{points:points.map(pair=>pair.join(",")).join(" "),fill:"#55aab3","fill-opacity":.23});
-  }
-  const needle=(bearing,col,thickness)=>{
-   const direction=bearingFromArrow(bearing);
-   if(direction===null)return;
-   const g=shape("g",{transform:"rotate("+direction+" 40 40)"});
-   shape("path",{d:"M40 54 V24 M35 30 L40 23 L45 30",fill:"none",stroke:col,
-    "stroke-width":thickness,"stroke-linecap":"round","stroke-linejoin":"round"},g);
+  const hudProfile=v.profiles?.[v.spot?.id]||{};
+  const swellFitHUD=directionalFit(slot.swellDirection,hudProfile.waveFromDeg);
+  const windFitHUD=directionalFit(slot.windDirection,hudProfile.windFromDeg,slot.windKmh,true);
+  const swellHUD=signalAssessment("swell",swellFitHUD,slot);
+  const windHUD=signalAssessment("wind",windFitHUD,slot);
+  compassDock.className="faro-lens-compass-dock faro-direction-hud";
+  const hdr=document.createElement("div");hdr.className="faro-hud-heading";
+  const hdrText=document.createElement("strong");
+  hdrText.textContent=es?"DIRECCIÓN · MODELO":"DIRECTION · MODEL";
+  const hdrNorth=document.createElement("span");hdrNorth.textContent="N ↑";
+  hdr.append(hdrText,hdrNorth);compassDock.append(hdr);
+  const makeArrow=from=>{
+   const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 28 28");
+   svg.setAttribute("aria-hidden","true");svg.classList.add("faro-hud-arrow");
+   const g=document.createElementNS(NS,"g");
+   g.setAttribute("transform","rotate("+(bearingFromArrow(from)??0)+" 14 14)");
+   svg.append(g);
+   const path=document.createElementNS(NS,"path");
+   path.setAttribute("d","M14 23 V5 M8.8 10.2 L14 5 L19.2 10.2");
+   for(const [key,value]of Object.entries({fill:"none",stroke:"currentColor",
+    "stroke-width":"2.5","stroke-linecap":"round","stroke-linejoin":"round"}))
+    path.setAttribute(key,value);
+   g.append(path);return svg;
   };
-  // One compass needle per view, never two crossing in the centre.
-  if(mode==="wind")needle(slot.windDirection,"#b97730",3.5);
-  else needle(slot.swellDirection,"#147c9d",3.5);
-  shape("circle",{cx:40,cy:40,r:2.5,fill:"#244b52"});
-  const caption=document.createElement("span");caption.className="faro-lens-compass-caption";
-  caption.textContent=(es?"NORTE · ":"NORTH · ")+(v.spot?.shortName||"FARO");
-  compassDock.append(caption);
-  const windCaption=document.createElement("span");windCaption.className="faro-lens-compass-wind";
-  windCaption.textContent=(es?"Viento ":"Wind ")+dir(slot.windDirection);
-  compassDock.append(windCaption);
-  compassDock.setAttribute("aria-label",(es?"Brújula fija, swell desde ":"Fixed compass, swell from ")+dir(slot.swellDirection)+
-   (es?", viento desde ":", wind from ")+dir(slot.windDirection));
-  // The legend uses the same signal colour as the beach arrow, never a
-  // fixed ocean/wind pigment that could contradict the directional assessment.
+  const addSignal=(name,from,signal)=>{
+   const item=document.createElement("div");item.className="faro-hud-row";
+   item.dataset.level=signal.level;
+   const palette={favourable:"#6bd0a3",mixed:"#ecc579",weak:"#e8a567",
+    unfavourable:"#e68f84",unknown:"#b1c3c8"};
+   item.style.setProperty("--faro-signal",palette[signal.level]);
+   item.append(makeArrow(from));
+   const copy=document.createElement("div");copy.className="faro-hud-copy";
+   const heading=document.createElement("strong");
+   heading.textContent=name+" · "+(deg(from)?Math.round(from)+"°":"—");
+   const subtitle=document.createElement("span");subtitle.textContent=signalCopy(signal,v.lang);
+   copy.append(heading,subtitle);item.append(copy);compassDock.append(item);
+  };
+  if(mode!=="wind")addSignal("SWELL",slot.swellDirection,swellHUD);
+  if(mode!=="swell")addSignal(es?"VIENTO":"WIND",slot.windDirection,windHUD);
+  const hudNote=document.createElement("small");hudNote.className="faro-hud-foot";
+  hudNote.textContent=es?"Flechas: hacia dónde viajan":"Arrows: direction of travel";
+  compassDock.append(hudNote);
+  compassDock.setAttribute("aria-label",(v.spot?.name||"")+
+    " · swell "+signalCopy(swellHUD,v.lang)+", wind "+signalCopy(windHUD,v.lang));
   legend.replaceChildren();
-  const localProfile=v.profiles?.[v.spot?.id]||{};
-  const swFit=directionalFit(slot.swellDirection,localProfile.waveFromDeg);
-  const wiFit=directionalFit(slot.windDirection,localProfile.windFromDeg,slot.windKmh,true);
-  const palette={inside:"#2b8968",edge:"#a67e2c",outside:"#b66049",strong:"#a84b47",unknown:"#5b7882"};
-  const entries=[];
-  if(mode!=="wind"){
-   entries.push([palette[swFit],es?"Swell · "+fitCopy(swFit,v.lang):"Swell · "+fitCopy(swFit,v.lang),false]);
-   // Secondary and tertiary partitions are read in the detail panel,
-   // not drawn on this map. Never claim dashed overlays that are absent.
-  }
-  if(mode!=="swell")entries.push([palette[wiFit],(es?"Viento":"Wind")+" · "+fitCopy(wiFit,v.lang),false]);
-  for(const [color,label,dashed] of entries){
+  const colours={favourable:"#348d71",mixed:"#b38b42",weak:"#c98b55",
+   unfavourable:"#be6959",unknown:"#738b93"};
+  for(const [visible,name,signal]of [
+   [mode!=="wind","Swell",swellHUD],[mode!=="swell",es?"Viento":"Wind",windHUD]]){
+   if(!visible)continue;
    const item=document.createElement("span");item.className="faro-lens-legend-key";
-   const line=document.createElement("i");line.style.borderTop="3px "+(dashed?"dashed ":"solid ")+color;
-   item.append(line,document.createTextNode(label));legend.append(item);
+   const line=document.createElement("i");
+   line.style.borderTop="3px solid "+colours[signal.level];
+   item.append(line,document.createTextNode(name+" · "+signalCopy(signal,v.lang)));
+   legend.append(item);
   }
-  const extra=document.createElement("small");extra.textContent=es?
-   "Colores = compatibilidad direccional con la guía; no son una puntuación del surf":"Colours = directional guide compatibility, not a surf rating";
-  legend.append(extra);
-  const beachKey=document.createElement("span");beachKey.className="faro-lens-map-status";
-  beachKey.textContent=es?"Puntos en playas = coincidencia angular de guía, no calidad":
-   "Beach dots = guide bearing alignment, not surf quality";
-  legend.append(beachKey);
+  const legendNote=document.createElement("small");
+  legendNote.textContent=es?"Guía + intensidad modelada, no surf observado":
+   "Guide + modelled strength, not observed surf quality";
+  legend.append(legendNote);
   const wasOpen=comparison.open;comparison.replaceChildren();
   const heading=document.createElement("summary");heading.className="faro-lens-beaches-header";
   const title=document.createElement("strong");title.textContent=es?"COMPARAR 4 PLAYAS":"COMPARE 4 BEACHES";
