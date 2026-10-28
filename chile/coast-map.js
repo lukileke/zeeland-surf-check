@@ -82,6 +82,35 @@ function fitCopy(fit,lang){
   fit==="strong"?(es?"Viento ≥30 km/h · precaución":"Wind ≥30 km/h · caution"):
   (es?"Sin rango evaluable":"Guide not assessed");
 }
+// Heuristic local signal, NOT a calibrated beach forecast or surf score.
+// H²×T is only a relative offshore energy proxy.
+function signalAssessment(kind,fit,slot={}){
+ if(!["inside","edge","outside","strong"].includes(fit))return {level:"unknown",strength:null};
+ if(kind==="swell"){
+  const h=slot.swellHeightM,t=slot.swellPeriodS;
+  if(!deg(h)||!deg(t)||h<0||t<=0)return {level:"unknown",strength:null};
+  const p=h*h*t,strength=p>=9?"energetic":p>=3?"moderate":"low";
+  if(fit==="outside")return {level:"unfavourable",strength};
+  if(strength==="low"||t<7)return {level:"weak",strength};
+  return {level:fit==="inside"&&strength==="energetic"?"favourable":"mixed",strength};
+ }
+ const speed=slot.windKmh,gust=slot.gustKmh;
+ if(!deg(speed)||speed<0)return {level:"unknown",strength:null};
+ const strength=speed>=26||(deg(gust)&&gust>=40)?"strong":
+  speed>=15||(deg(gust)&&gust>=26)?"breezy":"light";
+ if(strength==="strong"||fit==="strong")return {level:"unfavourable",strength};
+ if(speed<=4&&(!deg(gust)||gust<=12))return {level:"favourable",strength};
+ if(fit==="outside")return {level:"unfavourable",strength};
+ return {level:fit==="inside"&&strength==="light"?"favourable":"mixed",strength};
+}
+function signalCopy(result,lang){
+ const es=lang!=="en",s=result?.level;
+ return s==="favourable"?(es?"Favorable":"Favourable"):
+  s==="mixed"?(es?"Variable":"Mixed"):
+  s==="weak"?(es?"Poca energía":"Low energy"):
+  s==="unfavourable"?(es?"Desfavorable":"Unfavourable"):
+  (es?"Sin evaluar":"Not assessed");
+}
 function stateLabel(value,lang){
  const es=lang!=="en";
  return value==="convergent"?(es?"Guías coinciden":"Guides agree"):
@@ -93,7 +122,7 @@ function create(opts){
  const d=opts.disclosure;
  if(!host||!d)return null;
  let map=null,markers=new Map(),modelGridMarker=null,windGridMarker=null,latest=null,loadError=false;
- let mode="combined",mapView="beach",exposure=false,motion=false,inspected="marine",lastCentered=null,pendingSampleFit=false,beachVectorMarker=null;
+ let mode="combined",mapView="beach",exposure=false,motion=false,inspected="marine",lastCentered=null,pendingSampleFit=false;
  const reduced=()=>typeof root.matchMedia==="function"&&root.matchMedia("(prefers-reduced-motion: reduce)").matches;
  const controls=document.createElement("div");controls.className="faro-lens-controls";host.append(controls);
  const modes=document.createElement("div");modes.className="faro-lens-segments";
@@ -434,65 +463,6 @@ function create(opts){
  // A fixed-size, north-up directional instrument anchored to the selected
  // coastal reference. Arrows encode bearing only; these are not rays of swell
  // refraction or a prediction of local breaking-wave height.
- function beachVectorIcon(L,data){
-  // Beach-centred instrument. Incoming azimuths are model FROM bearings;
-  // short inward-moving ticks sit in separate concentric lanes. They are
-  // NOT traced paths across the coast, measured break coordinates or refraction.
-  const slot=data.slot||{},profile=data.profiles?.[data.spot?.id]||{};
-  const swell=directionalFit(slot.swellDirection,profile.waveFromDeg);
-  const wind=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
-  const tones={inside:"#348d71",edge:"#a58032",outside:"#bd7052",strong:"#ad5151",unknown:"#68818b"};
-  const shell=document.createElement("div");shell.className="faro-beach-instrument";
-  shell.dataset.swell=swell;shell.dataset.wind=wind;
-  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 178 178");
-  svg.setAttribute("aria-hidden","true");shell.append(svg);
-  const add=(tag,attrs,parent=svg)=>{
-   const el=document.createElementNS(NS,tag);
-   for(const [k,v]of Object.entries(attrs))el.setAttribute(k,String(v));
-   parent.append(el);return el;
-  };
-  add("circle",{cx:89,cy:89,r:76,fill:"#f6fcfb","fill-opacity":".93",
-   stroke:"#a9c6c6","stroke-width":1.1});
-  add("circle",{cx:89,cy:89,r:62,fill:"none",stroke:"#b5d0d0",
-   "stroke-width":1,"stroke-dasharray":"2 5"});
-  add("circle",{cx:89,cy:89,r:40,fill:"none",stroke:"#cadbd9","stroke-width":1});
-  const north=add("text",{x:89,y:24,"text-anchor":"middle",fill:"#28545e",
-   "font-family":"Manrope,Arial,sans-serif","font-size":11,"font-weight":850});
-  north.textContent="N";
-  function spoke(from,colour,outer,inner,width,kind){
-   if(!deg(from))return;
-   const r=from*Math.PI/180,ux=Math.sin(r),uy=-Math.cos(r);
-   const x1=89+ux*outer,y1=89+uy*outer,x2=89+ux*inner,y2=89+uy*inner;
-   const round=v=>Number(v.toFixed(2));
-   const group=add("g",{"data-vector":kind});
-   add("line",{x1:round(x1),y1:round(y1),x2:round(x2),y2:round(y2),
-    stroke:"#fff","stroke-width":width+3,"stroke-linecap":"round"},group);
-   add("line",{x1:round(x1),y1:round(y1),x2:round(x2),y2:round(y2),
-    stroke:colour,"stroke-width":width,"stroke-linecap":"round"},group);
-   const baseX=x2+ux*7,baseY=y2+uy*7,px=-uy,py=ux;
-   add("path",{d:"M"+round(x2)+" "+round(y2)+" L"+round(baseX+px*4.3)+" "+
-    round(baseY+py*4.3)+" L"+round(baseX-px*4.3)+" "+round(baseY-py*4.3)+" Z",
-    fill:colour,stroke:"#fff","stroke-width":1.1},group);
-   add("circle",{cx:round(x1),cy:round(y1),r:width*.95,fill:colour,
-    stroke:"#fff","stroke-width":1.2},group);
-  }
-  if(mode!=="wind")spoke(slot.swellDirection,tones[swell],72,49,5.4,"swell");
-  if(mode!=="swell")spoke(slot.windDirection,tones[wind],37,20,3.8,"wind");
-  add("circle",{cx:89,cy:89,r:10,fill:"#184957",stroke:"#fff","stroke-width":2});
-  add("circle",{cx:89,cy:89,r:2.5,fill:"#e7f4f1"});
-  // Compact legible names outside the direction paths.
-  const foot=document.createElement("div");foot.className="faro-beach-instrument-foot";
-  const sw=document.createElement("span");sw.className="faro-instrument-swell";
-  sw.textContent=(deg(slot.swellDirection)?Math.round(slot.swellDirection)+"°":"—")+" SWELL";
-  const wi=document.createElement("span");wi.className="faro-instrument-wind";
-  wi.textContent=(deg(slot.windDirection)?Math.round(slot.windDirection)+"°":"—")+
-   (data.lang==="en"?" WIND":" VIENTO");
-  if(mode!=="wind")foot.append(sw);
-  if(mode!=="swell")foot.append(wi);
-  shell.append(foot);
-  return L.divIcon({className:"faro-beach-vectors-anchor",html:shell.outerHTML,
-   iconSize:[178,204],iconAnchor:[89,89]});
- }
  function modelGridIcon(L,slot){
   const shell=document.createElement("div");shell.className="faro-lens-map-pin is-swell";
   shell.append(document.createElement("b"));
@@ -587,19 +557,7 @@ function create(opts){
    markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,status));
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
   }
-  const beach=latest.spot;
-  if(beach&&deg(beach.latitude)&&deg(beach.longitude)){
-   const pos=[beach.latitude,beach.longitude];
-   if(!beachVectorMarker){
-    beachVectorMarker=L.marker(pos,{interactive:false,keyboard:false,
-     zIndexOffset:65,title:"Directional compatibility at selected beach"}).addTo(map);
-   }else beachVectorMarker.setLatLng(pos);
-   beachVectorMarker.setIcon(beachVectorIcon(L,latest));
-   beachVectorMarker.setOpacity(mapView==="beach"?1:0);
-   if(beachVectorMarker.getElement())beachVectorMarker.getElement().style.pointerEvents="none";
-  }else if(beachVectorMarker){
-   map.removeLayer(beachVectorMarker);beachVectorMarker=null;
-  }
+  // Beach coordinates belong to the spot pin; signals live in the HUD.
   const grid=latest.marineGrid;
   const hasGrid=deg(grid?.lat)&&deg(grid?.lon);
   if(hasGrid){
@@ -701,6 +659,6 @@ function create(opts){
   setMapView:x=>{if(["beach","region"].includes(x)){mapView=x;frameMap(true);update(latest)}},
   getState:()=>({mode,mapView,exposure,motion,lastCentered})};
 }
-root.FaroChileCoastMap=Object.freeze({create,bearingFromArrow,stateLabel,distanceToGuide,guideClass,directionalFit,fitCopy});
+root.FaroChileCoastMap=Object.freeze({create,bearingFromArrow,stateLabel,distanceToGuide,guideClass,directionalFit,fitCopy,signalAssessment});
 if(typeof module!=="undefined"&&module.exports)module.exports=root.FaroChileCoastMap;
 })(typeof window!=="undefined"?window:globalThis);
