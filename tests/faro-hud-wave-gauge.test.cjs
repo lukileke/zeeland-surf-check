@@ -72,8 +72,8 @@ test('MapLibre browser build is compatible with Leaflet adapter, with a retina f
  assert.match(code,/tiles\.openfreemap\.org\/styles\/positron/);
 });
 test('cache version and Field Notes row are present',()=>{
- assert.match(html,/faro-coastal-lens-v4\.css\?v=8/);
- assert.match(html,/coast-map\.js\?v=13/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=9/);
+ assert.match(html,/coast-map\.js\?v=14/);
  assert.match(html,/chile-forecast\.js\?v=20/);
  assert.match(html,/data-faro-icon="field-notes"/);
 });
