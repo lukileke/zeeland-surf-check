@@ -405,52 +405,55 @@ function create(opts){
  // coastal reference. Arrows encode bearing only; these are not rays of swell
  // refraction or a prediction of local breaking-wave height.
  function beachVectorIcon(L,data){
-  const slot=data.slot||{},profile=data.profiles?.[data.spot?.id]||{};
-  const swFit=directionalFit(slot.swellDirection,profile.waveFromDeg);
-  const wiFit=directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true);
+  const slot=data.slot||{},profile=data.profiles?.[data.spot?.id]||{},es=data.lang!=="en";
+  const fits={
+   swell:directionalFit(slot.swellDirection,profile.waveFromDeg),
+   wind:directionalFit(slot.windDirection,profile.windFromDeg,slot.windKmh,true)
+  };
   const palette={inside:"#2b8968",edge:"#a67e2c",outside:"#b66049",strong:"#a84b47",unknown:"#5b7882"};
   const holder=document.createElement("div");holder.className="faro-beach-vectors";
-  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 248 208");
-  svg.classList.add("faro-beach-vector-svg");holder.append(svg);
-  function make(tag,attrs,parent=svg){
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 264 226");
+  svg.classList.add("faro-beach-vector-svg");svg.setAttribute("aria-hidden","true");holder.append(svg);
+  const make=(tag,attrs,parent=svg)=>{
    const e=document.createElementNS(NS,tag);
    for(const [key,value]of Object.entries(attrs))e.setAttribute(key,String(value));
    parent.append(e);return e;
-  }
-  function vector(from,fit,name,endX,endY,len){
+  };
+  // The reference beach lies at SVG (132,113). Arrow tips stop BEFORE the
+  // beach pin, in two non-overlapping lanes. This is directional annotation
+  // at a beach reference, NOT a bathymetric wave-ray trajectory.
+  function vector(kind,from,fit,tipX,tipY,length){
    const az=bearingFromArrow(from);if(az===null)return;
-   const a=az*Math.PI/180,ux=Math.sin(a),uy=-Math.cos(a);
-   const startX=endX-ux*len,startY=endY-uy*len;
-   const mx=(startX+endX)/2,my=(startY+endY)/2;
-   const deflect=name==="SWELL"?-4:4;
-   const ctrlX=mx-uy*deflect,ctrlY=my+ux*deflect;
-   const colour=palette[fit];
-   const g=make("g",{"data-vector":name,"data-fit":fit});
-   const round=x=>Number(x.toFixed(1));
-   make("path",{d:"M "+round(startX)+" "+round(startY)+" Q "+
-    round(ctrlX)+" "+round(ctrlY)+" "+round(endX)+" "+round(endY),
-    fill:"none",stroke:colour,"stroke-width":name==="SWELL"?5:3.3,
+   const rad=az*Math.PI/180,ux=Math.sin(rad),uy=-Math.cos(rad);
+   const startX=tipX-ux*length,startY=tipY-uy*length;
+   const color=palette[fit],isSwell=kind==="swell";
+   const g=make("g",{"data-vector":isSwell?"SWELL":"WIND","data-fit":fit});
+   const n=v=>Number(v.toFixed(1));
+   // Shadow/halo preserves legibility above muted coastlines and map labels.
+   const d="M "+n(startX)+" "+n(startY)+" L "+n(tipX)+" "+n(tipY);
+   make("path",{d,fill:"none",stroke:"#fff","stroke-width":isSwell?8:6,
+    "stroke-linecap":"round",opacity:.92},g);
+   make("path",{d,fill:"none",stroke:color,"stroke-width":isSwell?4.5:3,
     "stroke-linecap":"round"},g);
-   make("circle",{cx:round(startX),cy:round(startY),r:name==="SWELL"?3.7:3.0,
-    fill:colour,stroke:"#fff","stroke-width":1.2},g);
-   const bx=endX-ux*12,by=endY-uy*12,pX=-uy,pY=ux,half=name==="SWELL"?6.5:5;
-   make("path",{d:"M "+round(endX)+" "+round(endY)+" L "+
-    round(bx+pX*half)+" "+round(by+pY*half)+" L "+
-    round(bx-pX*half)+" "+round(by-pY*half)+" Z",
-    fill:colour,stroke:"#fff","stroke-width":1.1},g);
-   // Label anchored near the origin, not floating by an offshore model grid.
-   const tx=Math.max(25,Math.min(223,startX-ux*14));
-   const ty=Math.max(19,Math.min(197,startY-uy*14-3));
-   const label=make("text",{x:round(tx),y:round(ty),"text-anchor":"middle",
-    fill:colour,stroke:"#fff","stroke-width":3,"paint-order":"stroke",
-    "font-family":"Manrope,Arial,sans-serif","font-size":10.5,
-    "font-weight":900},g);
-   label.textContent=name==="WIND"&&data.lang!=="en"?"VIENTO":name;
+   const bx=tipX-ux*12,by=tipY-uy*12,px=-uy,py=ux;
+   const half=isSwell?6.3:5;
+   make("path",{d:"M "+n(tipX)+" "+n(tipY)+" L "+n(bx+px*half)+" "+n(by+py*half)+
+    " L "+n(bx-px*half)+" "+n(by-py*half)+" Z",fill:color,stroke:"#fff","stroke-width":1.6},g);
+   // Small fixed label at the vector origin. The numerical FROM bearing is
+   // shown separately in the model reading to avoid overprinting the map.
+   const tx=n(startX),ty=n(startY),w=isSwell?49:es?48:41;
+   make("rect",{x:tx-w/2,y:ty-22,width:w,height:18,rx:8,fill:"#f5fbfa",
+    stroke:color,"stroke-width":1.1},g);
+   const label=make("text",{x:tx,y:ty-9,"text-anchor":"middle",fill:color,
+    "font-family":"Manrope,Arial,sans-serif","font-size":10,"font-weight":900},g);
+   label.textContent=isSwell?"SWELL":es?"VIENTO":"WIND";
   }
-  if(mode!=="wind")vector(slot.swellDirection,swFit,"SWELL",107,91,72);
-  if(mode!=="swell")vector(slot.windDirection,wiFit,"WIND",143,119,54);
-  return L.divIcon({className:"faro-beach-vectors-anchor",html:holder.outerHTML,
-   iconSize:[248,208],iconAnchor:[124,104]});
+  // Wider vector-tip separation prevents an X-shaped intersection at
+  // the active beach. Both still read as approaching the same reference.
+  if(mode!=="wind")vector("swell",slot.swellDirection,fits.swell,113,91,65);
+  if(mode!=="swell")vector("wind",slot.windDirection,fits.wind,151,135,48);
+  return L.divIcon({className:"faro-beach-vectors-anchor",
+   html:holder.outerHTML,iconSize:[264,226],iconAnchor:[132,113]});
  }
  function modelGridIcon(L,slot){
   const shell=document.createElement("div");shell.className="faro-lens-map-pin is-swell";
@@ -511,7 +514,7 @@ function create(opts){
   // The selected beach controls the default zoom; offshore model sampling
   // coordinates are available separately via Regional view.
   if(mapView==="beach"){
-   map.setView(coast,viewport.clientWidth&&viewport.clientWidth<520?14:15,{animate:false});
+   map.setView(coast,viewport.clientWidth&&viewport.clientWidth<520?15:16,{animate:false});
   }else{
    const bounds=L.latLngBounds(coast,coast);let samples=0;
    for(const grid of [latest.marineGrid,latest.weatherGrid]){
