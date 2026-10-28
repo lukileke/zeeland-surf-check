@@ -97,7 +97,7 @@ test('wave height indicators are enclosed, based on actual model height and do n
  assert.match(nl,/MODEL HEIGHT · VISUAL SCALE/);
  assert.match(nl,/Math\.max\(0,Math\.min\(8,Math\.round\(b\.s\.h\/.25\)\)\)/);
  assert.match(cl,/id="dayWaveMeter" class="chile-wave-bars faro-wave-instrument"/);
- assert.match(chileJs,/Math\.max\(0,Math\.min\(8,Math\.round\(h\/.25\)\)\)/);
+ assert.match(chileJs,/fraction>i\/8&&fraction<segmentEnd/);
  assert.match(css,/html #dayview \.session-glance \.hero-wave-meter/);
 });
 test('coastal lens displays real swell partitions and separate atmospheric grid',()=>{
