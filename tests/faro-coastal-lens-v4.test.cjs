@@ -71,9 +71,18 @@ test('regional S/W indicators share the exact HUD signal, not colour-only angula
  assert.match(css,/\.faro-region-legend-dot\[data-level\]/);
 });
 
+test('regional click retains regional comparison and selected contrast overrides guide colour',()=>{
+ assert.match(code,/if\(mapView==="beach"\)frameMap\(false\)/);
+ assert.doesNotMatch(code,/mapView="beach";frameMap\(false\);drawUi\(\)/);
+ assert.match(code,/base\.dataset\.spotId=spot\.id/);
+ assert.match(css,/\.faro-map-pin\.is-current \.faro-region-fit-tick\[data-level="favourable"\]/);
+ assert.match(css,/\.faro-map-pin\.is-current \.faro-region-fit-tick\[data-level\]/);
+ assert.match(css,/data-spot-id="CL-VS:la-boca-concon"/);
+ assert.match(css,/data-spot-id="CL-VS:renaca"/);
+});
 test('asset version and shared Zeeland colours remain unaffected',()=>{
- assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=12"/);
- assert.match(html,/src="coast-map\.js\?v=16"/);
- assert.match(html,/src="chile-forecast\.js\?v=21"/);
+ assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=13"/);
+ assert.match(html,/src="coast-map\.js\?v=17"/);
+ assert.match(html,/src="chile-forecast\.js\?v=22"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });
