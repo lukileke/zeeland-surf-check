@@ -434,3 +434,31 @@ html:not([data-theme="light"]) #chileCoastMap .faro-lens-quick-metric[data-fit="
  #chileCoastMap .faro-lens-local-fit{font-size:9.5px!important}
  #chileCoastMap .faro-lens-read-heading span{max-width:100%}
 }
+
+/* Beach-close directional overlay: no competing map-grid labels in beach mode. */
+#chileCoastMap .faro-beach-vectors-anchor,
+#chileCoastMap .faro-beach-vectors,
+#chileCoastMap .faro-beach-vector-svg{
+ width:264px!important;height:226px!important;
+ background:transparent!important;pointer-events:none!important;
+}
+#chileCoastMap .faro-beach-vectors{
+ filter:drop-shadow(0 2px 2px #1c3b4222);
+}
+#chileCoastMap .faro-beach-vector-svg [data-vector]{
+ pointer-events:none!important;
+}
+#chileCoastMap .faro-lens-compass-dock{
+ transform:scale(.84);transform-origin:top right;
+ right:9px;top:9px;opacity:.97;
+}
+@media(max-width:630px){
+ #chileCoastMap .faro-beach-vectors-anchor,
+ #chileCoastMap .faro-beach-vectors,
+ #chileCoastMap .faro-beach-vector-svg{
+  width:264px!important;height:226px!important;
+ }
+ #chileCoastMap .faro-lens-compass-dock{
+  transform:scale(.75);transform-origin:top right;
+ }
+}
