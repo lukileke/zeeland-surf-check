@@ -23,6 +23,35 @@ function loadLeaflet(){
  });
  return loader;
 }
+// Progressive enhancement: OpenFreeMap's Positron vector style stays crisp
+// on HiDPI screens. Leaflet coordinates/markers continue to work through
+// MapLibre GL Leaflet; raster OSM is the honest fallback on blocked/WebGL-off
+// clients. Only requested upon opening the map, never prefetch other beaches.
+let vectorLoader=null;
+async function loadVectorSupport(){
+ if(!root.WebGLRenderingContext)throw Error("WebGL is unavailable");
+ if(root.L?.maplibreGL&&root.maplibregl)return root.L;
+ if(vectorLoader)return vectorLoader;
+ vectorLoader=(async()=>{
+  const module=await import("https://unpkg.com/maplibre-gl@6.3.0/dist/maplibre-gl.mjs");
+  root.maplibregl=module;
+  if(!document.querySelector('link[data-faro-maplibre]')){
+   const css=document.createElement("link");
+   css.rel="stylesheet";css.dataset.faroMaplibre="true";
+   css.href="https://unpkg.com/maplibre-gl@6.3.0/dist/maplibre-gl.css";
+   document.head.append(css);
+  }
+  await new Promise((resolve,reject)=>{
+   const script=document.createElement("script");
+   script.src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js";
+   script.onload=()=>root.L?.maplibreGL?resolve():reject(Error("Vector map adapter unavailable"));
+   script.onerror=()=>reject(Error("Vector map adapter blocked"));
+   document.head.append(script);
+  });
+  return root.L;
+ })().catch(err=>{vectorLoader=null;throw err});
+ return vectorLoader;
+}
 const deg=x=>typeof x==="number"&&Number.isFinite(x);
 function bearingFromArrow(value){return deg(value)?(((value+180)%360)+360)%360:null}
 function distanceToGuide(value,ranges){
@@ -619,9 +648,34 @@ function create(opts){
    schematic.remove();
    map=L.map(viewport,{scrollWheelZoom:false,zoomControl:true,attributionControl:true});
    map.on("dragstart",()=>{pendingSampleFit=false;});
-   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    maxZoom:17,minZoom:9,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+   // A raster first frame keeps the map usable if WebGL or the vector CDN
+   // is blocked. detectRetina avoids the soft 256px-tile upscaling on HiDPI.
+   const raster=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    maxZoom:18,maxNativeZoom:18,minZoom:9,detectRetina:true,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
    }).addTo(map);
+   if(root.WebGLRenderingContext){
+    // Optional, non-blocking vector enhancement. Never destroy working raster
+    // until a complete vector style has actually loaded.
+    void loadVectorSupport().then(()=>{
+     if(!map||!d.open)return;
+     const vector=L.maplibreGL({style:"https://tiles.openfreemap.org/styles/positron"}).addTo(map);
+     const gl=vector.getMaplibreMap?.();
+     if(!gl)return;
+     let ready=false;
+     gl.once("load",()=>{
+      if(!map||ready)return;
+      ready=true;
+      if(map.hasLayer?.(raster))map.removeLayer(raster);
+      viewport.classList.add("faro-has-vector-basemap");
+     });
+     gl.on("error",()=>{
+      if(ready)return;
+      try{map?.removeLayer(vector)}catch(_e){}
+      // Keep the OSM fallback. Errors must never erase beach markers.
+     });
+    }).catch(()=>{ /* already displaying a real raster basemap */ });
+   }
    map.setView([-32.918807,-71.512047],13);
    update(p());status.textContent="";
    requestAnimationFrame(()=>map?.invalidateSize({pan:false}));
