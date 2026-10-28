@@ -76,8 +76,8 @@ test('all four pilot spots and actual marine grid used; no fabricated shore vect
  assert.match(chileJs,/marineGrid:state\.forecast\?\.model\?\.marineGrid/);
  const mapSource=read('chile/coast-map.js');
  assert.match(mapSource,/modelGridMarker=L\.marker\(pos/);
- assert.match(mapSource,/L\.latLngBounds\(coast,coast\)/);
- assert.match(mapSource,/bounds\.extend\(\[grid\.lat,grid\.lon\]\)/);
+ assert.match(mapSource,/const bounds=L\.latLngBounds\(/);
+ assert.match(mapSource,/bounds\.extend\(\[beach\.latitude,beach\.longitude\]\)/);
  assert.doesNotMatch(mapSource,/a\.textContent="↑"/);
  assert.match(mapSource,/Sin simulación de refracción ni altura rompiente/);
 });
