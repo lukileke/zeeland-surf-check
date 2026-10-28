@@ -38,9 +38,9 @@ test('beach view contains a corner HUD, no centre beach disc; guide toggle has e
  assert.match(code,/if\(exposure\)\{/);
  assert.match(code,/faro-hud-guide/);
  assert.match(code,/aria-label/);
- assert.match(css,/rgba\(243,251,250,\.56\)/);
- assert.match(css,/rgba\(15,43,47,\.49\)/);
- assert.match(css,/-webkit-backdrop-filter:blur\(16px\)/);
+ assert.match(css,/rgba\(243,251,250,\.44\)/);
+ assert.match(css,/rgba\(15,43,47,\.40\)/);
+ assert.match(css,/-webkit-backdrop-filter:blur\(18px\)/);
  assert.match(css,/max-width:480px/);
 });
 test('directional travel arrows use FROM+180, live model inputs and text labels',()=>{
