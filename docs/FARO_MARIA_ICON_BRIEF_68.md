@@ -139,3 +139,14 @@ Cada ID corresponde exactamente a un archivo SVG en `assets/icons/`. No renombra
 ---
 
 **Fuente técnica única:** [assets/faro-icon-manifest.json](../assets/faro-icon-manifest.json), con los mismos 68 IDs de este documento. Para cambios en el alcance, actualizar ambos antes de dibujar o entregar.
+
+## Coastal Lens 2026-10-28 · New high-priority vector handoff
+The original 68-icon manifest remains unchanged. These are **variants of existing iconography or new large-format components**, not 68 additional files.
+
+1. **Mini corner-direction HUD face**: very restrained north reference and subtle 1-ring compass, suitable for a 140–174 CSS px translucent panel, light/dark. No solid, opaque background in the asset itself.
+2. **Two directional arrow masters**: swell slightly stronger and wind slightly lighter, geometric stroke rather than PPT-style block triangles; separate editable SVGs with centred rotation anchors and `currentColor`.
+3. **Five semantic states**: favourable, mixed, low-energy, unfavourable and unknown. Deliver **shape/weight differences** as well as colour tokens, so a surfer can read them in greyscale; do not bake a static red/green meaning into compass art.
+4. **Wave-height gauge accent**: single clean oceanographic instrument motif for a numerical *offshore model height* scale, not an illustration of the local breaker. It must work for 0 to 2m+ (display clamps; numeric height does not).
+5. **Spot pin / local reference**: thin, unobtrusive selected/nearby variants; must not obscure the coastline at zoom 15 or 16.
+
+Use the integration contract in [FARO HUD + wave gauge](FARO_HUD_SIGNALS_AND_WAVE_GAUGE_2026_10_28.md). The real model supplies bearing, heights, periods, speed and gusts at runtime. **No SVG should contain a hard-coded beach bearing, power rating or simulated ray trace.**
