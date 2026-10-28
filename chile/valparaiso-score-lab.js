@@ -109,6 +109,12 @@
   const swellAvailability=clamp(input.swellHeightM/H.presenceModerateM,0,1);
   const unrounded=directionalIndex*swellAvailability;
   const score=+Math.min(H.provisionalScoreCap,unrounded).toFixed(1);
+  // The experimental cap saturates many different offshore conditions.
+  // Preserve the unrounded arithmetic for auditing, NOT as a calibrated
+  // hidden score, and disclose saturation explicitly in every UI surface.
+  const capActive=unrounded>=H.provisionalScoreCap;
+  const fieldSessions=Number.isInteger(config.calibration?.fieldSessions)?
+   config.calibration.fieldSessions:0;
   const band=bands.find(b=>score<b.max);
   const label=t(locale,band.es,band.en);
   const tags=['windDirection','swellDirection','windStrength','period','swellPresence'].map(k=>fitTag(k,components[k].value,locale));
@@ -129,6 +135,8 @@
   const modelRisk=finite(input.gustKmh)&&input.gustKmh>=75||input.windKmh>=55;
   return {
    spotId,spot:profile.name,status:'experimental',score,scoreLabel:label,band:band.id,components,
+   capActive,fieldSessions,rawDirectionalIndex:+directionalIndex.toFixed(3),
+   rawSwellAvailability:+swellAvailability.toFixed(3),
    tags,vibe:{id:vibe,label:t(locale,...vibes[vibe])},
    read:read(components,locale,profile.name),
    caution:profile['hazardContext'+(es?'Es':'En')],

@@ -14,6 +14,21 @@ const scoreTone=n=>!ok(n)?"":(n>=8?"tone-great":n>=6?"tone-good":n>=4?"tone-fair
 // These are *relative model signals*, never validated observed surf quality.
 const grade=n=>!ok(n)?tr("Sin datos","No data"):n>=8.5?tr("Excelente","Excellent"):n>=7?tr("Bueno","Good"):n>=5?tr("Regular","Fair"):n>=3?tr("Malo","Poor"):tr("Muy malo","Very poor");
 const gradeClass=n=>!ok(n)?"faro-grade-unavailable":n>=8.5?"faro-grade-excellent":n>=7?"faro-grade-good":n>=5?"faro-grade-fair":n>=3?"faro-grade-poor":"faro-grade-very-poor";
+
+const experimentalLabel=session=>{
+ const meta=session?.scoreMeta;
+ return meta?.status==="experimental"&&meta.scoreLabel?meta.scoreLabel:grade(session?.score);
+};
+const scoreCaveat=session=>{
+ const meta=session?.scoreMeta;
+ if(meta?.status!=="experimental")return tr("Sin validación local","No local calibration");
+ const sessions=meta.fieldSessions??0;
+ return meta.capActive?
+  tr("Tope experimental "+num(meta.scoreCap)+" · "+sessions+" sesiones de validación",
+     "Experimental cap "+num(meta.scoreCap)+" · "+sessions+" validation sessions"):
+  tr("Índice de guía · "+sessions+" sesiones de validación",
+     "Guide-based index · "+sessions+" validation sessions");
+};
 const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
 const waveSizeLabel=h=>!ok(h)?"—":h<.5?tr("Pequeñas","Small"):h<1.2?tr("Medianas","Medium"):h<2?tr("Grandes","Large"):tr("Muy grandes","Very large");
 function waveBars(h){
@@ -345,7 +360,7 @@ function strip(){
   button.type="button";button.setAttribute("aria-pressed",String(i===state.day));
   button.append(el("span",i===0?tr("Hoy","Today"):Live.formatDay(d.date,state.lang),"chile-chip-day"));
   button.append(el(s?"strong":"span",s?num(s.score):"—",s?"chile-chip-number":"chile-chip-empty"));
-  button.append(el("span",s?grade(s.score):tr("Sin ventana","No daylight window"),"chile-chip-grade faro-grade "+gradeClass(s?.score)));
+  button.append(el("span",s?experimentalLabel(s):tr("Sin ventana","No daylight window"),"chile-chip-grade faro-grade "+gradeClass(s?.score)));
   button.append(el("small",s?sessionTime(s):tr("No evaluado","Not evaluated"),"chile-chip-time"));
   button.addEventListener("click",()=>{state.day=i;state.hour=null;render()});host.append(button);
  }
@@ -489,7 +504,7 @@ function slots(){
   button.type="button";button.setAttribute("aria-pressed",String(selection()?.hour===s.hour));button.disabled=!s.modelComplete;
   button.append(el("span",h(s.hour)+"–"+h(s.hour+2),"chile-slot-hour"));
   button.append(el("strong",eligible?num(s.score):"—","chile-slot-score"));
- if(eligible)button.append(el("span",grade(s.score),"chile-slot-quality faro-grade "+gradeClass(s.score)));
+ if(eligible)button.append(el("span",experimentalLabel(s),"chile-slot-quality faro-grade "+gradeClass(s.score)));
   button.append(el("small",dangerous?tr(" Riesgo modelo"," Model risk"):unknownRisk?tr(" Riesgo sin evaluar"," Risk unassessed"):Live.slotRisk(s,state.config)==="caution"?tr(" Precaución"," Caution"):eligible?(localRead(s)?.decision?.shortLabel||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
@@ -550,10 +565,10 @@ function session(){
  main.append(heading);
  const top=el("div",null,"chile-session-head faro-session-instrument");
  const score=el("div",null,"chile-session-rating "+scoreTone(s.score));
- score.append(el("small",tr("SURF QUALITY · MODELO","SURF QUALITY · MODEL"),"chile-session-label"));
+ score.append(el("small",tr("POTENCIAL · GUÍA + MODELO","POTENTIAL · GUIDE + MODEL"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
- score.append(big,el("span",grade(s.score),"chile-session-label faro-grade "+gradeClass(s.score)));
- score.append(el("small",tr("Índice experimental","Experimental index"),"chile-session-origin"));
+ score.append(big,el("span",experimentalLabel(s),"chile-session-label faro-grade "+gradeClass(s.score)));
+ score.append(el("small",scoreCaveat(s),"chile-session-origin faro-score-cap-context"));
  const wave=el("div",null,"chile-session-wave faro-wave-panel");
  wave.append(el("small",tr("ALTURA DE OLAS · MODELO","MODEL WAVE HEIGHT"),"chile-session-label"),
   el("strong",num(s.totalWaveHeightM)+" m"),waveBars(s.totalWaveHeightM),
@@ -681,12 +696,17 @@ async function rankings(){
  list.sort((a,b)=>(localRead(b.s,b.model.spot.id)?.decision?.priority??2)-
  (localRead(a.s,a.model.spot.id)?.decision?.priority??2)||b.s.score-a.s.score||a.day.date.localeCompare(b.day.date));
  host.replaceChildren();
- txt("rankingstatus",tr("Compatibilidad modelada · sin calibrar","Modelled compatibility · uncalibrated"));
+ txt("rankingstatus",tr("Orden orientativo · los índices pueden alcanzar el techo experimental","Indicative order · scores may hit the experimental cap"));
  if(!list.length){host.append(el("p",tr("Sin comparaciones suficientes por ahora.","Not enough comparable model values."),"muted"));return}
  for(const item of list.slice(0,12)){
   const b=el("button",null,"highlight chile-ranking "+scoreTone(item.s.score));b.type="button";
   const line=el("div",null,"chile-rank-layout"),data=el("div");
-  data.append(el("span",item.model.spot.name,"chile-rank-name"),el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),el("small",(localRead(item.s,item.model.spot.id)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
+  data.append(el("span",item.model.spot.name,"chile-rank-name"),
+   el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),
+   el("small",(localRead(item.s,item.model.spot.id)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
+  if(item.s.scoreMeta?.capActive)
+   data.append(el("small",tr("Techo del índice provisional · no permite ordenar valores superiores",
+    "Provisional index cap · cannot distinguish higher potential"),"faro-score-cap-note"));
   line.append(data,el("strong",num(item.s.score)));b.append(line);
   b.addEventListener("click",()=>{
    state.selected=state.config.pilots.findIndex(s=>s.id===item.model.spot.id);
@@ -723,6 +743,21 @@ async function initialize(){
     const head=target.querySelector("summary");
     if(head){head.setAttribute("tabindex","-1");head.focus({preventScroll:true})}
    }
+  });
+ }
+ // Footer links must open a useful panel, not send surfers to raw Markdown.
+ // They work from any page tab, including Best of Week and FARO Match.
+ for(const link of document.querySelectorAll("[data-expand-target]")){
+  link.addEventListener("click",event=>{
+   const disclosure=$(link.dataset.expandTarget);
+   if(!disclosure)return;
+   event.preventDefault();
+   tab("forecast");
+   disclosure.open=true;
+   const motion=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches?"auto":"smooth";
+   disclosure.scrollIntoView({behavior:motion,block:"start"});
+   const title=disclosure.querySelector("summary");
+   if(title){title.setAttribute("tabindex","-1");title.focus({preventScroll:true})}
   });
  }
  const dnaButton=$("openSpotDNA"),dnaDisclosure=$("spotInsightExpand");
