@@ -565,7 +565,7 @@ function session(){
  main.append(heading);
  const top=el("div",null,"chile-session-head faro-session-instrument");
  const score=el("div",null,"chile-session-rating "+scoreTone(s.score));
- score.append(el("small",tr("SURF QUALITY · MODELO","SURF QUALITY · MODEL"),"chile-session-label"));
+ score.append(el("small",tr("POTENCIAL · GUÍA + MODELO","POTENTIAL · GUIDE + MODEL"),"chile-session-label"));
  const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
  score.append(big,el("span",experimentalLabel(s),"chile-session-label faro-grade "+gradeClass(s.score)));
  score.append(el("small",scoreCaveat(s),"chile-session-origin faro-score-cap-context"));
