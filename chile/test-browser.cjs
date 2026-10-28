@@ -83,8 +83,8 @@ function fixture(){
    // not force the daily card to stretch to the height of hourly content.
    const visual=await page.evaluate(()=>{
     const $=s=>document.querySelector(s),style=s=>getComputedStyle($(s));
-    const selectors=['.day-editorial-overline','.day-overview-row','#dayUVBadge',
-      '#daySignalMetrics','#chileDecisionBrief','.chile-vibe','#openSpotDNA'];
+    const selectors=['.day-editorial-overline','.day-overview-row','#chileDecisionBrief',
+      '#dayUVBadge','#daySignalMetrics','.chile-vibe','#openSpotDNA'];
     const rects=selectors.map(selector=>{
      const r=$(selector).getBoundingClientRect();
      return {selector,top:r.top,bottom:r.bottom,height:r.height,width:r.width};
