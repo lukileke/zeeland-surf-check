@@ -15,10 +15,10 @@ const scoreTone=n=>!ok(n)?"":(n>=8?"tone-great":n>=6?"tone-good":n>=4?"tone-fair
 const grade=n=>!ok(n)?tr("Sin datos","No data"):n>=8.5?tr("Excelente","Excellent"):n>=7?tr("Bueno","Good"):n>=5?tr("Regular","Fair"):n>=3?tr("Malo","Poor"):tr("Muy malo","Very poor");
 const gradeClass=n=>!ok(n)?"faro-grade-unavailable":n>=8.5?"faro-grade-excellent":n>=7?"faro-grade-good":n>=5?"faro-grade-fair":n>=3?"faro-grade-poor":"faro-grade-very-poor";
 
-const experimentalLabel=session=>{
- const meta=session?.scoreMeta;
- return meta?.status==="experimental"&&meta.scoreLabel?meta.scoreLabel:grade(session?.score);
-};
+// Keep numerical score badges aligned with Zeeland's five quality bands.
+// Experimental status belongs in the explanatory model caveat, not a
+// different quality scale with e.g. eight identical 'Promising' labels.
+const experimentalLabel=session=>grade(session?.score);
 const scoreCaveat=session=>{
  const meta=session?.scoreMeta;
  if(meta?.status!=="experimental")return tr("Sin validación local","No local calibration");
