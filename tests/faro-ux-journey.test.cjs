@@ -54,8 +54,8 @@ test('controls have minimum 44 px touch targets and clear focus treatment',()=>{
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
 test('asset versions are updated without overwriting Zeeland visual contract',()=>{
- assert.match(html,/faro-coastal-lens-v4\.css\?v=4/);
- assert.match(html,/coast-map\.js\?v=8/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=5/);
+ assert.match(html,/coast-map\.js\?v=9/);
  assert.match(html,/chile-forecast\.js\?v=18/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
  assert.match(read('index.html'),/faro-visual-system-v2\.css\?v=5/);
