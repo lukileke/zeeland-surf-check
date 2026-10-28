@@ -29,29 +29,37 @@ function loadLeaflet(){
 // clients. Only requested upon opening the map, never prefetch other beaches.
 let vectorLoader=null;
 async function loadVectorSupport(){
- if(!root.WebGLRenderingContext)throw Error("WebGL is unavailable");
+ if(!root.WebGLRenderingContext)throw Error("WebGL unavailable");
  if(root.L?.maplibreGL&&root.maplibregl)return root.L;
  if(vectorLoader)return vectorLoader;
+ const addScript=url=>new Promise((resolve,reject)=>{
+  const script=document.createElement("script");script.src=url;
+  script.crossOrigin="anonymous";
+  script.onload=resolve;script.onerror=()=>reject(Error("Map script blocked: "+url));
+  document.head.append(script);
+ });
  vectorLoader=(async()=>{
-  const module=await import("https://unpkg.com/maplibre-gl@6.3.0/dist/maplibre-gl.mjs");
-  root.maplibregl=module;
-  if(!document.querySelector('link[data-faro-maplibre]')){
-   const css=document.createElement("link");
-   css.rel="stylesheet";css.dataset.faroMaplibre="true";
-   css.href="https://unpkg.com/maplibre-gl@6.3.0/dist/maplibre-gl.css";
-   document.head.append(css);
+  // MapLibre GL JS 5 browser build exposes global maplibregl, as required by
+  // the maplibre-gl-leaflet plugin. MapLibre 6 is ESM-only and its async
+  // module namespace is not the plugin's expected browser script API.
+  if(!root.maplibregl){
+   if(!document.querySelector('link[data-faro-maplibre]')){
+    const css=document.createElement("link");css.rel="stylesheet";
+    css.dataset.faroMaplibre="true";
+    css.href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css";
+    document.head.append(css);
+   }
+   await addScript("https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js");
+   if(!root.maplibregl)throw Error("MapLibre browser global unavailable");
   }
-  await new Promise((resolve,reject)=>{
-   const script=document.createElement("script");
-   script.src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js";
-   script.onload=()=>root.L?.maplibreGL?resolve():reject(Error("Vector map adapter unavailable"));
-   script.onerror=()=>reject(Error("Vector map adapter blocked"));
-   document.head.append(script);
-  });
+  if(!root.L?.maplibreGL)
+   await addScript("https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js");
+  if(!root.L?.maplibreGL)throw Error("Leaflet vector adapter unavailable");
   return root.L;
  })().catch(err=>{vectorLoader=null;throw err});
  return vectorLoader;
 }
+
 const deg=x=>typeof x==="number"&&Number.isFinite(x);
 function bearingFromArrow(value){return deg(value)?(((value+180)%360)+360)%360:null}
 function distanceToGuide(value,ranges){
