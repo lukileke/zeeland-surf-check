@@ -356,8 +356,8 @@ function create(opts){
    regionalTitle.textContent=es?"CUATRO PLAYAS · UNA COSTA":"FOUR BEACHES · ONE COAST";
    const regionalText=document.createElement("span");
    regionalText.textContent=es?
-    "Compara orientaciones de referencia. Selecciona una playa para explorar su pronóstico y acercarte.":
-    "Compare reference bearings. Select a beach to see its forecast and zoom in.";
+    "Selecciona una playa para acercarte. Los trazos comparan rumbos guía, no olas observadas.":
+    "Select a beach to zoom in. The marks compare guide bearings, not observed waves.";
    regionSummary.append(regionalTitle,regionalText);
   }
   viewport.classList.toggle("faro-lens-motion",motion&&!reduced()&&
@@ -624,7 +624,13 @@ function create(opts){
    if(!markers.has(sp.id)){
     const m=L.marker([sp.latitude,sp.longitude],{title:sp.name,keyboard:true});
     m.addTo(map).on("click",()=>{
-     if(sp.id!==latest.spot?.id)opts.onSelectSpot?.(sp.id);
+     if(sp.id!==latest.spot?.id){
+      opts.onSelectSpot?.(sp.id);
+     }else if(mapView==="region"){
+      // Even the already-selected beach is a useful regional navigation
+      // target: open its beach focus rather than doing nothing.
+      mapView="beach";frameMap(true);update(latest);
+     }
     });
     markers.set(sp.id,m);
    }
