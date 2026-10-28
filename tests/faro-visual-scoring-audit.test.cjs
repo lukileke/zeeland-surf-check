@@ -43,15 +43,17 @@ test('colour and score descriptions come from model guide, not an observed surf 
  assert.match(controller,/Techo del índice provisional/);
  assert.match(html,/Señales para la semana/);
 });
-test('beach dial only draws two separate radial lanes and remains on selected beach',()=>{
- assert.match(map,/function beachVectorIcon\(L,data\)/);
- assert.match(map,/const coast=\[sp\.latitude,sp\.longitude\]/);
- assert.match(map,/if\(mode!=="wind"\)spoke\(slot\.swellDirection,tones\[swell\],72,49/);
- assert.match(map,/if\(mode!=="swell"\)spoke\(slot\.windDirection,tones\[wind\],37,20/);
- assert.match(map,/iconAnchor:\[89,89\]/);
- assert.doesNotMatch(map,/faro-beach-vector-svg/);
- assert.match(css,/\.faro-beach-instrument\{/);
+test('only a small viewport HUD remains, with no beach-obscuring disc',()=>{
+ assert.doesNotMatch(map,/function beachVectorIcon\(L,data\)/);
+ assert.doesNotMatch(map,/beachVectorMarker/);
+ assert.match(map,/compassDock\.className="faro-lens-compass-dock faro-direction-hud"/);
+ assert.match(map,/signalAssessment\("swell",swellFitHUD,slot\)/);
+ assert.match(map,/signalAssessment\("wind",windFitHUD,slot\)/);
+ assert.match(css,/\.faro-lens-compass-dock\.faro-direction-hud\{/);
+ assert.match(css,/background:rgba\(243,251,250,\.72\)!important/);
+ assert.match(css,/backdrop-filter:blur\(12px\)/);
 });
+
 test('vector basemap is progressive and never removes working raster before vector load',()=>{
  assert.match(map,/loadVectorSupport\(\)/);
  assert.match(map,/tiles\.openfreemap\.org\/styles\/positron/);
@@ -70,8 +72,8 @@ test('the lower sections are purposeful, discoverable and functional',()=>{
  assert.match(css,/\.faro-hub-group>details\.forecast-expand>summary/);
 });
 test('all new frontend script and CSS versions invalidate old cached prototypes',()=>{
- assert.match(html,/coast-map\.js\?v=11/);
- assert.match(html,/chile-forecast\.js\?v=19/);
+ assert.match(html,/coast-map\.js\?v=12/);
+ assert.match(html,/chile-forecast\.js\?v=20/);
  assert.match(html,/valparaiso-score-lab\.js\?v=2/);
- assert.match(html,/faro-coastal-lens-v4\.css\?v=6/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=7/);
 });
