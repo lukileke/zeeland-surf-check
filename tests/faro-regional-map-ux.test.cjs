@@ -31,15 +31,15 @@ test('marine and atmospheric point markers are optional technical detail, not st
  assert.match(js,/samplesFlag=flag\("samples"/);
  assert.match(js,/if\(mapView==="region"\)frameMap\(true\)/);
  assert.match(js,/samplesFlag\.label\.hidden=mapView!=="region"/);
- assert.match(js,/modelGridMarker\.setOpacity\(mapView==="region"&&showSamples&&mode!=="wind"\?1:0\)/);
- assert.match(js,/windGridMarker\.setOpacity\(mapView==="region"&&showSamples&&mode!=="swell"\?1:0\)/);
+ assert.match(js,/const displayMarine=mapView==="region"&&showSamples&&mode!=="wind"/);
+ assert.match(js,/const displayWind=mapView==="region"&&showSamples&&mode!=="swell"/);
 });
 test('local glass is lighter but retains text contrast and a reduced transparency fallback',()=>{
- assert.match(css,/background:rgba\(243,251,250,\.56\)!important/);
- assert.match(css,/background:rgba\(15,43,47,\.49\)!important/);
- assert.match(css,/backdrop-filter:blur\(16px\)/);
+ assert.match(css,/background:rgba\(243,251,250,\.44\)!important/);
+ assert.match(css,/background:rgba\(15,43,47,\.40\)!important/);
+ assert.match(css,/backdrop-filter:blur\(18px\)/);
  assert.match(css,/@media\(prefers-reduced-transparency:reduce\)/);
- assert.match(css,/rgba\(169,206,207,\.30\)/);
+ assert.match(css,/rgba\(169,206,207,\.25\)/);
 });
 test('compare-by-beach keeps the scientific caveat, without assigning independent predictions to all beaches',()=>{
  assert.match(js,/Comparación regional de rumbo, sin corregir por bancos, sombra costera, profundidad o refracción/);
