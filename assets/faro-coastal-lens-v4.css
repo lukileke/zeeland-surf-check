@@ -41,16 +41,16 @@ html:not([data-theme="light"]) #chileCoastMap .leaflet-tile-pane{filter:saturate
  display:grid!important;justify-items:stretch!important;gap:5px!important;
  padding:10px 11px 8px!important;
  border-radius:13px!important;
- background:rgba(243,251,250,.72)!important;
- border:1px solid rgba(130,173,176,.54)!important;
- box-shadow:0 5px 21px rgba(20,55,59,.16)!important;
- backdrop-filter:blur(12px) saturate(115%);-webkit-backdrop-filter:blur(12px) saturate(115%);
+ background:rgba(243,251,250,.56)!important;
+ border:1px solid rgba(130,173,176,.37)!important;
+ box-shadow:0 5px 19px rgba(20,55,59,.11)!important;
+ backdrop-filter:blur(16px) saturate(110%);-webkit-backdrop-filter:blur(16px) saturate(110%);
  transform:none!important;opacity:1!important;
  color:#1d454a!important;
 }
 html:not([data-theme="light"]) #chileCoastMap .faro-direction-hud{
- background:rgba(15,43,47,.63)!important;
- border-color:rgba(169,206,207,.36)!important;
+ background:rgba(15,43,47,.49)!important;
+ border-color:rgba(169,206,207,.30)!important;
  color:#f0f7f5!important;
 }
 #chileCoastMap .faro-hud-heading{
@@ -665,4 +665,45 @@ html #forecastPage .faro-wave-gauge:is(.size-xl) .faro-gauge-position{
 }
 #chileCoastMap .faro-lens-quick-metric[data-signal] .faro-lens-local-fit{
  color:var(--fit-tone)!important;font-weight:850;
+}
+
+/* REGION vs BEACH · separate semantics, not the same map simply zoomed out.
+   Regional fits four known beach reference points, not model sample grids.
+   Keep geographic context free from the local north-arrow HUD. */
+#chileCoastMap .faro-lens-region-summary{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:6px 14px;flex-wrap:wrap;min-width:0;padding:4px 3px 1px;
+ font:650 10px/1.5 var(--faro-text,Manrope,system-ui);
+ color:var(--muted);
+}
+#chileCoastMap .faro-lens-region-summary[hidden]{display:none!important}
+#chileCoastMap .faro-lens-region-summary strong{
+ font:850 10px/1.4 var(--faro-text,Manrope,system-ui);
+ color:var(--faro-selection);letter-spacing:.08em;white-space:nowrap
+}
+#chileCoastMap .faro-lens-region-summary span{flex:1;min-width:180px}
+#chileCoastMap .faro-map-viewport.faro-map-regional .faro-direction-hud{
+ display:none!important;
+}
+#chileCoastMap[data-map-view="region"] .faro-map-brief{
+ display:none!important;
+}
+#chileCoastMap .faro-lens-options .faro-lens-flag[hidden]{display:none!important}
+#chileCoastMap .faro-lens-footer-legend .faro-region-legend-dot{
+ border:1px solid color-mix(in srgb,var(--fg) 15%,transparent)!important;
+ width:8px!important;height:8px!important;min-width:8px!important;
+ border-radius:50%!important;display:inline-block!important;
+}
+#chileCoastMap[data-map-view="region"] details.faro-lens-beaches{
+ border-color:color-mix(in srgb,var(--faro-selection) 30%,var(--border))!important
+}
+#chileCoastMap[data-map-view="region"] .faro-map-pin:not(.is-current){
+ opacity:1!important;transform:scale(.94)!important
+}
+#chileCoastMap[data-map-view="region"] .faro-map-pin.is-current{
+ box-shadow:0 0 0 2px #167b8ab0,0 3px 12px #142d3540!important
+}
+@media(max-width:630px){
+ #chileCoastMap .faro-lens-region-summary{display:grid;gap:4px}
+ #chileCoastMap .faro-lens-region-summary span{min-width:0}
 }
