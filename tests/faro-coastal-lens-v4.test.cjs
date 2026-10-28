@@ -49,7 +49,7 @@ test('layers are genuine selective controls and point markers remain clickable',
  assert.match(code,/const displayMarine=mapView==="region"&&showSamples&&mode!=="wind"/);
  assert.match(code,/const displayWind=mapView==="region"&&showSamples&&mode!=="swell"/);
  assert.doesNotMatch(code,/faro-lens-partitions/);
- assert.match(code,/One primary travel arrow/);
+ assert.match(code,/function modelSampleIcon\(L,kind\)/);\n assert.doesNotMatch(code,/function modelGridIcon\(/);
 });
 test('motion respects reduced-motion, exposure is only an editorial guide',()=>{
  assert.match(code,/prefers-reduced-motion: reduce/);
