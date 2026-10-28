@@ -51,7 +51,7 @@ test('only a small viewport HUD remains, with no beach-obscuring disc',()=>{
  assert.match(map,/signalAssessment\("wind",windFitHUD,slot\)/);
  assert.match(css,/\.faro-lens-compass-dock\.faro-direction-hud\{/);
  assert.match(css,/background:rgba\(243,251,250,\.56\)!important/);
- assert.match(css,/backdrop-filter:blur\(12px\)/);
+ assert.match(css,/backdrop-filter:blur\(16px\)/);
 });
 
 test('vector basemap is progressive and never removes working raster before vector load',()=>{
