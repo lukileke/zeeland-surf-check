@@ -558,3 +558,113 @@ html:not([data-theme="light"]) #forecastPage :is(.day-chip,.slots>button,.chile-
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
  }
 }
+
+/* FARO Chile · coherent desktop and mobile composition · 28 October 2026.
+   The model is unchanged. The reading order is daily > hours > session >
+   coastal context > progressive detail, without abandoned grid tracks. */
+#forecastPage>.chile-method-disclaimer{
+ width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+#forecastPage>.chile-method-disclaimer>summary{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ min-height:52px;width:100%;gap:12px!important;white-space:normal;line-height:1.45!important}
+#forecastPage>.chile-method-disclaimer>summary:after{flex:0 0 auto!important;margin-left:auto!important}
+#chileCoastMap .faro-lens-stage{
+ display:grid;grid-template-columns:minmax(0,1.42fr) minmax(280px,.8fr);
+ gap:clamp(12px,1.5vw,22px);align-items:start;min-width:0}
+#chileCoastMap .faro-lens-stage>.faro-map-wrap{min-width:0;width:100%}
+#chileCoastMap .faro-lens-stage>.faro-map-brief{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ align-content:start;gap:12px!important;min-width:0;
+ padding:clamp(14px,1.7vw,23px)!important;
+ border:1px solid var(--faro-editorial-hairline,var(--border))!important;
+ border-radius:16px!important;background:var(--faro-ed-shell,var(--panel))!important;
+ box-shadow:none!important}
+#chileCoastMap .faro-lens-stage .faro-lens-read-heading{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:6px 12px;padding-bottom:12px;border-bottom:1px solid var(--faro-editorial-hairline,var(--border))}
+#chileCoastMap .faro-lens-stage .faro-lens-read-heading span{
+ max-width:none!important;overflow-wrap:anywhere;text-align:left!important}
+#chileCoastMap .faro-lens-stage .faro-lens-quick-metrics{
+ grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+#chileCoastMap .faro-lens-stage .faro-lens-quick-metric{
+ min-width:0;min-height:93px;padding:13px 15px!important;align-content:center;gap:6px!important}
+#chileCoastMap .faro-lens-stage .faro-lens-quick-metric strong{
+ font-size:clamp(21px,2.3vw,27px)!important;line-height:1.05!important}
+#chileCoastMap .faro-lens-stage .faro-lens-quick-metric span{font-size:11px!important;line-height:1.45!important}
+#chileCoastMap .faro-lens-controls{display:flex!important;align-items:center!important;gap:9px 12px!important}
+#chileCoastMap .faro-lens-controls .faro-lens-recenter{margin-left:auto!important;min-height:44px}
+#chileCoastMap .faro-lens-controls .faro-lens-options{margin-left:0!important}
+#chileCoastMap .faro-lens-footer-legend{justify-content:flex-start;gap:9px 14px;padding:0 2px 4px}
+#chileCoastMap .faro-lens-footer-legend>small{margin-left:auto!important;max-width:35ch}
+#forecastPage .faro-detail-hub-grid{
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:clamp(11px,1.25vw,18px)!important}
+#forecastPage .faro-hub-group.is-ready{
+ grid-column:auto!important;grid-template-columns:minmax(0,1fr)!important}
+#forecastPage .faro-hub-group.is-ready>.faro-hub-group-head{grid-column:auto!important}
+#forecastPage .faro-hub-group{padding:clamp(13px,1.5vw,20px)!important;gap:8px!important}
+#forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary{
+ min-height:68px!important;padding:11px 12px!important}
+#forecastPage #dayview>.faro-detail-hub{margin-top:12px!important}
+.faro-footer-v2{gap:20px 38px!important;padding-top:25px!important}
+.faro-footer-v2 .faro-footer-nav{gap:18px 25px}
+#boardPage>.faro-guide{
+ width:min(100%,1120px)!important;max-width:1120px!important;
+ box-sizing:border-box!important;margin-inline:auto!important}
+#boardPage>.faro-guide h2{
+ max-width:24ch;line-height:1.13!important;font-size:clamp(27px,3vw,40px)!important}
+@media(min-width:1120px){
+ #forecastPage>.forecast-toolbar{grid-row:1!important;grid-column:1/-1!important}
+ #forecastPage>.picker-grid{grid-row:2!important;grid-column:1/-1!important}
+ #forecastPage>.faro-journey-nav{grid-row:3!important;grid-column:1/-1!important}
+ #forecastPage>#dayStrip{grid-row:4!important;grid-column:1/-1!important}
+ #forecastPage>.day-outlook-section{
+  grid-row:5/span 2!important;grid-column:1/span 5!important;align-self:start!important}
+ #forecastPage #dayview>.hourly-section{
+  grid-row:5!important;grid-column:6/-1!important;align-self:start!important}
+ #forecastPage #dayview>.session-section{
+  grid-row:6!important;grid-column:6/-1!important;align-self:start!important;margin:0!important}
+ #forecastPage #dayview>#coastMapExpand{
+  grid-row:7!important;grid-column:1/-1!important;align-self:start!important;margin:12px 0 0!important}
+ #forecastPage #dayview>.faro-detail-hub{grid-row:8!important;grid-column:1/-1!important}
+ #forecastPage>.chile-method-disclaimer{
+  grid-row:9!important;grid-column:1/-1!important;margin:2px 0 0!important}
+ #forecastPage #dayview>#coastMapExpand>summary{
+  min-height:65px!important;padding:15px 18px!important}
+ #chileCoastMap .faro-map-viewport{
+  height:clamp(350px,30vw,445px)!important;min-height:350px!important}
+ #forecastPage #dailyOverview .faro-read{margin-top:0!important}
+}
+@media(min-width:761px) and (max-width:1199px){
+ #forecastPage .faro-detail-hub-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #forecastPage .faro-hub-group.is-ready{
+  grid-column:1/-1!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #forecastPage .faro-hub-group.is-ready>.faro-hub-group-head{grid-column:1/-1!important}
+}
+@media(max-width:960px){
+ #chileCoastMap .faro-lens-stage{grid-template-columns:minmax(0,1fr)!important}
+ #chileCoastMap .faro-lens-stage>.faro-map-brief{padding:15px!important}
+ #chileCoastMap .faro-lens-stage .faro-lens-quick-metrics{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #chileCoastMap .faro-lens-stage .faro-lens-quick-metric{min-height:84px}
+}
+@media(max-width:760px){
+ #forecastPage .faro-detail-hub-grid{grid-template-columns:minmax(0,1fr)!important}
+ #forecastPage .faro-hub-group.is-ready{
+  grid-column:1!important;grid-template-columns:minmax(0,1fr)!important}
+ #forecastPage .faro-hub-group.is-ready>.faro-hub-group-head{grid-column:1!important}
+ #chileCoastMap .faro-lens-footer-legend>small{
+  max-width:none!important;width:100%;margin-left:0!important}
+}
+@media(max-width:440px){
+ #chileCoastMap .faro-lens-controls{
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ #chileCoastMap .faro-lens-controls .faro-lens-segments{grid-column:1/-1}
+ #chileCoastMap .faro-lens-controls .faro-lens-recenter{
+  grid-column:1;width:100%;margin-left:0!important}
+ #chileCoastMap .faro-lens-controls .faro-lens-options{grid-column:2;width:100%}
+ #chileCoastMap .faro-lens-stage .faro-lens-quick-metric{
+  min-height:76px;padding:10px!important}
+ #chileCoastMap .faro-lens-stage .faro-lens-quick-metric strong{font-size:19px!important}
+}
