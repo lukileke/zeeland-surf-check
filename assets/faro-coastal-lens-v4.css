@@ -630,3 +630,24 @@ html #forecastPage .faro-wave-gauge .faro-gauge-caption{
 html #forecastPage .faro-wave-gauge:is(.size-xl) .faro-gauge-position{
  background:#f4cf89;border-color:#a5712a;
 }
+
+/* The compact HUD's optional guide disclosure and subtle user-opted motion.
+   This is UI animation, NOT wave-particle simulation. */
+#chileCoastMap .faro-hud-guide{
+ display:block;border-top:1px solid rgba(130,173,176,.28);
+ padding-top:5px;color:inherit;opacity:.83;
+ font:700 9px/1.35 var(--faro-text,Manrope,system-ui);
+}
+#chileCoastMap .faro-lens-motion .faro-hud-row.is-swell .faro-hud-arrow{
+ animation:faro-hud-arrival 2.7s ease-in-out infinite;
+}
+#chileCoastMap .faro-lens-motion .faro-hud-row.is-wind .faro-hud-arrow{
+ animation:faro-hud-arrival 3.4s ease-in-out infinite;
+}
+@keyframes faro-hud-arrival{
+ 0%,100%{opacity:1;transform:translateY(0)}
+ 55%{opacity:.74;transform:translateY(-1.5px)}
+}
+@media(prefers-reduced-motion:reduce){
+ #chileCoastMap .faro-hud-arrow{animation:none!important}
+}
