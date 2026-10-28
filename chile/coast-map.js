@@ -660,7 +660,12 @@ function create(opts){
     // until a complete vector style has actually loaded.
     void loadVectorSupport().then(()=>{
      if(!map||!d.open)return;
-     const vector=L.maplibreGL({style:"https://tiles.openfreemap.org/styles/positron"}).addTo(map);
+     const vector=L.maplibreGL({
+      style:"https://tiles.openfreemap.org/styles/positron",
+      attribution:'&copy; <a href="https://openfreemap.org/">OpenFreeMap</a> / '+
+       '<a href="https://openmaptiles.org/">OpenMapTiles</a> / '+
+       '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+     }).addTo(map);
      const gl=vector.getMaplibreMap?.();
      if(!gl)return;
      let ready=false;
