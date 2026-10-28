@@ -22,7 +22,7 @@ test('direct user journey has four unique valid target IDs and accessible button
 test('map has one-tap reframe and preserves manual zoom on hourly model updates',()=>{
  assert.match(map,/recenter\.addEventListener\("click",\(\)=>\{/);
  assert.match(map,/mapView=mapView==="beach"\?"region":"beach"/);
- assert.match(map,/map\.setView\(coast,viewport\.clientWidth&&viewport\.clientWidth<520\?14:15/);
+ assert.match(map,/map\.setView\(coast,viewport\.clientWidth&&viewport\.clientWidth<520\?15:16/);
  assert.match(map,/lastCentered!==latest\.spot\.id/);
  assert.match(map,/map\.on\("dragstart",\(\)=>\{pendingSampleFit=false;\}\)/);
  assert.match(map,/bounds\.extend\(\[grid\.lat,grid\.lon\]\)/);
