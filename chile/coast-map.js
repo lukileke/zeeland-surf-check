@@ -436,8 +436,8 @@ function create(opts){
     item.append(dot,document.createTextNode(name));legend.append(item);
    }
    const note=document.createElement("small");note.textContent=es?
-    "Comparación angular, no calidad ni energía por playa":
-    "Bearing comparison, not per-beach surf quality or power";
+    "Trazos: swell sólido · viento punteado. Sólo rumbo guía.":
+    "Solid = swell · dotted = wind. Guide bearings only.";
    legend.append(note);
   }else{
    const colours={favourable:"#348d71",mixed:"#b38b42",weak:"#c98b55",
@@ -496,20 +496,41 @@ function create(opts){
 
  }
 
- function markerIcon(L,spot,selected,guideStatus){
-  // A named beach reference pin, not a wave-front observation.
+ function markerIcon(L,spot,selected,swellFit,windFit){
+  // The coastline and named breaks remain the central map content.
+  // Micro-bars show only angular compatibility with published guides.
+  const es=(latest?.lang||"es")!=="en";
+  const label=fit=>fit==="inside"?(es?"dentro":"within"):
+   fit==="edge"?(es?"cerca":"near"):
+   fit==="outside"?(es?"fuera":"outside"):
+   es?"sin referencia":"unavailable";
   const base=document.createElement("div");
-  base.className="faro-map-pin"+(selected?" is-current":"")+" guide-"+guideStatus;
+  base.className="faro-map-pin"+(selected?" is-current":"")+
+   (mapView==="region"?" is-regional":" is-beach");
+  base.dataset.swellFit=swellFit;
+  base.dataset.windFit=windFit;
   const dot=document.createElement("i");dot.className="faro-map-guide-dot";
   dot.setAttribute("aria-hidden","true");base.append(dot);
   const name=document.createElement("span");name.className="faro-map-pin-name";
   name.textContent=spot.shortName||spot.name;base.append(name);
+  if(mapView==="region"){
+   const tracks=document.createElement("span");tracks.className="faro-region-fit-tracks";
+   tracks.setAttribute("aria-hidden","true");
+   for(const [kind,status]of [["swell",swellFit],["wind",windFit]]){
+    if((mode==="swell"&&kind==="wind")||(mode==="wind"&&kind==="swell"))continue;
+    const micro=document.createElement("i");micro.className="faro-region-fit-tick is-"+kind;
+    micro.dataset.fit=status;tracks.append(micro);
+   }
+   base.append(tracks);
+   const desc=(es?"Swell: ":"Swell: ")+label(swellFit)+
+    (es?" de guía · viento: ":" guide · wind: ")+label(windFit)+
+    (es?" de guía":" guide");
+   base.setAttribute("aria-label",(spot.shortName||spot.name)+". "+desc);
+   base.title=desc;
+  }
   return L.divIcon({className:"faro-leaflet-marker",html:base.outerHTML,
-   iconSize:[112,36],iconAnchor:[56,18]});
+   iconSize:[124,38],iconAnchor:[62,19]});
  }
- // A fixed-size, north-up directional instrument anchored to the selected
- // coastal reference. Arrows encode bearing only; these are not rays of swell
- // refraction or a prediction of local breaking-wave height.
  function modelSampleIcon(L,kind){
   // Source coordinates, not breaking waves and never a directional arrow.
   // These quiet cartographic annotation pins appear only when the surfer
@@ -595,9 +616,9 @@ function create(opts){
     markers.set(sp.id,m);
    }
    const profile=latest.profiles?.[sp.id]||{};
-   const status=mode==="wind"?guideClass(latest.slot?.windDirection,profile.windFromDeg):
-    guideClass(latest.slot?.swellDirection,profile.waveFromDeg);
-   markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,status));
+   const swellFit=guideClass(latest.slot?.swellDirection,profile.waveFromDeg);
+   const windFit=guideClass(latest.slot?.windDirection,profile.windFromDeg);
+   markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,swellFit,windFit));
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
   }
   // Beach coordinates belong to the spot pin; signals live in the HUD.
