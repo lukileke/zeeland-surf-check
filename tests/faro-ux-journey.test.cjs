@@ -25,7 +25,7 @@ test('map has one-tap reframe and preserves manual zoom on hourly model updates'
  assert.match(map,/map\.setView\(coast,viewport\.clientWidth&&viewport\.clientWidth<520\?15:16/);
  assert.match(map,/lastCentered!==latest\.spot\.id/);
  assert.match(map,/map\.on\("dragstart",\(\)=>\{pendingSampleFit=false;\}\)/);
- assert.match(map,/bounds\.extend\(\[grid\.lat,grid\.lon\]\)/);
+ assert.match(map,/for\(const beach of beaches\.slice\(1\)\)bounds\.extend\(\[beach\.latitude,beach\.longitude\]\)/);
  assert.match(map,/grid\.distanceKm<=60/);
  assert.doesNotMatch(map,/map\.fitBounds\(bounds,\{padding:\[85,90\]/);
 });
