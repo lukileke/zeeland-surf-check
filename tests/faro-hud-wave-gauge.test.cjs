@@ -54,8 +54,8 @@ test('directional travel arrows use FROM+180, live model inputs and text labels'
 });
 test('wave height gauge uses a real capped 0–2 m+ scale, not an invented breaker trace',()=>{
  assert.match(ctrl,/function waveBars\(h\)/);
- assert.match(ctrl,/Math\.min\(1,Math\.max\(0,h\/2\)\)/);
- assert.match(ctrl,/Math\.max\(0,Math\.min\(8,Math\.round\(h\/\.25\)\)\)/);
+ assert.match(ctrl,/Math\.max\(0,Math\.min\(1,h\/2\)\)/);
+ assert.match(ctrl,/fraction>i\/8&&fraction<segmentEnd/);
  assert.match(ctrl,/faro-wave-ruler-scale/);
  assert.match(ctrl,/faro-wave-ruler-mark/);
  assert.doesNotMatch(ctrl,/faro-gauge-position/);
