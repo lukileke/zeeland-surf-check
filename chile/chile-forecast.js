@@ -740,6 +740,21 @@ async function initialize(){
    }
   });
  }
+ // Footer links must open a useful panel, not send surfers to raw Markdown.
+ // They work from any page tab, including Best of Week and FARO Match.
+ for(const link of document.querySelectorAll("[data-expand-target]")){
+  link.addEventListener("click",event=>{
+   const disclosure=$(link.dataset.expandTarget);
+   if(!disclosure)return;
+   event.preventDefault();
+   tab("forecast");
+   disclosure.open=true;
+   const motion=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches?"auto":"smooth";
+   disclosure.scrollIntoView({behavior:motion,block:"start"});
+   const title=disclosure.querySelector("summary");
+   if(title){title.setAttribute("tabindex","-1");title.focus({preventScroll:true})}
+  });
+ }
  const dnaButton=$("openSpotDNA"),dnaDisclosure=$("spotInsightExpand");
  if(dnaButton&&dnaDisclosure){
   dnaButton.addEventListener("click",()=>{
