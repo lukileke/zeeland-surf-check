@@ -22,7 +22,7 @@ test('direct user journey has four unique valid target IDs and accessible button
 test('map has one-tap reframe and preserves manual zoom on hourly model updates',()=>{
  assert.match(map,/recenter\.addEventListener\("click",\(\)=>\{/);
  assert.match(map,/mapView=mapView==="beach"\?"region":"beach"/);
- assert.match(map,/map\.setView\(coast,viewport\.clientWidth&&viewport\.clientWidth<520\?14:15/);
+ assert.match(map,/map\.setView\(coast,viewport\.clientWidth&&viewport\.clientWidth<520\?15:16/);
  assert.match(map,/lastCentered!==latest\.spot\.id/);
  assert.match(map,/map\.on\("dragstart",\(\)=>\{pendingSampleFit=false;\}\)/);
  assert.match(map,/bounds\.extend\(\[grid\.lat,grid\.lon\]\)/);
@@ -54,8 +54,8 @@ test('controls have minimum 44 px touch targets and clear focus treatment',()=>{
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
 test('asset versions are updated without overwriting Zeeland visual contract',()=>{
- assert.match(html,/faro-coastal-lens-v4\.css\?v=4/);
- assert.match(html,/coast-map\.js\?v=8/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=5/);
+ assert.match(html,/coast-map\.js\?v=9/);
  assert.match(html,/chile-forecast\.js\?v=18/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
  assert.match(read('index.html'),/faro-visual-system-v2\.css\?v=5/);
