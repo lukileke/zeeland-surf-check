@@ -48,6 +48,6 @@ test('compare-by-beach keeps the scientific caveat, without assigning independen
  assert.match(js,/mapView="beach";frameMap\(false\);drawUi\(\)/);
 });
 test('both map assets are cache-busted for new design',()=>{
- assert.match(html,/coast-map\.js\?v=13/);
- assert.match(html,/faro-coastal-lens-v4\.css\?v=8/);
+ assert.match(html,/coast-map\.js\?v=14/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=9/);
 });
