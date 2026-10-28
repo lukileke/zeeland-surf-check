@@ -344,7 +344,8 @@ function create(opts){
    (es?"Guía de viento":"Wind guide"):(es?"Guía de swell":"Swell guide");
   motionFlag.caption.textContent=es?"Movimiento":"Motion";
   motionFlag.input.checked=motion;exposureFlag.input.checked=exposure;
-  viewport.classList.toggle("faro-lens-motion",motion&&!reduced()&&deg(slot.swellDirection));
+  viewport.classList.toggle("faro-lens-motion",motion&&!reduced()&&
+   (mode==="wind"?deg(slot.windDirection):deg(slot.swellDirection)));
   viewport.classList.toggle("faro-map-regional",mapView==="region");
   // A compact viewport HUD: it does not move with model sample positions,
   // does not obscure the selected spot and survives pan/zoom.
@@ -374,7 +375,7 @@ function create(opts){
    g.append(path);return svg;
   };
   const addSignal=(name,from,signal)=>{
-   const item=document.createElement("div");item.className="faro-hud-row";
+   const item=document.createElement("div");item.className="faro-hud-row is-"+(name==="SWELL"?"swell":"wind");
    item.dataset.level=signal.level;
    const palette={favourable:"#6bd0a3",mixed:"#ecc579",weak:"#e8a567",
     unfavourable:"#e68f84",unknown:"#b1c3c8"};
@@ -391,6 +392,15 @@ function create(opts){
   const hudNote=document.createElement("small");hudNote.className="faro-hud-foot";
   hudNote.textContent=es?"Flechas: hacia dónde viajan":"Arrows: direction of travel";
   compassDock.append(hudNote);
+  if(exposure){
+   const chosen=(mode==="wind"?hudProfile.windFromDeg:hudProfile.waveFromDeg)||[];
+   const ranges=chosen.filter(r=>Array.isArray(r)&&r.length===2&&r.every(deg))
+    .map(r=>Math.round(r[0])+"–"+Math.round(r[1])+"°");
+   const guideNote=document.createElement("small");guideNote.className="faro-hud-guide";
+   guideNote.textContent=(es?"Rango guía: ":"Guide sector: ")+(ranges.join(", ")||
+    (es?"no disponible":"unavailable"));
+   compassDock.append(guideNote);
+  }
   compassDock.setAttribute("aria-label",(v.spot?.name||"")+
     " · swell "+signalCopy(swellHUD,v.lang)+", wind "+signalCopy(windHUD,v.lang));
   legend.replaceChildren();
