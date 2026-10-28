@@ -164,7 +164,11 @@ function create(opts){
  }
  const exposureFlag=flag("exposure",x=>{exposure=x;update(latest)});
  const motionFlag=flag("motion",x=>{motion=x&&!reduced();update(latest)});
- const samplesFlag=flag("samples",x=>{showSamples=x;update(latest)});
+ const samplesFlag=flag("samples",x=>{
+  showSamples=x;
+  if(mapView==="region")frameMap(true);
+  update(latest);
+ });
  if(reduced())motionFlag.input.disabled=true;
  const section=document.createElement("div");section.className="faro-map-wrap";host.append(section);
  const viewport=document.createElement("div");viewport.className="faro-map-viewport";viewport.setAttribute("aria-label","Valparaíso · mapa de spots");section.append(viewport);
@@ -590,6 +594,12 @@ function create(opts){
      [beaches[0].latitude,beaches[0].longitude],
      [beaches[0].latitude,beaches[0].longitude]);
     for(const beach of beaches.slice(1))bounds.extend([beach.latitude,beach.longitude]);
+    // Only when the surfer explicitly requests model sampling cells should
+    // those coordinates expand the region's framing.
+    if(showSamples)for(const grid of [latest.marineGrid,latest.weatherGrid]){
+     if(deg(grid?.lat)&&deg(grid?.lon)&&deg(grid?.distanceKm)&&grid.distanceKm<=60)
+      bounds.extend([grid.lat,grid.lon]);
+    }
     map.fitBounds(bounds,{
      padding:viewport.clientWidth&&viewport.clientWidth<520?[48,70]:[65,80],
      maxZoom:11,animate:false
