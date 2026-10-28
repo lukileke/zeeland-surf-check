@@ -176,6 +176,14 @@ function fixture(){
    });
    for(const item of vivid)assert.equal(item.actual,item.expected,
     "Light theme must keep FARO's vivid score inks: "+JSON.stringify({width,...item}));
+   assert.equal(await page.locator('#dayStrip').evaluate(el=>el.open),false,
+    'Weekly comparison must start collapsed so the daily decision comes first');
+   assert.equal(await page.locator('#sessionDetailExpand').evaluate(el=>el.open),false,
+    'Session instrument must not duplicate daily statistics before expansion');
+   assert.match(await page.locator('#dayStripSelected').textContent(),/\/10/,
+    'Collapsed weekly summary still identifies the current selection');
+   await page.locator('#dayStrip > summary').click();
+   assert.equal(await page.locator('#dayStrip').evaluate(el=>el.open),true);
    await page.locator('#dayStripItems .day-chip').nth(1).click();
    // The 06:00 window has stronger wind than 08:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
@@ -221,7 +229,15 @@ function fixture(){
     const mapBounds=await page.locator('#coastMapExpand').boundingBox();
     assert.ok(sessionBounds&&mapBounds,'Session and map must both occupy desktop grid');
     assert.ok(mapBounds.y>=sessionBounds.y+sessionBounds.height-10,'Map must follow the selected session');
-    assert.ok(mapBounds.width>sessionBounds.width*1.45,'Map must use a full-width coastal reading area');
+    assert.ok(mapBounds.width>=sessionBounds.width*.95,'Coastal map must span the full-width reading area');
+    const daily=await page.locator('.day-outlook-section').boundingBox();
+    const hourly=await page.locator('#dayview > .hourly-section').boundingBox();
+    assert.ok(daily&&hourly,'Daily and hourly decisions both render');
+    assert.ok(Math.abs(daily.y-hourly.y)<24,'Daily and hourly must start on the same decision row');
+    assert.ok(sessionBounds.y>=Math.max(daily.y+daily.height,hourly.y+hourly.height)-10,
+     'Session details belong after the paired hero, not below only one column');
+    assert.ok(sessionBounds.width>hourly.width*1.5,
+     'Selected session disclosure spans the desktop instead of reserving dead left space');
     const font=await page.locator('#dayWave').evaluate(el=>getComputedStyle(el).fontFamily);
     assert.match(font,/Manrope|faro-text|system-ui/i,'Model wave size must use Zeeland number font, not Archivo Black');
    }
