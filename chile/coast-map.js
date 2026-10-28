@@ -206,27 +206,20 @@ function create(opts){
   shape("text",{x:38,y:66,fill:"#517a84","font-family":"sans-serif","font-size":11},es?"Posiciones costeras aproximadas":"Approximate coastal reference points");
   shape("text",{x:558,y:344,fill:"#517a84","font-family":"sans-serif","font-size":11},es?"ESTE →":"EAST →");
   shape("text",{x:42,y:343,fill:"#517a84","font-family":"sans-serif","font-size":11},es?"← OESTE":"← WEST");
-  // Geographical relative positions; dynamic extent includes Maitencillo and the grid cell.
+  // Keep the four beaches readable by default. Source cells are included
+  // only when explicitly requested, never as large disconnected arrows.
   const grid=current.marineGrid,atmosphere=current.weatherGrid;
+  const gridVisible=mapView==="region"&&showSamples;
   const locations=spots
-   .concat(deg(grid?.lat)&&deg(grid?.lon)?[{latitude:grid.lat,longitude:grid.lon}]:[])
-   .concat(deg(atmosphere?.lat)&&deg(atmosphere?.lon)?[{latitude:atmosphere.lat,longitude:atmosphere.lon}]:[]);
+   .concat(gridVisible&&mode!=="wind"&&deg(grid?.lat)&&deg(grid?.lon)?
+    [{latitude:grid.lat,longitude:grid.lon}]:[])
+   .concat(gridVisible&&mode!=="swell"&&deg(atmosphere?.lat)&&deg(atmosphere?.lon)?
+    [{latitude:atmosphere.lat,longitude:atmosphere.lon}]:[]);
   const latMin=Math.min(...locations.map(x=>x.latitude)),latMax=Math.max(...locations.map(x=>x.latitude));
   const lonMin=Math.min(...locations.map(x=>x.longitude)),lonMax=Math.max(...locations.map(x=>x.longitude));
   const dy=Math.max(.10,latMax-latMin),dx=Math.max(.10,lonMax-lonMin);
   const project=sp=>({x:80+((sp.longitude-lonMin)/dx)*450,
                       y:300-((sp.latitude-latMin)/dy)*225});
-  function ray(x,y,bearing,color,shift){
-   const travel=bearingFromArrow(bearing),r=travel*Math.PI/180;
-   const sx=x+shift,sy=y-16;
-   const dx=Math.sin(r)*74,dy=-Math.cos(r)*74;
-   const endx=sx+dx,endy=sy+dy;
-   shape("line",{x1:sx,y1:sy,x2:endx,y2:endy,stroke:color,"stroke-width":5,"stroke-linecap":"round"});
-   const backx=endx-Math.sin(r)*13,backy=endy+Math.cos(r)*13;
-   const px=Math.cos(r)*7,py=Math.sin(r)*7;
-   shape("polygon",{points:[endx+","+endy,(backx+px)+","+(backy+py),(backx-px)+","+(backy-py)].join(" "),
-    fill:color});
-  }
   for(const sp of spots){
    const pos=project(sp),active=sp.id===current.spot?.id;
    const g=shape("g",{"data-spot":sp.id,role:"button",tabindex:0,"aria-label":sp.name,style:"cursor:pointer"});
@@ -243,24 +236,17 @@ function create(opts){
     g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();activate()}});
    }
   }
-  if(deg(grid?.lat)&&deg(grid?.lon)){
-   const q=project({latitude:grid.lat,longitude:grid.lon});
-   shape("circle",{cx:q.x,cy:q.y,r:7,fill:"#137d9f",stroke:"#fff","stroke-width":2});
-   if(mode!=="wind"&&deg(current.slot?.swellDirection))ray(q.x,q.y,current.slot.swellDirection,"#137d9f",0);
-   // Only the primary wave bearing appears on the overview.
-   shape("text",{x:q.x+11,y:q.y-14,fill:"#235363","font-family":"sans-serif",
-    "font-size":12,"font-weight":800,stroke:"#dceef1","stroke-width":3,"paint-order":"stroke"},
-    es?"Celda del modelo":"Model grid cell");
+  // Intentionally no arrow rays: one source point does not determine
+  // the wave path to each local break.
+  if(gridVisible){
+   for(const [source,kind,visible]of [[grid,"M",mode!=="wind"],[atmosphere,"A",mode!=="swell"]]){
+    if(!visible||!deg(source?.lat)||!deg(source?.lon))continue;
+    const q=project({latitude:source.lat,longitude:source.lon});
+    shape("circle",{cx:q.x,cy:q.y,r:12,fill:"#f3f8f7",stroke:"#567983","stroke-width":1.3});
+    shape("text",{x:q.x,y:q.y+4,fill:"#345a63","font-family":"sans-serif",
+     "font-size":10,"font-weight":800,"text-anchor":"middle"},kind);
+   }
   }
-  if(deg(atmosphere?.lat)&&deg(atmosphere?.lon)){
-   const q=project({latitude:atmosphere.lat,longitude:atmosphere.lon});
-   shape("circle",{cx:q.x,cy:q.y,r:6,fill:"#ca8b4a",stroke:"#fff","stroke-width":2});
-   if(mode!=="swell"&&deg(current.slot?.windDirection))ray(q.x,q.y,current.slot.windDirection,"#ba7628",0);
-  }
-  shape("rect",{x:28,y:351,width:11,height:6,rx:2,fill:"#137d9f"});
-  shape("text",{x:46,y:358,fill:"#234c5c","font-family":"sans-serif","font-size":11},es?"Swell, viaje del modelo":"Swell model travel");
-  shape("rect",{x:220,y:351,width:11,height:6,rx:2,fill:"#ba7628"});
-  shape("text",{x:238,y:358,fill:"#234c5c","font-family":"sans-serif","font-size":11},es?"Viento, viaje del modelo":"Wind model travel");
  }
  function append(tag,cls,text,parent=brief){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.append(n);return n}
  function describe(){
@@ -370,8 +356,8 @@ function create(opts){
    regionalTitle.textContent=es?"CUATRO PLAYAS · UNA COSTA":"FOUR BEACHES · ONE COAST";
    const regionalText=document.createElement("span");
    regionalText.textContent=es?
-    "Compara orientaciones de referencia. Selecciona una playa para explorar su pronóstico y acercarte.":
-    "Compare reference bearings. Select a beach to see its forecast and zoom in.";
+    "Selecciona una playa para acercarte. Los trazos comparan rumbos guía, no olas observadas.":
+    "Select a beach to zoom in. The marks compare guide bearings, not observed waves.";
    regionSummary.append(regionalTitle,regionalText);
   }
   viewport.classList.toggle("faro-lens-motion",motion&&!reduced()&&
@@ -394,26 +380,39 @@ function create(opts){
   hdrText.textContent=es?"DIRECCIÓN · MODELO":"DIRECTION · MODEL";
   const hdrNorth=document.createElement("span");hdrNorth.textContent="N ↑";
   hdr.append(hdrText,hdrNorth);compassDock.append(hdr);
-  const makeArrow=from=>{
+  const makeArrow=(from,kind)=>{
+   // A small current/wind notation, rather than a heavy clip-art arrow.
+   // Rotation remains data-driven; oceanographic FROM is converted to TO.
    const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 28 28");
    svg.setAttribute("aria-hidden","true");svg.classList.add("faro-hud-arrow");
-   const g=document.createElementNS(NS,"g");
-   g.setAttribute("transform","rotate("+(bearingFromArrow(from)??0)+" 14 14)");
-   svg.append(g);
-   const path=document.createElementNS(NS,"path");
-   path.setAttribute("d","M14 23 V5 M8.8 10.2 L14 5 L19.2 10.2");
-   for(const [key,value]of Object.entries({fill:"none",stroke:"currentColor",
-    "stroke-width":"2.5","stroke-linecap":"round","stroke-linejoin":"round"}))
-    path.setAttribute(key,value);
-   g.append(path);return svg;
+   svg.dataset.kind=kind;
+   const vector=document.createElementNS(NS,"g");
+   vector.setAttribute("transform","rotate("+(bearingFromArrow(from)??0)+" 14 14)");
+   svg.append(vector);
+   const add=(d,weight,opacity=1)=>{
+    const path=document.createElementNS(NS,"path");path.setAttribute("d",d);
+    for(const [key,value]of Object.entries({fill:"none",stroke:"currentColor",
+     "stroke-width":weight,"stroke-linecap":"round","stroke-linejoin":"round",
+     opacity}))path.setAttribute(key,value);
+    vector.append(path);
+   };
+   if(kind==="swell"){
+    add("M8 21 C11 18 14 13 15 5",1.8);
+    add("M10.4 9.4 L15 5 L18.1 10.6",1.8);
+    add("M7 22 Q10 20.6 12.5 21.1",1.15,.78);
+   }else{
+    add("M8.7 21.5 L15.4 5.3",1.55);
+    add("M10.9 8 L15.4 5.3 L17.7 10",1.55);
+    add("M7 18.2 L10.7 18.3",1.1,.78);
+    add("M8.3 15.4 L12.1 15.5",1.1,.78);
+   }
+   return svg;
   };
   const addSignal=(name,from,signal)=>{
    const item=document.createElement("div");item.className="faro-hud-row is-"+(name==="SWELL"?"swell":"wind");
    item.dataset.level=signal.level;
-   const palette={favourable:"#6bd0a3",mixed:"#ecc579",weak:"#e8a567",
-    unfavourable:"#e68f84",unknown:"#b1c3c8"};
-   item.style.setProperty("--faro-signal",palette[signal.level]);
-   item.append(makeArrow(from));
+   // Semantic colours live in CSS light/dark palettes, not inline paint.
+   item.append(makeArrow(from,name==="SWELL"?"swell":"wind"));
    const copy=document.createElement("div");copy.className="faro-hud-copy";
    const heading=document.createElement("strong");
    heading.textContent=name+" · "+(deg(from)?Math.round(from)+"°":"—");
@@ -450,8 +449,8 @@ function create(opts){
     item.append(dot,document.createTextNode(name));legend.append(item);
    }
    const note=document.createElement("small");note.textContent=es?
-    "Comparación angular, no calidad ni energía por playa":
-    "Bearing comparison, not per-beach surf quality or power";
+    "Trazos: swell sólido · viento punteado. Sólo rumbo guía.":
+    "Solid = swell · dotted = wind. Guide bearings only.";
    legend.append(note);
   }else{
    const colours={favourable:"#348d71",mixed:"#b38b42",weak:"#c98b55",
@@ -510,46 +509,54 @@ function create(opts){
 
  }
 
- function markerIcon(L,spot,selected,guideStatus){
-  // A named beach reference pin, not a wave-front observation.
+ function markerIcon(L,spot,selected,swellFit,windFit){
+  // The coastline and named breaks remain the central map content.
+  // Micro-bars show only angular compatibility with published guides.
+  const es=(latest?.lang||"es")!=="en";
+  const label=fit=>fit==="inside"?(es?"dentro":"within"):
+   fit==="edge"?(es?"cerca":"near"):
+   fit==="outside"?(es?"fuera":"outside"):
+   es?"sin referencia":"unavailable";
   const base=document.createElement("div");
-  base.className="faro-map-pin"+(selected?" is-current":"")+" guide-"+guideStatus;
+  base.className="faro-map-pin"+(selected?" is-current":"")+
+   (mapView==="region"?" is-regional":" is-beach");
+  base.dataset.swellFit=swellFit;
+  base.dataset.windFit=windFit;
   const dot=document.createElement("i");dot.className="faro-map-guide-dot";
   dot.setAttribute("aria-hidden","true");base.append(dot);
   const name=document.createElement("span");name.className="faro-map-pin-name";
   name.textContent=spot.shortName||spot.name;base.append(name);
+  if(mapView==="region"){
+   const tracks=document.createElement("span");tracks.className="faro-region-fit-tracks";
+   tracks.setAttribute("aria-hidden","true");
+   for(const [kind,status]of [["swell",swellFit],["wind",windFit]]){
+    if((mode==="swell"&&kind==="wind")||(mode==="wind"&&kind==="swell"))continue;
+    const micro=document.createElement("i");micro.className="faro-region-fit-tick is-"+kind;
+    micro.dataset.fit=status;tracks.append(micro);
+   }
+   base.append(tracks);
+   const desc=(es?"Swell: ":"Swell: ")+label(swellFit)+
+    (es?" de guía · viento: ":" guide · wind: ")+label(windFit)+
+    (es?" de guía":" guide");
+   base.setAttribute("aria-label",(spot.shortName||spot.name)+". "+desc);
+   base.title=desc;
+  }
   return L.divIcon({className:"faro-leaflet-marker",html:base.outerHTML,
-   iconSize:[112,36],iconAnchor:[56,18]});
+   iconSize:[124,38],iconAnchor:[62,19]});
  }
- // A fixed-size, north-up directional instrument anchored to the selected
- // coastal reference. Arrows encode bearing only; these are not rays of swell
- // refraction or a prediction of local breaking-wave height.
- function modelGridIcon(L,slot){
-  const shell=document.createElement("div");shell.className="faro-lens-map-pin is-swell";
-  shell.append(document.createElement("b"));
-  const arrow=document.createElement("span");arrow.className="faro-lens-arrow";arrow.textContent="↑";
-  const bearing=bearingFromArrow(slot?.swellDirection);
-  if(bearing!==null){
-   arrow.style.transform="rotate("+bearing+"deg)";
-   shell.style.setProperty("--lens-bearing",bearing+"deg");
-  }
-  shell.append(arrow);
-  // Secondary and tertiary partitions remain in model details and popup.
-  // Never draw intersecting arrows from the same model sample.
-  // One primary travel arrow in the marine sample pin; partitions in details.
-  return L.divIcon({className:"faro-map-grid-marker",html:shell.outerHTML,iconSize:[48,48],iconAnchor:[24,24]});
- }
- function windGridIcon(L,slot){
-  const shell=document.createElement("div");shell.className="faro-lens-map-pin is-wind";
-  shell.append(document.createElement("b"));
-  const arrow=document.createElement("span");arrow.className="faro-lens-arrow";arrow.textContent="↑";
-  const bearing=bearingFromArrow(slot?.windDirection);
-  if(bearing!==null){
-   arrow.style.transform="rotate("+bearing+"deg)";
-   shell.style.setProperty("--lens-bearing",bearing+"deg");
-  }
-  shell.append(arrow);
-  return L.divIcon({className:"faro-map-wind-marker",html:shell.outerHTML,iconSize:[44,44],iconAnchor:[22,22]});
+ function modelSampleIcon(L,kind){
+  // Source coordinates, not breaking waves and never a directional arrow.
+  // These quiet cartographic annotation pins appear only when the surfer
+  // explicitly chooses "Show model sample points".
+  const shell=document.createElement("div");shell.className="faro-model-sample";
+  shell.dataset.source=kind;
+  const mark=document.createElement("span");mark.className="faro-model-sample-mark";
+  mark.setAttribute("aria-hidden","true");mark.textContent=kind==="marine"?"M":"A";
+  const caption=document.createElement("span");caption.className="faro-model-sample-name";
+  caption.textContent=kind==="marine"?"MARINE":"ATMOS";
+  shell.append(mark,caption);
+  return L.divIcon({className:"faro-model-sample-anchor",html:shell.outerHTML,
+   iconSize:[78,28],iconAnchor:[39,14]});
  }
  function modelPopup(marine){
   const v=latest||p(),s=v.slot||{},es=v.lang!=="en",node=document.createElement("div");
@@ -617,48 +624,48 @@ function create(opts){
    if(!markers.has(sp.id)){
     const m=L.marker([sp.latitude,sp.longitude],{title:sp.name,keyboard:true});
     m.addTo(map).on("click",()=>{
-     if(sp.id!==latest.spot?.id)opts.onSelectSpot?.(sp.id);
+     if(sp.id!==latest.spot?.id){
+      opts.onSelectSpot?.(sp.id);
+     }else if(mapView==="region"){
+      // Even the already-selected beach is a useful regional navigation
+      // target: open its beach focus rather than doing nothing.
+      mapView="beach";frameMap(true);update(latest);
+     }
     });
     markers.set(sp.id,m);
    }
    const profile=latest.profiles?.[sp.id]||{};
-   const status=mode==="wind"?guideClass(latest.slot?.windDirection,profile.windFromDeg):
-    guideClass(latest.slot?.swellDirection,profile.waveFromDeg);
-   markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,status));
+   const swellFit=guideClass(latest.slot?.swellDirection,profile.waveFromDeg);
+   const windFit=guideClass(latest.slot?.windDirection,profile.windFromDeg);
+   markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,swellFit,windFit));
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
   }
   // Beach coordinates belong to the spot pin; signals live in the HUD.
+  const displayMarine=mapView==="region"&&showSamples&&mode!=="wind";
+  const displayWind=mapView==="region"&&showSamples&&mode!=="swell";
   const grid=latest.marineGrid;
-  const hasGrid=deg(grid?.lat)&&deg(grid?.lon);
-  if(hasGrid){
+  if(displayMarine&&deg(grid?.lat)&&deg(grid?.lon)){
    const pos=[grid.lat,grid.lon];
    if(!modelGridMarker){
-    modelGridMarker=L.marker(pos,{title:"Marine grid sample",interactive:true,keyboard:true});
+    modelGridMarker=L.marker(pos,{title:"Marine model sample",interactive:true,keyboard:true});
     modelGridMarker.addTo(map);
    }else modelGridMarker.setLatLng(pos);
-   modelGridMarker.setIcon(modelGridIcon(L,latest.slot));
+   modelGridMarker.setIcon(modelSampleIcon(L,"marine"));
    modelGridMarker.bindPopup(modelPopup(true),{maxWidth:300});
-   modelGridMarker.setOpacity(mapView==="region"&&showSamples&&mode!=="wind"?1:0);
-   if(modelGridMarker.getElement())modelGridMarker.getElement().style.pointerEvents=
-    mapView==="region"&&showSamples&&mode!=="wind"?"auto":"none";
-   modelGridMarker.setZIndexOffset(250);
+   modelGridMarker.setZIndexOffset(90);
   }else if(modelGridMarker){
    map.removeLayer(modelGridMarker);modelGridMarker=null;
   }
   const atmosphere=latest.weatherGrid;
-  const hasWindGrid=deg(atmosphere?.lat)&&deg(atmosphere?.lon)&&deg(latest.slot?.windDirection);
-  if(hasWindGrid){
+  if(displayWind&&deg(atmosphere?.lat)&&deg(atmosphere?.lon)){
    const pos=[atmosphere.lat,atmosphere.lon];
    if(!windGridMarker){
-    windGridMarker=L.marker(pos,{title:"Atmospheric grid sample",interactive:true,keyboard:true});
+    windGridMarker=L.marker(pos,{title:"Atmospheric model sample",interactive:true,keyboard:true});
     windGridMarker.addTo(map);
    }else windGridMarker.setLatLng(pos);
-   windGridMarker.setIcon(windGridIcon(L,latest.slot));
+   windGridMarker.setIcon(modelSampleIcon(L,"atmosphere"));
    windGridMarker.bindPopup(modelPopup(false),{maxWidth:300});
-   windGridMarker.setOpacity(mapView==="region"&&showSamples&&mode!=="swell"?1:0);
-   if(windGridMarker.getElement())windGridMarker.getElement().style.pointerEvents=
-    mapView==="region"&&showSamples&&mode!=="swell"?"auto":"none";
-   windGridMarker.setZIndexOffset(260);
+   windGridMarker.setZIndexOffset(90);
   }else if(windGridMarker){
    map.removeLayer(windGridMarker);windGridMarker=null;
   }

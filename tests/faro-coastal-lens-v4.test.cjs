@@ -46,10 +46,11 @@ test('layers are genuine selective controls and point markers remain clickable',
  for(const mode of ['combined','swell','wind'])assert.ok(code.includes('"'+mode+'"'));
  assert.match(code,/modelGridMarker\.bindPopup\(modelPopup\(true\)/);
  assert.match(code,/windGridMarker\.bindPopup\(modelPopup\(false\)/);
- assert.match(code,/modelGridMarker\.setOpacity\(mapView==="region"&&showSamples&&mode!=="wind"\?1:0\)/);
- assert.match(code,/windGridMarker\.setOpacity\(mapView==="region"&&showSamples&&mode!=="swell"\?1:0\)/);
+ assert.match(code,/const displayMarine=mapView==="region"&&showSamples&&mode!=="wind"/);
+ assert.match(code,/const displayWind=mapView==="region"&&showSamples&&mode!=="swell"/);
  assert.doesNotMatch(code,/faro-lens-partitions/);
- assert.match(code,/One primary travel arrow/);
+ assert.match(code,/function modelSampleIcon\(L,kind\)/);
+ assert.doesNotMatch(code,/function modelGridIcon\(/);
 });
 test('motion respects reduced-motion, exposure is only an editorial guide',()=>{
  assert.match(code,/prefers-reduced-motion: reduce/);
@@ -58,8 +59,8 @@ test('motion respects reduced-motion, exposure is only an editorial guide',()=>{
  assert.match(code,/Sin simulación de refracción ni altura rompiente/);
 });
 test('asset version and shared Zeeland colours remain unaffected',()=>{
- assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=8"/);
- assert.match(html,/src="coast-map\.js\?v=13"/);
+ assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=9"/);
+ assert.match(html,/src="coast-map\.js\?v=14"/);
  assert.match(html,/src="chile-forecast\.js\?v=20"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });

@@ -38,9 +38,9 @@ test('beach view contains a corner HUD, no centre beach disc; guide toggle has e
  assert.match(code,/if\(exposure\)\{/);
  assert.match(code,/faro-hud-guide/);
  assert.match(code,/aria-label/);
- assert.match(css,/rgba\(243,251,250,\.56\)/);
- assert.match(css,/rgba\(15,43,47,\.49\)/);
- assert.match(css,/-webkit-backdrop-filter:blur\(16px\)/);
+ assert.match(css,/rgba\(243,251,250,\.44\)/);
+ assert.match(css,/rgba\(15,43,47,\.40\)/);
+ assert.match(css,/-webkit-backdrop-filter:blur\(18px\)/);
  assert.match(css,/max-width:480px/);
 });
 test('directional travel arrows use FROM+180, live model inputs and text labels',()=>{
@@ -72,8 +72,8 @@ test('MapLibre browser build is compatible with Leaflet adapter, with a retina f
  assert.match(code,/tiles\.openfreemap\.org\/styles\/positron/);
 });
 test('cache version and Field Notes row are present',()=>{
- assert.match(html,/faro-coastal-lens-v4\.css\?v=8/);
- assert.match(html,/coast-map\.js\?v=13/);
+ assert.match(html,/faro-coastal-lens-v4\.css\?v=9/);
+ assert.match(html,/coast-map\.js\?v=14/);
  assert.match(html,/chile-forecast\.js\?v=20/);
  assert.match(html,/data-faro-icon="field-notes"/);
 });

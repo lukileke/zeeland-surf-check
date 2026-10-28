@@ -150,3 +150,24 @@ The original 68-icon manifest remains unchanged. These are **variants of existin
 5. **Spot pin / local reference**: thin, unobtrusive selected/nearby variants; must not obscure the coastline at zoom 15 or 16.
 
 Use the integration contract in [FARO HUD + wave gauge](FARO_HUD_SIGNALS_AND_WAVE_GAUGE_2026_10_28.md). The real model supplies bearing, heights, periods, speed and gusts at runtime. **No SVG should contain a hard-coded beach bearing, power rating or simulated ray trace.**
+
+## Coastal Atlas refresh · 28 October 2026 (prioritised handoff)
+This update clarifies the assets needed for the redesigned **beach-first Regional View** and the **lightweight Beach Focus HUD**. Do not replace or renumber the canonical 68-icon manifest.
+
+| Priority | Asset | Design brief | Implementation target |
+|---|---|---|---|
+| P0 | `regional-spot-pin` | 24–32px-height editorial pill with active/nearby and dark/light states; typographic, not cartoon | `.faro-map-pin` |
+| P0 | `regional-swell-fit-stroke` | 8–10px **solid** microstroke for guide alignment, usable in greyscale | `.faro-region-fit-tick.is-swell` |
+| P0 | `regional-wind-fit-stroke` | Matching **interrupted/dashed** microstroke, same shared palette, never a floating arrow | `.faro-region-fit-tick.is-wind` |
+| P0 | `hud-swell-direction` | Delicate current/energy-path arrow made of continuous flow lines, with a clear rotation centre; 24px | `.faro-hud-arrow[data-kind=swell]` |
+| P0 | `hud-wind-direction` | Related thinner arrow with wind-tail linework, not a chevron or clip-art arrow; 24px | `.faro-hud-arrow[data-kind=wind]` |
+| P0 | `hud-compass-north` | A minimal north reference that stays distinct from two dynamic model bearings, suitable in ~150px HUD | `.faro-hud-heading` |
+| P1 | `model-sample-marker` | Quiet monochrome lettering for **M** (marine) and **A** (atmosphere), source icon not a surf-status icon | `.faro-model-sample` |
+| P1 | `regional-legend-system` | Small within/near/outside guide symbols; words remain alongside colour, no arbitrary surf score | `.faro-lens-footer-legend` |
+| P1 | `wave-height-gauge-accent` | Subtle vector accent for actual offshore model height gauge, not a breaking-wave diagram | `.faro-wave-gauge` |
+
+**Unified visual rules:** 1.5–1.8 px round strokes at 24px, coastal evergreen/seafoam/slate and restrained sand tones, no electric blue or bright yellow distinguishing wind from swell. Colour indicates **alignment/energy status**; stroke style indicates **kind of signal**. The light/dark palettes should be optically balanced, but exported vector icons should use `currentColor`, not fixed status colours.
+
+**No arrow rays from offshore model cells to a beach:** a single directional observation does not provide bathymetric refraction. In regional mode the four beaches are places to choose; model samples are optional, small and neutral. In local mode the directional model reading lives in a **translucent corner HUD**, away from the geographic reference pin. Dynamic bearings, wave strength and wind intensity must come from code.
+
+Source specification and accessible behaviour: [Coastal Atlas UX audit](FARO_COASTAL_ATLAS_UX_VISUAL_AUDIT_2026_10_28.md).
