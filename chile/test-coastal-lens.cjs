@@ -2,6 +2,9 @@
 'use strict';
 const assert=require('node:assert/strict');
 const F=require('./faro-coastal-lens.js');
+const CoastMap=require('./coast-map.js');
+const fs=require('node:fs');
+const guideProfiles=JSON.parse(fs.readFileSync(require('node:path').join(__dirname,'valparaiso-score.config.json'),'utf8')).profiles;
 const base={modelComplete:true,swellHeightM:1.2,swellPeriodS:5.7,swellDirection:233,
  windKmh:16,windDirection:244,gustKmh:36,totalWaveHeightM:1.4};
 const fit={swell:{state:'convergent'},wind:{state:'outside'},decision:{
@@ -30,4 +33,22 @@ assert.equal(unknown.swellFrom,null);
 assert.equal(F.reading({},null,'es').available,false);
 const mix=F.reading({...base,swellPeriodS:12,windKmh:10},{swell:{state:'disputed'},wind:{state:'disputed'}},'es');
 assert.match(mix.explanation,/guías/i);
+// Reñaca regression: a 3 km/h breeze from 55° is slightly outside its
+// preferred wind bearing yet still favourable in the local HUD. The regional
+// W marker must use exactly the same overall model signal (not guide fit).
+const renaca=CoastMap.spotSignals({
+ swellHeightM:1.3,swellPeriodS:9,swellDirection:238,
+ windKmh:3,windDirection:55,gustKmh:5
+},guideProfiles['CL-VS:renaca']);
+assert.equal(renaca.windFit,'edge','The direction is near, not within, Reñaca wind guide');
+assert.equal(renaca.windSignal.level,'favourable','Light wind is favourable despite angular mismatch');
+assert.equal(renaca.swellSignal.level,'favourable','Modelled energetic swell aligns with guide');
+const strongWind=CoastMap.spotSignals({
+ swellHeightM:1.3,swellPeriodS:9,swellDirection:238,
+ windKmh:32,windDirection:55,gustKmh:43
+},guideProfiles['CL-VS:renaca']);
+assert.equal(strongWind.windSignal.level,'unfavourable','Strong wind must not be coloured favourable');
+assert.equal(CoastMap.spotSignals({windKmh:3,windDirection:55},{}).windSignal.level,'unknown',
+ 'Missing guide cannot be silently assigned a favourable colour');
+
 console.log('Coastal Lens: FROM compass angles, SW/NE labels, risk precedence, short-period case, wind and guide disagreement passed.');
