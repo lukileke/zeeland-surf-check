@@ -888,3 +888,41 @@ html:not([data-theme="light"]) #chileCoastMap .faro-map-focus :is(strong,small){
 @media(max-width:630px){
  #chileCoastMap .faro-map-focus{left:10px;bottom:12px;max-width:64%;padding:9px 11px}
 }
+
+/* Regional map semantics · 28 Oct 2026.
+   S/W badge COLOUR is the same combined model signal as the beach HUD.
+   Angular guide-only fit remains in data-fit and in accessible tooltips.
+   These are directional/strength heuristics, not observed surf quality. */
+#chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="favourable"],
+#chileCoastMap .faro-lens-beach[data-signal="favourable"]{--faro-region-status:#2c6e58}
+#chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="mixed"],
+#chileCoastMap .faro-lens-beach[data-signal="mixed"]{--faro-region-status:#846d42}
+#chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="weak"],
+#chileCoastMap .faro-lens-beach[data-signal="weak"]{--faro-region-status:#925d3c}
+#chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="unfavourable"],
+#chileCoastMap .faro-lens-beach[data-signal="unfavourable"]{--faro-region-status:#9a5852}
+#chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="unknown"],
+#chileCoastMap .faro-lens-beach[data-signal="unknown"]{--faro-region-status:#4e6b73}
+html:not([data-theme="light"]) #chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="favourable"],
+html:not([data-theme="light"]) #chileCoastMap .faro-lens-beach[data-signal="favourable"]{--faro-region-status:#a7d3bf}
+html:not([data-theme="light"]) #chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="mixed"],
+html:not([data-theme="light"]) #chileCoastMap .faro-lens-beach[data-signal="mixed"]{--faro-region-status:#dec79d}
+html:not([data-theme="light"]) #chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="weak"],
+html:not([data-theme="light"]) #chileCoastMap .faro-lens-beach[data-signal="weak"]{--faro-region-status:#dfb08b}
+html:not([data-theme="light"]) #chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="unfavourable"],
+html:not([data-theme="light"]) #chileCoastMap .faro-lens-beach[data-signal="unfavourable"]{--faro-region-status:#e2aba0}
+html:not([data-theme="light"]) #chileCoastMap :is(.faro-region-fit-tick,.faro-region-legend-dot,.faro-lens-beach)[data-level="unknown"],
+html:not([data-theme="light"]) #chileCoastMap .faro-lens-beach[data-signal="unknown"]{--faro-region-status:#c0d1d4}
+#chileCoastMap .faro-map-pin .faro-region-fit-tick[data-level]{
+ --faro-fit-ink:var(--faro-region-status)!important;
+}
+#chileCoastMap .faro-region-legend-dot[data-level]{
+ background:var(--faro-region-status)!important;
+}
+#chileCoastMap .faro-lens-beach[data-signal] small:first-of-type,
+#chileCoastMap .faro-lens-beach .faro-lens-wind-guide[data-level]{
+ color:var(--faro-region-status)!important;
+}
+#chileCoastMap .faro-lens-footer-legend:has(.faro-region-legend-dot){
+ row-gap:6px!important;
+}

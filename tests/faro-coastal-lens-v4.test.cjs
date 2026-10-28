@@ -55,12 +55,25 @@ test('layers are genuine selective controls and point markers remain clickable',
 test('motion respects reduced-motion, exposure is only an editorial guide',()=>{
  assert.match(code,/prefers-reduced-motion: reduce/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
- assert.match(code,/Comparación regional de rumbo, sin corregir por bancos, sombra costera, profundidad o refracción/);
+ assert.match(code,/Comparación regional de rumbo e intensidad usando la franja y los datos modelados seleccionados/);
  assert.match(code,/Sin simulación de refracción ni altura rompiente/);
 });
+test('regional S/W indicators share the exact HUD signal, not colour-only angular guide fit',()=>{
+ const slot={swellDirection:238,swellHeightM:1.3,swellPeriodS:9,windDirection:55,windKmh:3,gustKmh:5};
+ const reading=map.spotSignals(slot,guide['CL-VS:renaca']);
+ assert.equal(reading.swellSignal.level,'favourable');
+ assert.equal(reading.windFit,'edge');
+ assert.equal(reading.windSignal.level,'favourable');
+ assert.match(code,/micro\.dataset\.level=signal\.level/);
+ assert.match(code,/markers\.get\(sp\.id\)\.setIcon\(markerIcon\(L,sp,sp\.id===sel,reading\)\)/);
+ assert.match(code,/spotSignals\(slot,hudProfile\)/);
+ assert.match(css,/\.faro-map-pin \.faro-region-fit-tick\[data-level\]/);
+ assert.match(css,/\.faro-region-legend-dot\[data-level\]/);
+});
+
 test('asset version and shared Zeeland colours remain unaffected',()=>{
- assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=10"/);
- assert.match(html,/src="coast-map\.js\?v=15"/);
+ assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=12"/);
+ assert.match(html,/src="coast-map\.js\?v=16"/);
  assert.match(html,/src="chile-forecast\.js\?v=21"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });

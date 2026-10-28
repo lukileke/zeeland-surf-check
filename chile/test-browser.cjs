@@ -236,6 +236,51 @@ function fixture(){
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
    assert.equal(await page.locator('#chileCoastMap .faro-lens-stage').count(),1,'Map and ocean read share a stage');
    assert.equal(await page.locator('#chileCoastMap .faro-map-focus').count(),1,'Map has a selected-break label');
+   // On phone-width viewports ensure region signal colours agree with the
+   // semantic HUD palette, including on the dark selected beach marker.
+   const colours=await page.evaluate(()=>{
+    const host=document.getElementById('chileCoastMap');
+    const html=document.documentElement,original=html.dataset.theme,out={};
+    const pins=['regional','selected'].map(type=>{
+     const pin=document.createElement('div');
+     pin.className='faro-map-pin'+(type==='selected'?' is-current':'');
+     const nodes={};
+     for(const level of ['favourable','mixed','unfavourable']){
+      const tick=document.createElement('span');
+      tick.className='faro-region-fit-tick is-wind';
+      tick.dataset.fit='edge';tick.dataset.level=level;
+      tick.textContent='W';pin.append(tick);nodes[level]=tick;
+     }
+     host.append(pin);return {type,pin,nodes};
+    });
+    try{
+     for(const theme of ['light','dark']){
+      html.dataset.theme=theme;
+      out[theme]={};
+      for(const {type,nodes} of pins){
+       out[theme][type]={};
+       for(const [level,el] of Object.entries(nodes)){
+        out[theme][type][level]=getComputedStyle(el).color;
+       }
+      }
+     }
+    }finally{
+     html.dataset.theme=original;
+     pins.forEach(x=>x.pin.remove());
+    }
+    return out;
+   });
+   for(const type of ['regional','selected']){
+    assert.deepEqual(colours.light[type],{
+     favourable:'rgb(44, 110, 88)',mixed:'rgb(132, 109, 66)',
+     unfavourable:'rgb(154, 88, 82)'
+    },'Light regional badges use HUD semantic palette: '+type);
+    assert.deepEqual(colours.dark[type],{
+     favourable:'rgb(167, 211, 191)',mixed:'rgb(222, 199, 157)',
+     unfavourable:'rgb(226, 171, 160)'
+    },'Dark regional badges use HUD semantic palette: '+type);
+   }
+
    const mapText=await page.locator('#chileCoastMap').textContent();
    assert.match(mapText,/La Boca/);
    assert.match(mapText,/SWELL/);
