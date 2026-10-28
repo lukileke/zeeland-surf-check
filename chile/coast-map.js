@@ -206,27 +206,20 @@ function create(opts){
   shape("text",{x:38,y:66,fill:"#517a84","font-family":"sans-serif","font-size":11},es?"Posiciones costeras aproximadas":"Approximate coastal reference points");
   shape("text",{x:558,y:344,fill:"#517a84","font-family":"sans-serif","font-size":11},es?"ESTE →":"EAST →");
   shape("text",{x:42,y:343,fill:"#517a84","font-family":"sans-serif","font-size":11},es?"← OESTE":"← WEST");
-  // Geographical relative positions; dynamic extent includes Maitencillo and the grid cell.
+  // Keep the four beaches readable by default. Source cells are included
+  // only when explicitly requested, never as large disconnected arrows.
   const grid=current.marineGrid,atmosphere=current.weatherGrid;
+  const gridVisible=mapView==="region"&&showSamples;
   const locations=spots
-   .concat(deg(grid?.lat)&&deg(grid?.lon)?[{latitude:grid.lat,longitude:grid.lon}]:[])
-   .concat(deg(atmosphere?.lat)&&deg(atmosphere?.lon)?[{latitude:atmosphere.lat,longitude:atmosphere.lon}]:[]);
+   .concat(gridVisible&&mode!=="wind"&&deg(grid?.lat)&&deg(grid?.lon)?
+    [{latitude:grid.lat,longitude:grid.lon}]:[])
+   .concat(gridVisible&&mode!=="swell"&&deg(atmosphere?.lat)&&deg(atmosphere?.lon)?
+    [{latitude:atmosphere.lat,longitude:atmosphere.lon}]:[]);
   const latMin=Math.min(...locations.map(x=>x.latitude)),latMax=Math.max(...locations.map(x=>x.latitude));
   const lonMin=Math.min(...locations.map(x=>x.longitude)),lonMax=Math.max(...locations.map(x=>x.longitude));
   const dy=Math.max(.10,latMax-latMin),dx=Math.max(.10,lonMax-lonMin);
   const project=sp=>({x:80+((sp.longitude-lonMin)/dx)*450,
                       y:300-((sp.latitude-latMin)/dy)*225});
-  function ray(x,y,bearing,color,shift){
-   const travel=bearingFromArrow(bearing),r=travel*Math.PI/180;
-   const sx=x+shift,sy=y-16;
-   const dx=Math.sin(r)*74,dy=-Math.cos(r)*74;
-   const endx=sx+dx,endy=sy+dy;
-   shape("line",{x1:sx,y1:sy,x2:endx,y2:endy,stroke:color,"stroke-width":5,"stroke-linecap":"round"});
-   const backx=endx-Math.sin(r)*13,backy=endy+Math.cos(r)*13;
-   const px=Math.cos(r)*7,py=Math.sin(r)*7;
-   shape("polygon",{points:[endx+","+endy,(backx+px)+","+(backy+py),(backx-px)+","+(backy-py)].join(" "),
-    fill:color});
-  }
   for(const sp of spots){
    const pos=project(sp),active=sp.id===current.spot?.id;
    const g=shape("g",{"data-spot":sp.id,role:"button",tabindex:0,"aria-label":sp.name,style:"cursor:pointer"});
@@ -243,24 +236,17 @@ function create(opts){
     g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();activate()}});
    }
   }
-  if(deg(grid?.lat)&&deg(grid?.lon)){
-   const q=project({latitude:grid.lat,longitude:grid.lon});
-   shape("circle",{cx:q.x,cy:q.y,r:7,fill:"#137d9f",stroke:"#fff","stroke-width":2});
-   if(mode!=="wind"&&deg(current.slot?.swellDirection))ray(q.x,q.y,current.slot.swellDirection,"#137d9f",0);
-   // Only the primary wave bearing appears on the overview.
-   shape("text",{x:q.x+11,y:q.y-14,fill:"#235363","font-family":"sans-serif",
-    "font-size":12,"font-weight":800,stroke:"#dceef1","stroke-width":3,"paint-order":"stroke"},
-    es?"Celda del modelo":"Model grid cell");
+  // Intentionally no arrow rays: one source point does not determine
+  // the wave path to each local break.
+  if(gridVisible){
+   for(const [source,kind,visible]of [[grid,"M",mode!=="wind"],[atmosphere,"A",mode!=="swell"]]){
+    if(!visible||!deg(source?.lat)||!deg(source?.lon))continue;
+    const q=project({latitude:source.lat,longitude:source.lon});
+    shape("circle",{cx:q.x,cy:q.y,r:12,fill:"#f3f8f7",stroke:"#567983","stroke-width":1.3});
+    shape("text",{x:q.x,y:q.y+4,fill:"#345a63","font-family":"sans-serif",
+     "font-size":10,"font-weight":800,"text-anchor":"middle"},kind);
+   }
   }
-  if(deg(atmosphere?.lat)&&deg(atmosphere?.lon)){
-   const q=project({latitude:atmosphere.lat,longitude:atmosphere.lon});
-   shape("circle",{cx:q.x,cy:q.y,r:6,fill:"#ca8b4a",stroke:"#fff","stroke-width":2});
-   if(mode!=="swell"&&deg(current.slot?.windDirection))ray(q.x,q.y,current.slot.windDirection,"#ba7628",0);
-  }
-  shape("rect",{x:28,y:351,width:11,height:6,rx:2,fill:"#137d9f"});
-  shape("text",{x:46,y:358,fill:"#234c5c","font-family":"sans-serif","font-size":11},es?"Swell, viaje del modelo":"Swell model travel");
-  shape("rect",{x:220,y:351,width:11,height:6,rx:2,fill:"#ba7628"});
-  shape("text",{x:238,y:358,fill:"#234c5c","font-family":"sans-serif","font-size":11},es?"Viento, viaje del modelo":"Wind model travel");
  }
  function append(tag,cls,text,parent=brief){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.append(n);return n}
  function describe(){
@@ -524,32 +510,19 @@ function create(opts){
  // A fixed-size, north-up directional instrument anchored to the selected
  // coastal reference. Arrows encode bearing only; these are not rays of swell
  // refraction or a prediction of local breaking-wave height.
- function modelGridIcon(L,slot){
-  const shell=document.createElement("div");shell.className="faro-lens-map-pin is-swell";
-  shell.append(document.createElement("b"));
-  const arrow=document.createElement("span");arrow.className="faro-lens-arrow";arrow.textContent="↑";
-  const bearing=bearingFromArrow(slot?.swellDirection);
-  if(bearing!==null){
-   arrow.style.transform="rotate("+bearing+"deg)";
-   shell.style.setProperty("--lens-bearing",bearing+"deg");
-  }
-  shell.append(arrow);
-  // Secondary and tertiary partitions remain in model details and popup.
-  // Never draw intersecting arrows from the same model sample.
-  // One primary travel arrow in the marine sample pin; partitions in details.
-  return L.divIcon({className:"faro-map-grid-marker",html:shell.outerHTML,iconSize:[48,48],iconAnchor:[24,24]});
- }
- function windGridIcon(L,slot){
-  const shell=document.createElement("div");shell.className="faro-lens-map-pin is-wind";
-  shell.append(document.createElement("b"));
-  const arrow=document.createElement("span");arrow.className="faro-lens-arrow";arrow.textContent="↑";
-  const bearing=bearingFromArrow(slot?.windDirection);
-  if(bearing!==null){
-   arrow.style.transform="rotate("+bearing+"deg)";
-   shell.style.setProperty("--lens-bearing",bearing+"deg");
-  }
-  shell.append(arrow);
-  return L.divIcon({className:"faro-map-wind-marker",html:shell.outerHTML,iconSize:[44,44],iconAnchor:[22,22]});
+ function modelSampleIcon(L,kind){
+  // Source coordinates, not breaking waves and never a directional arrow.
+  // These quiet cartographic annotation pins appear only when the surfer
+  // explicitly chooses "Show model sample points".
+  const shell=document.createElement("div");shell.className="faro-model-sample";
+  shell.dataset.source=kind;
+  const mark=document.createElement("span");mark.className="faro-model-sample-mark";
+  mark.setAttribute("aria-hidden","true");mark.textContent=kind==="marine"?"M":"A";
+  const caption=document.createElement("span");caption.className="faro-model-sample-name";
+  caption.textContent=kind==="marine"?"MARINE":"ATMOS";
+  shell.append(mark,caption);
+  return L.divIcon({className:"faro-model-sample-anchor",html:shell.outerHTML,
+   iconSize:[78,28],iconAnchor:[39,14]});
  }
  function modelPopup(marine){
   const v=latest||p(),s=v.slot||{},es=v.lang!=="en",node=document.createElement("div");
@@ -628,37 +601,31 @@ function create(opts){
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
   }
   // Beach coordinates belong to the spot pin; signals live in the HUD.
+  const displayMarine=mapView==="region"&&showSamples&&mode!=="wind";
+  const displayWind=mapView==="region"&&showSamples&&mode!=="swell";
   const grid=latest.marineGrid;
-  const hasGrid=deg(grid?.lat)&&deg(grid?.lon);
-  if(hasGrid){
+  if(displayMarine&&deg(grid?.lat)&&deg(grid?.lon)){
    const pos=[grid.lat,grid.lon];
    if(!modelGridMarker){
-    modelGridMarker=L.marker(pos,{title:"Marine grid sample",interactive:true,keyboard:true});
+    modelGridMarker=L.marker(pos,{title:"Marine model sample",interactive:true,keyboard:true});
     modelGridMarker.addTo(map);
    }else modelGridMarker.setLatLng(pos);
-   modelGridMarker.setIcon(modelGridIcon(L,latest.slot));
+   modelGridMarker.setIcon(modelSampleIcon(L,"marine"));
    modelGridMarker.bindPopup(modelPopup(true),{maxWidth:300});
-   modelGridMarker.setOpacity(mapView==="region"&&showSamples&&mode!=="wind"?1:0);
-   if(modelGridMarker.getElement())modelGridMarker.getElement().style.pointerEvents=
-    mapView==="region"&&showSamples&&mode!=="wind"?"auto":"none";
-   modelGridMarker.setZIndexOffset(250);
+   modelGridMarker.setZIndexOffset(90);
   }else if(modelGridMarker){
    map.removeLayer(modelGridMarker);modelGridMarker=null;
   }
   const atmosphere=latest.weatherGrid;
-  const hasWindGrid=deg(atmosphere?.lat)&&deg(atmosphere?.lon)&&deg(latest.slot?.windDirection);
-  if(hasWindGrid){
+  if(displayWind&&deg(atmosphere?.lat)&&deg(atmosphere?.lon)){
    const pos=[atmosphere.lat,atmosphere.lon];
    if(!windGridMarker){
-    windGridMarker=L.marker(pos,{title:"Atmospheric grid sample",interactive:true,keyboard:true});
+    windGridMarker=L.marker(pos,{title:"Atmospheric model sample",interactive:true,keyboard:true});
     windGridMarker.addTo(map);
    }else windGridMarker.setLatLng(pos);
-   windGridMarker.setIcon(windGridIcon(L,latest.slot));
+   windGridMarker.setIcon(modelSampleIcon(L,"atmosphere"));
    windGridMarker.bindPopup(modelPopup(false),{maxWidth:300});
-   windGridMarker.setOpacity(mapView==="region"&&showSamples&&mode!=="swell"?1:0);
-   if(windGridMarker.getElement())windGridMarker.getElement().style.pointerEvents=
-    mapView==="region"&&showSamples&&mode!=="swell"?"auto":"none";
-   windGridMarker.setZIndexOffset(260);
+   windGridMarker.setZIndexOffset(90);
   }else if(windGridMarker){
    map.removeLayer(windGridMarker);windGridMarker=null;
   }
