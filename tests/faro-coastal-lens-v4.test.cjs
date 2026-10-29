@@ -104,7 +104,10 @@ test('Chile notices share FARO Zeeland presentation with both real map renderers
  assert.equal(notices.describe(clear,'es'),null);
  assert.equal(notices.describe({...mapSpot,accessNotice:{status:'unexpected-status'}},'es'),null);
  assert.match(html,/faro-notices\.js\?v=1/);
- assert.match(html,/faro-access-brand/);
+ assert.match(html,/faro-access-notice/);
+ assert.doesNotMatch(html,/class="faro-access-brand"/);
+ assert.match(html,/faro-spot-chooser\\.js\\?v=1/);
+ assert.match(html,/id="chileSpotButton"/);
  assert.match(html,/faro-safety-kicker/);
  assert.match(html,/faroAccessSourceLink/);
  assert.match(code,/function showNotice\(sp,anchor,pin=false\)/);
@@ -117,6 +120,6 @@ test('Chile notices share FARO Zeeland presentation with both real map renderers
 test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=16"/);
  assert.match(html,/src="coast-map\.js\?v=20"/);
- assert.match(html,/src="chile-forecast\.js\?v=32"/);
+ assert.match(html,/src="chile-forecast\.js\?v=33"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });
