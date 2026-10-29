@@ -273,6 +273,17 @@ function renderDNA(){
     "Input coverage: "+(selected.modelCoverage?.required==="complete"?"2/2 hours":"incomplete")+
      " · "+(proxy.partitions.length-1)+" complete additional swells. Directional fit is guide-based, NOT forecast probability or measured skill."
    ),"faro-dna-method"));
+   if(proxy.directionScenario){
+    const sensitivity=proxy.directionScenario;
+    lower.append(el("p",tr(
+     "Prueba de sensibilidad: si los rumbos de swell se desplazaran ±"+
+      sensitivity.bearingShiftDeg+"°, el modelo calcularía "+
+      num(sensitivity.scoreMin)+"–"+num(sensitivity.scoreMax)+"/10. Escenarios, NO intervalo de confianza ni pronóstico alternativo.",
+     "Sensitivity test: shifting swell bearings ±"+
+      sensitivity.bearingShiftDeg+"° yields modelled "+
+      num(sensitivity.scoreMin)+"–"+num(sensitivity.scoreMax)+"/10. Scenarios, NOT confidence bounds or alternative forecasts."
+    ),"faro-dna-method"));
+   }
   }
  }else{
   lower.append(el("small",tr("PRONÓSTICO LOCAL · POR COMPARAR","LOCAL MODEL · FIT UNAVAILABLE"),"faro-dna-below-title"));
