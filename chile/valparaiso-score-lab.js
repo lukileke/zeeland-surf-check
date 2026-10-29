@@ -1,7 +1,7 @@
-/* FARO Chile research scorer / v0.1 — NOT wired into the active website.
- * Interprets guide-sourced local directions and generic model parameters.
- * Experimental compatibility index: full 0–10 range, NO arbitrary 7.9 cap.
- * Full-range values are still NOT empirically validated as surf quality.
+/* FARO Chile offshore potential scorer / v0.3 — used by live-model website.
+ * Physics-informed Hs²×T swell partition proxy, guide-bearing exposure,
+ * speed-dependent wind evaluation and bounded cross-sea modifiers.
+ * Full-range 0–10 index, NOT empirically validated surf quality.
  * NEVER a breaking-wave prediction, safety approval or official alert.
  */
 (function(root){
