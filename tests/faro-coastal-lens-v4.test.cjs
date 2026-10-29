@@ -117,6 +117,6 @@ test('Chile notices share FARO Zeeland presentation with both real map renderers
 test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=16"/);
  assert.match(html,/src="coast-map\.js\?v=20"/);
- assert.match(html,/src="chile-forecast\.js\?v=31"/);
+ assert.match(html,/src="chile-forecast\.js\?v=32"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });
