@@ -76,6 +76,10 @@ assert.ok(best&&best.score>=0&&best.score<=10,'Guide-derived index should use it
 assert.equal(best.scoreMeta.scoreCap,null,'No artificial experimental ceiling should flatten conditions');
 assert.equal(best.scoreMeta.confidence,'low','The uncapped index remains unvalidated');
 assert.equal(best.scoreMeta.safetyAssessed,false);
+assert.equal(best.scoreMeta.physicsProxy.partitions.length,1,
+ 'Optional swell partitions absent from the model must never be inferred');
+assert.equal(best.scoreMeta.physicsProxy.optionalPartitionsMissing,true);
+
 assert.equal(best.nearshoreHeightEstimated,false);
 assert.equal(best.observed,false);
 assert.equal(best.windSeaHeightM,.6);
@@ -149,6 +153,13 @@ assert.equal(utcResult.days[0].sunrise,'2026-05-10T07:10');
 assert.equal(utcResult.days[0].slots[0].validTimesUtc[0],'2026-05-10T10:00:00.000Z');
 assert.equal(utcResult.days[0].slots[0].secondarySwell.heightM,.35);
 assert.equal(utcResult.days[0].slots[0].tertiarySwell.periodS,14);
+assert.equal(utcResult.days[0].slots[0].scoreMeta.indexVersion,'faro-offshore-potential-v0.3');
+assert.equal(utcResult.days[0].slots[0].scoreMeta.physicsProxy.partitions.length,3,
+ 'All available independent wave partitions must enter the physical index');
+assert.equal(utcResult.days[0].slots[0].scoreMeta.physicsProxy.offshoreNotBreakingWave,true);
+assert.equal(utcResult.days[0].slots[0].scoreMeta.tideEvaluated,false);
+assert.ok(utcResult.days[0].slots[0].scoreMeta.physicsProxy.admittedEnergyHs2T>0);
+
 assert.equal(utcResult.model.coverage.completeSlots,56);
 const mismatched=JSON.parse(JSON.stringify(epochMarine));
 mismatched.hourly.time[6]=epochTimes[6]+3600;
