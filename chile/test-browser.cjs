@@ -243,12 +243,39 @@ function fixture(){
      'Ventanas must no longer be an unscored reference marker');
     const marker=page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:ventanas"]');
     assert.equal(await marker.count(),1,'Ventanas is a fifth experimental modelled spot');
+    const warning=page.locator('#chileCoastMap .faro-map-schematic g[data-map-access="CL-VS:ventanas"]');
+    assert.equal(await warning.count(),1,'Reported restriction must have a separate map warning target');
+    await warning.focus();
+    assert.equal(await page.locator('#faroMapAccessTip').isVisible(),true,
+     'Keyboard focus reveals the type of warning, not just an exclamation mark');
+    assert.match(await page.locator('#faroMapAccessTip').textContent(),/restricci[oó]n|restriction/i);
+    assert.match(await page.locator('#faroMapAccessTip').textContent(),/27/);
+    await page.keyboard.press('Enter');
+    assert.equal(await page.locator('#faroMapAccessTip').isVisible(),true,
+     'Keyboard Enter pins a mini warning tooltip');
+    assert.notEqual(await page.locator('#chileSpotSelect').inputValue(),'CL-VS:ventanas',
+     'Activating the warning itself must NOT select a different beach');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#faroMapAccessTip').isVisible(),false);
+    await warning.evaluate(el=>el.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true})));
+    assert.equal(await page.locator('#faroMapAccessTip').isVisible(),true,
+     'Touch-equivalent click toggles a small warning popover');
+    assert.notEqual(await page.locator('#chileSpotSelect').inputValue(),'CL-VS:ventanas');
+    await page.keyboard.press('Escape');
     await marker.evaluate(el=>el.dispatchEvent(new MouseEvent('click',{bubbles:true})));
     await page.waitForFunction(()=>document.querySelector('#chileSpotSelect')?.value==='CL-VS:ventanas'&&
      document.querySelector('#ventanasAccessNotice')?.hidden===false,{timeout:12000});
     assert.match(await page.locator('#ventanasAccessNotice').textContent(),/restricci[oó]n|restriction/i);
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),false,
      'Restriction must remain compact by default, unlike the old full-screen warning');
+    assert.equal(await page.locator('#ventanasAccessNotice .faro-access-brand img').count(),1,
+     'Chile must reuse the FARO brand mark inside the Zeeland-style warning');
+    assert.match(await page.locator('#faroAccessKicker').textContent(),/FARO/);
+    assert.match(await page.locator('#faroAccessSeverity').textContent(),/REPORTED|REPORTADA/i);
+    assert.match(await page.locator('#faroAccessSubline').textContent(),/27/);
+    assert.equal(await page.locator('#faroAccessSourceLink').getAttribute('href'),
+     'https://puranoticia.pnt.cl/region-valparaiso/seremi-de-salud-levanta-prohibicion-de-bano-en-playa-de-algarrobo-no-han');
+
     assert.equal(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:ventanas"] text').count()>0,true);
     await page.locator('#ventanasAccessNotice > summary').click();
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),true);

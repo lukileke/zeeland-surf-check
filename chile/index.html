@@ -27,9 +27,9 @@
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=2">
 <!-- Final Chile-only layout contract after all shared FARO theme layers -->
 <link rel="stylesheet" href="../assets/faro-visual-system-v2.css?v=5">
-<link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=15">
+<link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=16">
 <!-- Single Chile-specific layout contract, loaded after all visual layers. -->
-<link rel="stylesheet" href="chile-visual-contract.css?v=7">
+<link rel="stylesheet" href="chile-visual-contract.css?v=8">
 </head>
 <body>
 <main>
@@ -90,15 +90,28 @@
    <label class="chile-spot-picker"><small data-es="REGIÓN" data-en="REGION">REGIÓN</small><strong>Valparaíso · Chile</strong><span class="chile-field-hint" data-es="Primera región disponible" data-en="First supported region">Primera región disponible</span></label>
    <label class="chile-spot-picker"><small data-es="PLAYA / SPOT" data-en="BEACH / SPOT">PLAYA / SPOT</small><select id="chileSpotSelect" aria-label="Playa o spot"></select></label>
   </div>
-  <details id="ventanasAccessNotice" class="faro-access-notice" aria-label="Aviso de acceso a la playa" hidden>
-   <summary class="faro-access-summary">
-    <span class="faro-access-symbol" aria-hidden="true">!</span>
-    <span class="faro-access-brief"><strong data-es="Ventanas · restricción reportada" data-en="Ventanas · reported restriction">Ventanas · restricción reportada</strong><small data-es="Último reporte 27 oct. 2026 · vigencia no verificada" data-en="Last reported 27 Oct 2026 · current status unverified">Último reporte 27 oct. 2026 · vigencia no verificada</small></span>
-    <span class="faro-access-chevron" aria-hidden="true">⌄</span>
+  <!-- Zeeland FARO safety-centre hierarchy, with the FARO mark. -->
+  <details id="ventanasAccessNotice" class="faro-access-notice faro-safety-center caution" hidden>
+   <summary class="faro-safety-summary faro-access-summary">
+    <span class="faro-access-brand" aria-hidden="true"><img src="../assets/faro-o-favicon.svg" width="27" height="27" alt=""></span>
+    <span class="faro-safety-top faro-access-top">
+     <strong class="faro-safety-kicker" id="faroAccessKicker">FARO · AVISOS</strong>
+     <span class="faro-safety-severity" id="faroAccessSeverity">RESTRICCIÓN REPORTADA</span>
+    </span>
+    <span class="faro-safety-headline" id="faroAccessHeadline">Ventanas · restricción recreativa reportada</span>
+    <span class="faro-safety-inline-source" id="faroAccessSubline">Último reporte 27 oct 2026 · vigencia actual no verificada</span>
+    <span class="faro-safety-chevron" aria-hidden="true"></span>
    </summary>
-   <div class="faro-access-body"><p id="ventanasNoticeText">—</p>
-   <a href="https://marejadas.uv.cl/CL15QTN03" target="_blank" rel="noopener noreferrer" data-es="Modelo costero UV · Puerto Ventanas (20 m)" data-en="UV nearshore model · Puerto Ventanas (20 m)">Modelo costero UV · Puerto Ventanas (20 m)</a>
-   <small data-es="El número FARO es potencial modelado, no permiso ni recomendación para surfear. Confirma restricciones con la autoridad marítima y sanitaria." data-en="FARO's number is modelled potential, not permission or advice to surf. Confirm restrictions with maritime and health authorities.">El número FARO es potencial modelado, no permiso ni recomendación para surfear. Confirma restricciones con la autoridad marítima y sanitaria.</small>
+   <div class="faro-safety-expanded faro-access-expanded">
+    <strong class="faro-safety-detail-heading" data-es="Qué sabemos" data-en="What we know">Qué sabemos</strong>
+    <p class="faro-safety-detail-description" id="ventanasNoticeText">—</p>
+    <div class="faro-access-links">
+     <a id="faroAccessSourceLink" class="faro-safety-link" href="https://puranoticia.pnt.cl/region-valparaiso/seremi-de-salud-levanta-prohibicion-de-bano-en-playa-de-algarrobo-no-han" target="_blank" rel="noopener noreferrer" data-es="Consultar reporte fechado" data-en="Read dated report">Consultar reporte fechado</a>
+     <a class="faro-safety-link" href="https://senapred.cl/alertas/" target="_blank" rel="noopener noreferrer" data-es="Consultar SENAPRED" data-en="Check SENAPRED">Consultar SENAPRED</a>
+     <a class="faro-safety-link" href="https://www.directemar.cl/directemar/" target="_blank" rel="noopener noreferrer" data-es="Consultar DIRECTEMAR" data-en="Check DIRECTEMAR">Consultar DIRECTEMAR</a>
+    </div>
+    <small class="faro-access-method" data-es="Aviso no sincronizado. FARO estima potencial oceánico, no autoriza el ingreso ni verifica restricciones sanitarias." data-en="Notice not synchronised. FARO estimates offshore potential; it does not clear access or verify health restrictions.">Aviso no sincronizado. FARO estima potencial oceánico, no autoriza el ingreso ni verifica restricciones sanitarias.</small>
+    <a class="faro-access-uv-link" href="https://marejadas.uv.cl/CL15QTN03" target="_blank" rel="noopener noreferrer" data-es="Pronóstico costero UV · Puerto Ventanas (no es fuente del aviso)" data-en="UV coastal forecast · Puerto Ventanas (not warning source)">Pronóstico costero UV · Puerto Ventanas (no es fuente del aviso)</a>
    </div>
   </details>
   <!-- Single-step exploration: choose a forecast window, inspect coastal context,
@@ -340,7 +353,8 @@
 <script src="faro-spot-intelligence.js?v=2"></script>
 <script src="video-observation-lab.js?v=1"></script>
 <script src="faro-coastal-lens.js?v=1"></script>
-<script src="coast-map.js?v=19"></script>
-<script src="chile-forecast.js?v=30"></script>
+<script src="faro-notices.js?v=1"></script>
+<script src="coast-map.js?v=20"></script>
+<script src="chile-forecast.js?v=31"></script>
 </body>
 </html>

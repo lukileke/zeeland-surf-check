@@ -193,7 +193,11 @@
         "clearanceVerified": false,
         "publicRecommendationAllowed": false,
         "es": "Restricción de actividades recreativas reportada como vigente el 27 de octubre de 2026 por fragata portuguesa. No se ha verificado una resolución que la levante. El índice FARO es sólo modelado: no constituye recomendación de entrar al agua.",
-        "en": "Recreational-use restriction reported still in effect on 27 October 2026 due to Portuguese man-of-war. No lifting resolution verified. FARO's number is a model estimate, NOT permission or advice to enter the water."
+        "en": "Recreational-use restriction reported still in effect on 27 October 2026 due to Portuguese man-of-war. No lifting resolution verified. FARO's number is a model estimate, NOT permission or advice to enter the water.",
+        "sourceUrl": "https://puranoticia.pnt.cl/region-valparaiso/seremi-de-salud-levanta-prohibicion-de-bano-en-playa-de-algarrobo-no-han",
+        "noticeType": "reported_restriction",
+        "severity": "caution",
+        "liveOfficialStatusVerified": false
       }
     }
   ],

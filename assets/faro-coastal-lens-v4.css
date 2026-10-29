@@ -1052,3 +1052,54 @@ html:not([data-theme="light"]) #chileCoastMap .faro-map-reference-pin small{colo
 #chileCoastMap .faro-map-pin[data-access-alert="reported"]{
  overflow:visible!important;
 }
+
+/* One accessible semantic tooltip for Leaflet and SVG fallback.
+   Content comes from FaroChileNotices, never from the model score. */
+#chileCoastMap .faro-map-access-tooltip{
+ position:absolute;z-index:1900;
+ width:min(254px,calc(100% - 18px));max-width:calc(100% - 18px);
+ box-sizing:border-box;padding:11px 13px;border:1px solid var(--faro-line);
+ border-left:3px solid #ae7a43;border-radius:11px;
+ background:var(--faro-raised,#fbfdfb);color:var(--fg,#223b40);
+ box-shadow:0 10px 28px rgba(9,34,41,.21);
+ pointer-events:none;transform:translate(-50%,-100%);
+ display:grid;gap:4px;text-align:left;
+ font-family:var(--faro-text,Manrope,system-ui);white-space:normal
+}
+#chileCoastMap .faro-map-access-tooltip.is-below{transform:translate(-50%,0)}
+#chileCoastMap .faro-map-access-tooltip[hidden]{display:none!important}
+#chileCoastMap .faro-map-access-tooltip[data-severity="danger"]{border-left-color:#b75d60}
+#chileCoastMap .faro-map-access-tooltip[data-severity="advisory"]{border-left-color:#2e7e85}
+#chileCoastMap .faro-map-access-tooltip strong{
+ font:850 12px/1.35 var(--faro-text,Manrope,system-ui);color:var(--fg,#223b40)
+}
+#chileCoastMap .faro-map-access-tooltip span{
+ font:600 11px/1.45 var(--faro-text,Manrope,system-ui);color:var(--fg,#223b40)
+}
+#chileCoastMap .faro-map-access-tooltip small{
+ font:800 9px/1.4 var(--faro-text,Manrope,system-ui);
+ color:var(--faro-quiet,#536b71);letter-spacing:.01em
+}
+#chileCoastMap .faro-map-access-badge{
+ appearance:none;display:inline-grid!important;place-items:center;
+ width:20px!important;min-width:20px;height:20px;
+ margin-left:4px;padding:0!important;flex:none;
+ border:1px solid #fff!important;border-radius:50%!important;
+ background:#a46c33!important;color:#fff!important;
+ font:900 12px/1 var(--faro-text,Manrope,system-ui)!important;
+ cursor:help!important;vertical-align:middle!important;
+ box-shadow:0 2px 5px rgba(24,35,38,.23);pointer-events:auto!important
+}
+#chileCoastMap .faro-map-access-badge:hover,
+#chileCoastMap .faro-map-access-badge:focus-visible{
+ outline:2px solid #d19a60!important;outline-offset:2px!important
+}
+#chileCoastMap .faro-map-schematic [data-map-access]{
+ cursor:help;outline:none
+}
+#chileCoastMap .faro-map-schematic [data-map-access]:focus-visible circle{
+ stroke:#ffe1a3;stroke-width:3
+}
+@media(prefers-reduced-motion:reduce){
+ #chileCoastMap .faro-map-access-tooltip{transition:none!important}
+}
