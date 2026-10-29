@@ -88,6 +88,6 @@ test('Ventanas is a separate pilot with an independent restriction',()=>{
 test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=14"/);
  assert.match(html,/src="coast-map\.js\?v=18"/);
- assert.match(html,/src="chile-forecast\.js\?v=28"/);
+ assert.match(html,/src="chile-forecast\.js\?v=29"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });
