@@ -24,8 +24,8 @@ const scoreCaveat=session=>{
  const meta=session?.scoreMeta;
  if(meta?.status!=="experimental")return tr("Sin validación local","No local calibration");
  const sessions=meta.fieldSessions??0;
- return tr("Potencial FARO · modelo v0.3 · "+sessions+" sesiones observadas",
-  "FARO potential · model v0.3 · "+sessions+" observed sessions");
+ return tr("Potencial FARO · modelo v0.4 · "+sessions+" sesiones observadas",
+  "FARO potential · model v0.4 · "+sessions+" observed sessions");
 };
 const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
 const waveSizeLabel=h=>!ok(h)?"—":h<.5?tr("Pequeñas","Small"):h<1.2?tr("Medianas","Medium"):h<2?tr("Grandes","Large"):tr("Muy grandes","Very large");
@@ -91,8 +91,9 @@ function bestRemaining(day,spotId=spot()?.id){
  // Opportunity first, old guide-fit score only as a tie-breaker.
  // A caution/unknown risk does not become the "best time" by high score.
  return day.slots.filter(s=>s.daylight.eligible&&ok(s.score)&&!["danger","unknown","caution"].includes(Live.slotRisk(s,state.config))&&(day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
-  .sort((a,b)=>(localRead(b,spotId)?.decision?.priority??2)-(localRead(a,spotId)?.decision?.priority??2)||
-   b.score-a.score||a.hour-b.hour)[0]||null;
+  .sort((a,b)=>b.score-a.score||
+   (localRead(b,spotId)?.decision?.priority??2)-(localRead(a,spotId)?.decision?.priority??2)||
+   a.hour-b.hour)[0]||null;
 }
 function selection(){
  const day=state.forecast?.days?.[state.day];
@@ -253,17 +254,36 @@ function renderDNA(){
   const proxy=selected.scoreMeta.physicsProxy;
   if(proxy?.partitions?.length){
    lower.append(el("p",tr(
-    "POTENCIAL FARO v0.3 · "+proxy.partitions.length+" componente(s) de swell; energía oceánica relativa Hs² × T = "+
-      num(proxy.admittedEnergyHs2T,1)+" m²·s tras exposición direccional de guía. "+
-      "Viento = "+num(proxy.windQuality*100,0)+" % de compatibilidad heurística. Marea y altura rompiente no evaluadas.",
-    "FARO POTENTIAL v0.3 · "+proxy.partitions.length+" swell partition(s); relative offshore Hs² × T = "+
-      num(proxy.admittedEnergyHs2T,1)+" m²·s after guide-based exposure. "+
-      "Wind = "+num(proxy.windQuality*100,0)+" % heuristic compatibility. Tide and breaking height not assessed."
+    "FARO v0.4 · "+proxy.partitions.length+" swell(s). Potencial oceánico Hs² × T = "+
+      num(proxy.admittedEnergyHs2T,1)+" m²·s. Coincidencia con rumbos de guía: "+
+      num(proxy.directionalGuideSupport*100,0)+" % de energía relativa; viento: "+
+      num(proxy.windQuality,2)+" (factor heurístico 0–1). No simula la ola rompiente.",
+    "FARO v0.4 · "+proxy.partitions.length+" swell partition(s). Offshore Hs² × T proxy = "+
+      num(proxy.admittedEnergyHs2T,1)+" m²·s. Guide-bearing support: "+
+      num(proxy.directionalGuideSupport*100,0)+" % of relative energy; wind factor "+
+      num(proxy.windQuality,2)+" (heuristic 0–1). Does not model breaking surf."
    ),"faro-dna-method"));
    lower.append(el("p",tr(
     "La conversión a 0–10 es experimental, sin mediciones locales para comprobar su precisión.",
     "The 0–10 mapping is experimental and lacks local observations to verify its accuracy."
    ),"faro-dna-method"));
+   lower.append(el("p",tr(
+    "Cobertura de entradas: "+(selected.modelCoverage?.required==="complete"?"2/2 h":"incompleta")+
+     " · "+(proxy.partitions.length-1)+" swells adicionales completos. La compatibilidad direccional se basa en guías, NO expresa probabilidad de acierto.",
+    "Input coverage: "+(selected.modelCoverage?.required==="complete"?"2/2 hours":"incomplete")+
+     " · "+(proxy.partitions.length-1)+" complete additional swells. Directional fit is guide-based, NOT forecast probability or measured skill."
+   ),"faro-dna-method"));
+   if(proxy.directionScenario){
+    const sensitivity=proxy.directionScenario;
+    lower.append(el("p",tr(
+     "Prueba de sensibilidad: si los rumbos de swell se desplazaran ±"+
+      sensitivity.bearingShiftDeg+"°, el modelo calcularía "+
+      num(sensitivity.scoreMin)+"–"+num(sensitivity.scoreMax)+"/10. Escenarios, NO intervalo de confianza ni pronóstico alternativo.",
+     "Sensitivity test: shifting swell bearings ±"+
+      sensitivity.bearingShiftDeg+"° yields modelled "+
+      num(sensitivity.scoreMin)+"–"+num(sensitivity.scoreMax)+"/10. Scenarios, NOT confidence bounds or alternative forecasts."
+    ),"faro-dna-method"));
+   }
   }
  }else{
   lower.append(el("small",tr("PRONÓSTICO LOCAL · POR COMPARAR","LOCAL MODEL · FIT UNAVAILABLE"),"faro-dna-below-title"));
@@ -660,6 +680,13 @@ function session(){
   }),
   [tr("Viento · DESDE","Wind · FROM"),Live.cardinal(s.windDirection)+" · "+num(s.windDirection,0)+"°"],
   [tr("Rachas","Gusts"),num(s.gustKmh,0)+" km/h"],
+  [tr("Nivel marino modelado · MSL","Modelled sea level · MSL"),
+   ok(s.seaLevelMslM)?
+    num(s.seaLevelMslM,2)+" m · "+
+     (ok(s.seaLevelChangeM)?
+      (s.seaLevelChangeM>.025?tr("subiendo","rising"):s.seaLevelChangeM<-.025?tr("bajando","falling"):tr("casi estable","nearly steady")):
+      tr("tendencia desconocida","trend unknown")):
+    tr("Sin dato costero","Coastal sea level unavailable")],
   [tr("Precipitación ventana","Rain in window"),num(s.precipitationMm)+" mm"],
   [tr("Índice UV","UV index"),num(s.uvIndex)+" · "+s.uv.name],
   [tr("Nubosidad","Cloud cover"),num(s.cloudPercent,0)+" %"],
@@ -673,7 +700,7 @@ function session(){
   [tr("Celda meteorológica a referencia costera","Weather grid to coastal reference"),ok(metGrid?.distanceKm)?num(metGrid.distanceKm)+" km":tr("No disponible","Unavailable")]
  ]));
  content.append(el("p",tr("Distancias desde una referencia costera, NO desde una rompiente georreferenciada. Estado de referencia: ","Distances from a coastal reference, NOT a surveyed breaking wave. Reference status: ")+coordinateStatus+". "+tr("La hora de consulta no es la hora de emisión del modelo.","Fetch time is not model issue time."),"muted"));
- content.append(el("p",tr("Fuente Open-Meteo. Una celda marina cercana NO representa una ola rompiendo en este banco ni una marea óptima. Sin estado automático de avisos oficiales.","Open-Meteo model. Nearby marine grid cells do NOT give breaking wave height or optimal tide. No automatically checked official notices."),"muted"));
+ content.append(el("p",tr("Open-Meteo: la celda marina NO representa la ola rompiente ni marea óptima. Nivel MSL: modelo grueso (~8 km) que incluye mareas y otros procesos; no es un mareógrafo local ni dato de navegación. Avisos oficiales sin verificación automática.","Open-Meteo grids do NOT resolve breaking surf or optimal tide. MSL sea level is a coarse (~8 km) tide-plus-other-process model, not a local gauge or navigation datum. Official alerts are not automatically checked."),"muted"));
  const UV=el("div","UV "+num(s.uvIndex)+": "+(s.uv.protection||tr("Sin dato","Unavailable")),"chile-uv-note chile-uv-"+s.uv.category);content.append(UV);
  link(content,tr("DMC · Radiación UV oficial","DMC · Official UV forecast"),"https://www.meteochile.gob.cl/PortalDMC-web/otros_pronosticos/radiacion_uv.xhtml");
  const wear=$("wetsuit");wear.replaceChildren(el("h3",tr("Equipo recomendado con cautela","Tentative gear advice")),el("p",wetsuit(s)+" · "+tr("Agua modelada ","Modelled water ")+num(s.waterTemperatureC)+" °C"),el("p",tr("Depende de viento, duración, temperatura real y tolerancia personal al frío.","Depends on wind, duration, real water temperature and personal cold tolerance."),"muted"));
@@ -754,8 +781,8 @@ async function rankings(){
  txt("rankingContext",!count?tr(
   "Todavía no hay franjas comparables para recomendar.","No comparable model windows are available yet."
  ):tr(
-  "Potencial FARO v0.3: energía de swells Hs²·T, exposición direccional de cada spot y viento. Escala 0–10 experimental; no predice ola rompiente, marea ni seguridad.",
-  "FARO potential v0.3: Hs²·T swell-partition energy, spot-guide exposure and wind. Experimental 0–10 index; does not predict breaking surf, tides or safety."
+  "FARO v0.4: swells Hs²·T, direcciones compatibles con cada playa y viento. Orden por potencial calculado; escala 0–10 experimental sin validar en olas rompientes.",
+  "FARO v0.4: Hs²·T swells, spot-specific guide bearings and wind. Sorted by modelled potential; experimental 0–10 without breaking-surf validation."
  ));
  if(!count){
   host.append(el("p",tr("Sin candidatos evaluables por ahora.","No assessable candidates yet."),"muted"));return;

@@ -147,6 +147,7 @@ for(const [name,value] of [["secondary_swell_wave_height",.35],["secondary_swell
  ["tertiary_swell_wave_period",14],["tertiary_swell_wave_direction",245]]){
  epochMarine.hourly[name]=epochTimes.map(()=>value);
 }
+epochMarine.hourly.sea_level_height_msl=epochTimes.map((_,i)=>.40+i*.01);
 epochWeather.daily.time=Array.from({length:7},(_,d)=>epochStart+d*86400);
 epochWeather.daily.sunrise=Array.from({length:7},(_,d)=>epochStart+d*86400+7*3600+10*60);
 epochWeather.daily.sunset=Array.from({length:7},(_,d)=>epochStart+d*86400+18*3600+10*60);
@@ -158,11 +159,31 @@ assert.equal(utcResult.days[0].sunrise,'2026-05-10T07:10');
 assert.equal(utcResult.days[0].slots[0].validTimesUtc[0],'2026-05-10T10:00:00.000Z');
 assert.equal(utcResult.days[0].slots[0].secondarySwell.heightM,.35);
 assert.equal(utcResult.days[0].slots[0].tertiarySwell.periodS,14);
-assert.equal(utcResult.days[0].slots[0].scoreMeta.indexVersion,'faro-offshore-potential-v0.3');
+assert.equal(utcResult.days[0].slots[0].scoreMeta.indexVersion,'faro-spot-response-v0.4');
 assert.equal(utcResult.days[0].slots[0].scoreMeta.physicsProxy.partitions.length,3,
  'All available independent wave partitions must enter the physical index');
 assert.equal(utcResult.days[0].slots[0].scoreMeta.physicsProxy.offshoreNotBreakingWave,true);
 assert.equal(utcResult.days[0].slots[0].scoreMeta.tideEvaluated,false);
+assert.ok(Number.isFinite(utcResult.days[0].slots[0].seaLevelMslM),
+ 'If 2 coastal model hours exist, MSL sea-level context may be displayed');
+assert.ok(Math.abs(utcResult.days[0].slots[0].seaLevelChangeM-.01)<1e-8);
+assert.equal(utcResult.days[0].slots[0].tideLocalCalibration,false,
+ 'A coarse modelled sea level must not count as measured spot tide');
+const partialOptional=JSON.parse(JSON.stringify(epochMarine));
+partialOptional.hourly.secondary_swell_wave_height[7]=null;
+const incompletePartition=L.extract(config,config.pilots[0],partialOptional,epochWeather,profile,'es').days[0].slots[0];
+assert.equal(incompletePartition.secondarySwell,null,
+ 'A partition missing one of two hours must be omitted rather than averaged from one sample');
+assert.equal(incompletePartition.scoreMeta.physicsProxy.partitions.length,2);
+assert.equal(incompletePartition.modelCoverage.secondary,'not-available-or-partial');
+const noSeaLevel=JSON.parse(JSON.stringify(epochMarine));
+delete noSeaLevel.hourly.sea_level_height_msl;
+const absentTide=L.extract(config,config.pilots[0],noSeaLevel,epochWeather,profile,'es').days[0].slots[0];
+assert.equal(absentTide.seaLevelMslM,null);
+assert.equal(absentTide.seaLevelChangeM,null);
+assert.equal(absentTide.score,utcResult.days[0].slots[0].score,
+ 'Sea-level context is not silently included in surf quality scoring');
+
 assert.ok(utcResult.days[0].slots[0].scoreMeta.physicsProxy.admittedEnergyHs2T>0);
 
 assert.equal(utcResult.model.coverage.completeSlots,56);

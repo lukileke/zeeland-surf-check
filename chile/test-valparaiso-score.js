@@ -56,13 +56,13 @@ for(const [id,profile] of Object.entries(cfg.profiles)){
  for(const ref of Object.values(profile.origins))assert.ok(refs[ref],'Unknown guide '+ref);
 }
 assert.equal(Object.keys(cfg.profiles).length,6);
-assert.equal(cfg.calibration.modelVersion,'faro-offshore-potential-v0.3');
+assert.equal(cfg.calibration.modelVersion,'faro-spot-response-v0.4');
 assert.equal(cfg.weights,undefined,'Old arbitrary weighted score must be removed');
 assert.ok(cfg.heuristics.energyWeight>0&&cfg.heuristics.energyWeight<1);
 assert.equal(laBoca.status,'experimental');
 assert.ok(laBoca.score>0&&laBoca.score<=10,
  'The guide-derived energy index must remain within the display range');
-assert.equal(laBoca.indexVersion,'faro-offshore-potential-v0.3');
+assert.equal(laBoca.indexVersion,'faro-spot-response-v0.4');
 assert.equal(laBoca.physicsProxy.partitions.length,1);
 assert.equal(laBoca.physicsProxy.offshoreNotBreakingWave,true);
 assert.equal(laBoca.scoreCap,null);
@@ -70,6 +70,36 @@ const perfect=score(cfg,'CL-VS:la-boca-concon',
  {windFromDeg:140,windKmh:0,gustKmh:1,swellFromDeg:305,swellPeriodS:16,swellHeightM:3});
 assert.ok(perfect.score>9.5&&perfect.score<=10,
  'Highly energetic, gently winded seas should exceed 7.9 without fabricated clipping');
+// A serious v0.3 defect: huge swell well outside a break's guide angles
+// could still earn ~9/10 through saturated residual offshore energy.
+const fullyAligned=score(cfg,'CL-VS:la-boca-concon',{
+ windFromDeg:145,windKmh:0,gustKmh:0,
+ swellFromDeg:290,swellPeriodS:20,swellHeightM:6
+});
+const stronglyOffAxis=score(cfg,'CL-VS:la-boca-concon',{
+ windFromDeg:145,windKmh:0,gustKmh:0,
+ swellFromDeg:100,swellPeriodS:20,swellHeightM:6
+});
+assert.ok(fullyAligned.score>8,'On-guide energetic swell can score above 7.9');
+assert.ok(stronglyOffAxis.score<4,
+ 'Massive off-guide swell must NOT saturate the offshore score to excellent');
+assert.ok(fullyAligned.physicsProxy.directionalGuideSupport>.95);
+assert.ok(stronglyOffAxis.physicsProxy.directionalGuideSupport<.05);
+assert.equal(stronglyOffAxis.physicsProxy.observationsCount,0);
+assert.equal(stronglyOffAxis.guideFitEvidence,'guide-only-unvalidated');
+assert.equal(stronglyOffAxis.physicsProxy.directionScenario.bearingShiftDeg,15);
+assert.equal(stronglyOffAxis.physicsProxy.directionScenario.isConfidenceInterval,false);
+assert.ok(stronglyOffAxis.physicsProxy.directionScenario.scoreMin<=stronglyOffAxis.score);
+assert.ok(stronglyOffAxis.physicsProxy.directionScenario.scoreMax>=stronglyOffAxis.score);
+const nearGuideEdge=score(cfg,'CL-VS:ritoque',{
+ windFromDeg:10,windKmh:7,gustKmh:9,
+ swellFromDeg:255,swellPeriodS:13,swellHeightM:1.5
+});
+assert.ok(nearGuideEdge.physicsProxy.directionScenario.scoreMax>
+ nearGuideEdge.physicsProxy.directionScenario.scoreMin,
+ 'A ±15° shift near a guide boundary must reveal model sensitivity');
+assert.equal(nearGuideEdge.physicsProxy.directionScenario.isConfidenceInterval,false);
+
 assert.equal(perfect.confidence,'low','A 10 is not field-validated surf quality');
 assert.equal(perfect.safetyAssessed,false);
 const nearFlat=score(cfg,'CL-VS:la-boca-concon',{...example,swellHeightM:0.15},{locale:'es'});
