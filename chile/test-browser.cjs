@@ -234,6 +234,35 @@ function fixture(){
      'Map must include published coastal reference '+id);
    }
    if(width===390){
+    // The system select is preserved for model state, but only FARO's own
+    // keyboard/mobile-friendly listbox may be visible to the surfer.
+    assert.equal(await page.locator('#chileSpotSelect').getAttribute('tabindex'),'-1');
+    await page.locator('#chileSpotButton').click();
+    assert.equal(await page.locator('#chileSpotButton').getAttribute('aria-expanded'),'true');
+    assert.equal(await page.locator('#chileSpotOptions').isVisible(),true);
+    assert.equal(await page.locator('#chileSpotOptions [role="option"]').count(),5);
+    const menu=await page.locator('#chileSpotOptions').evaluate(e=>({
+     bg:getComputedStyle(e).backgroundColor,
+     theme:document.documentElement.dataset.theme,
+     panel:e.getBoundingClientRect().width,
+     field:e.closest('.faro-spot-choice').getBoundingClientRect().width
+    }));
+    if(menu.theme==='dark')assert.notEqual(menu.bg,'rgb(255, 255, 255)',
+     'Dark mode cannot open the browser-white native popup');
+    assert.ok(menu.panel<=menu.field+2,'Menu remains within selected-spot column');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#chileSpotOptions').isVisible(),false);
+    await page.locator('#chileSpotButton').focus();
+    await page.keyboard.press('ArrowDown');
+    assert.equal(await page.locator('#chileSpotOptions').isVisible(),true,
+     'ArrowDown opens themed listbox with selected spot focused');
+    await page.locator('#chileSpotOptions [role="option"]').nth(1).focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await page.locator('#chileSpotSelect').inputValue(),'CL-VS:renaca',
+     'Keyboard selection synchronises the original model selector');
+    assert.equal(await page.locator('#chileSpotButton').getAttribute('aria-expanded'),'false');
+    await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
+    await page.waitForFunction(()=>document.querySelector('#chileSpotButton .faro-spot-choice-text')?.textContent?.includes('La Boca'));
     await page.locator('#chileSpotSelect').selectOption('CL-VS:ventanas');
     await page.waitForFunction(()=>document.getElementById('ventanasAccessNotice')?.hidden===false,{timeout:12000});
     const mobile=await page.locator('#ventanasAccessNotice summary').evaluate(e=>{
@@ -285,25 +314,27 @@ function fixture(){
     assert.match(await page.locator('#ventanasAccessNotice').textContent(),/restricci[oó]n|restriction/i);
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),false,
      'Restriction must remain compact by default, unlike the old full-screen warning');
-    assert.equal(await page.locator('#ventanasAccessNotice .faro-access-brand img').count(),1,
-     'Chile must reuse the FARO brand mark inside the Zeeland-style warning');
+    assert.equal(await page.locator('#ventanasAccessNotice .faro-access-brand img').count(),0,
+     'FARO mark must be a background watermark, not a foreground sticker');
     assert.match(await page.locator('#faroAccessKicker').textContent(),/FARO/);
     assert.match(await page.locator('#faroAccessSeverity').textContent(),/REPORTED|REPORTADA/i);
     assert.match(await page.locator('#faroAccessSubline').textContent(),/27/);
     const editorial=await page.locator('#ventanasAccessNotice').evaluate(n=>{
-     const summary=n.querySelector('summary'),logo=n.querySelector('.faro-access-brand');
-     const get=e=>getComputedStyle(e);
+     const summary=n.querySelector('summary');
+     const get=e=>getComputedStyle(e),watermark=getComputedStyle(n,'::before');
      return {summaryLayout:get(summary).display,
       width:summary.getBoundingClientRect().width,
       height:summary.getBoundingClientRect().height,
-      logoBackground:get(logo).backgroundColor,
-      logoBorder:get(logo).borderLeftWidth,
+      watermarkImage:watermark.backgroundImage,watermarkOpacity:Number(watermark.opacity),
       datedEvidence:n.querySelector('#faroAccessEvidence')?.textContent||'',
       summarySourceDisplay:get(n.querySelector('#faroAccessSubline')).display};
     });
     assert.equal(editorial.summaryLayout,'flex','Use compact Zeeland rail, not the earlier three-row alert card');
     assert.ok(editorial.height<=76,'Compact FARO warning is not a tall block: '+JSON.stringify(editorial));
-    assert.equal(editorial.logoBorder,'0px','FARO O may not be wrapped in a new square border');
+    assert.match(editorial.watermarkImage,/faro-o-favicon\.svg/,
+     'FARO O must appear as a background watermark in the alert');
+    assert.ok(editorial.watermarkOpacity>0&&editorial.watermarkOpacity<=0.08,
+     'Watermark should be an atmospheric texture, not a foreground logo');
     assert.equal(editorial.summarySourceDisplay,'none',
      'Dated source is progressive evidence rather than a third row in the compact summary');
     assert.match(editorial.datedEvidence,/27/);

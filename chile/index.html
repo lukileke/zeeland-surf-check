@@ -31,7 +31,7 @@
 <!-- Single Chile-specific layout contract, loaded after all visual layers. -->
 <link rel="stylesheet" href="chile-visual-contract.css?v=8">
 <!-- FARO coastal art direction: finish, not a new competing design system -->
-<link rel="stylesheet" href="faro-coastal-editorial-v3.css?v=1">
+<link rel="stylesheet" href="faro-coastal-editorial-v3.css?v=2">
 </head>
 <body>
 <main>
@@ -90,12 +90,16 @@
   </div>
   <div class="picker-grid">
    <label class="chile-spot-picker"><small data-es="REGIÓN" data-en="REGION">REGIÓN</small><strong>Valparaíso · Chile</strong><span class="chile-field-hint" data-es="Primera región disponible" data-en="First supported region">Primera región disponible</span></label>
-   <label class="chile-spot-picker"><small data-es="PLAYA / SPOT" data-en="BEACH / SPOT">PLAYA / SPOT</small><select id="chileSpotSelect" aria-label="Playa o spot"></select></label>
+   <div class="chile-spot-picker faro-spot-choice"><small data-es="PLAYA / SPOT" data-en="BEACH / SPOT">PLAYA / SPOT</small>
+    <select id="chileSpotSelect" class="faro-spot-native" aria-hidden="true" tabindex="-1" aria-label="Playa o spot"></select>
+    <button type="button" id="chileSpotButton" class="faro-spot-choice-trigger" aria-label="Seleccionar playa" aria-haspopup="listbox" aria-controls="chileSpotOptions" aria-expanded="false"><span class="faro-spot-choice-text">—</span><span class="faro-spot-choice-chevron" aria-hidden="true"></span></button>
+    <div id="chileSpotOptions" class="faro-spot-choice-options" role="listbox" aria-label="Playa o spot" hidden></div>
+   </div>
   </div>
   <!-- Zeeland FARO safety-centre hierarchy, with the FARO mark. -->
   <details id="ventanasAccessNotice" class="faro-access-notice faro-safety-center caution" hidden>
    <summary class="faro-safety-summary faro-access-summary">
-    <span class="faro-access-brand" aria-hidden="true"><img src="../assets/faro-o-favicon.svg" width="27" height="27" alt=""></span>
+    <!-- FARO O is a subtle watermark in the notice surface, not a foreground sticker. -->
     <span class="faro-safety-top faro-access-top">
      <strong class="faro-safety-kicker" id="faroAccessKicker">FARO · AVISOS</strong>
      <span class="faro-safety-severity" id="faroAccessSeverity">RESTRICCIÓN REPORTADA</span>
@@ -358,6 +362,7 @@
 <script src="faro-coastal-lens.js?v=1"></script>
 <script src="faro-notices.js?v=1"></script>
 <script src="coast-map.js?v=20"></script>
-<script src="chile-forecast.js?v=32"></script>
+<script src="faro-spot-chooser.js?v=1"></script>
+<script src="chile-forecast.js?v=33"></script>
 </body>
 </html>

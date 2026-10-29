@@ -3,7 +3,7 @@
 "use strict";
 const $=id=>document.getElementById(id),Live=window.FaroChileLive;
 const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,cameras:null,videoLab:null,coastMap:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,cache:new Map(),serial:0,page:0};
-let coastSwitchCleanup=null;
+let coastSwitchCleanup=null,spotChooser=null;
 const tr=(es,en)=>state.lang==="es"?es:en,ok=x=>typeof x==="number"&&Number.isFinite(x),num=(x,d=1)=>ok(x)?x.toFixed(d):"—";
 const el=(tag,value,cls)=>{const x=document.createElement(tag);if(value!==undefined&&value!==null)x.textContent=String(value);if(cls)x.className=cls;return x};
 const txt=(id,value)=>{$(id).textContent=value},clear=id=>$(id).replaceChildren(),add=(x,...nodes)=>{x.append(...nodes);return x};
@@ -129,6 +129,7 @@ function setLanguage(){
    if(direct.length)direct[0].textContent=copy;
   }
  setTheme(false);
+ spotChooser?.sync();
 }
 function setTheme(toggle){
  if(toggle)state.theme=state.theme==="dark"?"light":"dark";
@@ -788,6 +789,7 @@ function picker(){
  const list=$("chileSpotSelect");list.replaceChildren();
  for(const s of state.config.pilots){const item=el("option",s.name);item.value=s.id;list.append(item)}
  list.value=spot().id;
+ spotChooser?.refresh();
 }
 async function rankings(){
  const host=$("highlights"),more=$("additionalWeekPicks"),moreHost=$("additionalWeekList");
@@ -1033,6 +1035,10 @@ async function initialize(){
   for(const s of state.config.pilots)if(!state.profiles.profiles?.[s.id]||!state.registry.spots.find(r=>r.id===s.id))throw Error("Unattributed pilot "+s.id);
   const requested=new URLSearchParams(location.search).get("spot");
   state.selected=Math.max(0,state.config.pilots.findIndex(s=>s.id===requested));
+  spotChooser=window.FaroChileSpotChooser?.mount({
+   select:$("chileSpotSelect"),button:$("chileSpotButton"),panel:$("chileSpotOptions"),
+   getLang:()=>state.lang
+  })||null;
   picker();
   if(window.FaroChileVideoLab)state.videoLab=window.FaroChileVideoLab.init({
    container:$("faroVideoLab"),spotId:()=>spot()?.id,
