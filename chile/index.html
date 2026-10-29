@@ -29,7 +29,7 @@
 <link rel="stylesheet" href="../assets/faro-visual-system-v2.css?v=5">
 <link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=14">
 <!-- Single Chile-specific layout contract, loaded after all visual layers. -->
-<link rel="stylesheet" href="chile-visual-contract.css?v=6">
+<link rel="stylesheet" href="chile-visual-contract.css?v=7">
 </head>
 <body>
 <main>
@@ -90,12 +90,17 @@
    <label class="chile-spot-picker"><small data-es="REGIÓN" data-en="REGION">REGIÓN</small><strong>Valparaíso · Chile</strong><span class="chile-field-hint" data-es="Primera región disponible" data-en="First supported region">Primera región disponible</span></label>
    <label class="chile-spot-picker"><small data-es="PLAYA / SPOT" data-en="BEACH / SPOT">PLAYA / SPOT</small><select id="chileSpotSelect" aria-label="Playa o spot"></select></label>
   </div>
-  <aside id="ventanasAccessNotice" class="faro-access-notice" role="status" aria-live="polite" hidden>
-   <strong data-es="VENTANAS · RESTRICCIÓN REPORTADA" data-en="VENTANAS · REPORTED RESTRICTION">VENTANAS · RESTRICCIÓN REPORTADA</strong>
-   <p id="ventanasNoticeText">—</p>
+  <details id="ventanasAccessNotice" class="faro-access-notice" aria-label="Aviso de acceso a la playa" hidden>
+   <summary class="faro-access-summary">
+    <span class="faro-access-symbol" aria-hidden="true">!</span>
+    <span class="faro-access-brief"><strong data-es="Ventanas · restricción reportada" data-en="Ventanas · reported restriction">Ventanas · restricción reportada</strong><small data-es="Último reporte 27 oct. 2026 · vigencia no verificada" data-en="Last reported 27 Oct 2026 · current status unverified">Último reporte 27 oct. 2026 · vigencia no verificada</small></span>
+    <span class="faro-access-chevron" aria-hidden="true">⌄</span>
+   </summary>
+   <div class="faro-access-body"><p id="ventanasNoticeText">—</p>
    <a href="https://marejadas.uv.cl/CL15QTN03" target="_blank" rel="noopener noreferrer" data-es="Modelo costero UV · Puerto Ventanas (20 m)" data-en="UV nearshore model · Puerto Ventanas (20 m)">Modelo costero UV · Puerto Ventanas (20 m)</a>
    <small data-es="El número FARO es potencial modelado, no permiso ni recomendación para surfear. Confirma restricciones con la autoridad marítima y sanitaria." data-en="FARO's number is modelled potential, not permission or advice to surf. Confirm restrictions with maritime and health authorities.">El número FARO es potencial modelado, no permiso ni recomendación para surfear. Confirma restricciones con la autoridad marítima y sanitaria.</small>
-  </aside>
+   </div>
+  </details>
   <!-- Single-step exploration: choose a forecast window, inspect coastal context,
        then open local beach knowledge or external cameras. -->
   <nav class="faro-journey-nav" aria-label="Ir a las secciones del pronóstico">
@@ -172,25 +177,29 @@
       <button id="faroHourlyGoLens" type="button" data-es="Ver brújula y mapa" data-en="See compass and map">Ver brújula y mapa</button>
      </div>
    </section>
-   <section class="faro-ocean-tools" aria-labelledby="oceanToolsHeading">
-    <div class="faro-ocean-tools-copy">
-     <small data-es="EXPLORA LAS CONDICIONES" data-en="EXPLORE THE CONDITIONS">EXPLORA LAS CONDICIONES</small>
-     <h3 id="oceanToolsHeading" data-es="Mapa y brújula" data-en="Map & swell compass">Mapa y brújula</h3>
-     <p data-es="Comprueba dónde está el spot, de dónde viene el swell y cómo llega el viento." data-en="See the break, the incoming swell bearings and the wind direction.">Comprueba dónde está el spot, de dónde viene el swell y cómo llega el viento.</p>
+   <section class="faro-ocean-explorer" aria-labelledby="oceanToolsHeading">
+    <div class="faro-ocean-explorer-header">
+     <div class="faro-ocean-tools-copy">
+      <small data-es="LEE LAS CONDICIONES" data-en="READ THE CONDITIONS">LEE LAS CONDICIONES</small>
+      <h3 id="oceanToolsHeading" data-es="Mapa y brújula" data-en="Map & swell compass">Mapa y brújula</h3>
+      <p data-es="Explora el oleaje y el viento, sin confundir la altura oceánica con la ola rompiente." data-en="Read the swell and wind without confusing offshore height with breaking waves.">Explora el oleaje y el viento, sin confundir la altura oceánica con la ola rompiente.</p>
+     </div>
+     <div class="faro-ocean-tool-actions" role="group" aria-label="Lectura del mar">
+      <button type="button" id="openOceanMap" aria-controls="coastMapExpand" aria-pressed="true" data-es="Mapa" data-en="Map">Mapa</button>
+      <button type="button" id="openOceanCompass" aria-controls="waveInsightExpand" aria-pressed="false" data-es="Brújula" data-en="Compass">Brújula</button>
+     </div>
     </div>
-    <div class="faro-ocean-tool-actions">
-     <button type="button" id="openOceanMap" data-es="Explorar mapa" data-en="Explore map">Explorar mapa</button>
-     <button type="button" id="openOceanCompass" data-es="Ver brújula" data-en="View compass">Ver brújula</button>
+    <div class="faro-ocean-explorer-content">
+     <details id="coastMapExpand" class="forecast-expand faro-map-disclosure" open>
+      <summary data-es="Mapa costero" data-en="Coastal map">Mapa costero</summary>
+      <div id="chileCoastMap" class="chile-coast-map"></div>
+     </details>
+     <details id="waveInsightExpand" class="forecast-expand">
+      <summary data-es="Brújula de swell" data-en="Swell compass">Brújula de swell</summary>
+      <div id="waveinsight" class="insight-panel"><p class="muted">—</p></div>
+     </details>
     </div>
    </section>
-   <details id="coastMapExpand" class="forecast-expand faro-map-disclosure">
-    <summary><span data-faro-icon="map"></span><span class="forecast-accordion-title" data-es=" COASTAL LENS · lectura del mar" data-en=" COASTAL LENS · read the sea"> COASTAL LENS · lectura del mar</span><span class="forecast-accordion-meta" data-es="4 pronósticos · Ventanas como referencia" data-en="4 forecasts · Ventanas as reference">Cuatro spots · swell por componentes y viento</span></summary>
-    <div id="chileCoastMap" class="chile-coast-map"></div>
-   </details>
-   <details id="waveInsightExpand" class="forecast-expand">
-    <summary><span data-faro-icon="compass"></span><span class="forecast-accordion-title" data-es=" Swell Compass" data-en=" Swell Compass"> Swell Compass</span><span class="forecast-accordion-meta" data-es="Direcciones y componentes" data-en="Directions & components">Direcciones y componentes</span></summary>
-    <div id="waveinsight" class="insight-panel"><p class="muted">—</p></div>
-   </details>
    <section class="forecast-section session-section" aria-label="Sesión seleccionada">
     <details id="sessionDetailExpand" class="chile-session-disclosure">
      <summary class="chile-session-toggle">
@@ -331,7 +340,7 @@
 <script src="faro-spot-intelligence.js?v=2"></script>
 <script src="video-observation-lab.js?v=1"></script>
 <script src="faro-coastal-lens.js?v=1"></script>
-<script src="coast-map.js?v=18"></script>
-<script src="chile-forecast.js?v=29"></script>
+<script src="coast-map.js?v=19"></script>
+<script src="chile-forecast.js?v=30"></script>
 </body>
 </html>
