@@ -313,6 +313,36 @@
       "url": "https://www.directemar.cl/directemar/site/tax/port/fid_adjunto/taxport_34_112_219_2.html",
       "type": "official-maritime-restrictions-index",
       "reviewed": "2026-10-29"
+    },
+    "uv-quintero-bay-forecast": {
+      "name": "Universidad de Valparaíso · Bahía de Quintero (Puerto Ventanas, pronóstico de oleaje a 20 m)",
+      "url": "https://marejadas.uv.cl/pronosticos/cl15qt",
+      "type": "university-nearshore-wave-forecast",
+      "reviewed": "2026-10-29",
+      "scope": "20-m depth model near Puerto Ventanas; NOT a validated surf break forecast and not yet incorporated into FARO live scoring",
+      "observationsImported": 0
+    },
+    "wannasurf-ventanas": {
+      "name": "WannaSurf · Ventana / Pilotes (likely same community guide text as SurfSpots.co)",
+      "url": "https://www.wannasurf.com/spot/South_America/Chile/Central_Santiago/ventana/",
+      "type": "mirrored-community-surf-guide",
+      "reviewed": "2026-10-29",
+      "independentConfirmation": false,
+      "scope": "North swell; north and south winds; falling tide; multiple sections. Do not count as a second independent validation."
+    },
+    "uplav-hub-quintero-metals": {
+      "name": "Universidad de Playa Ancha · investigación de sedimentos y biota marina, bahía de Quintero",
+      "url": "https://hubambientalupla.cl/estudio-detecta-alta-presencia-de-metales-pesados-en-bahia-de-quintero-puchuncavi/",
+      "type": "research-environmental-context",
+      "reviewed": "2026-10-29",
+      "scope": "Regional environmental hazard context, not a Ventanas beach-water bathing safety assessment."
+    },
+    "ventanas-restriction-still-20261027": {
+      "name": "Puranoticia · 27 oct 2026: restricción en Playa Ventanas se mantiene",
+      "url": "https://puranoticia.pnt.cl/region-valparaiso/seremi-de-salud-levanta-prohibicion-de-bano-en-playa-de-algarrobo-no-han",
+      "type": "dated-access-restriction-report",
+      "reviewed": "2026-10-29",
+      "scope": "Reports restriction lifted at El Yachting but remains in Ventanas on 27 October; later official resolution not yet verified."
     }
   }
 }
