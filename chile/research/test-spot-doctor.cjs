@@ -1,0 +1,32 @@
+'use strict';
+const assert=require('node:assert/strict'),path=require('node:path'),fs=require('node:fs');
+const {validate,draft}=require('./spot-doctor.cjs');
+const root=path.resolve(__dirname,'..');
+const get=p=>JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
+const inputs={live:get('valparaiso-live.config.json'),
+ score:get('valparaiso-score.config.json'),
+ catalog:get('regions/CL-VS.json'),sources:get('sources.json')};
+const verdict=validate(inputs);
+assert.equal(verdict.status,'guide-model-consistent-not-field-validated');
+assert.equal(verdict.pilots,5);
+assert.equal(verdict.registrySpots,22);
+assert.equal(verdict.errors.length,0);
+assert.equal(verdict.report.some(x=>x.id==='CL-VS:ventanas'&&!x.publicRecommendationAllowed),true);
+assert.equal(verdict.report.every(x=>x.blockersToCalibratedClaim.includes('no_verified_surf_observations')),true);
+const untrusted=draft('CL-VS:playa-de-prueba','Playa de prueba');
+assert.equal(untrusted.forecastEnabled,false);
+assert.equal(untrusted.scoreEnabled,false);
+assert.equal(untrusted.latitude,null);
+assert.equal(untrusted.waveFromDeg,null);
+assert.equal(untrusted.observationCount,0);
+assert.throws(()=>draft('foo','Playa'),/CL-/);
+const withoutSource=structuredClone(inputs);
+withoutSource.sources.sources['surf-la-boca'].url='';
+assert.ok(validate(withoutSource).errors.some(x=>x.includes('missing_catalog_source')));
+const duplicated=structuredClone(inputs);
+duplicated.catalog.spots.push(duplicated.catalog.spots[0]);
+assert.equal(validate(duplicated).status,'invalid');
+const invalidGuide=structuredClone(inputs);
+invalidGuide.score.profiles['CL-VS:ventanas'].waveFromDeg=[[361,2]];
+assert.equal(validate(invalidGuide).status,'invalid');
+console.log('FARO expansion doctor: source attribution, five-spot profiles and research-only draft validated.');
