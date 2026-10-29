@@ -246,6 +246,17 @@
     windSeaModifier:+science.seaModifier.toFixed(3),
     partitionConsistency:science.power.consistency===null?null:+science.power.consistency.toFixed(3),
     partitions:science.power.breakdown,
+    // Linear deep-water approximations based on a *bulk model mean* period:
+    // useful diagnostic only, not a spectral calculation or surf break slope.
+    approximateDeepwaterWavelengthM:+(9.80665*input.swellPeriodS**2/(2*Math.PI)).toFixed(1),
+    approximateDeepwaterSteepness:+(input.swellHeightM/
+     (9.80665*input.swellPeriodS**2/(2*Math.PI))).toFixed(4),
+    secondaryCrossingAngleDeg:input.secondarySwell?
+     +delta(input.swellFromDeg,input.secondarySwell.fromDeg).toFixed(0):null,
+    coastBankState:'not_observed',
+    ripCurrentPrediction:null,
+    nearshoreShoalingCalculated:false,
+    empiricalBreakingHeight:null,
     offshoreNotBreakingWave:true,
     optionalPartitionsMissing:!input.secondarySwell&&!input.tertiarySwell,
     tideNotEvaluated:true
