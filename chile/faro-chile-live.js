@@ -127,7 +127,11 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const precipMissing=vals(met,"precipitation").every(v=>!finite(v));
  const weatherCode=max(vals(met,"weather_code"));
  const validTimesUtc=slotHours.map(t=>weatherHours.get(t)?.validAtUtc).filter(Boolean);
- const fields={windFromDeg:windDirection,windKmh:wind,gustKmh:gust,swellFromDeg:swellDirection,swellPeriodS:swellPeriod,swellHeightM:swellHeight};
+ const fields={windFromDeg:windDirection,windKmh:wind,gustKmh:gust,
+  swellFromDeg:swellDirection,swellPeriodS:swellPeriod,swellHeightM:swellHeight,
+  // Distinct optional partitions: never add offshore total Hs to its components.
+  secondarySwell:partition(secondarySwell),tertiarySwell:partition(tertiarySwell),
+  windSeaHeightM:windSeaHeight};
  const score=root.FaroChileScoreLab?.evaluate(profileConfig,spot.id,complete?fields:{},{locale})||{score:null,status:"unavailable",tags:[]};
  const modelComplete=complete&&[height,totalDirection,totalPeriod,wind].every(finite);
  return {

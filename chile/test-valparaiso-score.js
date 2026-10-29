@@ -54,15 +54,20 @@ for(const [id,profile] of Object.entries(cfg.profiles)){
  for(const ref of Object.values(profile.origins))assert.ok(refs[ref],'Unknown guide '+ref);
 }
 assert.equal(Object.keys(cfg.profiles).length,6);
-const total=Object.values(cfg.weights).reduce((sum,x)=>sum+x,0);
-assert.ok(Math.abs(total-1)<1e-10,'Scoring weights should sum to 1');
+assert.equal(cfg.calibration.modelVersion,'faro-offshore-potential-v0.3');
+assert.equal(cfg.weights,undefined,'Old arbitrary weighted score must be removed');
+assert.ok(cfg.heuristics.energyWeight>0&&cfg.heuristics.energyWeight<1);
 assert.equal(laBoca.status,'experimental');
-assert.ok(laBoca.score>7.9&&laBoca.score<=10,
- 'The previous hard-coded 7.9 ceiling must no longer flatten a good modelled window');
+assert.ok(laBoca.score>0&&laBoca.score<=10,
+ 'The guide-derived energy index must remain within the display range');
+assert.equal(laBoca.indexVersion,'faro-offshore-potential-v0.3');
+assert.equal(laBoca.physicsProxy.partitions.length,1);
+assert.equal(laBoca.physicsProxy.offshoreNotBreakingWave,true);
 assert.equal(laBoca.scoreCap,null);
 const perfect=score(cfg,'CL-VS:la-boca-concon',
- {windFromDeg:140,windKmh:3,gustKmh:4,swellFromDeg:305,swellPeriodS:13,swellHeightM:1.5});
-assert.equal(perfect.score,10,'Full theoretical 0–10 range should be reachable');
+ {windFromDeg:140,windKmh:0,gustKmh:1,swellFromDeg:305,swellPeriodS:16,swellHeightM:3});
+assert.ok(perfect.score>9.5&&perfect.score<=10,
+ 'Highly energetic, gently winded seas should exceed 7.9 without fabricated clipping');
 assert.equal(perfect.confidence,'low','A 10 is not field-validated surf quality');
 assert.equal(perfect.safetyAssessed,false);
 const nearFlat=score(cfg,'CL-VS:la-boca-concon',{...example,swellHeightM:0.15},{locale:'es'});
@@ -84,6 +89,38 @@ assert.equal(dangerous.safetyAssessed,false);
 assert.ok(dangerous.caution.includes('roca'));
 assert.equal(score(cfg,'CL-VS:ritoque',{...example,windFromDeg:359}).components.windDirection.value,1,
  'Wrapped N direction should work');
+// Physics/sensitivity checks, NOT pseudo-observational calibration.
+const base={windFromDeg:145,windKmh:5,gustKmh:7,
+ swellFromDeg:260,swellPeriodS:10,swellHeightM:1.3};
+const evalAt=overrides=>score(cfg,'CL-VS:la-boca-concon',{...base,...overrides});
+const low=evalAt({swellHeightM:.6}),mid=evalAt({swellHeightM:1.3}),
+ high=evalAt({swellHeightM:2.3});
+assert.ok(low.score<mid.score&&mid.score<high.score,
+ 'More energy from the same direction/period must increase the index without abrupt clipping');
+assert.ok(evalAt({swellPeriodS:7}).score<evalAt({swellPeriodS:13}).score,
+ 'Longer mean period increases offshore Hs²T potential at fixed Hs');
+const calmWrong=evalAt({windKmh:2,gustKmh:3,windFromDeg:280});
+const calmRight=evalAt({windKmh:2,gustKmh:3,windFromDeg:140});
+assert.equal(calmWrong.score,calmRight.score,
+ 'Under calm wind, compass bearing must not produce a false onshore penalty');
+const windyWrong=evalAt({windKmh:28,gustKmh:33,windFromDeg:280});
+const windyRight=evalAt({windKmh:28,gustKmh:33,windFromDeg:140});
+assert.ok(windyRight.score>windyWrong.score,
+ 'A strong adverse wind bearing reduces the spot-dependent potential');
+const opposite=evalAt({secondarySwell:{heightM:.7,periodS:12,fromDeg:80}});
+const aligned=evalAt({secondarySwell:{heightM:.7,periodS:12,fromDeg:250}});
+assert.equal(opposite.physicsProxy.partitions.length,2);
+assert.ok(aligned.physicsProxy.admittedEnergyHs2T>opposite.physicsProxy.admittedEnergyHs2T,
+ 'Secondary swell energy is independently exposed by its own guide bearing');
+assert.ok(aligned.score>mid.score,'Favourable secondary swell adds energy');
+assert.ok(evalAt({secondarySwell:{heightM:null,periodS:12,fromDeg:250}}).score===mid.score,
+ 'Incomplete optional secondary swell must not be imputed');
+assert.ok(evalAt({windSeaHeightM:2}).score<mid.score,
+ 'Independent local windsea can modestly lower relative orderliness');
+assert.equal(evalAt({swellHeightM:0}).score,0,
+ 'A flat swell has no surf potential even in perfect wind');
+assert.ok(score(cfg,'CL-VS:ventanas',base).score===null,
+ 'Restricted Ventanas continues unscored in the new physical index');
 const english=score(cfg,'CL-VS:la-boca-concon',example,{locale:'en'});
 assert.ok(english.read.includes('Wind'));
 console.log('FARO Valparaíso Lab: full unvalidated 0–10 index; Ventanas guide-only restrictions; 6 research profiles / 22 spots; research lab inactive.');
