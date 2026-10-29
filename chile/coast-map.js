@@ -277,6 +277,13 @@ function create(opts){
    const g=shape("g",{"data-spot":sp.id,role:"button",tabindex:0,"aria-label":sp.name,style:"cursor:pointer"});
    shape("circle",{cx:pos.x,cy:pos.y,r:active?11:8,stroke:active?"#fff":"#bad8dd",
     "stroke-width":active?4:2,fill:active?"#106382":"#1c3644"},null,g);
+   if(sp.accessNotice?.status==="restriction_reported_not_live_verified"){
+    shape("circle",{cx:pos.x+10,cy:pos.y-10,r:7,fill:"#b97742",
+     stroke:"#f9faf9","stroke-width":2},null,g);
+    shape("text",{x:pos.x+10,y:pos.y-7,"font-size":10,"font-weight":900,
+     "text-anchor":"middle",fill:"#fff"},"!",g);
+    g.setAttribute("aria-label",sp.name+" · "+(es?"restricción reportada":"reported restriction"));
+   }
    shape("text",{x:pos.x>475?pos.x-15:pos.x+15,y:pos.y+4,fill:"#173c4a","font-family":"sans-serif",
     "text-anchor":pos.x>475?"end":"start",
     "font-size":active?17:14,"font-weight":active?900:750,
@@ -582,6 +589,14 @@ function create(opts){
   dot.setAttribute("aria-hidden","true");base.append(dot);
   const name=document.createElement("span");name.className="faro-map-pin-name";
   name.textContent=spot.shortName||spot.name;base.append(name);
+  if(spot.accessNotice?.status==="restriction_reported_not_live_verified"){
+   const alert=document.createElement("span");alert.className="faro-map-access-badge";
+   alert.setAttribute("aria-hidden","true");alert.textContent="!";
+   alert.title=es?"Restricción recreativa reportada · verificar vigencia":
+    "Reported recreational-use restriction · verify status";
+   base.append(alert);
+   base.dataset.accessAlert="reported";
+  }
   if(mapView==="region"){
    const tracks=document.createElement("span");tracks.className="faro-region-fit-tracks";
    tracks.setAttribute("aria-hidden","true");
@@ -601,8 +616,11 @@ function create(opts){
     " ("+label(swellFit)+" guide); "+
     (es?"viento: ":"wind: ")+signalCopy(windSignal,latest?.lang)+
     " ("+label(windFit)+" guide)";
-   base.setAttribute("aria-label",(spot.shortName||spot.name)+". "+desc);
-   base.title=desc;
+   const access=base.dataset.accessAlert==="reported"?
+    (es?" Restricción de acceso reportada, sin levantamiento verificado.":
+     " Reported access restriction; lifting not verified."):"";
+   base.setAttribute("aria-label",(spot.shortName||spot.name)+". "+desc+access);
+   base.title=desc+access;
   }
   return L.divIcon({className:"faro-leaflet-marker",html:base.outerHTML,
    iconSize:[144,38],iconAnchor:[72,19]});

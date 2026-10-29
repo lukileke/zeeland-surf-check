@@ -148,6 +148,9 @@ for(const [name,value] of [["secondary_swell_wave_height",.35],["secondary_swell
  epochMarine.hourly[name]=epochTimes.map(()=>value);
 }
 epochMarine.hourly.sea_level_height_msl=epochTimes.map((_,i)=>.40+i*.01);
+epochMarine.hourly.ocean_current_velocity=epochTimes.map(()=>2.4);
+epochMarine.hourly.ocean_current_direction=epochTimes.map(()=>85);
+
 epochWeather.daily.time=Array.from({length:7},(_,d)=>epochStart+d*86400);
 epochWeather.daily.sunrise=Array.from({length:7},(_,d)=>epochStart+d*86400+7*3600+10*60);
 epochWeather.daily.sunset=Array.from({length:7},(_,d)=>epochStart+d*86400+18*3600+10*60);
@@ -169,6 +172,18 @@ assert.ok(Number.isFinite(utcResult.days[0].slots[0].seaLevelMslM),
 assert.ok(Math.abs(utcResult.days[0].slots[0].seaLevelChangeM-.01)<1e-8);
 assert.equal(utcResult.days[0].slots[0].tideLocalCalibration,false,
  'A coarse modelled sea level must not count as measured spot tide');
+assert.equal(utcResult.days[0].slots[0].oceanCurrentKmh,2.4);
+assert.equal(utcResult.days[0].slots[0].oceanCurrentToDeg,85);
+assert.equal(utcResult.days[0].slots[0].ripCurrentEstimated,false);
+assert.equal(utcResult.days[0].slots[0].modelCoverage.oceanCurrent,'complete');
+const missingCurrent=JSON.parse(JSON.stringify(epochMarine));
+missingCurrent.hourly.ocean_current_velocity[6]=null;
+const currentAbsent=L.extract(config,config.pilots[0],missingCurrent,epochWeather,profile,'es').days[0].slots[0];
+assert.equal(currentAbsent.oceanCurrentKmh,null);
+assert.equal(currentAbsent.modelCoverage.oceanCurrent,'not-available-or-partial');
+assert.equal(currentAbsent.score,utcResult.days[0].slots[0].score,
+ 'A coarse ocean-current model must never silently influence a surf-score/rip-risk model');
+
 const partialOptional=JSON.parse(JSON.stringify(epochMarine));
 partialOptional.hourly.secondary_swell_wave_height[7]=null;
 const incompletePartition=L.extract(config,config.pilots[0],partialOptional,epochWeather,profile,'es').days[0].slots[0];

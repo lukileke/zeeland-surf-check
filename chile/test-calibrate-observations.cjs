@@ -36,6 +36,18 @@ assert.ok(out.spots[spot].evaluation.rideability.mae<
  'Simplified model should learn synthetic dependence; NOT a real-world accuracy claim');
 assert.ok(out.spots[spot].evaluation.closeout.mae<
  out.spots[spot].evaluation.closeout.constantBaselineMae);
+// Frozen experimental FARO score can be compared on held-out reviewed
+// observations, but never used as synthetic labels or as live retraining.
+require('./valparaiso-score-lab.js');
+const cfg=JSON.parse(require('node:fs').readFileSync(require('node:path').join(__dirname,'valparaiso-score.config.json'),'utf8'));
+const withFaro=calibrate(records,reviews,{
+ scoreProfileConfig:cfg,scoreEvaluator:globalThis.FaroChileScoreLab.evaluate
+});
+assert.equal(withFaro.spots[spot].evaluation.existingFaroPotential.evaluated,true);
+assert.ok(Number.isFinite(withFaro.spots[spot].evaluation.existingFaroPotential.mae));
+assert.equal(withFaro.spots[spot].eligibleForLiveDeployment,false);
+assert.equal(withFaro.deployed,false);
+assert.equal(withFaro.spots[spot].evaluation.existingFaroPotential.forecastSkillClaim,false);
 const unaudited=calibrate(records,[]);
 assert.equal(unaudited.reviewedLabels,0);
 assert.equal(unaudited.rejectedReasons.missing_human_review,100);

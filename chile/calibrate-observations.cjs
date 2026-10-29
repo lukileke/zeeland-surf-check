@@ -103,9 +103,11 @@ function calibrate(observations,manifest,options={}){
   const time=epoch(record.observedAtUtc);
   const group=record.spotId+':'+Math.floor(time/(groupDays*86400000));
   if(!bySpot.has(record.spotId))bySpot.set(record.spotId,[]);
-  bySpot.get(record.spotId).push({id:record.observationId,time,group,x,y});
+  bySpot.get(record.spotId).push({id:record.observationId,time,group,x,y,
+   features:record.forecast.features});
  }
- const results={schemaVersion:'0.1.0',researchOnly:true,deployed:false,usesImagePixels:false,
+ const results={schemaVersion:'0.2.0',researchOnly:true,deployed:false,usesImagePixels:false,
+  publicationPolicy:'human-reviewed-observations-only; held-out event-days; NO automatic public score updates',
   reviewedLabels: [...bySpot.values()].reduce((n,a)=>n+a.length,0),
   rejectedReasons:rejected,requiredMinimums:{observations:options.minObservations??60,
    eventGroups:options.minGroups??15},spots:{}};
@@ -125,6 +127,26 @@ function calibrate(observations,manifest,options={}){
     eventGroups:groups.length,trainingPerformed:false};continue;
   }
   const evaluation={},models={};
+  // Optional explicit FARO score baseline: never train on its own outputs as
+  // if they were observed surf quality. This is only a frozen, prespecified
+  // score-to-ordinal mapping for comparing against human-reviewed labels.
+  const cfg=options.scoreProfileConfig;
+  const scoreFn=options.scoreEvaluator;
+  if(cfg&&typeof scoreFn==='function'&&cfg.profiles?.[spotId]){
+   const predicted=[],observed=[];
+   for(const record of test){
+    const forecast=scoreFn(cfg,spotId,record.features,{locale:'en'});
+    if(!finite(forecast.score))continue;
+    predicted.push(clamp(1+.4*forecast.score,1,5));
+    observed.push(record.y.rideability);
+   }
+   evaluation.existingFaroPotential={
+    evaluated:predicted.length===test.length&&test.length>0,
+    samples:predicted.length,ordinalMapping:'predefined_1_plus_0.4_times_score_not_empirical_fit',
+    mae:predicted.length===test.length?mae(observed,predicted):null,
+    forecastSkillClaim:false
+   };
+  }
   for(const target of ['rideability','closeout','frequency']){
    const model=trainRidge(train,target);
    models[target]=model;
@@ -136,7 +158,13 @@ function calibrate(observations,manifest,options={}){
   }
   const pass=evaluation.rideability.improvesOverConstant&&
    evaluation.closeout.improvesOverConstant;
+  const comparison=evaluation.existingFaroPotential;
+  const beatsExisting=(!comparison||!comparison.evaluated)?null:
+   evaluation.rideability.mae<comparison.mae;
   results.spots[spotId]={status:pass?'research_model_beats_constant_baseline':'research_model_fails_baseline',
+   beatsFrozenFaroOrdinalBaseline:beatsExisting,
+   eligibleForLiveDeployment:false,
+   modelUpgradeDecision:'requires_independent_multiseason_validation_and_human_review',
    samples:rows.length,eventGroups:groups.length,train:train.length,
    holdout:test.length,holdoutEventGroups:groups.length-boundary,
    evaluation,models,trainingPerformed:true,
@@ -151,7 +179,11 @@ if(require.main===module){
  const [obs,approvals,out]=process.argv.slice(2);
  if(!obs||!approvals||!out){process.stderr.write('Usage: node chile/calibrate-observations.cjs observations.jsonl human-reviewed-approvals.jsonl private-result.json\n');process.exitCode=2}
  else{
-  const output=calibrate(lines(obs),lines(approvals));
+  const cfg=JSON.parse(fs.readFileSync(path.join(__dirname,'valparaiso-score.config.json'),'utf8'));
+  require('./valparaiso-score-lab.js');
+  const output=calibrate(lines(obs),lines(approvals),{
+   scoreProfileConfig:cfg,scoreEvaluator:globalThis.FaroChileScoreLab.evaluate
+  });
   fs.writeFileSync(out,JSON.stringify(output,null,2)+'\n',{flag:'wx'});
   process.stdout.write(JSON.stringify(Object.fromEntries(Object.entries(output.spots).map(([id,s])=>
    [id,{status:s.status,samples:s.samples,eventGroups:s.eventGroups,evaluation:s.evaluation}])),null,2)+'\n');
