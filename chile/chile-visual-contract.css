@@ -1238,14 +1238,14 @@ html:not([data-theme="light"]) #forecastPage :is(.day-chip,.slots>button,.chile-
  #forecastPage>.faro-access-notice{grid-row:3!important}
  /* Insert the full-width warning between picker and journey without
     relying on auto placement or pushing it into an empty side track. */
- #forecastPage>.faro-journey-nav{grid-row:4!important}
- #forecastPage>#dayStrip{grid-row:5!important}
- #forecastPage>.day-outlook-section{grid-row:6!important}
- #forecastPage #dayview>.hourly-section{grid-row:6!important}
- #forecastPage #dayview>.faro-ocean-tools{grid-row:7!important}
- #forecastPage #dayview>#coastMapExpand{grid-row:8!important}
- #forecastPage #dayview>#waveInsightExpand{grid-row:9!important}
- #forecastPage #dayview>.session-section{grid-row:10!important}
- #forecastPage #dayview>.faro-detail-hub{grid-row:11!important}
- #forecastPage>.chile-method-disclaimer{grid-row:12!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden]))>.faro-journey-nav{grid-row:4!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden]))>#dayStrip{grid-row:5!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden]))>.day-outlook-section{grid-row:6!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden])) #dayview>.hourly-section{grid-row:6!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden])) #dayview>.faro-ocean-tools{grid-row:7!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden])) #dayview>#coastMapExpand{grid-row:8!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden])) #dayview>#waveInsightExpand{grid-row:9!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden])) #dayview>.session-section{grid-row:10!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden])) #dayview>.faro-detail-hub{grid-row:11!important}
+ #forecastPage:has(>.faro-access-notice:not([hidden]))>.chile-method-disclaimer{grid-row:12!important}
 }
