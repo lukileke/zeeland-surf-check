@@ -1,6 +1,7 @@
 /* FARO Chile research scorer / v0.1 — NOT wired into the active website.
  * Interprets guide-sourced local directions and generic model parameters.
- * Experimental score: capped at 7.9 until measured beach validation.
+ * Experimental compatibility index: full 0–10 range, NO arbitrary 7.9 cap.
+ * Full-range values are still NOT empirically validated as surf quality.
  * NEVER a breaking-wave prediction, safety approval or official alert.
  */
 (function(root){
@@ -108,11 +109,11 @@
   // swell height into breaking wave height or incorporate secondary windsea.
   const swellAvailability=clamp(input.swellHeightM/H.presenceModerateM,0,1);
   const unrounded=directionalIndex*swellAvailability;
-  const score=+Math.min(H.provisionalScoreCap,unrounded).toFixed(1);
-  // The experimental cap saturates many different offshore conditions.
-  // Preserve the unrounded arithmetic for auditing, NOT as a calibrated
-  // hidden score, and disclose saturation explicitly in every UI surface.
-  const capActive=unrounded>=H.provisionalScoreCap;
+  // Full-range, guide-derived numerical INDEX. The former 7.9 ceiling
+  // made distinct conditions tie and hid ranking information. A 9.6 here
+  // does not mean 96% quality, accuracy or observed rideable surf.
+  const score=+clamp(unrounded,0,10).toFixed(1);
+  const guideOnly=profile.scoreEnabled===false||profile.accessRestriction?.status==='restriction_reported_not_live_verified';
   const fieldSessions=Number.isInteger(config.calibration?.fieldSessions)?
    config.calibration.fieldSessions:0;
   const band=bands.find(b=>score<b.max);
@@ -134,8 +135,10 @@
   };
   const modelRisk=finite(input.gustKmh)&&input.gustKmh>=75||input.windKmh>=55;
   return {
-   spotId,spot:profile.name,status:'experimental',score,scoreLabel:label,band:band.id,components,
-   capActive,fieldSessions,rawDirectionalIndex:+directionalIndex.toFixed(3),
+   spotId,spot:profile.name,status:guideOnly?'guide-only-restricted':'experimental',
+   score:guideOnly?null:score,
+   scoreLabel:guideOnly?null:label,band:guideOnly?null:band.id,components,
+   fieldSessions,rawDirectionalIndex:+directionalIndex.toFixed(3),
    rawSwellAvailability:+swellAvailability.toFixed(3),
    tags,vibe:{id:vibe,label:t(locale,...vibes[vibe])},
    read:read(components,locale,profile.name),
@@ -146,10 +149,15 @@
     official:false
    },
    swellAvailability:+swellAvailability.toFixed(2),evidence:'published_guide_not_calibrated',tideEvaluated:false,nearshoreWaveHeightEstimated:false,
-   safetyAssessed:false,confidence:'low',scoreCap:H.provisionalScoreCap,
+   safetyAssessed:false,confidence:'low',scoreCap:null,scoreLimitPolicy:'full-range-unvalidated',
+   publicRecommendationAllowed:!guideOnly,
    warning:t(locale,
-    'Índice experimental con corrección por presencia de swell offshore; no estima ola rompiente, marea óptima ni seguridad.',
-    'Experimental index with an offshore swell-presence adjustment, not breaking height, optimal tide or safety.')
+    guideOnly?
+     'Ventanas: sólo hipótesis de guía; sin score ni recomendación mientras la restricción sanitaria no esté verificada como levantada.':
+     'Índice experimental 0–10 sin validar, con corrección de swell offshore; no estima ola rompiente, marea óptima ni seguridad.',
+    guideOnly?
+     'Ventanas: guide hypotheses only; no score or recommendation until the health restriction is verified as lifted.':
+     'Unvalidated full-range 0–10 index with offshore swell adjustment; not breaking-wave height, optimal tide or safety.')
   };
  }
  root.FaroChileScoreLab=Object.freeze({evaluate,directionalFit,distanceToRange,periodFit,strength});
