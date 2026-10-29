@@ -881,6 +881,7 @@ async function initialize(){
   if(window.FaroChileCoastMap)state.coastMap=window.FaroChileCoastMap.create({
    container:$("chileCoastMap"),disclosure:$("coastMapExpand"),
    getCurrent:()=>({spot:spot(),spots:state.config.pilots,
+    referenceSpots:state.config.referenceSpots||[],
     slot:selection(),marineGrid:state.forecast?.model?.marineGrid||null,
   weatherGrid:state.forecast?.model?.weatherGrid||null,
   profiles:state.profiles?.profiles||{},
