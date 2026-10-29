@@ -75,11 +75,14 @@ html:not([data-theme="light"]) #bestPage{
 #forecastPage>.faro-journey-nav button:hover{
  background:var(--faro-editorial-quiet)!important;color:var(--faro-selection)!important
 }
-/* Zeeland safety rail: a 52px-ish editorial sentence, not the big 3-row
-   "logo card" introduced in Chile. The O is a quiet sign, never an icon tile. */
+/* FARO safety rail: restrained Zeeland-style ghost logo behind the notice,
+   never a sticker in front of the content. */
 #forecastPage>.faro-access-notice.faro-safety-center{
  --safety-accent:#ae804b;
- background:color-mix(in srgb,var(--safety-accent) 3%,var(--faro-raised))!important;
+ position:relative!important;isolation:isolate;
+ background:linear-gradient(105deg,
+  color-mix(in srgb,var(--safety-accent) 8%,var(--faro-raised)),
+  color-mix(in srgb,var(--safety-accent) 3%,var(--faro-raised)) 80%)!important;
  border:0!important;
  border-left:3px solid var(--safety-accent)!important;
  border-bottom:1px solid var(--faro-editorial-stroke)!important;
@@ -96,16 +99,17 @@ html:not([data-theme="light"]) #bestPage{
  grid-template-rows:none!important;
  background:transparent!important;
 }
-#forecastPage .faro-access-brand{
- display:flex!important;align-items:center!important;justify-content:center!important;
- width:22px!important;min-width:22px!important;height:27px!important;
- flex:none!important;margin:0 4px 0 0!important;
- border:0!important;border-radius:0!important;
- background:none!important;box-shadow:none!important
+#forecastPage>.faro-access-notice.faro-safety-center::before{
+ content:"";position:absolute;pointer-events:none;z-index:0;
+ right:clamp(25px,6vw,100px);top:50%;
+ width:clamp(108px,12vw,160px);height:clamp(108px,12vw,160px);
+ background:url("../assets/faro-o-favicon.svg") center/contain no-repeat;
+ opacity:.055;filter:grayscale(1);transform:translateY(-50%) rotate(-7deg);
 }
-#forecastPage .faro-access-brand img{
- display:block!important;width:22px!important;height:22px!important;
- max-width:22px!important;object-fit:contain!important
+html[data-theme="light"] #forecastPage>.faro-access-notice.faro-safety-center::before{opacity:.04}
+#forecastPage>.faro-access-notice.faro-safety-center>summary,
+#forecastPage>.faro-access-notice.faro-safety-center>.faro-access-expanded{
+ position:relative!important;z-index:1;
 }
 #forecastPage .faro-access-top{
  display:flex!important;flex:0 0 auto!important;
@@ -297,16 +301,121 @@ html:not([data-theme="light"]) #forecastPage>.faro-access-notice.faro-safety-cen
  #forecastPage>.faro-access-notice .faro-safety-summary.faro-access-summary{
   min-height:52px!important;padding:9px 10px!important;gap:7px!important
  }
- #forecastPage .faro-access-brand{width:19px!important;min-width:19px!important;margin-right:1px!important}
- #forecastPage .faro-access-brand img{width:19px!important;height:19px!important}
  #forecastPage .faro-access-top .faro-safety-severity{font-size:9px!important;padding:3px 5px!important}
  #forecastPage .faro-access-summary .faro-safety-headline{font-size:11px!important}
  #forecastPage .faro-ocean-explorer-header{padding:17px!important}
  #forecastPage #dailyOverview.forecast-overview{border-radius:16px!important}
 }
 @media(max-width:380px){
- #forecastPage .faro-access-brand{display:none!important}
  #forecastPage .faro-access-top .faro-safety-severity{font-size:8.5px!important}
  #forecastPage .faro-access-summary .faro-safety-headline{font-size:11px!important}
  #forecastPage>.faro-journey-nav button{padding:7px 7px!important}
+}
+
+/* Native select remains source of truth; only the visual popup is custom.
+   Dark and light menus use FARO's same neutral/teal palette. */
+#forecastPage>.picker-grid{position:relative!important;overflow:visible!important}
+#forecastPage>.picker-grid:has(.faro-spot-choice.is-open){z-index:80!important}
+#forecastPage .faro-spot-choice{
+ position:relative!important;overflow:visible!important;z-index:1;
+ transition:border-color .18s ease,background-color .18s ease!important;
+}
+#forecastPage .faro-spot-choice.is-open{z-index:90}
+#forecastPage .faro-spot-choice select.faro-spot-native{
+ position:absolute!important;width:1px!important;min-width:1px!important;
+ height:1px!important;min-height:1px!important;margin:0!important;
+ padding:0!important;opacity:0!important;clip-path:inset(50%)!important;
+ pointer-events:none!important;border:0!important;overflow:hidden!important
+}
+#forecastPage .faro-spot-choice-trigger{
+ display:flex!important;align-items:center;justify-content:space-between;
+ gap:12px;width:100%;min-height:43px;min-width:0;
+ margin:0!important;padding:6px 0!important;
+ color:var(--fg)!important;background:transparent!important;
+ border:0!important;border-radius:3px!important;
+ box-shadow:none!important;text-align:left;cursor:pointer
+}
+#forecastPage .faro-spot-choice-trigger:hover{color:var(--faro-selection)!important}
+#forecastPage .faro-spot-choice-trigger:focus-visible{
+ outline:2px solid var(--faro-selection)!important;outline-offset:3px!important
+}
+#forecastPage .faro-spot-choice-text{
+ display:block;flex:1;min-width:0;
+ font:800 clamp(14px,1.65vw,19px)/1.35 var(--faro-text)!important;
+ letter-spacing:-.025em;overflow-wrap:anywhere
+}
+#forecastPage .faro-spot-choice-chevron{
+ flex:none;width:9px;height:9px;margin-right:5px;
+ border-right:1.6px solid var(--faro-selection);
+ border-bottom:1.6px solid var(--faro-selection);
+ transform:rotate(45deg);transition:transform .18s ease
+}
+#forecastPage .faro-spot-choice.is-open .faro-spot-choice-chevron{
+ transform:rotate(225deg) translate(-2px,-2px)
+}
+#forecastPage .faro-spot-choice-options{
+ position:absolute!important;z-index:120!important;
+ top:calc(100% + 6px);left:0;right:0;
+ max-height:min(320px,46vh);overflow-y:auto;overscroll-behavior:contain;
+ padding:5px!important;
+ border:1px solid color-mix(in srgb,var(--faro-selection) 22%,var(--faro-line))!important;
+ border-radius:13px!important;background:var(--faro-raised)!important;
+ box-shadow:0 20px 45px rgba(0,10,16,.24);
+ scrollbar-width:thin;scrollbar-color:var(--faro-line) transparent;
+ animation:faro-chooser-enter .17s cubic-bezier(.2,.75,.25,1) both
+}
+#forecastPage .faro-spot-choice-options[hidden]{display:none!important}
+#forecastPage .faro-spot-choice-item{
+ display:flex;align-items:center;min-height:44px;padding:10px 13px;
+ border-radius:8px;background:transparent;
+ font:740 13px/1.45 var(--faro-text);color:var(--fg);
+ cursor:pointer;outline:none;
+ transition:background-color .15s ease,color .15s ease
+}
+#forecastPage .faro-spot-choice-item[aria-selected="true"]{
+ color:var(--faro-selection);font-weight:850;
+ background:color-mix(in srgb,var(--faro-selection) 11%,var(--faro-raised))
+}
+#forecastPage .faro-spot-choice-item:hover,
+#forecastPage .faro-spot-choice-item:focus-visible{
+ color:var(--fg);
+ background:color-mix(in srgb,var(--faro-selection) 17%,var(--faro-raised));
+ box-shadow:inset 2px 0 0 var(--faro-selection)
+}
+/* Quiet background mark and shared premium motion. */
+#forecastPage>.faro-access-notice.faro-safety-center{
+ transition:background-color .18s ease,border-color .18s ease!important
+}
+#forecastPage>.faro-access-notice .faro-safety-summary{
+ transition:background-color .18s ease!important
+}
+#forecastPage>.faro-access-notice .faro-safety-summary:hover{
+ background:color-mix(in srgb,var(--safety-accent) 7%,transparent)!important
+}
+#forecastPage>.faro-access-notice .faro-access-expanded{
+ animation:faro-notice-enter .19s cubic-bezier(.2,.75,.25,1) both
+}
+#forecastPage .faro-safety-chevron,#forecastPage .faro-week-toggle,
+#forecastPage .faro-ocean-tool-actions button,#forecastPage>.faro-journey-nav button{
+ transition:transform .19s cubic-bezier(.2,.75,.25,1),
+  background-color .17s ease,border-color .17s ease,color .17s ease!important
+}
+#forecastPage>.faro-access-notice .faro-safety-summary:focus-visible{
+ outline:2px solid var(--faro-selection)!important;outline-offset:-3px!important
+}
+@keyframes faro-chooser-enter{
+ from{opacity:.35;transform:translateY(-6px)}to{opacity:1;transform:none}
+}
+@keyframes faro-notice-enter{
+ from{opacity:.45;transform:translateY(-3px)}to{opacity:1;transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+ #forecastPage .faro-spot-choice-options,#forecastPage>.faro-access-notice .faro-access-expanded{animation:none!important}
+ #forecastPage .faro-spot-choice *,#forecastPage>.faro-access-notice *,
+ #forecastPage>.faro-journey-nav button{transition:none!important}
+}
+@media(max-width:650px){
+ #forecastPage .faro-spot-choice-options{max-height:min(290px,44vh)}
+ #forecastPage .faro-spot-choice-text{font-size:15px!important}
+ #forecastPage>.faro-access-notice.faro-safety-center::before{right:21px;width:100px;height:100px;opacity:.042}
 }
