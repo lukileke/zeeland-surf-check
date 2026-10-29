@@ -47,7 +47,7 @@ assert.equal(ventanasResearch.publicRecommendationAllowed,false);
 assert.equal(ventanasResearch.components.swellDirection.value,1);
 assert.equal(ventanasResearch.components.windDirection.value,1);
 for(const spot of region.spots){
- assert.equal(spot.forecastEnabled,false);
+ assert.equal(spot.forecastEnabled,spot.id==='CL-VS:ventanas');
  assert.equal(spot.coordinates,null);
  for(const sourceId of spot.sources)assert.ok(refs[sourceId],'Missing source: '+sourceId);
 }
