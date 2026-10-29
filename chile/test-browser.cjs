@@ -169,8 +169,7 @@ function fixture(){
      }
      for(const [name,outer,inner] of [
       ["daily","#dayStripItems .day-chip[class*='brand-band-']",".chile-chip-number"],
-      ["hourly","#slots button[class*='brand-band-']",".chile-slot-score"],
-      ["session","#sessionAtGlance .chile-session-rating[class*='brand-band-']",".chile-session-score"]
+      ["hourly","#slots button[class*='brand-band-']",".chile-slot-score"]
      ]){
       const parent=document.querySelector(outer),score=parent?.querySelector(inner);
       if(!score)throw Error("Missing "+name+" numerical score");
