@@ -67,13 +67,23 @@ const restricted=()=>spot()?.accessNotice?.status==="restriction_reported_not_li
 function paintAccessNotice(){
  const note=$("ventanasAccessNotice");
  if(!note)return;
+ const info=window.FaroChileNotices?.describe(spot(),state.lang)||null;
  const oldHidden=note.hidden;
- note.hidden=!restricted();
- if(!note.hidden){
-  if(oldHidden)note.open=false;
-  txt("ventanasNoticeText",
-   state.lang==="es"?spot().accessNotice.es:spot().accessNotice.en);
- }
+ note.hidden=!info;
+ if(!info)return;
+ if(oldHidden)note.open=false;
+ // Same dated taxonomy and wording as the regional map tooltip.
+ note.classList.remove("caution","danger","advisory");
+ note.classList.add(info.severity);
+ txt("faroAccessKicker",info.kicker);
+ txt("faroAccessSeverity",info.severityLabel);
+ txt("faroAccessHeadline",info.headline);
+ txt("faroAccessSubline",info.subline);
+ txt("ventanasNoticeText",info.detail);
+ note.setAttribute("aria-label",info.headline+" · "+info.statusLabel);
+ const source=$("faroAccessSourceLink");
+ source.hidden=!info.sourceUrl;
+ if(info.sourceUrl)source.href=info.sourceUrl;
 }
 const localRead=(s,spotId=spot()?.id)=>window.FaroChileSpotIntelligence&&state.intelligence&&spotId?
  window.FaroChileSpotIntelligence.evaluate(s,spotId,state.intelligence,state.lang,
