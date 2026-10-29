@@ -24,11 +24,8 @@ const scoreCaveat=session=>{
  const meta=session?.scoreMeta;
  if(meta?.status!=="experimental")return tr("Sin validación local","No local calibration");
  const sessions=meta.fieldSessions??0;
- return meta.capActive?
-  tr("Tope experimental "+num(meta.scoreCap)+" · "+sessions+" sesiones de validación",
-     "Experimental cap "+num(meta.scoreCap)+" · "+sessions+" validation sessions"):
-  tr("Índice de guía · "+sessions+" sesiones de validación",
-     "Guide-based index · "+sessions+" validation sessions");
+ return tr("Índice de guía 0–10 · "+sessions+" sesiones verificadas",
+  "Guide-based 0–10 index · "+sessions+" verified sessions");
 };
 const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
 const waveSizeLabel=h=>!ok(h)?"—":h<.5?tr("Pequeñas","Small"):h<1.2?tr("Medianas","Medium"):h<2?tr("Grandes","Large"):tr("Muy grandes","Very large");
@@ -700,25 +697,22 @@ async function rankings(){
   (localRead(b.s,b.model.spot.id)?.decision?.priority??2)-
   (localRead(a.s,a.model.spot.id)?.decision?.priority??2)||
   b.s.score-a.s.score||a.day.date.localeCompare(b.day.date));
- // The index is capped at 7.9. Twelve near-identical capped windows imply a
- // false ranking. Show one representative window per distinct spot, then
- // disclose the last spot on demand. This is a comparison, not a top-12 list.
+ // A guide-derived 0–10 index still lacks observed-surf calibration. Show
+ // one representative window per distinct spot, then disclose alternatives;
+ // do not imply that a numerical difference is a measured accuracy ranking.
  const unique=[],seen=new Set();
  for(const item of all){
   if(seen.has(item.model.spot.id))continue;
   seen.add(item.model.spot.id);unique.push(item);
  }
  host.replaceChildren();
- const count=unique.length,limited=unique.filter(item=>item.s.scoreMeta?.capActive).length;
+ const count=unique.length;
  txt("rankingstatus",tr(count+" spots con datos",""+count+" spots with data"));
  txt("rankingContext",!count?tr(
   "Todavía no hay franjas comparables para recomendar.","No comparable model windows are available yet."
- ):limited>1?tr(
-  "Varios spots alcanzan el techo provisional de 7,9/10. Sus diferencias de calidad no pueden resolverse con este índice. Compara hora, viento y período.",
-  "Several spots reach the provisional 7.9/10 cap. The index cannot resolve their true quality differences. Compare timing, wind and period."
  ):tr(
-  "Una franja orientativa por spot. Valores experimentales, no observaciones de rompiente ni evaluación de seguridad.",
-  "One indicative window per spot. Experimental values, not observed breaking surf or safety assessments."
+  "Escala experimental completa de 0 a 10, sin tope artificial. Orden orientativo por guías y swell oceánico; no predice altura rompiente, no está validado y no evalúa seguridad. Compara hora, viento y período.",
+  "Full experimental 0–10 scale without an artificial cap. Indicative ordering from guide bearings and offshore swell; no breaking-wave prediction, field validation or safety assessment. Compare timing, wind and period."
  ));
  if(!count){
   host.append(el("p",tr("Sin candidatos evaluables por ahora.","No assessable candidates yet."),"muted"));return;
