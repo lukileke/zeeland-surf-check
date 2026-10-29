@@ -87,6 +87,19 @@ assert.ok(fullyAligned.physicsProxy.directionalGuideSupport>.95);
 assert.ok(stronglyOffAxis.physicsProxy.directionalGuideSupport<.05);
 assert.equal(stronglyOffAxis.physicsProxy.observationsCount,0);
 assert.equal(stronglyOffAxis.guideFitEvidence,'guide-only-unvalidated');
+assert.equal(stronglyOffAxis.physicsProxy.directionScenario.bearingShiftDeg,15);
+assert.equal(stronglyOffAxis.physicsProxy.directionScenario.isConfidenceInterval,false);
+assert.ok(stronglyOffAxis.physicsProxy.directionScenario.scoreMin<=stronglyOffAxis.score);
+assert.ok(stronglyOffAxis.physicsProxy.directionScenario.scoreMax>=stronglyOffAxis.score);
+const nearGuideEdge=score(cfg,'CL-VS:ritoque',{
+ windFromDeg:10,windKmh:7,gustKmh:9,
+ swellFromDeg:255,swellPeriodS:13,swellHeightM:1.5
+});
+assert.ok(nearGuideEdge.physicsProxy.directionScenario.scoreMax>
+ nearGuideEdge.physicsProxy.directionScenario.scoreMin,
+ 'A ±15° shift near a guide boundary must reveal model sensitivity');
+assert.equal(nearGuideEdge.physicsProxy.directionScenario.isConfidenceInterval,false);
+
 assert.equal(perfect.confidence,'low','A 10 is not field-validated surf quality');
 assert.equal(perfect.safetyAssessed,false);
 const nearFlat=score(cfg,'CL-VS:la-boca-concon',{...example,swellHeightM:0.15},{locale:'es'});
