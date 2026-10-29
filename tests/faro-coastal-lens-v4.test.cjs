@@ -91,6 +91,6 @@ test('Ventanas is a reference-only marker, not a fifth scored or modelled pilot'
 test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=14"/);
  assert.match(html,/src="coast-map\.js\?v=18"/);
- assert.match(html,/src="chile-forecast\.js\?v=25"/);
+ assert.match(html,/src="chile-forecast\.js\?v=26"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });

@@ -960,7 +960,7 @@
       "subarea": "Playa Ventanas; secciones exactas pendientes de georreferenciar",
       "timeZone": "America/Santiago",
       "precision": "beach_centre_only_not_takeoff_point",
-      "evidenceStatus": "community_guide_plus_municipal_location",
+      "evidenceStatus": "community-guide-prior-only-restriction-reported",
       "forecastEnabled": false,
       "coordinates": null,
       "coastalReference": {
@@ -977,7 +977,11 @@
         "municipio-ventanas",
         "osm-playa-ventanas",
         "biobio-ventanas-restriction-20261026",
-        "directemar-quintero-restrictions"
+        "directemar-quintero-restrictions",
+        "uv-quintero-bay-forecast",
+        "wannasurf-ventanas",
+        "uplav-hub-quintero-metals",
+        "ventanas-restriction-still-20261027"
       ],
       "conditions": {
         "favourableWindDegrees": null,
@@ -986,25 +990,58 @@
         "periodResponse": null,
         "breakingHeightCalibration": null,
         "publishedReference": {
-          "swellFrom": null,
-          "windFrom": null,
-          "tide": "Community source describes multiple breaks; inconsistent/uncalibrated guidance; not modelled",
-          "scope": "Ventanas beach with Muelle Chico/Pilotes sections; exact surf take-off not verified",
-          "attribution": "surfspots-ventanas"
+          "swellFrom": "N (hipótesis de guía, sin validación)",
+          "windFrom": "N / S (hipótesis de guía, no ambos offshore)",
+          "tide": "Todas las alturas mencionadas; preferencia por bajante. No validado por sección.",
+          "scope": "La guía distingue Muelle Chico y Pilotes. No hay coordenadas de las rompientes ni datos observados sobre formación de olas.",
+          "attribution": "surfspots-ventanas",
+          "nearshoreReference": "uv-quintero-bay-forecast"
         },
-        "regionSpecificNoteEs": "Spot descrito por guía comunitaria con sectores Muelle Chico y Pilotes, sin georreferenciar rompientes ni verificar ventanas de swell/viento. Cercanía a actividad portuaria y riesgos de contaminación. El 24–26 octubre de 2026 se informó restricción sanitaria por fragata portuguesa: comprobar con Seremi de Salud y DIRECTEMAR si se ha levantado antes de entrar al mar.",
-        "regionSpecificNoteEn": "Community guide describes Muelle Chico and Pilotes sections, without verified lineups or swell/wind guide calibration. Close to port operations and possible pollution. A Portuguese man-of-war restriction was reported on 24–26 October 2026; check with health and maritime authorities whether it has been lifted before entering the water.",
-        "fieldVerification": "required_before_any_recommendation"
+        "regionSpecificNoteEs": "Precalibración bibliográfica: guía comunitaria menciona swell N, viento N/S y preferencia por marea bajante. Interpretación distinta entre Muelle Chico y Pilotes aún sin mediciones. Modelo UV de Bahía Quintero (Puerto Ventanas, 20 m) disponible como referencia externa, no conectado a FARO. Restricción sanitaria reportada vigente al 27 oct. 2026 por fragata portuguesa; no recomendar entrar al agua. Riesgo ambiental industrial y operativo.",
+        "regionSpecificNoteEn": "Literature-only precalibration: a community surf guide suggests N swell, N/S winds and falling tide. Muelle Chico and Pilotes have not been separately observed. UV Quintero Bay model (Puerto Ventanas, 20 m) is an external reference, not connected to FARO. Health restriction still reported in force on 27 Oct 2026 due to Portuguese man-of-war; no water-entry recommendation. Industrial and port hazards.",
+        "fieldVerification": "required_before_any_recommendation",
+        "guideHypotheses": {
+          "level": "source-derived-prior-not-calibrated",
+          "cardinalConversionDegrees": 22.5,
+          "swellN": [
+            [
+              337.5,
+              22.5
+            ]
+          ],
+          "windNandS": [
+            [
+              337.5,
+              22.5
+            ],
+            [
+              157.5,
+              202.5
+            ]
+          ],
+          "tide": "all reported; falling preferred",
+          "interpretiveLimit": "Cardinal bins ±22.5° are a notation choice, not a measured local optimum; guide text may be replicated on WannaSurf; cannot infer sheltering of Muelle Chico or Pilotes.",
+          "localWaveEnergyThresholdM": null,
+          "swellRefractionCoefficients": null,
+          "validationCount": 0,
+          "nearshoreInput": {
+            "provider": "Universidad de Valparaíso",
+            "site": "Puerto Ventanas",
+            "nominalDepthM": 20,
+            "source": "uv-quintero-bay-forecast",
+            "integratedInFaro": false
+          }
+        }
       },
       "accessNotice": {
         "status": "restriction_reported_not_live_verified",
         "reportedOn": "2026-10-24",
         "checkedOn": "2026-10-29",
-        "source": "biobio-ventanas-restriction-20261026",
+        "source": "ventanas-restriction-still-20261027",
         "officialStatus": "not_synchronised",
         "automaticClearance": false,
-        "es": "Restricción sanitaria reportada el 24–26 oct. 2026 por fragata portuguesa. Prohibidas actividades recreativas según el reporte; vigencia no comprobada en directo.",
-        "en": "Health-related recreational-use prohibition reported 24–26 Oct 2026 due to Portuguese man-of-war; current status not checked live."
+        "es": "Restricción del baño y actividades recreativas reportada como vigente el 27 de octubre de 2026 por presencia de fragata portuguesa. No se ha verificado resolución posterior que la levante.",
+        "en": "Recreational-use restriction reported still in force on 27 October 2026 due to Portuguese man-of-war; no later lifting resolution verified."
       },
       "hazards": {
         "pollution": "industrial_area_review_water_quality_before_any_use",
@@ -1018,7 +1055,10 @@
         "existence": "source_supported",
         "directionalFit": "not_calibrated",
         "tide": "not_calibrated",
-        "breakingWave": "not_calibrated"
+        "breakingWave": "not_calibrated",
+        "guidePrior": "provisional_single-community-text",
+        "nearshoreModel": "published_20m_location_not_transferred",
+        "fieldObservations": 0
       }
     }
   ]

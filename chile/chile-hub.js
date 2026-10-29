@@ -76,6 +76,28 @@ function itemCard(spot){
  identity.append(textElement("h3",spot.name));
  identity.append(textElement("p",spot.locality||"", "locality"));
  card.append(identity);
+ if(spot.id==="CL-VS:ventanas"&&spot.conditions?.guideHypotheses){
+  const prior=textElement("div","","spot-precalibration");
+  prior.append(textElement("strong",
+   tr("Precalibración documental · no validada","Literature-based precalibration · unvalidated")));
+  prior.append(textElement("p",tr(
+   "La guía describe swell del N, viento del N o S y preferencia por marea bajante. Muelle Chico y Pilotes necesitan observaciones independientes; estos rumbos no representan una predicción de la ola rompiente.",
+   "One community guide suggests N swell, N/S winds and falling tide. Muelle Chico and Pilotes need independent observations; these bearings are not breaking-wave forecasts."
+  )));
+  const university=sources["uv-quintero-bay-forecast"];
+  if(university?.url){
+   const link=document.createElement("a");
+   link.href=university.url;link.target="_blank";link.rel="noopener noreferrer";
+   link.textContent=tr("Universidad de Valparaíso · pronóstico bahía de Quintero (20 m)",
+    "University of Valparaíso · Quintero Bay forecast (20 m)");
+   prior.append(link);
+  }
+  prior.append(textElement("small",tr(
+   "0 sesiones observadas · sin score ni habilitación de acceso",
+   "0 observed sessions · no score or access clearance"
+  )));
+  card.append(prior);
+ }
  if(hasRestriction){
   const alert=textElement("div","","spot-access-notice");
   alert.append(textElement("strong",tr("Aviso de acceso · 24 oct. 2026","Access report · 24 Oct 2026")));
