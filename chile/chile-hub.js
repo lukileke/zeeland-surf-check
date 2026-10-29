@@ -64,15 +64,30 @@ function typeName(value){
 function itemCard(spot){
  const pilot=pilotIds.has(spot.id)&&Boolean(profiles[spot.id]);
  const card=document.createElement("article");
- card.className="spot-card"+(pilot?" featured-spot":"");
+ const hasRestriction=spot.accessNotice?.status==="restriction_reported_not_live_verified";
+ card.className="spot-card"+(pilot?" featured-spot":"")+(hasRestriction?" access-notice-spot":"");
  const top=textElement("div","","card-top");
- top.append(textElement("span",pilot?tr("PILOTO FARO","FARO PILOT"):spot.evidenceStatus==="guide_described"?tr("GUÍA LOCAL","LOCAL GUIDE"):tr("EN INVESTIGACIÓN","RESEARCH"),"mini-status"));
+ top.append(textElement("span",hasRestriction?tr("RESTRICCIÓN REPORTADA","RESTRICTION REPORTED"):
+  pilot?tr("PILOTO FARO","FARO PILOT"):spot.evidenceStatus==="guide_described"?
+  tr("GUÍA LOCAL","LOCAL GUIDE"):tr("EN INVESTIGACIÓN","RESEARCH"),"mini-status"));
  top.append(textElement("span",typeName(spot.breakType),"type"));
  card.append(top);
  const identity=textElement("div");
  identity.append(textElement("h3",spot.name));
  identity.append(textElement("p",spot.locality||"", "locality"));
  card.append(identity);
+ if(hasRestriction){
+  const alert=textElement("div","","spot-access-notice");
+  alert.append(textElement("strong",tr("Aviso de acceso · 24 oct. 2026","Access report · 24 Oct 2026")));
+  alert.append(textElement("p",tr(spot.accessNotice.es,spot.accessNotice.en)));
+  const source=document.createElement("a");
+  source.href=sources[spot.accessNotice.source]?.url||"https://www.directemar.cl/";
+  source.target="_blank";source.rel="noopener noreferrer";
+  source.textContent=tr("Leer reporte · comprobar vigencia con la autoridad",
+   "Read report · verify current status with authorities");
+  alert.append(source);
+  card.append(alert);
+ }
  const ref=spot.conditions?.publishedReference;
  if(ref?.swellFrom||ref?.windFrom){
   const conditions=textElement("div","","signals");
@@ -85,10 +100,12 @@ function itemCard(spot){
  }else{
   card.append(textElement("p",tr("Exposición, mareas y dirección óptima aún sin verificar.", "Exposure, tide and optimal directions are not yet verified."),"notice"));
  }
- const note=textElement("p",tr(
-  pilot?"Compatible con el laboratorio experimental. No hay score en vivo.":"La calidad local y el acceso requieren verificación.",
-  pilot?"Available in the experimental lab. Not a live score.":"Local surf quality and access still require verification."
- ),"notice");card.append(note);
+ const note=textElement("p",hasRestriction?
+  tr("Sólo referencia costera: sin score ni recomendación de surf mientras no se confirme el levantamiento de la restricción.",
+   "Coastal reference only: no score or surf recommendation until restrictions are verified as lifted."):
+  tr(pilot?"Compatible con el laboratorio experimental. No hay score en vivo.":"La calidad local y el acceso requieren verificación.",
+   pilot?"Available in the experimental lab. Not a live score.":"Local surf quality and access still require verification."),
+  "notice");card.append(note);
  if(pilot){
   const link=document.createElement("a");link.className="card-cta";
   link.href="lab.html?spot="+encodeURIComponent(spot.id);
@@ -172,6 +189,7 @@ async function init(){
   }
   const params=new URLSearchParams(window.location.search);
   const requested=params.get("region");
+  search.value=params.get("q")||"";
   await chooseRegion(m.regions.some(r=>r.code===requested)?requested:"CL-VS");
   applyLocale();
  }catch(error){
