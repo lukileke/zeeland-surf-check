@@ -343,6 +343,27 @@
       "type": "dated-access-restriction-report",
       "reviewed": "2026-10-29",
       "scope": "Reports restriction lifted at El Yachting but remains in Ventanas on 27 October; later official resolution not yet verified."
+    },
+    "uv-ventanas-node": {
+      "name": "Universidad de Valparaíso · Nodo costero Puerto Ventanas · CL15QTN03",
+      "url": "https://marejadas.uv.cl/CL15QTN03",
+      "type": "university-visual-forecast-at-20m",
+      "reviewed": "2026-10-29",
+      "siteId": "CL15QTN03",
+      "depthM": 20,
+      "structuredDataAccessVerified": false,
+      "autoIntegrated": false,
+      "note": "Only a published visual forecast page verified; not a machine-readable numeric timeseries."
+    },
+    "shoa-cendhoc-oleaje": {
+      "name": "SHOA/CENDHOC · Oleaje, solicitud de datos y archivo publicado",
+      "url": "https://cendhoc.shoa.cl/ddoleaje_get",
+      "type": "official-instrumental-observations",
+      "reviewed": "2026-10-29",
+      "stationCoverageConfirmed": false,
+      "autoIntegrated": false,
+      "archive": "https://shoabucket.s3.amazonaws.com/shoa.cl/datos/oleaje/OLEAJE.zip",
+      "note": "Availability announced publicly; no observation data ingested or station-to-model comparison performed."
     }
   }
 }
