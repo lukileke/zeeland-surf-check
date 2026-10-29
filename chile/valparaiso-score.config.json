@@ -1,9 +1,9 @@
 {
-  "schemaVersion": "0.3.0",
+  "schemaVersion": "0.4.0",
   "status": "experimental",
   "region": "CL-VS",
   "active": false,
-  "statement": "FARO offshore surf-potential index 0–10: separate wave partitions (Hs² × modelled period, not true Te), source-guide directional exposure, speed-sensitive wind and bounded cross-sea modifiers. No breaking-wave predictions, coastal transformation or empirical validation. Ventanas has a modelled exploratory index but cannot appear as an actionable pick while its reported legal/recreational restriction remains unverified lifted.",
+  "statement": "FARO v0.4 spot-response index 0–10: Hs² × model mean period per swell partition; coastal-guide angular support remains influential in energetic off-axis swells. No empirical breaker-height calibration or locally derived tide/shape model.",
   "calibration": {
     "fieldSessions": 0,
     "requiredBeforeLaunch": true,
@@ -11,10 +11,10 @@
       0,
       10
     ],
-    "scoringPolicy": "physics-informed-relative-offshore-index-v0.3-no-local-observational-calibration",
+    "scoringPolicy": "spot-guide-directional-regularisation-unvalidated",
     "minimumObservedSessionsForClaim": "field_validation_required",
-    "modelVersion": "faro-offshore-potential-v0.3",
-    "methodology": "research/FARO_OFFSHORE_POTENTIAL_V03.md"
+    "modelVersion": "faro-spot-response-v0.4",
+    "methodology": "research/FARO_SPOT_RESPONSE_V04.md"
   },
   "heuristics": {
     "angleFalloffDegrees": 50,
@@ -36,7 +36,9 @@
     "windDirectionFullKmh": 18,
     "windDirectionPenalty": 0.65,
     "windSeaPenalty": 0.12,
-    "crossingPenalty": 0.08
+    "crossingPenalty": 0.08,
+    "offAxisScoreFloor": 0.24,
+    "offAxisScoreFloorDescription": "Heuristic lower bound on directional score compatibility for wave approach outside uncalibrated guide sectors, NOT a physical refraction coefficient, measured percentage or safety gate."
   },
   "profiles": {
     "CL-VS:la-boca-concon": {
