@@ -233,6 +233,23 @@ function fixture(){
     assert.ok(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="'+id+'"]').count()>=1,
      'Map must include published coastal reference '+id);
    }
+   if(width===390){
+    await page.locator('#chileSpotSelect').selectOption('CL-VS:ventanas');
+    await page.waitForFunction(()=>document.getElementById('ventanasAccessNotice')?.hidden===false,{timeout:12000});
+    const mobile=await page.locator('#ventanasAccessNotice summary').evaluate(e=>{
+     const b=e.getBoundingClientRect();
+     return {height:b.height,display:getComputedStyle(e).display,
+      scrollWidth:document.documentElement.scrollWidth,
+      clientWidth:document.documentElement.clientWidth};
+    });
+    assert.equal(mobile.display,'flex');
+    assert.ok(mobile.height<=88,
+     'FARO compact mobile warning must not consume a third of the screen: '+JSON.stringify(mobile));
+    assert.ok(mobile.scrollWidth<=mobile.clientWidth+3,
+     'New visual direction introduces horizontal scrolling: '+JSON.stringify(mobile));
+    await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
+    await page.waitForFunction(()=>document.getElementById('ventanasAccessNotice')?.hidden===true,{timeout:12000});
+   }
    if(width===1180){
     // Ventanas is now modelled but legally restricted: the index may be
     // calculated without turning the forecast into an access recommendation.
@@ -273,6 +290,24 @@ function fixture(){
     assert.match(await page.locator('#faroAccessKicker').textContent(),/FARO/);
     assert.match(await page.locator('#faroAccessSeverity').textContent(),/REPORTED|REPORTADA/i);
     assert.match(await page.locator('#faroAccessSubline').textContent(),/27/);
+    const editorial=await page.locator('#ventanasAccessNotice').evaluate(n=>{
+     const summary=n.querySelector('summary'),logo=n.querySelector('.faro-access-brand');
+     const get=e=>getComputedStyle(e);
+     return {summaryLayout:get(summary).display,
+      width:summary.getBoundingClientRect().width,
+      height:summary.getBoundingClientRect().height,
+      logoBackground:get(logo).backgroundColor,
+      logoBorder:get(logo).borderLeftWidth,
+      datedEvidence:n.querySelector('#faroAccessEvidence')?.textContent||'',
+      summarySourceDisplay:get(n.querySelector('#faroAccessSubline')).display};
+    });
+    assert.equal(editorial.summaryLayout,'flex','Use compact Zeeland rail, not the earlier three-row alert card');
+    assert.ok(editorial.height<=76,'Compact FARO warning is not a tall block: '+JSON.stringify(editorial));
+    assert.equal(editorial.logoBorder,'0px','FARO O may not be wrapped in a new square border');
+    assert.equal(editorial.summarySourceDisplay,'none',
+     'Dated source is progressive evidence rather than a third row in the compact summary');
+    assert.match(editorial.datedEvidence,/27/);
+
     assert.equal(await page.locator('#faroAccessSourceLink').getAttribute('href'),
      'https://puranoticia.pnt.cl/region-valparaiso/seremi-de-salud-levanta-prohibicion-de-bano-en-playa-de-algarrobo-no-han');
 
