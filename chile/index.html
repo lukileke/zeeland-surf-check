@@ -29,7 +29,7 @@
 <link rel="stylesheet" href="../assets/faro-visual-system-v2.css?v=5">
 <link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=14">
 <!-- Single Chile-specific layout contract, loaded after all visual layers. -->
-<link rel="stylesheet" href="chile-visual-contract.css?v=5">
+<link rel="stylesheet" href="chile-visual-contract.css?v=6">
 </head>
 <body>
 <main>
@@ -90,6 +90,12 @@
    <label class="chile-spot-picker"><small data-es="REGIÓN" data-en="REGION">REGIÓN</small><strong>Valparaíso · Chile</strong><span class="chile-field-hint" data-es="Primera región disponible" data-en="First supported region">Primera región disponible</span></label>
    <label class="chile-spot-picker"><small data-es="PLAYA / SPOT" data-en="BEACH / SPOT">PLAYA / SPOT</small><select id="chileSpotSelect" aria-label="Playa o spot"></select></label>
   </div>
+  <aside id="ventanasAccessNotice" class="faro-access-notice" role="status" aria-live="polite" hidden>
+   <strong data-es="VENTANAS · RESTRICCIÓN REPORTADA" data-en="VENTANAS · REPORTED RESTRICTION">VENTANAS · RESTRICCIÓN REPORTADA</strong>
+   <p id="ventanasNoticeText">—</p>
+   <a href="https://marejadas.uv.cl/CL15QTN03" target="_blank" rel="noopener noreferrer" data-es="Modelo costero UV · Puerto Ventanas (20 m)" data-en="UV nearshore model · Puerto Ventanas (20 m)">Modelo costero UV · Puerto Ventanas (20 m)</a>
+   <small data-es="El número FARO es potencial modelado, no permiso ni recomendación para surfear. Confirma restricciones con la autoridad marítima y sanitaria." data-en="FARO's number is modelled potential, not permission or advice to surf. Confirm restrictions with maritime and health authorities.">El número FARO es potencial modelado, no permiso ni recomendación para surfear. Confirma restricciones con la autoridad marítima y sanitaria.</small>
+  </aside>
   <!-- Single-step exploration: choose a forecast window, inspect coastal context,
        then open local beach knowledge or external cameras. -->
   <nav class="faro-journey-nav" aria-label="Ir a las secciones del pronóstico">
@@ -319,13 +325,13 @@
        data-en="CHILE · EXPERIMENTAL MODEL · OFFICIAL ALERTS NOT SYNCHRONISED">CHILE · MODELO EXPERIMENTAL · ALERTAS OFICIALES NO SINCRONIZADAS</div>
  </footer>
 </main>
-<script src="valparaiso-score-lab.js?v=4"></script>
+<script src="valparaiso-score-lab.js?v=5"></script>
 <script src="faro-chile-live.js?v=5"></script>
 <script src="faro-physics-lab.js?v=1"></script>
 <script src="faro-spot-intelligence.js?v=2"></script>
 <script src="video-observation-lab.js?v=1"></script>
 <script src="faro-coastal-lens.js?v=1"></script>
 <script src="coast-map.js?v=18"></script>
-<script src="chile-forecast.js?v=27"></script>
+<script src="chile-forecast.js?v=28"></script>
 </body>
 </html>
