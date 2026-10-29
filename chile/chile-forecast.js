@@ -685,6 +685,38 @@ function render(){
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
  state.videoLab?.refreshCameras();updateCoastMap();renderHourlyPreview();if(state.tab==="board")match();
 }
+// A map popup loads the requested beach on demand, without changing the
+// page's selected break. Only independently fetched spot forecasts can
+// populate an individual beach window; never reuse another beach's slot.
+const previewFlights=new Map();
+async function beachMapPreview(id){
+ const target=state.config?.pilots?.find(item=>item.id===id);
+ if(!target)return {status:"unavailable"};
+ const cached=state.cache.get(id);
+ let forecast=cached&&Date.now()-cached.at<15*60*1000?cached.forecast:null;
+ if(!forecast){
+  if(!previewFlights.has(id)){
+   const flight=Live.fetchSpot(state.config,target,state.profiles,fetch,state.lang)
+    .then(data=>{state.cache.set(id,{forecast:data,at:Date.now()});return data})
+    .finally(()=>previewFlights.delete(id));
+   previewFlights.set(id,flight);
+  }
+  forecast=await previewFlights.get(id);
+ }
+ const desiredDate=state.forecast?.days?.[state.day]?.date;
+ const day=forecast?.days?.find(d=>d.date===desiredDate)||forecast?.days?.[0];
+ const best=bestRemaining(day,id);
+ if(!best||!ok(best.score)||!best.modelComplete){
+  return {status:"no-window",spotName:target.shortName||target.name,date:day?.date||null};
+ }
+ return {
+  status:"ready",spotName:target.shortName||target.name,date:day.date,
+  dateLabel:dateLabel(day.date),time:sessionTime(best),
+  score:best.score,grade:grade(best.score),experimental:true,
+  waveM:best.totalWaveHeightM,periodS:best.swellPeriodS,
+  windKmh:best.windKmh
+ };
+}
 async function refresh(force=false,onSettled=null){
  if(!state.config)return;
  const id=spot().id,serial=++state.serial,stored=state.cache.get(id);
@@ -886,6 +918,7 @@ async function initialize(){
   profiles:state.profiles?.profiles||{},
     local:localRead(selection()),lang:state.lang,
     cameras:state.cameras?.sources||[]}),
+   getSpotPreview:beachMapPreview,
    onSelectSpot:id=>{
     if(spot()?.id===id)return;
     $("chileSpotSelect").value=id;
