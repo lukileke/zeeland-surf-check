@@ -106,7 +106,7 @@ test('Chile notices share FARO Zeeland presentation with both real map renderers
  assert.match(html,/faro-notices\.js\?v=1/);
  assert.match(html,/faro-access-notice/);
  assert.doesNotMatch(html,/class="faro-access-brand"/);
- assert.match(html,/faro-spot-chooser\\.js\\?v=1/);
+ assert.ok(html.includes('src="faro-spot-chooser.js?v=1"'));
  assert.match(html,/id="chileSpotButton"/);
  assert.match(html,/faro-safety-kicker/);
  assert.match(html,/faroAccessSourceLink/);
