@@ -216,9 +216,14 @@ function fixture(){
    assert.ok(await page.locator('a[href="https://marejadas.uv.cl/CL15CCN01"]').count(),
     'Officially identified university La Boca coastal model needs provenance link');
    assert.equal(await page.locator('#chileRiskDisclosure').count(),1);
-   // Desktop must show map directly. Mobile can expand it on demand.
-   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),width>=1120,
-    'Map opens as a prominent element on desktop, not a buried dropdown');
+   // Single unified ocean reader: Map is the initial view on both layouts,
+   // Compass is the only alternative, never another duplicate teaser box.
+   assert.equal(await page.locator('.faro-ocean-explorer').count(),1);
+   assert.equal(await page.locator('.faro-ocean-tools').count(),0);
+   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true,
+    'Map is immediately available through the unified ocean reader');
+   assert.equal(await page.locator('#openOceanMap').getAttribute('aria-pressed'),'true');
+   assert.equal(await page.locator('#openOceanCompass').getAttribute('aria-pressed'),'false');
    assert.equal(await page.locator('#coastMapExpand .leaflet-container').count(),0);
    await page.locator('#coastMapExpand').evaluate(el=>el.open=true);
    await page.waitForFunction(()=>document.querySelector('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:la-boca-concon"]'),{timeout:8000});
@@ -242,6 +247,13 @@ function fixture(){
     await page.waitForFunction(()=>document.querySelector('#chileSpotSelect')?.value==='CL-VS:ventanas'&&
      document.querySelector('#ventanasAccessNotice')?.hidden===false,{timeout:12000});
     assert.match(await page.locator('#ventanasAccessNotice').textContent(),/restricci[oó]n|restriction/i);
+    assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),false,
+     'Restriction must remain compact by default, unlike the old full-screen warning');
+    assert.equal(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:ventanas"] text').count()>0,true);
+    await page.locator('#ventanasAccessNotice > summary').click();
+    assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),true);
+    await page.locator('#ventanasAccessNotice > summary').click();
+    assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),false);
     await page.waitForFunction(()=>document.querySelector('#dayStripItems .day-chip .chile-chip-number')?.textContent?.includes('.'),
      {timeout:15000});
     assert.match(await page.locator('#chileDecisionHeadline').textContent(),/acceso|access/i);
@@ -283,11 +295,18 @@ function fixture(){
     'Coastal map must have a prominent primary action');
    await page.locator('#openOceanCompass').click();
    assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),true,
-    'Swell compass is accessible beside the map rather than buried in research panels');
+    'Compass opens within same reader rather than through a second independent card');
+   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),false,
+    'Selecting compass closes map to avoid duplicated panels');
+   assert.equal(await page.locator('#openOceanCompass').getAttribute('aria-pressed'),'true');
    assert.equal(await page.locator('#waveInsightExpand .chile-compass-svg').count(),1,
     'Swell compass remains data driven after repositioning');
    assert.equal(await page.locator('#chileCoastMap .faro-lens-stage').count(),1,'Map and ocean read share a stage');
    assert.equal(await page.locator('#chileCoastMap .faro-map-focus').count(),1,'Map has a selected-break label');
+   await page.locator('#openOceanMap').click();
+   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
+   assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),false);
+   assert.equal(await page.locator('#openOceanMap').getAttribute('aria-pressed'),'true');
    // On phone-width viewports ensure region signal colours agree with the
    // semantic HUD palette, including on the dark selected beach marker.
    const colours=await page.evaluate(()=>{
