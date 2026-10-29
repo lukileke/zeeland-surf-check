@@ -67,9 +67,13 @@ const restricted=()=>spot()?.accessNotice?.status==="restriction_reported_not_li
 function paintAccessNotice(){
  const note=$("ventanasAccessNotice");
  if(!note)return;
+ const oldHidden=note.hidden;
  note.hidden=!restricted();
- if(!note.hidden)txt("ventanasNoticeText",
-  state.lang==="es"?spot().accessNotice.es:spot().accessNotice.en);
+ if(!note.hidden){
+  if(oldHidden)note.open=false;
+  txt("ventanasNoticeText",
+   state.lang==="es"?spot().accessNotice.es:spot().accessNotice.en);
+ }
 }
 const localRead=(s,spotId=spot()?.id)=>window.FaroChileSpotIntelligence&&state.intelligence&&spotId?
  window.FaroChileSpotIntelligence.evaluate(s,spotId,state.intelligence,state.lang,
@@ -868,7 +872,9 @@ async function initialize(){
    if(!disclosure)return;
    event.preventDefault();
    tab("forecast");
-   disclosure.open=true;
+   if(disclosure.id==="coastMapExpand"||disclosure.id==="waveInsightExpand"){
+    selectOcean(disclosure.id==="coastMapExpand"?"map":"compass");
+   }else disclosure.open=true;
    const motion=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches?"auto":"smooth";
    disclosure.scrollIntoView({behavior:motion,block:"start"});
    const title=disclosure.querySelector("summary");
@@ -889,16 +895,35 @@ async function initialize(){
  }
  for(const [name,id]of [["forecast","navForecast"],["best","navBest"],["board","navBoard"]])$(id).addEventListener("click",()=>tab(name));
  $("refreshForecast").addEventListener("click",()=>refresh(true));
+ function selectOcean(view,scroll=false){
+  const isMap=view!=="compass";
+  $("coastMapExpand").open=isMap;
+  $("waveInsightExpand").open=!isMap;
+  $("openOceanMap").setAttribute("aria-pressed",String(isMap));
+  $("openOceanCompass").setAttribute("aria-pressed",String(!isMap));
+  if(scroll){
+   const motion=window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+   $("oceanToolsHeading").scrollIntoView({block:"start",behavior:motion});
+  }
+ }
  function revealOcean(id){
-  const target=$(id);
-  if(!target)return;
-  target.open=true;
-  const motion=window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
-  target.scrollIntoView({block:"start",behavior:motion});
+  selectOcean(id==="waveInsightExpand"?"compass":"map",true);
  }
  $("faroHourlyGoLens").addEventListener("click",()=>revealOcean("coastMapExpand"));
  $("openOceanMap").addEventListener("click",()=>revealOcean("coastMapExpand"));
  $("openOceanCompass").addEventListener("click",()=>revealOcean("waveInsightExpand"));
+ // Programmatic navigation from the compact coastal route and spot DNA.
+ for(const [id,type]of [["coastMapExpand","map"],["waveInsightExpand","compass"]]){
+  const target=$(id);
+  target.addEventListener("toggle",()=>{
+   if(target.open){
+    const counterpart=$(type==="map"?"waveInsightExpand":"coastMapExpand");
+    if(counterpart.open)counterpart.open=false;
+    $("openOceanMap").setAttribute("aria-pressed",String(type==="map"));
+    $("openOceanCompass").setAttribute("aria-pressed",String(type==="compass"));
+   }
+  });
+ }
  $("chileSpotSelect").addEventListener("change",event=>{
   const i=state.config.pilots.findIndex(x=>x.id===$("chileSpotSelect").value);
   if(i>=0){
