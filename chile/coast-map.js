@@ -142,6 +142,7 @@ function create(opts){
  if(!host||!d)return null;
  let map=null,markers=new Map(),modelGridMarker=null,windGridMarker=null,latest=null,loadError=false;
  let mode="combined",mapView="beach",exposure=false,motion=false,showSamples=false,inspected="marine",lastCentered=null,pendingSampleFit=false;
+ let activePreviewId=null,previewToken=0,previewBaseSpot=null;
  const reduced=()=>typeof root.matchMedia==="function"&&root.matchMedia("(prefers-reduced-motion: reduce)").matches;
  const controls=document.createElement("div");controls.className="faro-lens-controls";host.append(controls);
  const modes=document.createElement("div");modes.className="faro-lens-segments";
@@ -160,6 +161,7 @@ function create(opts){
  const recenter=document.createElement("button");recenter.type="button";
  recenter.className="faro-lens-recenter";recenter.dataset.action="reframe";
  recenter.addEventListener("click",()=>{
+  closePreview();
   mapView=mapView==="beach"?"region":"beach";
   if(mapView==="region")comparison.open=true;
   frameMap(true);update(latest);
@@ -190,6 +192,35 @@ function create(opts){
  const focus=document.createElement("div");focus.className="faro-map-focus";focus.setAttribute("aria-hidden","true");
  const focusLabel=document.createElement("small"),focusName=document.createElement("strong");
  focus.append(focusLabel,focusName);viewport.append(focus);
+ // Non-modal beach window: never scroll or change the selected forecast
+ // until the surfer explicitly chooses the full-break action.
+ const preview=document.createElement("section");preview.className="faro-beach-preview";
+ preview.hidden=true;preview.setAttribute("role","dialog");
+ preview.setAttribute("aria-modal","false");
+ preview.setAttribute("aria-label","Beach forecast quick view");
+ const previewHead=document.createElement("div");previewHead.className="faro-beach-preview-head";
+ const previewHeading=document.createElement("div");previewHeading.className="faro-beach-preview-heading";
+ const previewKicker=document.createElement("small");
+ const previewTitle=document.createElement("strong");
+ previewHeading.append(previewKicker,previewTitle);
+ const previewClose=document.createElement("button");previewClose.type="button";
+ previewClose.className="faro-beach-preview-close";previewClose.textContent="×";
+ previewHead.append(previewHeading,previewClose);
+ const previewBody=document.createElement("div");previewBody.className="faro-beach-preview-body";
+ const previewActions=document.createElement("div");previewActions.className="faro-beach-preview-actions";
+ const previewSelect=document.createElement("button");previewSelect.type="button";
+ previewSelect.className="faro-beach-preview-select";
+ previewActions.append(previewSelect);
+ preview.append(previewHead,previewBody,previewActions);viewport.append(preview);
+ previewClose.addEventListener("click",()=>closePreview());
+ previewSelect.addEventListener("click",()=>{
+  const id=activePreviewId;closePreview();
+  if(id&&id!==latest?.spot?.id)opts.onSelectSpot?.(id);
+  else if(mapView==="region"){mapView="beach";frameMap(true);update(latest)}
+ });
+ preview.addEventListener("keydown",event=>{
+  if(event.key==="Escape"){event.stopPropagation();closePreview()}
+ });
  const brief=document.createElement("div");brief.className="faro-map-brief";brief.setAttribute("aria-live","polite");stage.append(brief);
  const legend=document.createElement("div");legend.className="faro-lens-footer-legend";host.append(legend);
  const comparison=document.createElement("details");comparison.className="faro-lens-beaches";host.append(comparison);
@@ -246,11 +277,10 @@ function create(opts){
     "font-size":active?17:14,"font-weight":active?900:750,
     stroke:"#dceef1","stroke-width":3,"paint-order":"stroke"},
     sp.shortName||sp.name,g);
-   if(!active){
-    const activate=()=>opts.onSelectSpot?.(sp.id);
-    g.addEventListener("click",activate);
-    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();activate()}});
-   }
+   const activate=()=>showPreview(sp);
+   g.addEventListener("click",activate);
+   g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();activate()}});
+
   }
   // Intentionally no arrow rays: one source point does not determine
   // the wave path to each local break.
@@ -263,6 +293,79 @@ function create(opts){
      "font-size":10,"font-weight":800,"text-anchor":"middle"},kind);
    }
   }
+ }
+ function closePreview(){
+  previewToken++;activePreviewId=null;previewBaseSpot=null;
+  preview.hidden=true;previewBody.replaceChildren();
+ }
+ function showPreview(sp){
+  if(!sp?.id)return;
+  const locale=latest?.lang||"es",es=locale!=="en";
+  const token=++previewToken;
+  activePreviewId=sp.id;previewBaseSpot=latest?.spot?.id||null;
+  preview.hidden=false;previewBody.replaceChildren();
+  previewKicker.textContent=es?"VISTA RÁPIDA · MODELO":"QUICK LOOK · MODEL";
+  previewTitle.textContent=sp.shortName||sp.name;
+  previewClose.setAttribute("aria-label",es?"Cerrar ventana":"Close preview");
+  previewSelect.textContent=sp.id===latest?.spot?.id?
+   (es?"Acercar al spot":"Beach focus"):(es?"Ver pronóstico completo":"Open full forecast");
+  previewBody.textContent=es?"Consultando datos de esta playa…":"Loading this beach forecast…";
+  if(typeof opts.getSpotPreview!=="function"){
+   previewBody.textContent=es?"Pronóstico no disponible":"Forecast unavailable";
+   return;
+  }
+  Promise.resolve().then(()=>opts.getSpotPreview(sp.id)).then(data=>{
+   if(token!==previewToken||preview.hidden)return;
+   previewBody.replaceChildren();
+   if(data?.status!=="ready"){
+    const msg=document.createElement("p");msg.className="faro-beach-preview-note";
+    msg.textContent=data?.status==="no-window"?
+     (es?"No hay una franja diurna evaluable para esta playa y fecha.":
+      "No assessable daylight window for this break and date."):
+     (es?"No se pudo consultar el pronóstico de esta playa.":
+      "This beach forecast could not be retrieved.");
+    previewBody.append(msg);return;
+   }
+   const time=document.createElement("div");time.className="faro-beach-preview-time";
+   const timeCaption=document.createElement("small");
+   timeCaption.textContent=es?"MEJOR FRANJA ESTIMADA":"ESTIMATED BEST WINDOW";
+   const timeValue=document.createElement("strong");
+   timeValue.textContent=data.time||"—";
+   const date=document.createElement("span");date.textContent=data.dateLabel||"";
+   time.append(timeCaption,timeValue,date);
+   const score=document.createElement("div");score.className="faro-beach-preview-rating";
+   const scoreNumber=document.createElement("strong");scoreNumber.textContent=
+    typeof data.score==="number"?data.score.toFixed(1)+"/10":"—";
+   const scoreLabel=document.createElement("span");scoreLabel.textContent=data.grade||"";
+   score.append(scoreNumber,scoreLabel);
+   const summary=document.createElement("div");summary.className="faro-beach-preview-summary";
+   summary.append(time,score);
+   previewBody.append(summary);
+   const metrics=document.createElement("div");metrics.className="faro-beach-preview-metrics";
+   for(const [caption,value,unit]of [
+    [es?"ALTURA MAR ABIERTO":"OFFSHORE HEIGHT",data.waveM,"m"],
+    [es?"PERÍODO":"PERIOD",data.periodS,"s"],
+    [es?"VIENTO":"WIND",data.windKmh,"km/h"]
+   ]){
+    const item=document.createElement("div");
+    const label=document.createElement("small");label.textContent=caption;
+    const amount=document.createElement("strong");
+    amount.textContent=deg(value)?value.toFixed(unit==="km/h"?0:1)+" "+unit:"—";
+    item.append(label,amount);metrics.append(item);
+   }
+   previewBody.append(metrics);
+   const caveat=document.createElement("p");caveat.className="faro-beach-preview-note";
+   caveat.textContent=es?
+    "Pronóstico de esta playa · índice experimental. Altura oceánica, no ola rompiente; seguridad no evaluada.":
+    "Beach-specific forecast · experimental index. Offshore height, not breaking surf; safety not assessed.";
+   previewBody.append(caveat);
+  }).catch(()=>{
+   if(token!==previewToken||preview.hidden)return;
+   previewBody.textContent=es?
+    "No se pudieron cargar los datos de esta playa.":
+    "Unable to load this beach forecast.";
+  });
+  previewClose.focus({preventScroll:true});
  }
  function append(tag,cls,text,parent=brief){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;parent.append(n);return n}
  function describe(){
@@ -628,21 +731,15 @@ function create(opts){
   return true;
  }
  function update(data){
-  latest=data||p();describe();drawSchematic();drawUi();
+  const next=data||p();
+  if(activePreviewId&&previewBaseSpot!==next.spot?.id)closePreview();
+  latest=next;describe();drawSchematic();drawUi();
   if(!map)return;
   const L=root.L,sel=latest.spot?.id;
   for(const sp of (latest.spots||[]).filter(s=>Number.isFinite(s.latitude)&&Number.isFinite(s.longitude))){
    if(!markers.has(sp.id)){
     const m=L.marker([sp.latitude,sp.longitude],{title:sp.name,keyboard:true});
-    m.addTo(map).on("click",()=>{
-     if(sp.id!==latest.spot?.id){
-      opts.onSelectSpot?.(sp.id);
-     }else if(mapView==="region"){
-      // Even the already-selected beach is a useful regional navigation
-      // target: open its beach focus rather than doing nothing.
-      mapView="beach";frameMap(true);update(latest);
-     }
-    });
+    m.addTo(map).on("click",()=>showPreview(sp));
     markers.set(sp.id,m);
    }
    const profile=latest.profiles?.[sp.id]||{};
@@ -735,7 +832,7 @@ function create(opts){
    requestAnimationFrame(()=>map?.invalidateSize({pan:false}));
   }catch(err){
    loadError=true;
-   if(!schematic.isConnected){viewport.replaceChildren(schematic,compassDock,focus)}
+   if(!schematic.isConnected){viewport.replaceChildren(schematic,compassDock,focus,preview)}
    status.textContent=p().lang==="en"?
     "Map tiles unavailable. Showing a schematic of model references.":
     "Mapa base no disponible. Se muestran las referencias del modelo.";
@@ -747,7 +844,7 @@ function create(opts){
  if(d.open)void open();
  return {update,getMap:()=>map,setMode:x=>{if(buttons[x]){mode=x;update(latest)}},
   setMapView:x=>{if(["beach","region"].includes(x)){
-   mapView=x;if(x==="region")comparison.open=true;
+   closePreview();mapView=x;if(x==="region")comparison.open=true;
    frameMap(true);update(latest)}},
   getState:()=>({mode,mapView,exposure,motion,showSamples,lastCentered})};
 }
