@@ -1,4 +1,4 @@
-/* FARO Chile offshore potential scorer / v0.3 — used by live-model website.
+/* FARO Chile offshore potential scorer / v0.4 — used by live-model website.
  * Physics-informed Hs²×T swell partition proxy, guide-bearing exposure,
  * speed-dependent wind evaluation and bounded cross-sea modifiers.
  * Full-range 0–10 index, NOT empirically validated surf quality.
@@ -61,7 +61,7 @@
  }
  function potentialEnergy(input,profile,H){
   const parts=partitions(input);
-  let energy=0,raw=0,vol=0,wx=0,wy=0;
+  let energy=0,raw=0,supported=0,vol=0,wx=0,wy=0;
   const breakdown=parts.map(p=>{
    const fit=directionalFit(p.fromDeg,profile.waveFromDeg,H.angleFalloffDegrees);
    if(!fit)throw Error('Missing guide exposure for wave partition');
@@ -70,7 +70,7 @@
    const exposure=.05+.95*fit.value;
    const component=p.heightM**2*p.periodS;
    const admitted=component*exposure;
-   energy+=admitted;raw+=component;vol+=p.heightM**2;
+   energy+=admitted;raw+=component;supported+=component*fit.value;vol+=p.heightM**2;
    wx+=p.heightM**2*Math.cos(wrap(p.fromDeg)*Math.PI/180);
    wy+=p.heightM**2*Math.sin(wrap(p.fromDeg)*Math.PI/180);
    return {id:p.id,fromDeg:p.fromDeg,periodS:p.periodS,heightM:p.heightM,
@@ -78,7 +78,10 @@
     admittedProxy:+admitted.toFixed(3)};
   });
   const consistency=vol>0?clamp(Math.hypot(wx,wy)/vol,0,1):null;
-  return {admitted:energy,raw,consistency,breakdown};
+  return {admitted:energy,raw,consistency,
+   // Energy-weighted FRACTION of incoming swell that falls inside each
+   // spot's guide response. Not shoaling/refraction or camera calibration.
+   guideSupport:raw>0?clamp(supported/raw,0,1):0,breakdown};
  }
  function potentialScore(input,profile,H){
   const power=potentialEnergy(input,profile,H);
@@ -102,11 +105,19 @@
   const seaModifier=windSeaFraction===null?1:
    1-H.windSeaPenalty*windSeaFraction*clamp(input.windKmh/20,0,1);
   const crossingModifier=1-H.crossingPenalty*(1-(power.consistency??1));
+  // v0.3 defect: offshore energy can overwhelm a very small residual
+  // exposure, giving implausibly excellent ratings for swell completely
+  // outside the spot's documented direction sectors. This *guide-prior*
+  // regulariser makes the incompatibility remain material even in a large
+  // swell; it is NOT a physical nearshore transmission coefficient.
+  const directionalSupportFactor=H.offAxisScoreFloor+
+   (1-H.offAxisScoreFloor)*Math.sqrt(power.guideSupport);
   const unrounded=10*gate*
    (H.energyWeight*energyResponse+(1-H.energyWeight)*windQuality)*
-   seaModifier*crossingModifier;
+   seaModifier*crossingModifier*directionalSupportFactor;
   return {unrounded,energyResponse,gate,windQuality,windDirection,
-   windStrength,seaModifier,crossingModifier,windSeaFraction,power};
+   windStrength,seaModifier,crossingModifier,windSeaFraction,
+   directionalSupportFactor,power};
  }
  const t=(lang,es,en)=>lang==='es'?es:en;
  const bands=[
@@ -200,10 +211,15 @@
    scoreLabel:guideOnly?null:label,band:guideOnly?null:band.id,components,
    fieldSessions,rawDirectionalIndex:null,
    rawSwellAvailability:+science.gate.toFixed(3),
-   indexVersion:'faro-offshore-potential-v0.3',
+   indexVersion:'faro-spot-response-v0.4',
    physicsProxy:{
     energyHs2T:+science.power.raw.toFixed(3),
     admittedEnergyHs2T:+science.power.admitted.toFixed(3),
+    // A guide-supported directional fraction, not empirical confidence.
+    directionalGuideSupport:+science.power.guideSupport.toFixed(3),
+    directionalSupportFactor:+science.directionalSupportFactor.toFixed(3),
+    directionalGuideSource:profile.origins?.swell||'unspecified',
+    observationsCount:profile.observations||0,
     energyResponse:+science.energyResponse.toFixed(3),
     energyGate:+science.gate.toFixed(3),
     windQuality:+science.windQuality.toFixed(3),
@@ -224,8 +240,10 @@
     official:false
    },
    swellAvailability:+science.gate.toFixed(2),evidence:'published_guide_not_calibrated',tideEvaluated:false,nearshoreWaveHeightEstimated:false,
-   safetyAssessed:false,confidence:'low',scoreCap:null,scoreLimitPolicy:'full-range-unvalidated',
+   safetyAssessed:false,confidence:'low',scoreCap:null,
+   scoreLimitPolicy:'full-range-with-local-guide-support-no-7.9-ceiling',
    publicRecommendationAllowed:!guideOnly&&!accessRestricted,
+   guideFitEvidence:profile.observations>0?'observations-present-not-necessarily-calibrated':'guide-only-unvalidated',
    accessRestrictionIndependentlyEvaluated:false,
    accessStatus:accessRestricted?'reported-restricted-unverified-lift':'not-model-verified',
    warning:t(locale,
@@ -233,12 +251,12 @@
      'Sin score público; hipótesis documentales sin validar.':
      accessRestricted?
      'Ventanas: score experimental de potencial oceánico; NO habilita acceso. Restricción recreativa reportada y no verificada como levantada. No hay calibración de la ola rompiente.':
-     'FARO 0–10: índice de potencial oceánico (componentes Hs²·T, dirección de guía y viento). Parámetros heurísticos sin calibración local; no predice altura rompiente, marea ni seguridad.',
+     'FARO v0.4 · 0–10: energía oceánica por componentes y compatibilidad direccional de la playa. Ajuste de guía, no calibración costera observada; no estima ola rompiente ni seguridad.',
     guideOnly?
      'Unscored research guide; not validated.':
      accessRestricted?
      'Ventanas: experimental offshore potential only, NOT access clearance. Recreational restriction reported without verified lifting. No calibrated breaking-wave model.':
-     'FARO 0–10: offshore-potential index (Hs²·T partitions, guide bearings and wind). Heuristic parameters lack local calibration; not breaking-wave height, tide or safety.')
+     'FARO v0.4 · 0–10: partitioned offshore energy and spot-specific guide bearing compatibility. Guide-derived, not observed nearshore calibration; no breaking-wave or safety prediction.')
   };
  }
  root.FaroChileScoreLab=Object.freeze({evaluate,directionalFit,distanceToRange,periodFit,strength,potentialEnergy,potentialScore});
