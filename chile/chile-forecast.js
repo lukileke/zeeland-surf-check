@@ -450,7 +450,8 @@ function renderHourlyPreview(){
 }
 function updateCoastMap(){
  const s=selection();
- state.coastMap?.update({spot:spot(),spots:state.config?.pilots||[],slot:s,
+ state.coastMap?.update({spot:spot(),spots:state.config?.pilots||[],
+  referenceSpots:state.config?.referenceSpots||[],slot:s,
   marineGrid:state.forecast?.model?.marineGrid||null,
   weatherGrid:state.forecast?.model?.weatherGrid||null,
   profiles:state.profiles?.profiles||{},
@@ -881,6 +882,7 @@ async function initialize(){
   if(window.FaroChileCoastMap)state.coastMap=window.FaroChileCoastMap.create({
    container:$("chileCoastMap"),disclosure:$("coastMapExpand"),
    getCurrent:()=>({spot:spot(),spots:state.config.pilots,
+    referenceSpots:state.config.referenceSpots||[],
     slot:selection(),marineGrid:state.forecast?.model?.marineGrid||null,
   weatherGrid:state.forecast?.model?.weatherGrid||null,
   profiles:state.profiles?.profiles||{},

@@ -140,7 +140,7 @@ function create(opts){
  const host=opts.container;const p=()=>opts.getCurrent?.()||{};
  const d=opts.disclosure;
  if(!host||!d)return null;
- let map=null,markers=new Map(),modelGridMarker=null,windGridMarker=null,latest=null,loadError=false;
+ let map=null,markers=new Map(),referenceMarkers=new Map(),modelGridMarker=null,windGridMarker=null,latest=null,loadError=false;
  let mode="combined",mapView="beach",exposure=false,motion=false,showSamples=false,inspected="marine",lastCentered=null,pendingSampleFit=false;
  const reduced=()=>typeof root.matchMedia==="function"&&root.matchMedia("(prefers-reduced-motion: reduce)").matches;
  const controls=document.createElement("div");controls.className="faro-lens-controls";host.append(controls);
@@ -190,6 +190,14 @@ function create(opts){
  const focus=document.createElement("div");focus.className="faro-map-focus";focus.setAttribute("aria-hidden","true");
  const focusLabel=document.createElement("small"),focusName=document.createElement("strong");
  focus.append(focusLabel,focusName);viewport.append(focus);
+ // Explicitly unscored coastal places live in a separate map layer.
+ // Clicking a reference does not select a forecast pilot or fake a score.
+ const refPanel=document.createElement("aside");refPanel.className="faro-coast-ref-panel";
+ refPanel.hidden=true;refPanel.setAttribute("aria-label","Coastal place reference");
+ const refClose=document.createElement("button");refClose.type="button";refClose.className="faro-coast-ref-close";
+ refClose.textContent="×";refPanel.append(refClose);
+ refClose.addEventListener("click",()=>{refPanel.hidden=true;refPanel.replaceChildren(refClose)});
+ viewport.append(refPanel);
  const brief=document.createElement("div");brief.className="faro-map-brief";brief.setAttribute("aria-live","polite");stage.append(brief);
  const legend=document.createElement("div");legend.className="faro-lens-footer-legend";host.append(legend);
  const comparison=document.createElement("details");comparison.className="faro-lens-beaches";host.append(comparison);
@@ -205,6 +213,33 @@ function create(opts){
  schematic.setAttribute("viewBox","0 0 640 370");schematic.setAttribute("role","img");
  schematic.setAttribute("aria-label","Referencias geolocalizadas de cuatro spots; direcciones de swell y viento en sus celdas de modelo");
  viewport.append(schematic);
+ function showReference(sp){
+  if(!sp?.id)return;
+  const es=(latest?.lang||"es")!=="en";
+  refPanel.replaceChildren(refClose);
+  const kicker=document.createElement("small");kicker.textContent=es?"LUGAR DE REFERENCIA":"REFERENCE LOCATION";
+  const title=document.createElement("strong");title.textContent=sp.shortName||sp.name;
+  const note=document.createElement("p");
+  note.textContent=es?
+   "Se informó restricción sanitaria de actividades recreativas en Playa Ventanas (24–26 oct. 2026) por fragata portuguesa. La vigencia actual no está comprobada; no hay score ni recomendación de surf.":
+   "A recreational-use restriction was reported at Playa Ventanas (24–26 Oct 2026) due to Portuguese man-of-war. Current status is not verified; no surf score or recommendation.";
+  const link=document.createElement("a");
+  link.href=sp.catalogueUrl||"atlas.html?region=CL-VS&q=Ventanas";
+  link.textContent=es?"Ver ficha y fuentes en el atlas":"View sources in the atlas";
+  refPanel.append(kicker,title,note,link);refPanel.hidden=false;
+ }
+ function referenceIcon(L,sp){
+  const es=(latest?.lang||"es")!=="en";
+  const badge=document.createElement("div");badge.className="faro-map-reference-pin";
+  badge.dataset.referenceId=sp.id;
+  const dot=document.createElement("span");dot.className="faro-map-reference-dot";
+  dot.setAttribute("aria-hidden","true");
+  const name=document.createElement("strong");name.textContent=sp.shortName||sp.name;
+  const scope=document.createElement("small");scope.textContent=es?"REFERENCIA":"REFERENCE";
+  badge.append(dot,name,scope);
+  return L.divIcon({className:"faro-leaflet-reference-marker",html:badge.outerHTML,
+   iconSize:[144,30],iconAnchor:[72,15]});
+ }
  function drawSchematic(){
   const current=latest||p(),es=current.lang!=="en";
   schematic.replaceChildren();
@@ -215,6 +250,7 @@ function create(opts){
    parent.append(node);return node;
   }
   const spots=(current.spots||[]).filter(sp=>deg(sp.latitude)&&deg(sp.longitude));
+  const references=(current.referenceSpots||[]).filter(sp=>deg(sp.latitude)&&deg(sp.longitude));
   shape("rect",{x:0,y:0,width:640,height:370,fill:"#dceef1"});
   for(let i=0;i<7;i++)shape("line",{x1:40+i*94,y1:20,x2:40+i*94,y2:345,stroke:"#bad8dd","stroke-width":1,"stroke-dasharray":"3 8"});
   for(let i=0;i<5;i++)shape("line",{x1:25,y1:25+i*79,x2:610,y2:25+i*79,stroke:"#bad8dd","stroke-width":1,"stroke-dasharray":"3 8"});
@@ -226,7 +262,7 @@ function create(opts){
   // only when explicitly requested, never as large disconnected arrows.
   const grid=current.marineGrid,atmosphere=current.weatherGrid;
   const gridVisible=mapView==="region"&&showSamples;
-  const locations=spots
+  const locations=spots.concat(mapView==="region"?references:[])
    .concat(gridVisible&&mode!=="wind"&&deg(grid?.lat)&&deg(grid?.lon)?
     [{latitude:grid.lat,longitude:grid.lon}]:[])
    .concat(gridVisible&&mode!=="swell"&&deg(atmosphere?.lat)&&deg(atmosphere?.lon)?
@@ -251,6 +287,22 @@ function create(opts){
     g.addEventListener("click",activate);
     g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();activate()}});
    }
+  }
+  if(mapView==="region")for(const sp of references){
+   const pos=project(sp);
+   const g=shape("g",{"data-reference-spot":sp.id,role:"button",tabindex:0,
+    "aria-label":(sp.shortName||sp.name)+" · "+(es?"sin pronóstico":"no forecast"),
+    style:"cursor:pointer"});
+   shape("circle",{cx:pos.x,cy:pos.y,r:7,fill:"#647b80",stroke:"#f8fcfb",
+    "stroke-width":2},null,g);
+   shape("text",{x:pos.x+12,y:pos.y+4,fill:"#37545b","font-family":"sans-serif",
+    "font-size":12,"font-weight":750,"paint-order":"stroke",stroke:"#e3f0f2",
+    "stroke-width":3},(sp.shortName||sp.name)+(es?" · referencia":" · reference"),g);
+   const act=()=>showReference(sp);
+   g.addEventListener("click",act);
+   g.addEventListener("keydown",event=>{
+    if(event.key==="Enter"||event.key===" "){event.preventDefault();act()}
+   });
   }
   // Intentionally no arrow rays: one source point does not determine
   // the wave path to each local break.
@@ -369,7 +421,7 @@ function create(opts){
   regionSummary.replaceChildren();
   if(mapView==="region"){
    const regionalTitle=document.createElement("strong");
-   regionalTitle.textContent=es?"CUATRO PLAYAS · UNA COSTA":"FOUR BEACHES · ONE COAST";
+   regionalTitle.textContent=es?"4 PRONÓSTICOS · 1 REFERENCIA":"4 FORECASTS · 1 REFERENCE";
    const regionalText=document.createElement("span");
    regionalText.textContent=es?
     "S/W muestran la lectura modelada de la franja seleccionada con la guía de cada playa. No son olas observadas.":
@@ -605,7 +657,7 @@ function create(opts){
   }else{
    // REGIONAL means compare the FOUR named beaches, NOT fit offshore
    // marine/atmosphere model sample grids which can push beaches off-screen.
-   const beaches=(latest.spots||[]).filter(p=>
+   const beaches=[...(latest.spots||[]),...(latest.referenceSpots||[])].filter(p=>
     deg(p.latitude)&&deg(p.longitude));
    if(beaches.length>1){
     const bounds=L.latLngBounds(
@@ -628,7 +680,8 @@ function create(opts){
   return true;
  }
  function update(data){
-  latest=data||p();describe();drawSchematic();drawUi();
+  latest=data||p();refPanel.hidden=true;refPanel.replaceChildren(refClose);
+  describe();drawSchematic();drawUi();
   if(!map)return;
   const L=root.L,sel=latest.spot?.id;
   for(const sp of (latest.spots||[]).filter(s=>Number.isFinite(s.latitude)&&Number.isFinite(s.longitude))){
@@ -649,6 +702,27 @@ function create(opts){
    const reading=spotSignals(latest.slot||{},profile);
    markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,reading));
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
+  }
+  // Unscored references are separate from the four real model pilots:
+  // they never receive S/W badges, automatic scoring or "favourable" colour.
+  const referenceSet=new Set();
+  for(const sp of (latest.referenceSpots||[]).filter(p=>
+   deg(p.latitude)&&deg(p.longitude))){
+   referenceSet.add(sp.id);
+   if(mapView!=="region")continue;
+   if(!referenceMarkers.has(sp.id)){
+    const ref=L.marker([sp.latitude,sp.longitude],{
+     title:sp.name,keyboard:true,zIndexOffset:30
+    }).addTo(map);
+    ref.on("click",()=>showReference(sp));
+    referenceMarkers.set(sp.id,ref);
+   }
+   referenceMarkers.get(sp.id).setIcon(referenceIcon(L,sp));
+  }
+  for(const [id,marker]of referenceMarkers){
+   if(mapView!=="region"||!referenceSet.has(id)){
+    map.removeLayer(marker);referenceMarkers.delete(id);
+   }
   }
   // Beach coordinates belong to the spot pin; signals live in the HUD.
   const displayMarine=mapView==="region"&&showSamples&&mode!=="wind";
@@ -735,7 +809,7 @@ function create(opts){
    requestAnimationFrame(()=>map?.invalidateSize({pan:false}));
   }catch(err){
    loadError=true;
-   if(!schematic.isConnected){viewport.replaceChildren(schematic,compassDock,focus)}
+   if(!schematic.isConnected){viewport.replaceChildren(schematic,compassDock,focus,refPanel)}
    status.textContent=p().lang==="en"?
     "Map tiles unavailable. Showing a schematic of model references.":
     "Mapa base no disponible. Se muestran las referencias del modelo.";

@@ -978,3 +978,63 @@ html:not([data-theme="light"]) #chileCoastMap .faro-lens-beach[data-signal="unkn
 #chileCoastMap[data-map-view="region"] .faro-map-pin.is-regional[data-spot-id="CL-VS:renaca"]::after{
  top:-22px;
 }
+
+/* Valparaíso: Ventanas is a geographical research reference, NOT a fifth
+   modelled surf score. Muted marker communicates the lower certainty. */
+#chileCoastMap .faro-leaflet-reference-marker{background:transparent;border:0;overflow:visible!important}
+#chileCoastMap .faro-map-reference-pin{
+ display:inline-flex;align-items:center;justify-content:center;gap:5px;
+ width:max-content;max-width:155px;height:29px;box-sizing:border-box;
+ padding:0 9px;border:1px solid rgba(106,135,141,.55);
+ border-radius:16px;background:rgba(247,251,249,.94);
+ box-shadow:0 3px 10px rgba(20,54,61,.13);color:#37555b;
+ font:750 10px/1.1 var(--faro-text,Manrope,system-ui);
+ white-space:nowrap;pointer-events:auto;
+}
+#chileCoastMap .faro-map-reference-pin strong{font:inherit}
+#chileCoastMap .faro-map-reference-pin small{
+ font:850 8px/1.1 var(--faro-text,Manrope,system-ui);
+ text-transform:uppercase;letter-spacing:.04em;color:#68848b;
+}
+#chileCoastMap .faro-map-reference-dot{
+ width:6px;height:6px;min-width:6px;border-radius:50%;background:#708f94;
+}
+#chileCoastMap .faro-coast-ref-panel{
+ position:absolute;z-index:1350;bottom:14px;left:14px;
+ width:min(340px,calc(100% - 28px));max-height:calc(100% - 28px);
+ overflow:auto;box-sizing:border-box;
+ padding:14px 42px 14px 15px;display:grid;gap:7px;
+ border:1px solid var(--faro-line,#cad8db);
+ border-left:3px solid #9b6743;border-radius:13px;
+ background:var(--faro-raised,#fff);color:var(--fg,#213d41);
+ box-shadow:0 10px 30px rgba(14,41,49,.22);
+}
+#chileCoastMap .faro-coast-ref-panel[hidden]{display:none!important}
+#chileCoastMap .faro-coast-ref-panel>small{
+ font:850 9px/1.2 var(--faro-text,Manrope,system-ui);letter-spacing:.09em;
+ color:var(--faro-quiet,#68818a);
+}
+#chileCoastMap .faro-coast-ref-panel>strong{
+ font:850 18px/1.2 var(--faro-text,Manrope,system-ui);
+}
+#chileCoastMap .faro-coast-ref-panel>p{
+ margin:0;font:600 11px/1.55 var(--faro-text,Manrope,system-ui);
+}
+#chileCoastMap .faro-coast-ref-panel>a{
+ font:800 11px/1.4 var(--faro-text,Manrope,system-ui);
+ color:var(--faro-ocean,#176e81);text-underline-offset:3px;
+}
+#chileCoastMap .faro-coast-ref-close{
+ position:absolute;top:8px;right:9px;display:grid;place-items:center;
+ width:30px;height:30px;padding:0;border:1px solid var(--faro-line,#cad8db);
+ border-radius:8px;background:var(--tile,#f3f8f8);color:var(--fg,#213d41);
+ font:850 20px/1 var(--faro-text,Manrope,system-ui);cursor:pointer;
+}
+html:not([data-theme="light"]) #chileCoastMap .faro-map-reference-pin{
+ background:rgba(36,60,65,.94);color:#e7f1f1;
+ border-color:rgba(152,177,179,.65);
+}
+html:not([data-theme="light"]) #chileCoastMap .faro-map-reference-pin small{color:#c4d5d6}
+#chileCoastMap .faro-leaflet-reference-marker:focus-visible .faro-map-reference-pin{
+ outline:3px solid var(--faro-selection,#15798c);outline-offset:3px;
+}

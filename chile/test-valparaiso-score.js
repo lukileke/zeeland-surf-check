@@ -20,7 +20,10 @@ assert.equal(cfg.active,false);
 assert.equal(region.forecastEnabled,false);
 assert.equal(manifest.active,false);
 assert.equal(manifest.regions.find(r=>r.code==='CL-VS').spotCount,region.spots.length);
-assert.equal(region.spots.length,21);
+assert.equal(region.spots.length,22);
+assert.equal(region.spots.some(s=>s.id==='CL-VS:ventanas'),true);
+assert.equal(Object.hasOwn(cfg.profiles,'CL-VS:ventanas'),false,
+ 'Ventanas must remain unscored while reported access restrictions are not verified lifted');
 for(const spot of region.spots){
  assert.equal(spot.forecastEnabled,false);
  assert.equal(spot.coordinates,null);

@@ -12,6 +12,23 @@ const config=json('valparaiso-live.config.json'),profile=json('valparaiso-score.
 assert.equal(config.region,'CL-VS');
 assert.equal(config.noOfficialAlertAssertions,true);
 assert.equal(config.pilots.length,4);
+assert.equal(config.referenceSpots?.length,1,'Ventanas is a fifth geographical reference, not a forecast pilot');
+const ventanas=config.referenceSpots[0];
+assert.equal(ventanas.id,'CL-VS:ventanas');
+assert.equal(ventanas.forecastEnabled,false);
+assert.equal(ventanas.scoreEnabled,false);
+assert.ok(ventanas.coordinateStatus.includes('not_surf_break'));
+assert.equal(config.pilots.some(p=>p.id===ventanas.id),false,
+ 'Ventanas must never receive an uncalibrated surf recommendation during a reported access restriction');
+const candidate=registry.spots.find(p=>p.id===ventanas.id);
+assert.ok(candidate&&candidate.forecastEnabled===false&&candidate.coordinates===null);
+assert.equal(candidate.accessNotice?.automaticClearance,false);
+assert.equal(candidate.accessNotice?.status,'restriction_reported_not_live_verified');
+const manifest=json('regions.json');
+assert.equal(manifest.regions.find(r=>r.code==='CL-VS')?.spotCount,registry.spots.length);
+const sources=json('sources.json').sources;
+for(const id of candidate.sources)assert.ok(sources[id]?.url,'Ventanas claim needs an attributable source: '+id);
+
 assert.equal(profile.active,false);
 for(const p of config.pilots){
  assert.equal(p.coordinateStatus.includes('not_'),true,'Coordinates cannot masquerade as calibrated wave breaks');

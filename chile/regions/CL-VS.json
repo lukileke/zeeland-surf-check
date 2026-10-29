@@ -952,6 +952,74 @@
         "tide": "not_calibrated",
         "breakingWave": "not_calibrated"
       }
+    },
+    {
+      "id": "CL-VS:ventanas",
+      "name": "Ventanas · muelle chico / Pilotes",
+      "locality": "Puchuncaví · bahía de Quintero",
+      "subarea": "Playa Ventanas; secciones exactas pendientes de georreferenciar",
+      "timeZone": "America/Santiago",
+      "precision": "beach_centre_only_not_takeoff_point",
+      "evidenceStatus": "community_guide_plus_municipal_location",
+      "forecastEnabled": false,
+      "coordinates": null,
+      "coastalReference": {
+        "latitude": -32.74445,
+        "longitude": -71.48821,
+        "source": "osm-playa-ventanas",
+        "precision": "approximate_beach_centre_not_breaking_wave"
+      },
+      "breakType": "beach",
+      "waveHand": "both",
+      "abilityReference": "varies_by_section",
+      "sources": [
+        "surfspots-ventanas",
+        "municipio-ventanas",
+        "osm-playa-ventanas",
+        "biobio-ventanas-restriction-20261026",
+        "directemar-quintero-restrictions"
+      ],
+      "conditions": {
+        "favourableWindDegrees": null,
+        "swellWindowsDegrees": null,
+        "idealTide": null,
+        "periodResponse": null,
+        "breakingHeightCalibration": null,
+        "publishedReference": {
+          "swellFrom": null,
+          "windFrom": null,
+          "tide": "Community source describes multiple breaks; inconsistent/uncalibrated guidance; not modelled",
+          "scope": "Ventanas beach with Muelle Chico/Pilotes sections; exact surf take-off not verified",
+          "attribution": "surfspots-ventanas"
+        },
+        "regionSpecificNoteEs": "Spot descrito por guía comunitaria con sectores Muelle Chico y Pilotes, sin georreferenciar rompientes ni verificar ventanas de swell/viento. Cercanía a actividad portuaria y riesgos de contaminación. El 24–26 octubre de 2026 se informó restricción sanitaria por fragata portuguesa: comprobar con Seremi de Salud y DIRECTEMAR si se ha levantado antes de entrar al mar.",
+        "regionSpecificNoteEn": "Community guide describes Muelle Chico and Pilotes sections, without verified lineups or swell/wind guide calibration. Close to port operations and possible pollution. A Portuguese man-of-war restriction was reported on 24–26 October 2026; check with health and maritime authorities whether it has been lifted before entering the water.",
+        "fieldVerification": "required_before_any_recommendation"
+      },
+      "accessNotice": {
+        "status": "restriction_reported_not_live_verified",
+        "reportedOn": "2026-10-24",
+        "checkedOn": "2026-10-29",
+        "source": "biobio-ventanas-restriction-20261026",
+        "officialStatus": "not_synchronised",
+        "automaticClearance": false,
+        "es": "Restricción sanitaria reportada el 24–26 oct. 2026 por fragata portuguesa. Prohibidas actividades recreativas según el reporte; vigencia no comprobada en directo.",
+        "en": "Health-related recreational-use prohibition reported 24–26 Oct 2026 due to Portuguese man-of-war; current status not checked live."
+      },
+      "hazards": {
+        "pollution": "industrial_area_review_water_quality_before_any_use",
+        "portStructures": "nearby_port_and_moorings_verify_restrictions",
+        "jellyfish": "portuguese_man_of_war_restriction_reported_2026_10_24",
+        "ripCurrents": "not_assessed",
+        "rocks": "not_assessed",
+        "access": "restriction_reported_current_clearance_unknown"
+      },
+      "confidence": {
+        "existence": "source_supported",
+        "directionalFit": "not_calibrated",
+        "tide": "not_calibrated",
+        "breakingWave": "not_calibrated"
+      }
     }
   ]
 }
