@@ -187,6 +187,66 @@ function create(opts){
  const compassDock=document.createElement("div");compassDock.className="faro-lens-compass-dock";
  compassDock.setAttribute("role","img");viewport.append(compassDock);
  // A grounded spot label gives the map a clear visual anchor.
+ // One map tooltip source for Leaflet pins and the no-tiles SVG.
+ // An alert describes a dated external report, NEVER a live official feed.
+ const noticeTip=document.createElement("div");noticeTip.id="faroMapAccessTip";
+ noticeTip.className="faro-map-access-tooltip";noticeTip.setAttribute("role","tooltip");
+ noticeTip.hidden=true;viewport.append(noticeTip);
+ let pinnedNotice=null,activeNoticeAnchor=null;
+ const noticeFor=sp=>root.FaroChileNotices?.describe(sp,latest?.lang||"es")||null;
+ function hideNotice(){
+  if(activeNoticeAnchor)activeNoticeAnchor.removeAttribute("aria-describedby");
+  activeNoticeAnchor=null;pinnedNotice=null;noticeTip.hidden=true;
+ }
+ function showNotice(sp,anchor,pin=false){
+  const n=noticeFor(sp);
+  if(!n||!anchor)return;
+  if(activeNoticeAnchor&&activeNoticeAnchor!==anchor)
+   activeNoticeAnchor.removeAttribute("aria-describedby");
+  activeNoticeAnchor=anchor;
+  pinnedNotice=pin?anchor:null;
+  noticeTip.replaceChildren();
+  const heading=document.createElement("strong");heading.textContent=n.tooltipTitle;
+  const line=document.createElement("span");line.textContent=n.tooltipDetail;
+  const stamp=document.createElement("small");stamp.textContent=n.kicker+" · "+n.statusLabel;
+  noticeTip.append(heading,line,stamp);
+  noticeTip.dataset.severity=n.severity;noticeTip.hidden=false;
+  anchor.setAttribute("aria-describedby",noticeTip.id);
+  const rootRect=viewport.getBoundingClientRect(),r=anchor.getBoundingClientRect();
+  const x=Math.min(Math.max(r.left+r.width/2-rootRect.left,135),Math.max(135,rootRect.width-135));
+  const y=r.top-rootRect.top;
+  const below=y<115;
+  noticeTip.classList.toggle("is-below",below);
+  noticeTip.style.left=x+"px";
+  noticeTip.style.top=(below?r.bottom-rootRect.top+9:y-9)+"px";
+ }
+ function wireNotice(sp,anchor){
+  if(!noticeFor(sp)||!anchor||anchor.dataset.noticeWired==="true")return;
+  anchor.dataset.noticeWired="true";
+  anchor.setAttribute("aria-label",(latest?.lang==="en"?"Warning: ":"Aviso: ")+
+   noticeFor(sp).headline+". "+noticeFor(sp).tooltipDetail);
+  anchor.addEventListener("pointerenter",()=>showNotice(sp,anchor,false));
+  anchor.addEventListener("pointerleave",()=>{if(pinnedNotice!==anchor)hideNotice()});
+  anchor.addEventListener("focus",()=>showNotice(sp,anchor,false));
+  anchor.addEventListener("blur",()=>{if(pinnedNotice!==anchor)hideNotice()});
+  anchor.addEventListener("pointerdown",e=>{e.stopPropagation()});
+  anchor.addEventListener("dblclick",e=>e.stopPropagation());
+  anchor.addEventListener("click",e=>{
+   // A warning is an interaction distinct from selecting/changing the beach.
+   e.preventDefault();e.stopPropagation();
+   if(pinnedNotice===anchor){hideNotice();return}
+   showNotice(sp,anchor,true);
+  });
+  anchor.addEventListener("keydown",e=>{
+   if(e.key==="Escape"){hideNotice();e.stopPropagation();return}
+   if(e.key===" "||e.key==="Enter"){e.preventDefault();e.stopPropagation();
+    if(pinnedNotice===anchor)hideNotice();else showNotice(sp,anchor,true)}
+  });
+ }
+ host.addEventListener("pointerdown",e=>{
+  if(pinnedNotice&&!e.target.closest(".faro-map-access-badge, [data-map-access]"))hideNotice();
+ });
+ document.addEventListener("keydown",e=>{if(e.key==="Escape")hideNotice()});
  const focus=document.createElement("div");focus.className="faro-map-focus";focus.setAttribute("aria-hidden","true");
  const focusLabel=document.createElement("small"),focusName=document.createElement("strong");
  focus.append(focusLabel,focusName);viewport.append(focus);
@@ -277,12 +337,18 @@ function create(opts){
    const g=shape("g",{"data-spot":sp.id,role:"button",tabindex:0,"aria-label":sp.name,style:"cursor:pointer"});
    shape("circle",{cx:pos.x,cy:pos.y,r:active?11:8,stroke:active?"#fff":"#bad8dd",
     "stroke-width":active?4:2,fill:active?"#106382":"#1c3644"},null,g);
-   if(sp.accessNotice?.status==="restriction_reported_not_live_verified"){
-    shape("circle",{cx:pos.x+10,cy:pos.y-10,r:7,fill:"#b97742",
-     stroke:"#f9faf9","stroke-width":2},null,g);
-    shape("text",{x:pos.x+10,y:pos.y-7,"font-size":10,"font-weight":900,
-     "text-anchor":"middle",fill:"#fff"},"!",g);
-    g.setAttribute("aria-label",sp.name+" · "+(es?"restricción reportada":"reported restriction"));
+   const access=noticeFor(sp);
+   if(access){
+    const alert=shape("g",{"data-map-access":sp.id,"data-notice-type":access.type,
+     role:"button",tabindex:0,style:"cursor:pointer"});
+    shape("circle",{cx:pos.x+10,cy:pos.y-10,r:10,fill:"#ac753d",
+     stroke:"#fff","stroke-width":2},null,alert);
+    shape("text",{x:pos.x+10,y:pos.y-6,"font-size":12,"font-weight":900,
+     "text-anchor":"middle","pointer-events":"none",fill:"#fff"},"!",alert);
+    const native=document.createElementNS(NS,"title");
+    native.textContent=access.tooltipTitle+" · "+access.tooltipDetail;
+    alert.append(native);
+    wireNotice(sp,alert);
    }
    shape("text",{x:pos.x>475?pos.x-15:pos.x+15,y:pos.y+4,fill:"#173c4a","font-family":"sans-serif",
     "text-anchor":pos.x>475?"end":"start",
@@ -589,13 +655,13 @@ function create(opts){
   dot.setAttribute("aria-hidden","true");base.append(dot);
   const name=document.createElement("span");name.className="faro-map-pin-name";
   name.textContent=spot.shortName||spot.name;base.append(name);
-  if(spot.accessNotice?.status==="restriction_reported_not_live_verified"){
-   const alert=document.createElement("span");alert.className="faro-map-access-badge";
-   alert.setAttribute("aria-hidden","true");alert.textContent="!";
-   alert.title=es?"Restricción recreativa reportada · verificar vigencia":
-    "Reported recreational-use restriction · verify status";
-   base.append(alert);
-   base.dataset.accessAlert="reported";
+  const access=noticeFor(spot);
+  if(access){
+   const alert=document.createElement("button");alert.type="button";
+   alert.className="faro-map-access-badge";alert.textContent="!";
+   alert.dataset.noticeType=access.type;
+   alert.setAttribute("aria-label",access.headline+" · "+access.tooltipDetail);
+   base.append(alert);base.dataset.accessAlert="reported";
   }
   if(mapView==="region"){
    const tracks=document.createElement("span");tracks.className="faro-region-fit-tracks";
@@ -698,7 +764,7 @@ function create(opts){
   return true;
  }
  function update(data){
-  latest=data||p();refPanel.hidden=true;refPanel.replaceChildren(refClose);
+  latest=data||p();hideNotice();refPanel.hidden=true;refPanel.replaceChildren(refClose);
   describe();drawSchematic();drawUi();
   if(!map)return;
   const L=root.L,sel=latest.spot?.id;
@@ -720,6 +786,9 @@ function create(opts){
    const reading=spotSignals(latest.slot||{},profile);
    markers.get(sp.id).setIcon(markerIcon(L,sp,sp.id===sel,reading));
    markers.get(sp.id).setZIndexOffset(sp.id===sel?150:0);
+   const pin=markers.get(sp.id).getElement()?.querySelector(".faro-map-access-badge");
+   if(pin){wireNotice(sp,pin);L.DomEvent?.disableClickPropagation?.(pin)}
+
   }
   // Unscored references are separate from the four real model pilots:
   // they never receive S/W badges, automatic scoring or "favourable" colour.
