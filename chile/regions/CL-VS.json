@@ -960,8 +960,8 @@
       "subarea": "Playa Ventanas; secciones exactas pendientes de georreferenciar",
       "timeZone": "America/Santiago",
       "precision": "beach_centre_only_not_takeoff_point",
-      "evidenceStatus": "community-guide-prior-only-restriction-reported",
-      "forecastEnabled": false,
+      "evidenceStatus": "experimental-model-only-restriction-reported",
+      "forecastEnabled": true,
       "coordinates": null,
       "coastalReference": {
         "latitude": -32.74445,
@@ -981,7 +981,9 @@
         "uv-quintero-bay-forecast",
         "wannasurf-ventanas",
         "uplav-hub-quintero-metals",
-        "ventanas-restriction-still-20261027"
+        "ventanas-restriction-still-20261027",
+        "uv-ventanas-node",
+        "shoa-cendhoc-oleaje"
       ],
       "conditions": {
         "favourableWindDegrees": null,
@@ -997,8 +999,8 @@
           "attribution": "surfspots-ventanas",
           "nearshoreReference": "uv-quintero-bay-forecast"
         },
-        "regionSpecificNoteEs": "Precalibración bibliográfica: guía comunitaria menciona swell N, viento N/S y preferencia por marea bajante. Interpretación distinta entre Muelle Chico y Pilotes aún sin mediciones. Modelo UV de Bahía Quintero (Puerto Ventanas, 20 m) disponible como referencia externa, no conectado a FARO. Restricción sanitaria reportada vigente al 27 oct. 2026 por fragata portuguesa; no recomendar entrar al agua. Riesgo ambiental industrial y operativo.",
-        "regionSpecificNoteEn": "Literature-only precalibration: a community surf guide suggests N swell, N/S winds and falling tide. Muelle Chico and Pilotes have not been separately observed. UV Quintero Bay model (Puerto Ventanas, 20 m) is an external reference, not connected to FARO. Health restriction still reported in force on 27 Oct 2026 due to Portuguese man-of-war; no water-entry recommendation. Industrial and port hazards.",
+        "regionSpecificNoteEs": "Precalibración bibliográfica: guía comunitaria menciona swell N, viento N/S y preferencia por marea bajante. Interpretación distinta entre Muelle Chico y Pilotes aún sin mediciones. Modelo UV de Bahía Quintero (Puerto Ventanas, 20 m) disponible como referencia externa, no conectado a FARO. Restricción sanitaria reportada vigente al 27 oct. 2026 por fragata portuguesa; no recomendar entrar al agua; el puntaje FARO describe sólo el potencial oceánico modelado. Riesgo ambiental industrial y operativo.",
+        "regionSpecificNoteEn": "Literature-only precalibration: a community surf guide suggests N swell, N/S winds and falling tide. Muelle Chico and Pilotes have not been separately observed. UV Quintero Bay model (Puerto Ventanas, 20 m) is an external reference, not connected to FARO. Health restriction still reported in force on 27 Oct 2026 due to Portuguese man-of-war; no water-entry recommendation; FARO's modelled offshore score is not a safety clearance. Industrial and port hazards.",
         "fieldVerification": "required_before_any_recommendation",
         "guideHypotheses": {
           "level": "source-derived-prior-not-calibrated",
@@ -1031,7 +1033,9 @@
             "source": "uv-quintero-bay-forecast",
             "integratedInFaro": false
           }
-        }
+        },
+        "modelStatus": "FARO offshore potential v0.3, guide-prior-only",
+        "modelRecommendationAllowed": false
       },
       "accessNotice": {
         "status": "restriction_reported_not_live_verified",
