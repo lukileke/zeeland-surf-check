@@ -197,8 +197,10 @@ function fixture(){
    const hourlyScore=Number(await chosen.locator('.chile-slot-score').textContent());
    assert.equal(await chosen.locator('.chile-slot-quality').textContent(),qualityOf(hourlyScore),
     'Hourly score must show the same Zeeland quality caption');
-   assert.equal(await page.locator('.chile-session-rating .chile-session-label').last().textContent(),qualityOf(hourlyScore),
-    'Session score and hourly category must agree');
+   assert.equal(await page.locator('#sessionAtGlance .chile-session-rating').count(),0,
+    'Gear checklist must not repeat the daily score and offshore wave instrument');
+   assert.match(await page.locator('#sessionDetailSummary').textContent(),/mm|Shorty|accesorios/i,
+    'Collapsed gear checklist names actual wetsuit guidance, rather than a duplicated score');
    await page.waitForFunction(()=>document.getElementById('detail')?.textContent?.includes('UTC'),{timeout:6000});
    // The technical drawer is intentionally collapsed; innerText is empty
    // for hidden elements, while textContent still exposes populated content.
@@ -251,14 +253,15 @@ function fixture(){
     const sessionBounds=await page.locator('#dayview > .session-section').boundingBox();
     const mapBounds=await page.locator('#coastMapExpand').boundingBox();
     assert.ok(sessionBounds&&mapBounds,'Session and map must both occupy desktop grid');
-    assert.ok(mapBounds.y>=sessionBounds.y+sessionBounds.height-10,'Map must follow the selected session');
+    assert.ok(sessionBounds.y>=mapBounds.y+mapBounds.height-10,
+     'Practical gear checklist must follow map and swell compass, not conceal them');
     assert.ok(mapBounds.width>=sessionBounds.width*.95,'Coastal map must span the full-width reading area');
     const daily=await page.locator('.day-outlook-section').boundingBox();
     const hourly=await page.locator('#dayview > .hourly-section').boundingBox();
     assert.ok(daily&&hourly,'Daily and hourly decisions both render');
     assert.ok(Math.abs(daily.y-hourly.y)<24,'Daily and hourly must start on the same decision row');
-    assert.ok(sessionBounds.y>=Math.max(daily.y+daily.height,hourly.y+hourly.height)-10,
-     'Session details belong after the paired hero, not below only one column');
+    assert.ok(mapBounds.y>=Math.max(daily.y+daily.height,hourly.y+hourly.height)-10,
+     'Ocean tools must follow the paired day and hourly decision row');
     assert.ok(sessionBounds.width>hourly.width*1.5,
      'Selected session disclosure spans the desktop instead of reserving dead left space');
     const font=await page.locator('#dayWave').evaluate(el=>getComputedStyle(el).fontFamily);
@@ -273,6 +276,13 @@ function fixture(){
    assert.match(await page.locator('#faroHourlyPreview').textContent(),/COASTAL READ/);
    await page.locator('#faroHourlyGoLens').click();
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
+   assert.equal(await page.locator('#openOceanMap').isVisible(),true,
+    'Coastal map must have a prominent primary action');
+   await page.locator('#openOceanCompass').click();
+   assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),true,
+    'Swell compass is accessible beside the map rather than buried in research panels');
+   assert.equal(await page.locator('#waveInsightExpand .chile-compass-svg').count(),1,
+    'Swell compass remains data driven after repositioning');
    assert.equal(await page.locator('#chileCoastMap .faro-lens-stage').count(),1,'Map and ocean read share a stage');
    assert.equal(await page.locator('#chileCoastMap .faro-map-focus').count(),1,'Map has a selected-break label');
    // On phone-width viewports ensure region signal colours agree with the
@@ -500,6 +510,31 @@ function fixture(){
    assert.equal(await page.locator('#cutoff').count(),1,'Translation must preserve daylight cut-off element');
    await page.locator('#themeToggle').click();
    assert.equal(scriptErrors.length,0,'No runtime errors during locale/theme/tab changes');
+   if(width===390||width===1180){
+    await page.locator('#navBest').click();
+    await page.waitForFunction(()=>document.querySelectorAll('#highlights .chile-ranking').length>0,{timeout:15000});
+    const count=await page.locator('#highlights .chile-ranking').count();
+    assert.ok(count>=1&&count<=3,'Best of week presents at most three immediate choices');
+    assert.ok(await page.locator('#rankingContext').textContent(),
+     'Provisional cap must be explained once above cards');
+    assert.equal(await page.locator('#highlights .faro-score-cap-note').count(),0,
+     'Do not repeat the same score-cap caveat on every pick');
+    const scoreLayout=await page.locator('#highlights .chile-ranking').first().evaluate(card=>{
+     const number=card.querySelector('.chile-rank-score');
+     const area=card.querySelector('.chile-rank-rating');
+     return {whiteSpace:getComputedStyle(number).whiteSpace,
+      scoreWidth:number.getBoundingClientRect().width,
+      areaWidth:area.getBoundingClientRect().width,
+      scoreText:number.textContent};
+    });
+    assert.equal(scoreLayout.whiteSpace,'nowrap',
+     'The 7.9 score must never wrap onto two lines');
+    assert.ok(scoreLayout.scoreWidth<=scoreLayout.areaWidth+1,
+     'The score needs a width-protected column: '+JSON.stringify(scoreLayout));
+    assert.match(scoreLayout.scoreText,/^\\d+(?:\\.\\d+)?$/,
+     'Each ranking score is one continuous number');
+    await page.locator('#navForecast').click();
+   }
    // Simulate an actual model threshold crossing to confirm hazards remain prominent.
    const severe=JSON.parse(JSON.stringify(weather));
    severe.hourly.wind_gusts_10m=severe.hourly.wind_gusts_10m.map(()=>80);
