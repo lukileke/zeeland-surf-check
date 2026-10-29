@@ -26,6 +26,10 @@ The `0.24` constant is a **heuristic residual uncertainty floor**: its value is 
 
 Angles are **FROM** directions, with circular wrap handled. These are the pre-existing, cited guide-sector parameters, not measured beach-specific optimum surf. The compass supports interpretation but does not simulate local refraction.
 
+## Sensitivity before observational calibration
+
+For every complete modelled slot, FARO now computes a **deterministic, per-spot scenario** by rotating all available swell FROM bearings by -15° and +15°, holding wave heights, periods, wind and time constant. The minimum and maximum of those two scenarios **plus the central forecast** are displayed in Spot DNA as “what-if” scores. They are deliberately NOT presented as a confidence interval, probability, uncertainty band with measured coverage, or a competing meteorological forecast. Their main purpose is to identify guide-angle-sensitive conditions that deserve on-site checks or later targeted camera/field validation. The angular perturbation ±15° is a fixed educational sensitivity probe, not a sourced forecast error standard deviation.
+
 ## Open-Meteo data-quality improvements
 
 1. Secondary and tertiary swell partitions are accepted only when all three variables (height, period and FROM direction) are finite **at both hours of the two-hour window**. An incomplete half-window is excluded, never imputed as complete.
