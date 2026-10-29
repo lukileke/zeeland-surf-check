@@ -581,50 +581,17 @@ function wetsuit(s){
 function session(){
  const s=selection(),d=state.forecast?.days?.[state.day],main=$("sessionAtGlance"),ess=$("sessionEssentials");
  main.replaceChildren();ess.replaceChildren();
- if(!s){main.append(el("p",tr("No hay ventana futura con luz y score experimental disponible. Puedes elegir manualmente otra franja.","No upcoming daylight window with experimental fit. Select another window to inspect model data."),"muted"));return}
- const heading=el("div",null,"chile-session-overline");
- heading.append(el("span",state.hour===null?tr("SELECCIÓN FARO","FARO PICK"):tr("TU VENTANA","YOUR WINDOW"),"chile-session-eyebrow"),
-  el("span",sessionTime(s),"chile-session-hours"));
- const local=localRead(s);
- if(local?.vibe?.label)heading.append(el("span",local.vibe.label,"chile-session-vibe"));
- main.append(heading);
- const top=el("div",null,"chile-session-head faro-session-instrument");
- top.setAttribute("aria-label",tr("Potencial modelado y altura en mar abierto",
-  "Modelled potential and offshore wave height"));
- const score=el("div",null,"chile-session-rating "+scoreTone(s.score));
- score.append(el("small",tr("POTENCIAL · GUÍA + MODELO","POTENTIAL · GUIDE + MODEL"),"chile-session-label"));
- const big=el("strong",num(s.score),"chile-session-score");big.append(el("small"," /10"));
- score.append(big,el("span",experimentalLabel(s),"chile-session-label faro-grade "+gradeClass(s.score)));
- score.append(el("small",scoreCaveat(s),"chile-session-origin faro-score-cap-context"));
- const wave=el("div",null,"chile-session-wave faro-wave-panel");
- wave.append(el("small",tr("ALTURA EN MAR ABIERTO","OFFSHORE WAVE HEIGHT"),"chile-session-label"),
-  el("strong",num(s.totalWaveHeightM)+" m"),waveBars(s.totalWaveHeightM),
-  el("span",waveSizeLabel(s.totalWaveHeightM),"chile-wave-size-tag"));
- top.append(score,wave);main.append(top);
- const meta=el("div",null,"chile-session-meta");
- for(const [label,value]of [[tr("PERÍODO","PERIOD"),num(s.swellPeriodS)+" s"],
-  [tr("SWELL DESDE","SWELL FROM"),Live.cardinal(s.swellDirection)+" · "+num(s.swellDirection,0)+"°"],
-  [tr("VIENTO","WIND"),num(s.windKmh,0)+" km/h"]]){
-  const block=el("div",null,"chile-session-mini");
-  block.append(el("small",label),el("strong",value));meta.append(block);
+ if(!s){
+  main.append(el("p",tr("No hay una franja evaluable. Selecciona otro horario antes de preparar el equipo.","No assessable window. Choose another time before preparing your gear."),"muted"));
+  return;
  }
- main.append(meta);
- // Data-derived editorial hint, never a claim that we observed the local surf.
- const line=el("p",null,"faro-session-editorial");
- const modelRisk=Live.slotRisk(s,state.config);
- if(modelRisk==="danger"||modelRisk==="unknown")line.textContent=tr(
-  "No recomendamos elegir esta franja sin comprobar primero los riesgos y avisos oficiales.",
-  "Do not choose this window without checking the risks and official advisories first.");
- else if(ok(s.windKmh)&&s.windKmh>=30)line.textContent=tr(
-  "El viento se hace notar en esta ventana. Revisa el mar antes de entrar.",
-  "Wind is a defining factor in this window. Check the sea before paddling out.");
- else if(ok(s.swellPeriodS)&&s.swellPeriodS>=10)line.textContent=tr(
-  "Un pulso de período largo llega desde mar abierto. El banco decidirá cómo rompe.",
-  "Longer-period energy is arriving offshore. The sandbank will decide how it breaks.");
- else line.textContent=tr(
-  "Una lectura del mar para elegir tu momento. Comprueba las olas reales antes de salir.",
-  "A read on the sea to help choose your moment. Check the actual waves before you go.");
- main.append(line);
+ // Day and hourly cards already contain the index, height and wind. This
+ // drawer is a practical checklist, not a second forecast scoreboard.
+ const intro=el("p",tr(
+  "Orientación de equipo para "+sessionTime(s)+". Confirma las condiciones en la playa y revisa los avisos oficiales.",
+  "Gear guidance for "+sessionTime(s)+". Check conditions at the beach and official notices."
+ ),"chile-session-checklist-intro");
+ main.append(intro);
  const essentials=[
   ["wetsuit",wetsuit(s)],
   ["water-temperature",num(s.waterTemperatureC)+" °C"],
@@ -680,7 +647,7 @@ function render(){
  if(!state.forecast)return;
  const session=selection();
  txt("sessionDetailSummary",session?
-  sessionTime(session)+" · "+num(session.score)+"/10 · "+experimentalLabel(session):
+  sessionTime(session)+" · "+wetsuit(session):
   tr("Sin ventana disponible","No available window"));
  txt("updated",tr("Modelo consultado ","Model fetched ")+new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(state.forecast.model.fetchedAt))+" · CL");
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
@@ -711,40 +678,85 @@ function picker(){
  list.value=spot().id;
 }
 async function rankings(){
- const host=$("highlights");host.replaceChildren(el("p",tr("Comparando pronósticos…","Comparing forecasts…"),"muted"));
- txt("rankingstatus",tr("Actualizando modelos","Loading model data"));
- const results=await Promise.allSettled(state.config.pilots.map(async s=>{
-  const cached=state.cache.get(s.id);
+ const host=$("highlights"),more=$("additionalWeekPicks"),moreHost=$("additionalWeekList");
+ host.replaceChildren(el("p",tr("Comparando los cuatro modelos…","Comparing the four models…"),"muted"));
+ more.hidden=true;more.open=false;moreHost.replaceChildren();
+ txt("rankingstatus",tr("Consultando franjas","Loading windows"));
+ const results=await Promise.allSettled(state.config.pilots.map(async sp=>{
+  const cached=state.cache.get(sp.id);
   if(cached&&Date.now()-cached.at<15*60*1000)return cached.forecast;
-  const data=await Live.fetchSpot(state.config,s,state.profiles,fetch,state.lang);
-  state.cache.set(s.id,{forecast:data,at:Date.now()});return data;
+  const data=await Live.fetchSpot(state.config,sp,state.profiles,fetch,state.lang);
+  state.cache.set(sp.id,{forecast:data,at:Date.now()});return data;
  }));
- const list=[];
- for(const item of results)if(item.status==="fulfilled"){
-  const model=item.value;
-  for(const day of model.days){const s=bestRemaining(day,model.spot.id);if(s)list.push({model,day,s})}
+ const all=[];
+ for(const result of results)if(result.status==="fulfilled"){
+  const model=result.value;
+  for(const day of model.days){
+   const selected=bestRemaining(day,model.spot.id);
+   if(selected&&ok(selected.score))all.push({model,day,s:selected});
+  }
  }
- list.sort((a,b)=>(localRead(b.s,b.model.spot.id)?.decision?.priority??2)-
- (localRead(a.s,a.model.spot.id)?.decision?.priority??2)||b.s.score-a.s.score||a.day.date.localeCompare(b.day.date));
+ all.sort((a,b)=>
+  (localRead(b.s,b.model.spot.id)?.decision?.priority??2)-
+  (localRead(a.s,a.model.spot.id)?.decision?.priority??2)||
+  b.s.score-a.s.score||a.day.date.localeCompare(b.day.date));
+ // The index is capped at 7.9. Twelve near-identical capped windows imply a
+ // false ranking. Show one representative window per distinct spot, then
+ // disclose the last spot on demand. This is a comparison, not a top-12 list.
+ const unique=[],seen=new Set();
+ for(const item of all){
+  if(seen.has(item.model.spot.id))continue;
+  seen.add(item.model.spot.id);unique.push(item);
+ }
  host.replaceChildren();
- txt("rankingstatus",tr("Orden orientativo · los índices pueden alcanzar el techo experimental","Indicative order · scores may hit the experimental cap"));
- if(!list.length){host.append(el("p",tr("Sin comparaciones suficientes por ahora.","Not enough comparable model values."),"muted"));return}
- for(const item of list.slice(0,12)){
-  const b=el("button",null,"highlight chile-ranking "+scoreTone(item.s.score));b.type="button";
-  const line=el("div",null,"chile-rank-layout"),data=el("div");
-  data.append(el("span",item.model.spot.name,"chile-rank-name"),
-   el("div",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when"),
-   el("small",(localRead(item.s,item.model.spot.id)?.vibe?.label||Live.vibe(item.s,state.lang).label)));
-  if(item.s.scoreMeta?.capActive)
-   data.append(el("small",tr("Techo del índice provisional · no permite ordenar valores superiores",
-    "Provisional index cap · cannot distinguish higher potential"),"faro-score-cap-note"));
-  line.append(data,el("strong",num(item.s.score)));b.append(line);
+ const count=unique.length,limited=unique.filter(item=>item.s.scoreMeta?.capActive).length;
+ txt("rankingstatus",tr(count+" spots con datos",""+count+" spots with data"));
+ txt("rankingContext",!count?tr(
+  "Todavía no hay franjas comparables para recomendar.","No comparable model windows are available yet."
+ ):limited>1?tr(
+  "Varios spots alcanzan el techo provisional de 7,9/10. Sus diferencias de calidad no pueden resolverse con este índice. Compara hora, viento y período.",
+  "Several spots reach the provisional 7.9/10 cap. The index cannot resolve their true quality differences. Compare timing, wind and period."
+ ):tr(
+  "Una franja orientativa por spot. Valores experimentales, no observaciones de rompiente ni evaluación de seguridad.",
+  "One indicative window per spot. Experimental values, not observed breaking surf or safety assessments."
+ ));
+ if(!count){
+  host.append(el("p",tr("Sin candidatos evaluables por ahora.","No assessable candidates yet."),"muted"));return;
+ }
+ const card=item=>{
+  const b=el("button",null,"highlight chile-ranking "+scoreTone(item.s.score));
+  b.type="button";
+  b.setAttribute("aria-label",item.model.spot.name+" · "+dateLabel(item.day.date)+" · "+
+   sessionTime(item.s)+" · "+num(item.s.score)+"/10");
+  const content=el("div",null,"faro-week-pick-content");
+  content.append(
+   el("strong",item.model.spot.name,"chile-rank-name"),
+   el("span",dateLabel(item.day.date)+" · "+sessionTime(item.s),"chile-rank-when")
+  );
+  const facts=el("div",null,"faro-week-pick-facts");
+  if(ok(item.s.swellPeriodS))facts.append(el("span",tr("Período ","Period ")+
+   num(item.s.swellPeriodS)+" s"));
+  if(ok(item.s.windKmh))facts.append(el("span",tr("Viento ","Wind ")+
+   num(item.s.windKmh,0)+" km/h"));
+  content.append(facts);
+  const rating=el("div",null,"chile-rank-rating");
+  rating.append(el("strong",num(item.s.score),"chile-rank-score"),
+   el("span","/10","chile-rank-denominator"));
+  b.append(content,rating);
   b.addEventListener("click",()=>{
-   state.selected=state.config.pilots.findIndex(s=>s.id===item.model.spot.id);
+   state.selected=state.config.pilots.findIndex(sp=>sp.id===item.model.spot.id);
    state.forecast=item.model;state.day=item.day.index;state.hour=item.s.hour;
    picker();tab("forecast");render();
+   document.getElementById("forecastPage")?.scrollIntoView({block:"start",behavior:"instant"});
   });
-  host.append(b);
+  return b;
+ };
+ for(const item of unique.slice(0,3))host.append(card(item));
+ const rest=unique.slice(3);
+ more.hidden=!rest.length;
+ if(rest.length){
+  txt("additionalWeekLabel",tr("Ver otro spot comparado","View another compared spot"));
+  for(const item of rest)moreHost.append(card(item));
  }
 }
 function match(){
@@ -805,10 +817,16 @@ async function initialize(){
  }
  for(const [name,id]of [["forecast","navForecast"],["best","navBest"],["board","navBoard"]])$(id).addEventListener("click",()=>tab(name));
  $("refreshForecast").addEventListener("click",()=>refresh(true));
- $("faroHourlyGoLens").addEventListener("click",()=>{
-  const panel=$("coastMapExpand");panel.open=true;
-  panel.scrollIntoView({block:"center",behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
- });
+ function revealOcean(id){
+  const target=$(id);
+  if(!target)return;
+  target.open=true;
+  const motion=window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+  target.scrollIntoView({block:"start",behavior:motion});
+ }
+ $("faroHourlyGoLens").addEventListener("click",()=>revealOcean("coastMapExpand"));
+ $("openOceanMap").addEventListener("click",()=>revealOcean("coastMapExpand"));
+ $("openOceanCompass").addEventListener("click",()=>revealOcean("waveInsightExpand"));
  $("chileSpotSelect").addEventListener("change",event=>{
   const i=state.config.pilots.findIndex(x=>x.id===$("chileSpotSelect").value);
   if(i>=0){

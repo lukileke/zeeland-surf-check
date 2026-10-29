@@ -29,7 +29,7 @@
 <link rel="stylesheet" href="../assets/faro-visual-system-v2.css?v=5">
 <link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=14">
 <!-- Single Chile-specific layout contract, loaded after all visual layers. -->
-<link rel="stylesheet" href="chile-visual-contract.css?v=4">
+<link rel="stylesheet" href="chile-visual-contract.css?v=5">
 </head>
 <body>
 <main>
@@ -166,10 +166,29 @@
       <button id="faroHourlyGoLens" type="button" data-es="Ver brújula y mapa" data-en="See compass and map">Ver brújula y mapa</button>
      </div>
    </section>
+   <section class="faro-ocean-tools" aria-labelledby="oceanToolsHeading">
+    <div class="faro-ocean-tools-copy">
+     <small data-es="EXPLORA LAS CONDICIONES" data-en="EXPLORE THE CONDITIONS">EXPLORA LAS CONDICIONES</small>
+     <h3 id="oceanToolsHeading" data-es="Mapa y brújula" data-en="Map & swell compass">Mapa y brújula</h3>
+     <p data-es="Comprueba dónde está el spot, de dónde viene el swell y cómo llega el viento." data-en="See the break, the incoming swell bearings and the wind direction.">Comprueba dónde está el spot, de dónde viene el swell y cómo llega el viento.</p>
+    </div>
+    <div class="faro-ocean-tool-actions">
+     <button type="button" id="openOceanMap" data-es="Explorar mapa" data-en="Explore map">Explorar mapa</button>
+     <button type="button" id="openOceanCompass" data-es="Ver brújula" data-en="View compass">Ver brújula</button>
+    </div>
+   </section>
+   <details id="coastMapExpand" class="forecast-expand faro-map-disclosure">
+    <summary><span data-faro-icon="map"></span><span class="forecast-accordion-title" data-es=" COASTAL LENS · lectura del mar" data-en=" COASTAL LENS · read the sea"> COASTAL LENS · lectura del mar</span><span class="forecast-accordion-meta" data-es="4 pronósticos · Ventanas como referencia" data-en="4 forecasts · Ventanas as reference">Cuatro spots · swell por componentes y viento</span></summary>
+    <div id="chileCoastMap" class="chile-coast-map"></div>
+   </details>
+   <details id="waveInsightExpand" class="forecast-expand">
+    <summary><span data-faro-icon="compass"></span><span class="forecast-accordion-title" data-es=" Swell Compass" data-en=" Swell Compass"> Swell Compass</span><span class="forecast-accordion-meta" data-es="Direcciones y componentes" data-en="Directions & components">Direcciones y componentes</span></summary>
+    <div id="waveinsight" class="insight-panel"><p class="muted">—</p></div>
+   </details>
    <section class="forecast-section session-section" aria-label="Sesión seleccionada">
     <details id="sessionDetailExpand" class="chile-session-disclosure">
      <summary class="chile-session-toggle">
-      <span class="chile-session-toggle-name"><small data-es="SESIÓN ELEGIDA" data-en="SELECTED SESSION">SESIÓN ELEGIDA</small><strong data-es="Detalles y equipo" data-en="Details & gear">Detalles y equipo</strong></span>
+      <span class="chile-session-toggle-name"><small data-es="SESIÓN ELEGIDA" data-en="SELECTED SESSION">SESIÓN ELEGIDA</small><strong data-es="Equipo y preparación" data-en="Gear & preparation">Equipo y preparación</strong></span>
       <span id="sessionDetailSummary" class="chile-session-toggle-value" aria-live="polite">—</span>
       <span class="chile-session-toggle-arrow" aria-hidden="true">+</span>
      </summary>
@@ -194,10 +213,6 @@
      </details>
     </div>
    </section>
-   <details id="coastMapExpand" class="forecast-expand faro-map-disclosure">
-    <summary><span data-faro-icon="map"></span><span class="forecast-accordion-title" data-es=" COASTAL LENS · lectura del mar" data-en=" COASTAL LENS · read the sea"> COASTAL LENS · lectura del mar</span><span class="forecast-accordion-meta" data-es="Cuatro spots · swell por componentes y viento" data-en="Four spots · swell partitions and wind">Cuatro spots · swell por componentes y viento</span></summary>
-    <div id="chileCoastMap" class="chile-coast-map"></div>
-   </details>
    <section class="faro-detail-hub" aria-labelledby="faroExploreHeading">
     <header class="faro-detail-hub-heading">
       <div><small data-es="SIGUE EXPLORANDO" data-en="KEEP EXPLORING">SIGUE EXPLORANDO</small>
@@ -210,10 +225,6 @@
       <h4 data-es="01 · Lee las condiciones" data-en="01 · Read the conditions">01 · Lee las condiciones</h4>
       <p data-es="Direcciones, energía y datos del modelo." data-en="Directions, energy and model data.">Direcciones, energía y datos del modelo.</p>
      </header>
-     <details id="waveInsightExpand" class="forecast-expand">
-    <summary><span data-faro-icon="compass"></span><span class="forecast-accordion-title" data-es=" Swell Compass" data-en=" Swell Compass"> Swell Compass</span><span class="forecast-accordion-meta" data-es="Direcciones y componentes" data-en="Directions & components">Direcciones y componentes</span></summary>
-    <div id="waveinsight" class="insight-panel"><p class="muted">—</p></div>
-   </details>
      <details id="faroTechnicalExpand" class="forecast-expand faro-technical">
     <summary><span data-faro-icon="info"></span><span class="forecast-accordion-title" data-es=" Detalles del pronóstico" data-en=" Forecast details"> Detalles del pronóstico</span><span class="forecast-accordion-meta" data-es="Modelo y UV" data-en="Model & UV">Modelo y UV</span></summary>
     <div class="faro-technical-inner"><div class="panel" id="detail">—</div></div>
@@ -261,8 +272,19 @@
   </details>
  </div>
  <section id="bestPage" class="hide">
-  <div class="best-intro"><small data-es="DESCUBRE · VALPARAÍSO" data-en="DISCOVER · VALPARAÍSO">DESCUBRE · VALPARAÍSO</small><h2 data-es="Señales para la semana" data-en="Weekly outlook">Señales para la semana</h2><p class="muted" data-es="Dónde y cuándo puede valer la pena revisar el mar. Índice experimental de compatibilidad local, no surf observado." data-en="Where and when conditions may be worth checking. Experimental local fit, not observed surf.">Dónde y cuándo puede valer la pena revisar el mar. Índice experimental de compatibilidad local, no surf observado.</p></div>
-  <section class="panel"><div class="row"><h2 data-es="Comparación de spots" data-en="Compare spots">Comparación de spots</h2><small id="rankingstatus">—</small></div><div class="highlights" id="highlights"></div></section>
+  <div class="best-intro"><small data-es="DESCUBRE · VALPARAÍSO" data-en="DISCOVER · VALPARAÍSO">DESCUBRE · VALPARAÍSO</small><h2 data-es="Señales para la semana" data-en="Weekly outlook">Señales para la semana</h2><p class="muted" data-es="Una selección breve de franjas estimadas. Los índices limitados al mismo techo no permiten ordenar su calidad real." data-en="A short comparison of estimated windows. Similar capped scores are not meaningful ties to break.">Una selección breve de franjas estimadas. Los índices limitados al mismo techo no permiten ordenar su calidad real.</p></div>
+  <section class="panel faro-week-picks"><div class="faro-week-picks-head">
+    <div><small data-es="PRONÓSTICOS COMPARADOS" data-en="FORECASTS COMPARED">PRONÓSTICOS COMPARADOS</small>
+     <h3 data-es="Tres opciones para mirar" data-en="Three spots to check">Tres opciones para mirar</h3></div>
+    <span id="rankingstatus">—</span>
+   </div>
+   <p id="rankingContext" class="faro-week-ranking-context" aria-live="polite">—</p>
+   <div class="highlights" id="highlights" aria-label="Ventanas recomendadas"></div>
+   <details id="additionalWeekPicks" class="faro-week-extra" hidden>
+    <summary><span id="additionalWeekLabel">—</span><span aria-hidden="true">+</span></summary>
+    <div id="additionalWeekList" class="highlights faro-week-extra-list"></div>
+   </details>
+  </section>
  </section>
  <section id="boardPage" class="hide">
   <div class="panel faro-guide" id="faroGuide">
@@ -304,6 +326,6 @@
 <script src="video-observation-lab.js?v=1"></script>
 <script src="faro-coastal-lens.js?v=1"></script>
 <script src="coast-map.js?v=18"></script>
-<script src="chile-forecast.js?v=24"></script>
+<script src="chile-forecast.js?v=25"></script>
 </body>
 </html>
