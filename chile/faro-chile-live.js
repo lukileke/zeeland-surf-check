@@ -128,6 +128,12 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const seaLevelMslM=seaLevelComplete?mean(seaLevels):null;
  const seaLevelChangeM=seaLevelComplete&&seaLevels.length===2?
   +(seaLevels[1]-seaLevels[0]).toFixed(3):null;
+ const currentValues=vals(mar,'ocean_current_velocity');
+ const currentDirections=vals(mar,'ocean_current_direction');
+ const currentComplete=mar.length===slotHours.length&&
+  currentValues.every(finite)&&currentDirections.every(finite);
+ const oceanCurrentKmh=currentComplete?mean(currentValues):null;
+ const oceanCurrentToDeg=currentComplete?circleMean(currentDirections):null;
  const swellPeriod=mean(vals(mar,"swell_wave_period"));
  const totalPeriod=mean(vals(mar,"wave_period"));
  const wind=mean(vals(met,"wind_speed_10m"));
@@ -156,12 +162,16 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
   swellHeightM:swellHeight,swellDirection,swellPeriodS:swellPeriod,
   secondarySwell:secondaryValid,tertiarySwell:tertiaryValid,
   seaLevelMslM,seaLevelChangeM,
+  oceanCurrentKmh,oceanCurrentToDeg,
+  oceanCurrentSource:currentComplete?'Open-Meteo coarse ocean circulation model, direction TO; not local rip currents':'not_available',
+  ripCurrentEstimated:false,
   seaLevelSource:seaLevelComplete?'Open-Meteo model, ~8 km tides+non-tidal terms':'not_available',
   tideLocalCalibration:false,
   modelCoverage:{required:complete?'complete':'incomplete',
    secondary:secondaryValid?'complete':'not-available-or-partial',
    tertiary:tertiaryValid?'complete':'not-available-or-partial',
-   seaLevel:seaLevelComplete?'complete':'not-available-or-partial'},
+   seaLevel:seaLevelComplete?'complete':'not-available-or-partial',
+   oceanCurrent:currentComplete?'complete':'not-available-or-partial'},
   windKmh:wind,windDirection,gustKmh:gust,uvIndex,uv:statusUV(uvIndex,locale),
   temperatureC:temperature,waterTemperatureC:sst,cloudPercent:cloud,precipitationMm:precipMissing?null:precip,
   weatherCode,weatherSource:"Open-Meteo",observed:false,nearshoreHeightEstimated:false
@@ -217,6 +227,7 @@ function extract(config,spot,marine,weather,profileConfig,locale="es"){
   coverage:{completeSlots,totalSlots:windows.length},
   optionalSwellFallback:marine.optionalSwellFallback===true,
   seaLevelFallback:marine.seaLevelFallback===true,
+  oceanCurrentFallback:marine.oceanCurrentFallback===true,
   offshoreApproximation:true,referencePointStatus:spot.coordinateStatus||"unverified"},days,windows,hazard:screenRisk(config,weather,locale),fitExperimental:true};
 }
 function screenRisk(config,weather,locale="es"){
@@ -332,20 +343,32 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
    if(error.status!==400||!config.modelProviders.optionalMarineVariables?.length)throw error;
    const initial=new URL(urls.marine);
    const optional=config.modelProviders.optionalMarineVariables;
+   if(optional.includes("ocean_current_velocity")){
+    // Additional fallback preserves partition forecasts when the current
+    // model field is rejected by providers/territories.
+    const withoutCurrent=new URL(initial);
+    const fields=withoutCurrent.searchParams.get("hourly").split(",")
+     .filter(v=>v!=="ocean_current_velocity"&&v!=="ocean_current_direction");
+    withoutCurrent.searchParams.set("hourly",fields.join(","));
+    try{
+     const data=await fetchJSON(withoutCurrent.toString(),fetcher);
+     data.oceanCurrentFallback=true;return data;
+    }catch(e){if(e.status!==400)throw e;}
+   }
    if(optional.includes("sea_level_height_msl")){
     const withoutSeaLevel=new URL(initial);
     const fields=withoutSeaLevel.searchParams.get("hourly").split(",")
-     .filter(v=>v!=="sea_level_height_msl");
+     .filter(v=>v!=="sea_level_height_msl"&&v!=="ocean_current_velocity"&&v!=="ocean_current_direction");
     withoutSeaLevel.searchParams.set("hourly",fields.join(","));
     try{
      const data=await fetchJSON(withoutSeaLevel.toString(),fetcher);
-     data.seaLevelFallback=true;return data;
+     data.seaLevelFallback=true;data.oceanCurrentFallback=true;return data;
     }catch(e){if(e.status!==400)throw e;}
    }
    const fallback=new URL(initial);
    fallback.searchParams.set("hourly",config.modelProviders.requiredVariables.marine.join(","));
    const data=await fetchJSON(fallback.toString(),fetcher);
-   data.optionalSwellFallback=true;data.seaLevelFallback=true;
+   data.optionalSwellFallback=true;data.seaLevelFallback=true;data.oceanCurrentFallback=true;
    return data;
   }
  };
