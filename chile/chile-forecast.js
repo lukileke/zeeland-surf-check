@@ -24,8 +24,8 @@ const scoreCaveat=session=>{
  const meta=session?.scoreMeta;
  if(meta?.status!=="experimental")return tr("Sin validación local","No local calibration");
  const sessions=meta.fieldSessions??0;
- return tr("Índice de guía 0–10 · "+sessions+" sesiones verificadas",
-  "Guide-based 0–10 index · "+sessions+" verified sessions");
+ return tr("Potencial FARO · modelo v0.3 · "+sessions+" sesiones observadas",
+  "FARO potential · model v0.3 · "+sessions+" observed sessions");
 };
 const waveSize=h=>!ok(h)?"":h<.5?"size-small":h<1.2?"size-medium":h<2?"size-large":"size-xl";
 const waveSizeLabel=h=>!ok(h)?"—":h<.5?tr("Pequeñas","Small"):h<1.2?tr("Medianas","Medium"):h<2?tr("Grandes","Large"):tr("Muy grandes","Very large");
@@ -241,6 +241,21 @@ function renderDNA(){
   }
   indicators.append(el("span",tr("Marea · no evaluada","Tide · not assessed"),"chile-signal-tag unknown"));
   lower.append(indicators);
+  const proxy=selected.scoreMeta.physicsProxy;
+  if(proxy?.partitions?.length){
+   lower.append(el("p",tr(
+    "POTENCIAL FARO v0.3 · "+proxy.partitions.length+" componente(s) de swell; energía oceánica relativa Hs² × T = "+
+      num(proxy.admittedEnergyHs2T,1)+" m²·s tras exposición direccional de guía. "+
+      "Viento = "+num(proxy.windQuality*100,0)+" % de compatibilidad heurística. Marea y altura rompiente no evaluadas.",
+    "FARO POTENTIAL v0.3 · "+proxy.partitions.length+" swell partition(s); relative offshore Hs² × T = "+
+      num(proxy.admittedEnergyHs2T,1)+" m²·s after guide-based exposure. "+
+      "Wind = "+num(proxy.windQuality*100,0)+" % heuristic compatibility. Tide and breaking height not assessed."
+   ),"faro-dna-method"));
+   lower.append(el("p",tr(
+    "La conversión a 0–10 es experimental, sin mediciones locales para comprobar su precisión.",
+    "The 0–10 mapping is experimental and lacks local observations to verify its accuracy."
+   ),"faro-dna-method"));
+  }
  }else{
   lower.append(el("small",tr("PRONÓSTICO LOCAL · POR COMPARAR","LOCAL MODEL · FIT UNAVAILABLE"),"faro-dna-below-title"));
   lower.append(el("p",tr("El ajuste por dirección requiere datos válidos para la franja elegida.",
@@ -693,10 +708,10 @@ async function rankings(){
    if(selected&&ok(selected.score))all.push({model,day,s:selected});
   }
  }
- all.sort((a,b)=>
+ all.sort((a,b)=>b.s.score-a.s.score||
   (localRead(b.s,b.model.spot.id)?.decision?.priority??2)-
   (localRead(a.s,a.model.spot.id)?.decision?.priority??2)||
-  b.s.score-a.s.score||a.day.date.localeCompare(b.day.date));
+  a.day.date.localeCompare(b.day.date));
  // A guide-derived 0–10 index still lacks observed-surf calibration. Show
  // one representative window per distinct spot, then disclose alternatives;
  // do not imply that a numerical difference is a measured accuracy ranking.
@@ -711,8 +726,8 @@ async function rankings(){
  txt("rankingContext",!count?tr(
   "Todavía no hay franjas comparables para recomendar.","No comparable model windows are available yet."
  ):tr(
-  "Escala experimental completa de 0 a 10, sin tope artificial. Orden orientativo por guías y swell oceánico; no predice altura rompiente, no está validado y no evalúa seguridad. Compara hora, viento y período.",
-  "Full experimental 0–10 scale without an artificial cap. Indicative ordering from guide bearings and offshore swell; no breaking-wave prediction, field validation or safety assessment. Compare timing, wind and period."
+  "Potencial FARO v0.3: energía de swells Hs²·T, exposición direccional de cada spot y viento. Escala 0–10 experimental; no predice ola rompiente, marea ni seguridad.",
+  "FARO potential v0.3: Hs²·T swell-partition energy, spot-guide exposure and wind. Experimental 0–10 index; does not predict breaking surf, tides or safety."
  ));
  if(!count){
   host.append(el("p",tr("Sin candidatos evaluables por ahora.","No assessable candidates yet."),"muted"));return;
