@@ -1,9 +1,9 @@
 {
-  "schemaVersion": "0.1.0",
+  "schemaVersion": "0.3.0",
   "status": "experimental",
   "region": "CL-VS",
   "active": false,
-  "statement": "Guide-derived 0–10 directional compatibility index without an artificial ceiling; not calibrated against observed breaking-wave quality or safety.",
+  "statement": "FARO offshore surf-potential index 0–10: separate wave partitions (Hs² × modelled period, not true Te), source-guide directional exposure, speed-sensitive wind and bounded cross-sea modifiers. No breaking-wave predictions, coastal transformation or empirical validation.",
   "calibration": {
     "fieldSessions": 0,
     "requiredBeforeLaunch": true,
@@ -11,15 +11,10 @@
       0,
       10
     ],
-    "scoringPolicy": "uncalibrated-guide-derived-index-no-arbitrary-ceiling",
-    "minimumObservedSessionsForClaim": "field_validation_required"
-  },
-  "weights": {
-    "windDirection": 0.28,
-    "swellDirection": 0.28,
-    "windStrength": 0.19,
-    "period": 0.17,
-    "swellPresence": 0.08
+    "scoringPolicy": "physics-informed-relative-offshore-index-v0.3-no-local-observational-calibration",
+    "minimumObservedSessionsForClaim": "field_validation_required",
+    "modelVersion": "faro-offshore-potential-v0.3",
+    "methodology": "research/FARO_OFFSHORE_POTENTIAL_V03.md"
   },
   "heuristics": {
     "angleFalloffDegrees": 50,
@@ -32,7 +27,16 @@
     "periodGoodS": 12,
     "presenceWeakM": 0.35,
     "presenceModerateM": 0.9,
-    "presenceLargeM": 3
+    "presenceLargeM": 3,
+    "energyResponseScaleM2S": 12,
+    "minimumEnergyGateM2S": 2.4,
+    "energyGateExponent": 0.8,
+    "energyWeight": 0.76,
+    "calmWindKmh": 4,
+    "windDirectionFullKmh": 18,
+    "windDirectionPenalty": 0.65,
+    "windSeaPenalty": 0.12,
+    "crossingPenalty": 0.08
   },
   "profiles": {
     "CL-VS:la-boca-concon": {
