@@ -1220,3 +1220,32 @@ html:not([data-theme="light"]) #forecastPage :is(.day-chip,.slots>button,.chile-
  #bestPage .highlight.chile-ranking .chile-rank-name{font-size:15px!important}
  #bestPage .faro-week-pick-facts{gap:3px 8px}
 }
+
+/* Separate surf potential from legal/recreational access at Ventanas. */
+#forecastPage>.faro-access-notice{
+ grid-column:1/-1!important;min-width:0;display:grid;gap:7px;
+ padding:clamp(15px,2.2vw,22px);margin:7px 0 12px;
+ border-radius:14px;border:1px solid var(--faro-line);
+ border-left:4px solid #b97945;background:var(--faro-ed-shell,var(--tile));
+ color:var(--fg);box-sizing:border-box;
+}
+#forecastPage>.faro-access-notice[hidden]{display:none!important}
+#forecastPage>.faro-access-notice>strong{font:850 12px/1.4 var(--faro-text);letter-spacing:.06em;color:var(--fg)}
+#forecastPage>.faro-access-notice>p{margin:0;font:650 12px/1.6 var(--faro-text);max-width:85ch}
+#forecastPage>.faro-access-notice>a{font:800 12px/1.4 var(--faro-text);color:var(--faro-selection);width:fit-content}
+#forecastPage>.faro-access-notice>small{font:650 11px/1.5 var(--faro-text);color:var(--faro-quiet);max-width:85ch}
+@media(min-width:1120px){
+ #forecastPage>.faro-access-notice{grid-row:3!important}
+ /* Insert the full-width warning between picker and journey without
+    relying on auto placement or pushing it into an empty side track. */
+ #forecastPage>.faro-journey-nav{grid-row:4!important}
+ #forecastPage>#dayStrip{grid-row:5!important}
+ #forecastPage>.day-outlook-section{grid-row:6!important}
+ #forecastPage #dayview>.hourly-section{grid-row:6!important}
+ #forecastPage #dayview>.faro-ocean-tools{grid-row:7!important}
+ #forecastPage #dayview>#coastMapExpand{grid-row:8!important}
+ #forecastPage #dayview>#waveInsightExpand{grid-row:9!important}
+ #forecastPage #dayview>.session-section{grid-row:10!important}
+ #forecastPage #dayview>.faro-detail-hub{grid-row:11!important}
+ #forecastPage>.chile-method-disclaimer{grid-row:12!important}
+}
