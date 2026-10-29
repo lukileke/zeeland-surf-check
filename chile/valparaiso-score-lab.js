@@ -175,6 +175,20 @@
   const swellPresence={value:presenceFit(input.swellHeightM,H)};
   if(!windDirection||!swellDirection)throw Error('Profile direction bands not defined');
   const science=potentialScore(input,profile,H);
+  // Deterministic scenario: imagine the same forecast sea state with swell
+  // bearings shifted ±15°. This is directional sensitivity, NOT accuracy
+  // or a statistical confidence interval; no forecast errors are implied.
+  const shiftBearings=delta=>({
+   ...input,swellFromDeg:wrap(input.swellFromDeg+delta),
+   secondarySwell:input.secondarySwell?
+    {...input.secondarySwell,fromDeg:wrap(input.secondarySwell.fromDeg+delta)}:null,
+   tertiarySwell:input.tertiarySwell?
+    {...input.tertiarySwell,fromDeg:wrap(input.tertiarySwell.fromDeg+delta)}:null
+  });
+  const scoreDirectionScenario=offset=>clamp(
+   potentialScore(shiftBearings(offset),profile,H).unrounded,0,10);
+  const bearingScenarios=[scoreDirectionScenario(-15),
+   clamp(science.unrounded,0,10),scoreDirectionScenario(15)];
   // Score is a 0–10 relative offshore surf-potential INDEX. No numerical
   // calibration to observed rideability or transformation into surf height.
   const components={windDirection,swellDirection,
@@ -220,6 +234,11 @@
     directionalSupportFactor:+science.directionalSupportFactor.toFixed(3),
     directionalGuideSource:profile.origins?.swell||'unspecified',
     observationsCount:profile.observations||0,
+    directionScenario:{bearingShiftDeg:15,
+     scoreMin:+Math.min(...bearingScenarios).toFixed(1),
+     scoreMax:+Math.max(...bearingScenarios).toFixed(1),
+     isConfidenceInterval:false,
+     interpretation:'sensitivity-only-no-forecast-error-probability'},
     energyResponse:+science.energyResponse.toFixed(3),
     energyGate:+science.gate.toFixed(3),
     windQuality:+science.windQuality.toFixed(3),
