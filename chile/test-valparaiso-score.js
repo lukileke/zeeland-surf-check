@@ -27,7 +27,7 @@ assert.equal(Object.hasOwn(cfg.profiles,'CL-VS:ventanas'),true,
 const ventanasProfile=cfg.profiles['CL-VS:ventanas'];
 assert.equal(ventanasProfile.scoreEnabled,true);
 assert.equal(ventanasProfile.observations,0);
-assert.equal(ventanasProfile.calibrationStage,'guide-prior-only-no-measured-sessions');
+assert.equal(ventanasProfile.calibrationStage,'physics-informed-guide-prior-no-observational-validation');
 assert.deepEqual(ventanasProfile.waveFromDeg,[[337.5,22.5]],
  'North from-direction is a broad research cardinal hypothesis, not a calibrated window');
 assert.deepEqual(ventanasProfile.windFromDeg,[[337.5,22.5],[157.5,202.5]]);
@@ -126,4 +126,4 @@ assert.ok(Number.isFinite(score(cfg,'CL-VS:ventanas',base).score),
 assert.equal(score(cfg,'CL-VS:ventanas',base).publicRecommendationAllowed,false);
 const english=score(cfg,'CL-VS:la-boca-concon',example,{locale:'en'});
 assert.ok(english.read.includes('Wind'));
-console.log('FARO Valparaíso Lab: full unvalidated 0–10 index; Ventanas guide-only restrictions; 6 research profiles / 22 spots; research lab inactive.');
+console.log('FARO Valparaíso Lab: full unvalidated 0–10 index; Ventanas modelled with access block; 6 research profiles / 22 spots; research lab configuration inactive.');
