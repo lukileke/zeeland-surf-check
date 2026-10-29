@@ -46,6 +46,68 @@
   if(height<H.presenceModerateM)return .3+.7*(height-H.presenceWeakM)/(H.presenceModerateM-H.presenceWeakM);
   return 1;
  }
+ // FARO v0.3: physics-informed, NOT physics-calibrated surfability.
+ // Offshore potential ∝ Hs²*T (T here is modelled mean swell period, not Te).
+ // This is a relative propagation-energy proxy, never coastal wave power or
+ // breaking-wave height. Optional independent partitions add by energy, not Hs.
+ function partitions(input){
+  const out=[{id:'primary',heightM:input.swellHeightM,
+   periodS:input.swellPeriodS,fromDeg:input.swellFromDeg}];
+  for(const [id,p]of [['secondary',input.secondarySwell],['tertiary',input.tertiarySwell]]){
+   if(p&&[p.heightM,p.periodS,p.fromDeg].every(finite)&&p.heightM>=0&&p.periodS>0)
+    out.push({id,heightM:p.heightM,periodS:p.periodS,fromDeg:p.fromDeg});
+  }
+  return out;
+ }
+ function potentialEnergy(input,profile,H){
+  const parts=partitions(input);
+  let energy=0,raw=0,vol=0,wx=0,wy=0;
+  const breakdown=parts.map(p=>{
+   const fit=directionalFit(p.fromDeg,profile.waveFromDeg,H.angleFalloffDegrees);
+   if(!fit)throw Error('Missing guide exposure for wave partition');
+   // 5% residual is a bounded, explicitly uncalibrated uncertainty floor,
+   // not a claim that the wave reaches the break after coastal refraction.
+   const exposure=.05+.95*fit.value;
+   const component=p.heightM**2*p.periodS;
+   const admitted=component*exposure;
+   energy+=admitted;raw+=component;vol+=p.heightM**2;
+   wx+=p.heightM**2*Math.cos(wrap(p.fromDeg)*Math.PI/180);
+   wy+=p.heightM**2*Math.sin(wrap(p.fromDeg)*Math.PI/180);
+   return {id:p.id,fromDeg:p.fromDeg,periodS:p.periodS,heightM:p.heightM,
+    relativeFluxH2Tm:+component.toFixed(3),guideFit:+fit.value.toFixed(3),
+    admittedProxy:+admitted.toFixed(3)};
+  });
+  const consistency=vol>0?clamp(Math.hypot(wx,wy)/vol,0,1):null;
+  return {admitted:energy,raw,consistency,breakdown};
+ }
+ function potentialScore(input,profile,H){
+  const power=potentialEnergy(input,profile,H);
+  const scale=H.energyResponseScaleM2S;
+  const gate=clamp(power.admitted/H.minimumEnergyGateM2S,0,1)**H.energyGateExponent;
+  const energyResponse=1-Math.exp(-power.admitted/scale);
+  const windDirection=directionalFit(input.windFromDeg,profile.windFromDeg,H.angleFalloffDegrees);
+  const windStrength=strength(input.windKmh,input.gustKmh,H);
+  // Calm wind cannot be deemed bad solely for an 'offshore' direction
+  // mismatch. Its angular impact grows with speed (a guide-level prior).
+  const windDirectionWeight=clamp((input.windKmh-H.calmWindKmh)/
+   (H.windDirectionFullKmh-H.calmWindKmh),0,1);
+  const windQuality=clamp(windStrength*
+   (1-H.windDirectionPenalty*windDirectionWeight*(1-windDirection.value)),0,1);
+  const sea=finite(input.windSeaHeightM)&&input.windSeaHeightM>=0?input.windSeaHeightM:null;
+  const primaryHs2=partitions(input).reduce((n,p)=>n+p.heightM**2,0);
+  const windSeaFraction=sea===null?null:
+   sea**2/Math.max(.00001,primaryHs2+sea**2);
+  // Conservative modifiers: spread and local chop are not directly
+  // observed breakers. Never double-count windsea as an extra swell.
+  const seaModifier=windSeaFraction===null?1:
+   1-H.windSeaPenalty*windSeaFraction*clamp(input.windKmh/20,0,1);
+  const crossingModifier=1-H.crossingPenalty*(1-(power.consistency??1));
+  const unrounded=10*gate*
+   (H.energyWeight*energyResponse+(1-H.energyWeight)*windQuality)*
+   seaModifier*crossingModifier;
+  return {unrounded,energyResponse,gate,windQuality,windDirection,
+   windStrength,seaModifier,crossingModifier,windSeaFraction,power};
+ }
  const t=(lang,es,en)=>lang==='es'?es:en;
  const bands=[
   {max:2,id:'copper',es:'Muy pobre',en:'Very poor'},
@@ -55,7 +117,7 @@
   {max:11,id:'olive',es:'Muy prometedor',en:'Very promising'}
  ];
  function fitTag(key,val,lang){
-  const states={windDirection:['Viento','Wind'],swellDirection:['Swell','Swell'],windStrength:['Intensidad','Wind strength'],period:['Período','Period'],swellPresence:['Oleaje offshore','Offshore swell']};
+  const states={windDirection:['Viento','Wind'],swellDirection:['Swell','Swell'],windStrength:['Intensidad','Wind strength'],period:['Período','Period'],swellPresence:['Energía orientativa','Indicative energy']};
   const state=val>=.8?'positive':val>=.45?'mixed':'negative';
   const label=key==='windDirection'?
    [val>=.8?'Dirección favorable':val>=.45?'Viento lateral/mixto':'Dirección desfavorable',val>=.8?'Favourable direction':val>=.45?'Cross/mixed wind':'Unfavourable direction']:
@@ -101,17 +163,13 @@
   const period={value:periodFit(input.swellPeriodS,H)};
   const swellPresence={value:presenceFit(input.swellHeightM,H)};
   if(!windDirection||!swellDirection)throw Error('Profile direction bands not defined');
-  const components={windDirection,swellDirection,windStrength,period,swellPresence};
-  const directionalIndex=10*Object.entries(config.weights).reduce((sum,[key,weight])=>sum+weight*components[key].value,0);
-  // Wind and directions alone cannot imply rideable surf when the input swell
-  // is tiny or missing. A deliberately uncalibrated *offshore presence* gate
-  // reduces the prototype index in such cases. It does NOT convert offshore
-  // swell height into breaking wave height or incorporate secondary windsea.
-  const swellAvailability=clamp(input.swellHeightM/H.presenceModerateM,0,1);
-  const unrounded=directionalIndex*swellAvailability;
-  // Full-range, guide-derived numerical INDEX. The former 7.9 ceiling
-  // made distinct conditions tie and hid ranking information. A 9.6 here
-  // does not mean 96% quality, accuracy or observed rideable surf.
+  const science=potentialScore(input,profile,H);
+  // Score is a 0–10 relative offshore surf-potential INDEX. No numerical
+  // calibration to observed rideability or transformation into surf height.
+  const components={windDirection,swellDirection,
+   windStrength:{value:science.windQuality},period,
+   swellPresence:{value:science.energyResponse}};
+  const unrounded=science.unrounded;
   const score=+clamp(unrounded,0,10).toFixed(1);
   const guideOnly=profile.scoreEnabled===false||profile.accessRestriction?.status==='restriction_reported_not_live_verified';
   const fieldSessions=Number.isInteger(config.calibration?.fieldSessions)?
@@ -138,8 +196,23 @@
    spotId,spot:profile.name,status:guideOnly?'guide-only-restricted':'experimental',
    score:guideOnly?null:score,
    scoreLabel:guideOnly?null:label,band:guideOnly?null:band.id,components,
-   fieldSessions,rawDirectionalIndex:+directionalIndex.toFixed(3),
-   rawSwellAvailability:+swellAvailability.toFixed(3),
+   fieldSessions,rawDirectionalIndex:null,
+   rawSwellAvailability:+science.gate.toFixed(3),
+   indexVersion:'faro-offshore-potential-v0.3',
+   physicsProxy:{
+    energyHs2T:+science.power.raw.toFixed(3),
+    admittedEnergyHs2T:+science.power.admitted.toFixed(3),
+    energyResponse:+science.energyResponse.toFixed(3),
+    energyGate:+science.gate.toFixed(3),
+    windQuality:+science.windQuality.toFixed(3),
+    windSeaFraction:science.windSeaFraction===null?null:+science.windSeaFraction.toFixed(3),
+    windSeaModifier:+science.seaModifier.toFixed(3),
+    partitionConsistency:science.power.consistency===null?null:+science.power.consistency.toFixed(3),
+    partitions:science.power.breakdown,
+    offshoreNotBreakingWave:true,
+    optionalPartitionsMissing:!input.secondarySwell&&!input.tertiarySwell,
+    tideNotEvaluated:true
+   },
    tags,vibe:{id:vibe,label:t(locale,...vibes[vibe])},
    read:read(components,locale,profile.name),
    caution:profile['hazardContext'+(es?'Es':'En')],
@@ -148,17 +221,17 @@
     label:modelRisk?t(locale,'Rachas/viento potencialmente peligrosos (criterio FARO)','Potentially hazardous wind (FARO screen)'):null,
     official:false
    },
-   swellAvailability:+swellAvailability.toFixed(2),evidence:'published_guide_not_calibrated',tideEvaluated:false,nearshoreWaveHeightEstimated:false,
+   swellAvailability:+science.gate.toFixed(2),evidence:'published_guide_not_calibrated',tideEvaluated:false,nearshoreWaveHeightEstimated:false,
    safetyAssessed:false,confidence:'low',scoreCap:null,scoreLimitPolicy:'full-range-unvalidated',
    publicRecommendationAllowed:!guideOnly,
    warning:t(locale,
     guideOnly?
      'Ventanas: sólo hipótesis de guía; sin score ni recomendación mientras la restricción sanitaria no esté verificada como levantada.':
-     'Índice experimental 0–10 sin validar, con corrección de swell offshore; no estima ola rompiente, marea óptima ni seguridad.',
+     'FARO 0–10: índice de potencial oceánico (componentes Hs²·T, dirección de guía y viento). Parámetros heurísticos sin calibración local; no predice altura rompiente, marea ni seguridad.',
     guideOnly?
      'Ventanas: guide hypotheses only; no score or recommendation until the health restriction is verified as lifted.':
-     'Unvalidated full-range 0–10 index with offshore swell adjustment; not breaking-wave height, optimal tide or safety.')
+     'FARO 0–10: offshore-potential index (Hs²·T partitions, guide bearings and wind). Heuristic parameters lack local calibration; not breaking-wave height, tide or safety.')
   };
  }
- root.FaroChileScoreLab=Object.freeze({evaluate,directionalFit,distanceToRange,periodFit,strength});
+ root.FaroChileScoreLab=Object.freeze({evaluate,directionalFit,distanceToRange,periodFit,strength,potentialEnergy,potentialScore});
 })(typeof globalThis!=='undefined'?globalThis:this);
