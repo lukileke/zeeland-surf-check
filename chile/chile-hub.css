@@ -99,3 +99,17 @@ footer a{color:var(--ink);text-underline-offset:3px}
 .spot-access-notice strong{font-size:12px;color:var(--ink)}
 .spot-access-notice p{font-size:12px;color:var(--ink);margin:0;line-height:1.55}
 .spot-access-notice a{font-size:11px;font-weight:750;text-underline-offset:3px;overflow-wrap:anywhere}
+
+/* Research-only Ventanas prior: visible sources, no implied surf clearance. */
+.spot-precalibration{
+ display:grid;gap:8px;padding:13px 15px;
+ border-radius:12px;border:1px solid var(--line);
+ background:var(--surface,#eef5f4);
+}
+.spot-precalibration strong{font-size:13px;color:var(--ink);line-height:1.35}
+.spot-precalibration p{margin:0;font-size:12px;line-height:1.6;color:var(--ink)}
+.spot-precalibration a{
+ color:var(--accent,#187284);font-weight:800;font-size:12px;
+ text-underline-offset:3px;overflow-wrap:anywhere
+}
+.spot-precalibration small{font-size:10px;color:var(--muted);line-height:1.4}
