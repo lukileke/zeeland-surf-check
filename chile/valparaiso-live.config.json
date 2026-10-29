@@ -193,5 +193,24 @@
       "Vidriado",
       "Cerrón"
     ]
-  }
+  },
+  "referenceSpots": [
+    {
+      "id": "CL-VS:ventanas",
+      "name": "Ventanas · Muelle Chico / Pilotes",
+      "shortName": "Ventanas",
+      "locality": "Puchuncaví · bahía de Quintero",
+      "latitude": -32.74445,
+      "longitude": -71.48821,
+      "coordinateSource": "https://mapcarta.com/W150935216",
+      "coordinateStatus": "approximate_beach_centre_not_surf_break",
+      "forecastEnabled": false,
+      "modelEvaluated": false,
+      "scoreEnabled": false,
+      "catalogueUrl": "atlas.html?region=CL-VS&q=Ventanas",
+      "sourceUrl": "https://www.biobiochile.cl/noticias/servicios/explicado/2026/10/26/cierran-2-playas-en-region-de-valparaiso-por-fragata-portuguesa-que-hacer-ante-una-picadura.shtml",
+      "noticeDate": "2026-10-24",
+      "noticeState": "reported_restriction_unverified_current_status"
+    }
+  ]
 }
