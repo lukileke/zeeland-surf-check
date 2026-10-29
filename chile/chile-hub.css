@@ -84,3 +84,18 @@ footer a{color:var(--ink);text-underline-offset:3px}
 @media(max-width:900px){.hero,.featured{grid-template-columns:1fr}.hero-side{max-width:500px}.spot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:610px){.shell{padding:25px 17px 75px}.masthead{align-items:flex-start}.logo-art{width:143px}.faro-tools button{padding:7px 10px}.switch{margin:20px 0 29px}.switch a{padding:8px 11px;font-size:12px}.hero{gap:21px;margin-bottom:26px}.hero h1{margin-top:11px}.featured{padding:24px 19px;margin-bottom:40px}.filters{grid-template-columns:1fr}.spot-grid{grid-template-columns:1fr}.spot-card{padding:17px}.process-row{grid-template-columns:1fr}.actions{gap:12px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Ventanas is a documented coast reference, NOT an available surf session.
+   This is a dated report, not a continuously synchronised official alert. */
+.spot-card.access-notice-spot{border-color:color-mix(in srgb,var(--warning) 55%,var(--line))}
+.spot-card.access-notice-spot .mini-status{
+ color:var(--warning);border-color:var(--warning);
+}
+.spot-access-notice{
+ display:grid;gap:7px;padding:12px 13px;
+ background:var(--warning-bg);border-radius:11px;
+ border-left:3px solid var(--warning);
+}
+.spot-access-notice strong{font-size:12px;color:var(--ink)}
+.spot-access-notice p{font-size:12px;color:var(--ink);margin:0;line-height:1.55}
+.spot-access-notice a{font-size:11px;font-weight:750;text-underline-offset:3px;overflow-wrap:anywhere}
