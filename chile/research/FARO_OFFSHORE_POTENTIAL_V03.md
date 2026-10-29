@@ -4,7 +4,7 @@
 
 ## Purpose and meaningful distinction
 
-This index estimates the *potential of the modelled offshore sea state for a particular guide-described spot*. It is not a predicted breaking height, an observed wave-quality rating, a probability, or a water-safety assessment. It is not Surfline's LOTUS model. FARO presently uses Open-Meteo wave/weather grids and published directional *guide sectors* for its four experimental Valparaíso pilots; it has no actual nearshore wave transformation, measured banks or licensed camera observations.
+This index estimates the *potential of the modelled offshore sea state for a particular guide-described spot*. It is not a predicted breaking height, an observed wave-quality rating, a probability, or a water-safety assessment. It is not Surfline's LOTUS model. FARO presently uses Open-Meteo wave/weather grids and published directional *guide sectors* for its five experimental Valparaíso model locations (Ventanas excluded from surfing recommendations); it has no actual nearshore wave transformation, measured banks or licensed camera observations.
 
 ## Inputs
 
@@ -45,7 +45,7 @@ The conversion of `E*` into a user-facing 0–10 index is **explicitly heuristic
 
 1. The score can exceed 7.9 and approach 10; a 9/10 is **not 90% confidence, 90% wave quality or predicted 9/10 breaking surf**.
 2. This approach only partly differentiates spots: guide swell/wind direction ranges differ; **there is no site-specific refraction, shoaling, sediment morphology or reliable surf height estimate**. A common offshore grid cell can still produce similar indices at nearby beaches.
-3. Do not use it as an access approval, to forecast currents or to override public restrictions. **Ventanas remains unscored** while the reported recreational-use restriction has not been verified lifted and break coordinates and observations are absent.
+3. Do not use it as an access approval, to forecast currents or to override public restrictions. **Ventanas is numerically modelled but excluded from actionable recommendations** while the reported recreational-use restriction has not been verified lifted. Its guide bearings and breakup coordinates are uncalibrated.
 4. For future calibration, archive issued forecasts with valid-time offsets and geolocated observations; obtain per-spot tide and observed rideability/wave forms with permissions. Use chronological hold-out and compare to simpler directional baselines. Optimise declared heuristic coefficients only on training days; test on independent days/seasons. Do not fit to synthetic outcomes.
 5. No camera access is required to **publish a clearly labelled experimental index**. It *is* required (or comparable independent field observation) to substantiate predictive surf quality/accuracy at a given breaking spot.
 
