@@ -76,9 +76,12 @@ function paintAccessNotice(){
  note.classList.remove("caution","danger","advisory");
  note.classList.add(info.severity);
  txt("faroAccessKicker",info.kicker);
- txt("faroAccessSeverity",info.severityLabel);
- txt("faroAccessHeadline",info.headline);
+ txt("faroAccessSeverity",info.type==="reported_restriction"?
+  tr("REPORTADA","REPORTED"):info.severityLabel);
+ txt("faroAccessHeadline",info.type==="reported_restriction"?
+  info.spotName+" · "+tr("restricción recreativa","recreation restriction"):info.headline);
  txt("faroAccessSubline",info.subline);
+ txt("faroAccessEvidence",info.subline);
  txt("ventanasNoticeText",info.detail);
  note.setAttribute("aria-label",info.headline+" · "+info.statusLabel);
  const source=$("faroAccessSourceLink");

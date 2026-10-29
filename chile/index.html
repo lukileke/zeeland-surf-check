@@ -30,6 +30,8 @@
 <link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=16">
 <!-- Single Chile-specific layout contract, loaded after all visual layers. -->
 <link rel="stylesheet" href="chile-visual-contract.css?v=8">
+<!-- FARO coastal art direction: finish, not a new competing design system -->
+<link rel="stylesheet" href="faro-coastal-editorial-v3.css?v=1">
 </head>
 <body>
 <main>
@@ -103,6 +105,7 @@
     <span class="faro-safety-chevron" aria-hidden="true"></span>
    </summary>
    <div class="faro-safety-expanded faro-access-expanded">
+    <small class="faro-access-evidence" id="faroAccessEvidence">Último reporte 27 oct. 2026 · vigencia actual no verificada</small>
     <strong class="faro-safety-detail-heading" data-es="Qué sabemos" data-en="What we know">Qué sabemos</strong>
     <p class="faro-safety-detail-description" id="ventanasNoticeText">—</p>
     <div class="faro-access-links">
@@ -140,7 +143,7 @@
   </details>
   <section class="forecast-section day-outlook-section" aria-label="Resumen diario">
    <div class="forecast-overview" id="dailyOverview">
-    <div class="day-editorial-overline"><span data-es="EL PANORAMA DEL DÍA" data-en="THE DAILY TAKE">EL PANORAMA DEL DÍA</span> <span>·</span> VALPARAÍSO</div>
+    <div class="day-editorial-overline"><span data-es="FARO · EL PANORAMA" data-en="FARO · THE DAILY TAKE">FARO · EL PANORAMA</span> <span>·</span> VALPARAÍSO</div>
     <div class="row day-overview-row">
      <div class="day-identity"><h2 id="datehead">—</h2><div id="spotname">—</div></div>
      <div class="best-session-brief"><small id="bestTimeKicker">MEJOR VENTANA</small><div id="bestTime" class="best-time">—</div></div>
@@ -193,7 +196,7 @@
    <section class="faro-ocean-explorer" aria-labelledby="oceanToolsHeading">
     <div class="faro-ocean-explorer-header">
      <div class="faro-ocean-tools-copy">
-      <small data-es="LEE LAS CONDICIONES" data-en="READ THE CONDITIONS">LEE LAS CONDICIONES</small>
+      <small data-es="FARO · LECTURA COSTERA" data-en="FARO · COASTAL READ">FARO · LECTURA COSTERA</small>
       <h3 id="oceanToolsHeading" data-es="Mapa y brújula" data-en="Map & swell compass">Mapa y brújula</h3>
       <p data-es="Explora el oleaje y el viento, sin confundir la altura oceánica con la ola rompiente." data-en="Read the swell and wind without confusing offshore height with breaking waves.">Explora el oleaje y el viento, sin confundir la altura oceánica con la ola rompiente.</p>
      </div>
@@ -355,6 +358,6 @@
 <script src="faro-coastal-lens.js?v=1"></script>
 <script src="faro-notices.js?v=1"></script>
 <script src="coast-map.js?v=20"></script>
-<script src="chile-forecast.js?v=31"></script>
+<script src="chile-forecast.js?v=32"></script>
 </body>
 </html>
