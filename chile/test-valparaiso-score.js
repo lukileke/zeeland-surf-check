@@ -65,6 +65,19 @@ assert.ok(laBoca.score>0&&laBoca.score<=10,
 assert.equal(laBoca.indexVersion,'faro-spot-response-v0.4');
 assert.equal(laBoca.physicsProxy.partitions.length,1);
 assert.equal(laBoca.physicsProxy.offshoreNotBreakingWave,true);
+assert.ok(Math.abs(laBoca.physicsProxy.approximateDeepwaterWavelengthM-
+ 9.80665*example.swellPeriodS**2/(2*Math.PI))<.06,
+ 'Deepwater wavelength follows linear dispersion approximation only');
+assert.equal(laBoca.physicsProxy.empiricalBreakingHeight,null);
+assert.equal(laBoca.physicsProxy.nearshoreShoalingCalculated,false);
+assert.equal(laBoca.physicsProxy.ripCurrentPrediction,null);
+const twoTrain=score(cfg,'CL-VS:la-boca-concon',{
+ ...example,secondarySwell:{heightM:.7,periodS:12,fromDeg:120}
+});
+assert.ok(Number.isFinite(twoTrain.physicsProxy.secondaryCrossingAngleDeg));
+assert.ok(twoTrain.physicsProxy.secondaryCrossingAngleDeg>=0&&
+ twoTrain.physicsProxy.secondaryCrossingAngleDeg<=180);
+
 assert.equal(laBoca.scoreCap,null);
 const perfect=score(cfg,'CL-VS:la-boca-concon',
  {windFromDeg:140,windKmh:0,gustKmh:1,swellFromDeg:305,swellPeriodS:16,swellHeightM:3});
