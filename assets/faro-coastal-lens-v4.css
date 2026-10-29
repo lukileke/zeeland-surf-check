@@ -1038,3 +1038,17 @@ html:not([data-theme="light"]) #chileCoastMap .faro-map-reference-pin small{colo
 #chileCoastMap .faro-leaflet-reference-marker:focus-visible .faro-map-reference-pin{
  outline:3px solid var(--faro-selection,#15798c);outline-offset:3px;
 }
+
+/* Small marker annotation: report of restricted recreation, not a verified
+   live government alert or an assessment of ocean-wave quality. */
+#chileCoastMap .faro-map-pin .faro-map-access-badge{
+ display:inline-grid!important;place-items:center;
+ width:16px!important;min-width:16px;height:16px;margin-left:4px;
+ border:1px solid rgba(255,255,255,.82)!important;border-radius:50%;
+ background:#ad6e35!important;color:#fff!important;
+ font:900 11px/1 sans-serif!important;
+ box-shadow:0 1px 4px rgba(22,30,34,.2);vertical-align:middle
+}
+#chileCoastMap .faro-map-pin[data-access-alert="reported"]{
+ overflow:visible!important;
+}
