@@ -80,9 +80,17 @@ test('regional click retains regional comparison and selected contrast overrides
  assert.match(css,/data-spot-id="CL-VS:la-boca-concon"/);
  assert.match(css,/data-spot-id="CL-VS:renaca"/);
 });
+test('Ventanas is a reference-only marker, not a fifth scored or modelled pilot',()=>{
+ assert.match(code,/const references=\(current\.referenceSpots\|\|\[\]\)/);
+ assert.match(code,/referenceMarkers=new Map\(\)/);
+ assert.match(code,/referenceIcon\(L,sp\)/);
+ assert.match(code,/showReference\(sp\)/);
+ assert.match(code,/data-reference-spot/);
+ assert.doesNotMatch(code,/referenceMarkers\.get\(sp\.id\)\.setIcon\(markerIcon/);
+});
 test('asset version and shared Zeeland colours remain unaffected',()=>{
- assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=13"/);
- assert.match(html,/src="coast-map\.js\?v=17"/);
- assert.match(html,/src="chile-forecast\.js\?v=23"/);
+ assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=14"/);
+ assert.match(html,/src="coast-map\.js\?v=18"/);
+ assert.match(html,/src="chile-forecast\.js\?v=24"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });
