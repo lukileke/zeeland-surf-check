@@ -113,7 +113,21 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const tertiarySwell={heightM:mean(vals(mar,"tertiary_swell_wave_height")),
   periodS:mean(vals(mar,"tertiary_swell_wave_period")),
   fromDeg:circleMean(vals(mar,"tertiary_swell_wave_direction"))};
- const partition=part=>[part.heightM,part.periodS,part.fromDeg].every(finite)?part:null;
+ // Optional partitions are only valid if ALL model hours provide complete
+ // height, period and FROM direction. Averaging one of two missing hours
+ // would quietly substitute a partial prediction for a full session.
+ const validPartition=(part,prefix)=>mar.length===slotHours.length&&
+  mar.every(row=>['height','period','direction'].every(k=>{
+   const field=prefix+'_swell_wave_'+k;
+   return finite(row[field]);
+  }))&&[part.heightM,part.periodS,part.fromDeg].every(finite)?part:null;
+ const secondaryValid=validPartition(secondarySwell,'secondary');
+ const tertiaryValid=validPartition(tertiarySwell,'tertiary');
+ const seaLevels=vals(mar,'sea_level_height_msl');
+ const seaLevelComplete=mar.length===slotHours.length&&seaLevels.every(finite);
+ const seaLevelMslM=seaLevelComplete?mean(seaLevels):null;
+ const seaLevelChangeM=seaLevelComplete&&seaLevels.length===2?
+  +(seaLevels[1]-seaLevels[0]).toFixed(3):null;
  const swellPeriod=mean(vals(mar,"swell_wave_period"));
  const totalPeriod=mean(vals(mar,"wave_period"));
  const wind=mean(vals(met,"wind_speed_10m"));
@@ -130,7 +144,7 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const fields={windFromDeg:windDirection,windKmh:wind,gustKmh:gust,
   swellFromDeg:swellDirection,swellPeriodS:swellPeriod,swellHeightM:swellHeight,
   // Distinct optional partitions: never add offshore total Hs to its components.
-  secondarySwell:partition(secondarySwell),tertiarySwell:partition(tertiarySwell),
+  secondarySwell:secondaryValid,tertiarySwell:tertiaryValid,
   windSeaHeightM:windSeaHeight};
  const score=root.FaroChileScoreLab?.evaluate(profileConfig,spot.id,complete?fields:{},{locale})||{score:null,status:"unavailable",tags:[]};
  const modelComplete=complete&&[height,totalDirection,totalPeriod,wind].every(finite);
@@ -140,7 +154,14 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
   totalWaveHeightM:height,totalWaveDirection:totalDirection,totalWavePeriodS:totalPeriod,
   windSeaHeightM:windSeaHeight,windSeaDirection,
   swellHeightM:swellHeight,swellDirection,swellPeriodS:swellPeriod,
-  secondarySwell:partition(secondarySwell),tertiarySwell:partition(tertiarySwell),
+  secondarySwell:secondaryValid,tertiarySwell:tertiaryValid,
+  seaLevelMslM,seaLevelChangeM,
+  seaLevelSource:seaLevelComplete?'Open-Meteo model, ~8 km tides+non-tidal terms':'not_available',
+  tideLocalCalibration:false,
+  modelCoverage:{required:complete?'complete':'incomplete',
+   secondary:secondaryValid?'complete':'not-available-or-partial',
+   tertiary:tertiaryValid?'complete':'not-available-or-partial',
+   seaLevel:seaLevelComplete?'complete':'not-available-or-partial'},
   windKmh:wind,windDirection,gustKmh:gust,uvIndex,uv:statusUV(uvIndex,locale),
   temperatureC:temperature,waterTemperatureC:sst,cloudPercent:cloud,precipitationMm:precipMissing?null:precip,
   weatherCode,weatherSource:"Open-Meteo",observed:false,nearshoreHeightEstimated:false
@@ -195,6 +216,7 @@ function extract(config,spot,marine,weather,profileConfig,locale="es"){
   issueAt:null,validFrom:utcInstant(weatherTimes[0]),timeBasis:typeof weatherTimes[0]==="number"?"epoch_utc":"legacy_local_unverified",source:"Open-Meteo",
   coverage:{completeSlots,totalSlots:windows.length},
   optionalSwellFallback:marine.optionalSwellFallback===true,
+  seaLevelFallback:marine.seaLevelFallback===true,
   offshoreApproximation:true,referencePointStatus:spot.coordinateStatus||"unverified"},days,windows,hazard:screenRisk(config,weather,locale),fitExperimental:true};
 }
 function screenRisk(config,weather,locale="es"){
@@ -304,14 +326,26 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
  const marineRequest=async()=>{
   try{return await fetchJSON(urls.marine,fetcher)}
   catch(error){
-   // Some wave-model combinations reject unsupported partition variables.
-   // Retry only a 400 from this optional request; never mask outages or
-   // missing primary wave variables, and never impute a secondary swell.
+   // If the coastal sea-level field is unavailable, preserve swell
+   // partitions in the first fallback; only an additional 400 warrants
+   // dropping optional swell partitions. Never mask non-400 outages.
    if(error.status!==400||!config.modelProviders.optionalMarineVariables?.length)throw error;
-   const fallback=new URL(urls.marine);
+   const initial=new URL(urls.marine);
+   const optional=config.modelProviders.optionalMarineVariables;
+   if(optional.includes("sea_level_height_msl")){
+    const withoutSeaLevel=new URL(initial);
+    const fields=withoutSeaLevel.searchParams.get("hourly").split(",")
+     .filter(v=>v!=="sea_level_height_msl");
+    withoutSeaLevel.searchParams.set("hourly",fields.join(","));
+    try{
+     const data=await fetchJSON(withoutSeaLevel.toString(),fetcher);
+     data.seaLevelFallback=true;return data;
+    }catch(e){if(e.status!==400)throw e;}
+   }
+   const fallback=new URL(initial);
    fallback.searchParams.set("hourly",config.modelProviders.requiredVariables.marine.join(","));
    const data=await fetchJSON(fallback.toString(),fetcher);
-   data.optionalSwellFallback=true;
+   data.optionalSwellFallback=true;data.seaLevelFallback=true;
    return data;
   }
  };
