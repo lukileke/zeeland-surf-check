@@ -81,6 +81,7 @@ function paintAccessNotice(){
  txt("faroAccessHeadline",info.type==="reported_restriction"?
   info.spotName+" · "+tr("restricción recreativa","recreation restriction"):info.headline);
  txt("faroAccessSubline",info.subline);
+ txt("faroAccessEvidence",info.subline);
  txt("ventanasNoticeText",info.detail);
  note.setAttribute("aria-label",info.headline+" · "+info.statusLabel);
  const source=$("faroAccessSourceLink");
