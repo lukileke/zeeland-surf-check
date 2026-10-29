@@ -277,6 +277,36 @@ function renderDNA(){
     "Input coverage: "+(selected.modelCoverage?.required==="complete"?"2/2 hours":"incomplete")+
      " · "+(proxy.partitions.length-1)+" complete additional swells. Directional fit is guide-based, NOT forecast probability or measured skill."
    ),"faro-dna-method"));
+   if(Number.isFinite(proxy.approximateDeepwaterWavelengthM)){
+    lower.append(el("p",tr(
+     "Análisis de tren de swell: longitud de onda profunda aproximada "+
+     num(proxy.approximateDeepwaterWavelengthM,0)+" m; esbeltez Hs/L₀ "+
+     num(proxy.approximateDeepwaterSteepness,4)+
+     (Number.isFinite(proxy.secondaryCrossingAngleDeg)?
+      "; separación con swell secundario "+num(proxy.secondaryCrossingAngleDeg,0)+"°":"")+
+     ". No estima shoaling, bancos ni altura de rompiente.",
+     "Wave-train analysis: approximate deepwater wavelength "+
+     num(proxy.approximateDeepwaterWavelengthM,0)+" m; Hs/L₀ steepness "+
+     num(proxy.approximateDeepwaterSteepness,4)+
+     (Number.isFinite(proxy.secondaryCrossingAngleDeg)?
+      "; secondary swell crossing angle "+num(proxy.secondaryCrossingAngleDeg,0)+"°":"")+
+     ". Does not estimate shoaling, banks or breaking heights."
+    ),"faro-dna-method"));
+   }
+   lower.append(el("p",tr(
+    Number.isFinite(selected.oceanCurrentKmh)?
+     "Corriente oceánica modelada (~8 km): "+num(selected.oceanCurrentKmh,1)+
+      " km/h hacia "+num(selected.oceanCurrentToDeg,0)+"°. NO representa corrientes de resaca ni riesgo dentro del spot.":
+     "Corriente oceánica modelada: no disponible. La dirección de las corrientes de resaca locales sigue desconocida.",
+    Number.isFinite(selected.oceanCurrentKmh)?
+     "Modelled ocean current (~8 km): "+num(selected.oceanCurrentKmh,1)+
+      " km/h flowing TO "+num(selected.oceanCurrentToDeg,0)+"°. NOT local rip current or spot safety.":
+     "Modelled ocean current unavailable. Actual local rip currents remain unassessed."
+   ),"faro-dna-method"));
+   lower.append(el("p",tr(
+    "Estado de bancos de arena, fondo, canaletas y caudal del río: no observado y NO incluido en la puntuación.",
+    "Sandbars, bathymetry, channels and river discharge: not observed and NOT included in the score."
+   ),"faro-dna-method"));
    if(proxy.directionScenario){
     const sensitivity=proxy.directionScenario;
     lower.append(el("p",tr(
