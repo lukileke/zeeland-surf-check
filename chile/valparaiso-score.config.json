@@ -3,10 +3,16 @@
   "status": "experimental",
   "region": "CL-VS",
   "active": false,
-  "statement": "Directional compatibility prototype with an uncalibrated minimum offshore swell presence adjustment (0.9 m scale). NOT a live surf-quality forecast, breaking-wave height or safety approval.",
+  "statement": "Guide-derived 0–10 directional compatibility index without an artificial ceiling; not calibrated against observed breaking-wave quality or safety.",
   "calibration": {
     "fieldSessions": 0,
-    "requiredBeforeLaunch": true
+    "requiredBeforeLaunch": true,
+    "publicScoreRange": [
+      0,
+      10
+    ],
+    "scoringPolicy": "uncalibrated-guide-derived-index-no-arbitrary-ceiling",
+    "minimumObservedSessionsForClaim": "field_validation_required"
   },
   "weights": {
     "windDirection": 0.28,
@@ -26,8 +32,7 @@
     "periodGoodS": 12,
     "presenceWeakM": 0.35,
     "presenceModerateM": 0.9,
-    "presenceLargeM": 3,
-    "provisionalScoreCap": 7.9
+    "presenceLargeM": 3
   },
   "profiles": {
     "CL-VS:la-boca-concon": {
@@ -179,6 +184,92 @@
       "hazardContextEn": "Demanding rocky break with faster sections and specific access. A high score does not imply safety or suitability for your level.",
       "status": "guide_only",
       "observations": 0
+    },
+    "CL-VS:ventanas": {
+      "name": "Ventanas · Muelle Chico / Pilotes",
+      "kind": "multi-section point/beach (community description)",
+      "scoreEnabled": false,
+      "forecastEnabled": false,
+      "calibrationStage": "guide-prior-only-no-measured-sessions",
+      "guideOnly": true,
+      "guideAngleInterpretation": "North/South cardinal labels from one community-derived text, converted to 45° compass bins (±22.5°). Hypotheses only; no demonstrated favourable angular interval or nearshore refraction model.",
+      "windFromDeg": [
+        [
+          337.5,
+          22.5
+        ],
+        [
+          157.5,
+          202.5
+        ]
+      ],
+      "waveFromDeg": [
+        [
+          337.5,
+          22.5
+        ]
+      ],
+      "origins": {
+        "wind": "surfspots-ventanas",
+        "swell": "surfspots-ventanas",
+        "tide": "surfspots-ventanas",
+        "nearshore": "uv-quintero-bay-forecast"
+      },
+      "tideReference": "Community guide: all tide levels, falling tide preferred. No validated sector-specific tide or depth response. The University of Valparaíso Quintero Bay forecast is for ~20 m depth and does not resolve Pilotes or Muelle Chico breaking waves.",
+      "personality": {
+        "es": "Muelle Chico: izquierda y derecha descritas como accesibles; Pilotes: sección exigente. No verificados ni georreferenciados.",
+        "en": "Muelle Chico: community-described accessible left/right; Pilotes: demanding section. Neither independently verified nor georeferenced."
+      },
+      "sectors": {
+        "muelleChico": {
+          "reportedLevel": "beginner",
+          "waveDirection": "left and right",
+          "breakpointCoordinates": null,
+          "validations": 0,
+          "source": "surfspots-ventanas"
+        },
+        "pilotes": {
+          "reportedLevel": "expert",
+          "waveDirection": "not independently identified",
+          "breakpointCoordinates": null,
+          "validations": 0,
+          "source": "surfspots-ventanas"
+        }
+      },
+      "literatureFrom": {
+        "swell": "N",
+        "wind": [
+          "N",
+          "S"
+        ],
+        "tide": "all; falling preferred"
+      },
+      "accessRestriction": {
+        "status": "restriction_reported_not_live_verified",
+        "since": "2026-10-23",
+        "source": "biobio-ventanas-restriction-20261026",
+        "newResolutionVerified": false
+      },
+      "hazardContextEs": "Playa Ventanas: restricción sanitaria de uso recreativo reportada en octubre de 2026 por fragata portuguesa, aún sin levantamiento verificado. Área portuaria y riesgos ambientales. NO recomendar entrar al agua; el índice investigativo está deshabilitado.",
+      "hazardContextEn": "Playa Ventanas: October 2026 health-related recreation restriction reported due to Portuguese man-of-war, not verified lifted. Port and environmental concerns. Do NOT recommend water entry; research-only index disabled.",
+      "status": "research-hypothesis-only",
+      "observations": 0,
+      "rawCommunitySourcesIndependent": 1,
+      "validationTargets": [
+        "local filmed breaking wave type and size",
+        "geolocate sections",
+        "tide-height/phase",
+        "swell partition and period",
+        "modelled 20 m Quintero Bay output vs observations",
+        "current legal/access status"
+      ],
+      "nearshoreModel": {
+        "source": "uv-quintero-bay-forecast",
+        "reference": "Puerto Ventanas",
+        "depthM": 20,
+        "directApiIntegration": false,
+        "surfaceBreakingWaveCalibration": false
+      }
     }
   }
 }
