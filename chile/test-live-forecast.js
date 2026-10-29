@@ -25,7 +25,7 @@ assert.ok(candidate&&candidate.coordinates===null,
 assert.equal(candidate.accessNotice.automaticClearance,false);
 const sources=json('sources.json').sources;
 for(const id of candidate.sources)assert.ok(sources[id]?.url,'Source missing '+id);
-const estimated=Lab.evaluate(profile,modelledVentanas.id,{
+const estimated=globalThis.FaroChileScoreLab.evaluate(profile,modelledVentanas.id,{
  windFromDeg:8,windKmh:3,gustKmh:5,
  swellFromDeg:355,swellHeightM:1.6,swellPeriodS:12
 },{locale:'es'});
