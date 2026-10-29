@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.1.0",
-  "asOf": "2026-10-26",
+  "asOf": "2026-10-29",
   "sources": {
     "travel-arica": {
       "name": "Chile Travel · Arica and local surf beaches",
@@ -280,6 +280,39 @@
       "type": "restricted-viewer-camera",
       "reviewed": "2026-10-26",
       "rights": "not licensed for training or copying"
+    },
+    "surfspots-ventanas": {
+      "name": "SurfSpots.co · ventana (muelle chico y Pilotes; guía no calibrada)",
+      "url": "https://www.surfspots.co/spot/ventana",
+      "type": "community-surf-spot-guide",
+      "reviewed": "2026-10-29",
+      "scope": "Unverified spot-level conditions. Industrial contamination mentioned."
+    },
+    "municipio-ventanas": {
+      "name": "Municipalidad de Puchuncaví · Las Ventanas",
+      "url": "https://www.munipuchuncavi.cl/4.0/ventanas.php",
+      "type": "municipal-geography",
+      "reviewed": "2026-10-29"
+    },
+    "osm-playa-ventanas": {
+      "name": "OpenStreetMap way 150935216 · Playa Ventanas (via Mapcarta)",
+      "url": "https://mapcarta.com/W150935216",
+      "type": "osm-beach-geometry",
+      "reviewed": "2026-10-29",
+      "scope": "Approximate centre of beach; not georeferenced surf take-off"
+    },
+    "biobio-ventanas-restriction-20261026": {
+      "name": "BioBioChile · 26 October 2026 Seremi restriction report",
+      "url": "https://www.biobiochile.cl/noticias/servicios/explicado/2026/10/26/cierran-2-playas-en-region-de-valparaiso-por-fragata-portuguesa-que-hacer-ante-una-picadura.shtml",
+      "type": "dated-access-restriction-report",
+      "reviewed": "2026-10-29",
+      "scope": "Prohibition of swimming and recreational use on Playa Ventanas reported 24–26 October 2026; no automatic current-status verification"
+    },
+    "directemar-quintero-restrictions": {
+      "name": "DIRECTEMAR · Resoluciones de Capitanía de Puerto Quintero",
+      "url": "https://www.directemar.cl/directemar/site/tax/port/fid_adjunto/taxport_34_112_219_2.html",
+      "type": "official-maritime-restrictions-index",
+      "reviewed": "2026-10-29"
     }
   }
 }
