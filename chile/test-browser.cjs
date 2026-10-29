@@ -531,7 +531,7 @@ function fixture(){
      'The 7.9 score must never wrap onto two lines');
     assert.ok(scoreLayout.scoreWidth<=scoreLayout.areaWidth+1,
      'The score needs a width-protected column: '+JSON.stringify(scoreLayout));
-    assert.match(scoreLayout.scoreText,/^\\d+(?:\\.\\d+)?$/,
+    assert.match(scoreLayout.scoreText,/^\d+(?:\.\d+)?$/,
      'Each ranking score is one continuous number');
     await page.locator('#navForecast').click();
    }
