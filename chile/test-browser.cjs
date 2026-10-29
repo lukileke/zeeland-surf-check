@@ -222,6 +222,29 @@ function fixture(){
     assert.ok(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="'+id+'"]').count()>=1,
      'Map must include published coastal reference '+id);
    }
+   if(width===1180){
+    // Ventanas must be a labelled, unscored regional reference, not a
+    // fabricated fifth forecast with the active beach's S/W signals.
+    const regionButton=page.locator('#chileCoastMap .faro-lens-recenter');
+    await regionButton.evaluate(el=>el.disabled=false);
+    await regionButton.click();
+    const refSpot=page.locator('#chileCoastMap .faro-map-schematic g[data-reference-spot="CL-VS:ventanas"]');
+    assert.equal(await refSpot.count(),1,'Ventanas must appear in the regional reference layer');
+    assert.equal(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:ventanas"]').count(),0,
+     'Ventanas must not appear as an eligible forecast pin');
+    const previous=await page.locator('#chileSpotSelect').inputValue();
+    await refSpot.evaluate(el=>el.dispatchEvent(new MouseEvent('click',{bubbles:true})));
+    assert.equal(await page.locator('#chileCoastMap .faro-coast-ref-panel').isVisible(),true);
+    const referenceCopy=await page.locator('#chileCoastMap .faro-coast-ref-panel').textContent();
+    assert.match(referenceCopy,/Ventanas/);
+    assert.match(referenceCopy,/restricci[oó]n|restriction/i);
+    assert.match(referenceCopy,/no hay score|no surf score/i);
+    assert.equal(await page.locator('#chileSpotSelect').inputValue(),previous,
+     'Reference pin must not replace the active real forecast pilot');
+    await page.locator('#chileCoastMap .faro-coast-ref-close').click();
+    await regionButton.evaluate(el=>el.disabled=false);
+    await regionButton.click();
+   }
    const arrowCount=await page.locator('#chileCoastMap .faro-map-schematic line[stroke="#137d9f"], #chileCoastMap .faro-map-schematic line[stroke="#ba7628"]').count();
    assert.equal(arrowCount,0,'Schematic must not invent swell rays from model grid points');
    if(width>=1120){
