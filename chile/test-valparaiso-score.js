@@ -25,9 +25,9 @@ assert.equal(region.spots.some(s=>s.id==='CL-VS:ventanas'),true);
 assert.equal(Object.hasOwn(cfg.profiles,'CL-VS:ventanas'),true,
  'Ventanas must have sourced research-only directional priors');
 const ventanasProfile=cfg.profiles['CL-VS:ventanas'];
-assert.equal(ventanasProfile.scoreEnabled,false);
+assert.equal(ventanasProfile.scoreEnabled,true);
 assert.equal(ventanasProfile.observations,0);
-assert.equal(ventanasProfile.calibrationStage,'guide-prior-only-no-measured-sessions');
+assert.equal(ventanasProfile.calibrationStage,'physics-informed-guide-prior-no-observational-validation');
 assert.deepEqual(ventanasProfile.waveFromDeg,[[337.5,22.5]],
  'North from-direction is a broad research cardinal hypothesis, not a calibrated window');
 assert.deepEqual(ventanasProfile.windFromDeg,[[337.5,22.5],[157.5,202.5]]);
@@ -37,15 +37,17 @@ assert.equal(ventanasProfile.accessRestriction.newResolutionVerified,false);
 const ventanasResearch=score(cfg,'CL-VS:ventanas',
  {...example,swellFromDeg:5,windFromDeg:180,windKmh:4},
  {locale:'es'});
-assert.equal(ventanasResearch.status,'guide-only-restricted');
-assert.equal(ventanasResearch.score,null,
- 'No public score for Ventanas under reported, unverified-lifted recreation restriction');
+assert.equal(ventanasResearch.status,'experimental-restricted');
+assert.ok(Number.isFinite(ventanasResearch.score),
+ 'Ventanas is numerically modelled without inventing field calibration');
+assert.equal(ventanasResearch.publicRecommendationAllowed,false,
+ 'Model value must never override a reported access restriction');
 assert.equal(ventanasResearch.safetyAssessed,false);
 assert.equal(ventanasResearch.publicRecommendationAllowed,false);
 assert.equal(ventanasResearch.components.swellDirection.value,1);
 assert.equal(ventanasResearch.components.windDirection.value,1);
 for(const spot of region.spots){
- assert.equal(spot.forecastEnabled,false);
+ assert.equal(spot.forecastEnabled,spot.id==='CL-VS:ventanas');
  assert.equal(spot.coordinates,null);
  for(const sourceId of spot.sources)assert.ok(refs[sourceId],'Missing source: '+sourceId);
 }
@@ -119,8 +121,9 @@ assert.ok(evalAt({windSeaHeightM:2}).score<mid.score,
  'Independent local windsea can modestly lower relative orderliness');
 assert.equal(evalAt({swellHeightM:0}).score,0,
  'A flat swell has no surf potential even in perfect wind');
-assert.ok(score(cfg,'CL-VS:ventanas',base).score===null,
- 'Restricted Ventanas continues unscored in the new physical index');
+assert.ok(Number.isFinite(score(cfg,'CL-VS:ventanas',base).score),
+ 'Restricted Ventanas is modelled but its score must not count as permission');
+assert.equal(score(cfg,'CL-VS:ventanas',base).publicRecommendationAllowed,false);
 const english=score(cfg,'CL-VS:la-boca-concon',example,{locale:'en'});
 assert.ok(english.read.includes('Wind'));
-console.log('FARO Valparaíso Lab: full unvalidated 0–10 index; Ventanas guide-only restrictions; 6 research profiles / 22 spots; research lab inactive.');
+console.log('FARO Valparaíso Lab: full unvalidated 0–10 index; Ventanas modelled with access block; 6 research profiles / 22 spots; research lab configuration inactive.');

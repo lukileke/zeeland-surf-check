@@ -1,7 +1,7 @@
 # FARO | Model Accuracy Programme: Surfline/LOTUS benchmark & coastal upgrade
 **Version:** design v0.4 (no model changes in this PR)
 **Date:** 2026-10-29
-**Current production baseline:** FARO offshore-potential v0.3 (4 experimental Chile pilots; Ventanas is unscored research-only)
+**Current production baseline:** FARO offshore-potential v0.3 (5 experimental Chile model locations; Ventanas is excluded from actionable picks due to reported access restriction)
 **Status:** engineering research / implementation specification; NO accuracy improvement claimed.
 
 ## 1. Evidence-based competitor benchmark

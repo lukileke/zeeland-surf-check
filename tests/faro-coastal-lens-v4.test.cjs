@@ -29,8 +29,8 @@ test('guide-sector matching works with angular wrap and does not invent breaking
  assert.equal(map.guideClass(241,guide['CL-VS:maitencillo'].waveFromDeg),'inside');
  assert.equal(map.guideClass(null,[]),'unknown');
 });
-test('full four-beach comparison uses actual published guide profiles',()=>{
- assert.equal(pilot.length,4);
+test('five modelled beaches each retain their own guide hypothesis profile',()=>{
+ assert.equal(pilot.length,5);
  for(const p of pilot)assert.ok(guide[p.id]?.waveFromDeg?.length>0,p.name);
  assert.match(code,/v\.profiles\?\.\[sp\.id\]/); // see dedicated guide table
 });
@@ -80,17 +80,14 @@ test('regional click retains regional comparison and selected contrast overrides
  assert.match(css,/data-spot-id="CL-VS:la-boca-concon"/);
  assert.match(css,/data-spot-id="CL-VS:renaca"/);
 });
-test('Ventanas is a reference-only marker, not a fifth scored or modelled pilot',()=>{
- assert.match(code,/const references=\(current\.referenceSpots\|\|\[\]\)/);
- assert.match(code,/referenceMarkers=new Map\(\)/);
- assert.match(code,/referenceIcon\(L,sp\)/);
- assert.match(code,/showReference\(sp\)/);
- assert.match(code,/data-reference-spot/);
- assert.doesNotMatch(code,/referenceMarkers\.get\(sp\.id\)\.setIcon\(markerIcon/);
+test('Ventanas is a separate pilot with an independent restriction',()=>{
+ assert.equal(pilot.some(p=>p.id==='CL-VS:ventanas'),true);
+ assert.equal(guide['CL-VS:ventanas'].accessRestriction.newResolutionVerified,false);
+ assert.match(code,/markers\.get\(sp\.id\)\.setIcon\(markerIcon\(L,sp,sp\.id===sel,reading\)\)/);
 });
 test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=14"/);
  assert.match(html,/src="coast-map\.js\?v=18"/);
- assert.match(html,/src="chile-forecast\.js\?v=27"/);
+ assert.match(html,/src="chile-forecast\.js\?v=28"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });

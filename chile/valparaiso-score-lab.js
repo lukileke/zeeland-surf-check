@@ -171,7 +171,9 @@
    swellPresence:{value:science.energyResponse}};
   const unrounded=science.unrounded;
   const score=+clamp(unrounded,0,10).toFixed(1);
-  const guideOnly=profile.scoreEnabled===false||profile.accessRestriction?.status==='restriction_reported_not_live_verified';
+  const guideOnly=profile.scoreEnabled===false;
+  const accessRestricted=profile.accessRestriction?.status==='restriction_reported_not_live_verified'&&
+   profile.accessRestriction.newResolutionVerified!==true;
   const fieldSessions=Number.isInteger(config.calibration?.fieldSessions)?
    config.calibration.fieldSessions:0;
   const band=bands.find(b=>score<b.max);
@@ -193,7 +195,7 @@
   };
   const modelRisk=finite(input.gustKmh)&&input.gustKmh>=75||input.windKmh>=55;
   return {
-   spotId,spot:profile.name,status:guideOnly?'guide-only-restricted':'experimental',
+   spotId,spot:profile.name,status:guideOnly?'guide-only-restricted':accessRestricted?'experimental-restricted':'experimental',
    score:guideOnly?null:score,
    scoreLabel:guideOnly?null:label,band:guideOnly?null:band.id,components,
    fieldSessions,rawDirectionalIndex:null,
@@ -223,13 +225,19 @@
    },
    swellAvailability:+science.gate.toFixed(2),evidence:'published_guide_not_calibrated',tideEvaluated:false,nearshoreWaveHeightEstimated:false,
    safetyAssessed:false,confidence:'low',scoreCap:null,scoreLimitPolicy:'full-range-unvalidated',
-   publicRecommendationAllowed:!guideOnly,
+   publicRecommendationAllowed:!guideOnly&&!accessRestricted,
+   accessRestrictionIndependentlyEvaluated:false,
+   accessStatus:accessRestricted?'reported-restricted-unverified-lift':'not-model-verified',
    warning:t(locale,
     guideOnly?
-     'Ventanas: sólo hipótesis de guía; sin score ni recomendación mientras la restricción sanitaria no esté verificada como levantada.':
+     'Sin score público; hipótesis documentales sin validar.':
+     accessRestricted?
+     'Ventanas: score experimental de potencial oceánico; NO habilita acceso. Restricción recreativa reportada y no verificada como levantada. No hay calibración de la ola rompiente.':
      'FARO 0–10: índice de potencial oceánico (componentes Hs²·T, dirección de guía y viento). Parámetros heurísticos sin calibración local; no predice altura rompiente, marea ni seguridad.',
     guideOnly?
-     'Ventanas: guide hypotheses only; no score or recommendation until the health restriction is verified as lifted.':
+     'Unscored research guide; not validated.':
+     accessRestricted?
+     'Ventanas: experimental offshore potential only, NOT access clearance. Recreational restriction reported without verified lifting. No calibrated breaking-wave model.':
      'FARO 0–10: offshore-potential index (Hs²·T partitions, guide bearings and wind). Heuristic parameters lack local calibration; not breaking-wave height, tide or safety.')
   };
  }

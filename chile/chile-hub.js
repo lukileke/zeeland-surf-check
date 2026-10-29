@@ -93,8 +93,8 @@ function itemCard(spot){
    prior.append(link);
   }
   prior.append(textElement("small",tr(
-   "0 sesiones observadas · sin score ni habilitación de acceso",
-   "0 observed sessions · no score or access clearance"
+   "0 sesiones observadas · potencial FARO experimental; acceso no habilitado",
+   "0 observed sessions · experimental FARO potential; no access clearance"
   )));
   card.append(prior);
  }
@@ -123,8 +123,8 @@ function itemCard(spot){
   card.append(textElement("p",tr("Exposición, mareas y dirección óptima aún sin verificar.", "Exposure, tide and optimal directions are not yet verified."),"notice"));
  }
  const note=textElement("p",hasRestriction?
-  tr("Sólo referencia costera: sin score ni recomendación de surf mientras no se confirme el levantamiento de la restricción.",
-   "Coastal reference only: no score or surf recommendation until restrictions are verified as lifted."):
+  tr("Potencial oceánico experimental disponible; no es recomendación de surf ni habilita el acceso hasta verificar el levantamiento de la restricción.",
+   "Experimental offshore potential available; not surf advice or access clearance until restrictions are verified as lifted."):
   tr(pilot?"Compatible con el laboratorio experimental. No hay score en vivo.":"La calidad local y el acceso requieren verificación.",
    pilot?"Available in the experimental lab. Not a live score.":"Local surf quality and access still require verification."),
   "notice");card.append(note);

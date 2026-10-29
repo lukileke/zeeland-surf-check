@@ -1,5 +1,5 @@
 # FARO · Ventanas (Puchuncaví), staged spot-model precalibration
-Updated 2026-10-29 · **research only, NOT a calibrated public surf-quality model**
+Updated 2026-10-29 · **experimental offshore-potential index available; NOT a calibrated or actionable surf forecast**
 
 ## Current state
 - Surf location: *Ventanas* near Puerto Ventanas, Quintero Bay, Chile; approximate centre of Playa Ventanas (-32.74445, -71.48821), **not a verified surf take-off coordinate**.
@@ -9,7 +9,7 @@ Updated 2026-10-29 · **research only, NOT a calibrated public surf-quality mode
 - Source-reported recreational-use prohibition due to Portuguese man-of-war was **still reported in force on 27 October 2026**. No later lifting resolution has been verified. It must be treated as a legal access block; no surf recommendation or public score is permitted.
 - Environmental and port-related exposures require independent clearance; **absence of a warning is not evidence of safe water**.
 - Field observations, licensed clips and matched forecast/observation pairs: **0**.
-- Experimental profile flags: `scoreEnabled: false`, `forecastEnabled: false`, `observations: 0`, `status: research-hypothesis-only`.
+- Experimental model flags: `scoreEnabled: true`, `forecastEnabled: true`, `observations: 0`. The numerical 0–10 value can be computed from offshore model cells; `publicRecommendationAllowed: false` remains the overriding access gate.
 
 ## Physical workflow before local scoring
 1. Confirm current legal clearance and whether the exact surf sectors are outside maritime exclusion or port operation areas. Never infer that a beach is open from an old tourism guide.
@@ -29,4 +29,4 @@ Updated 2026-10-29 · **research only, NOT a calibrated public surf-quality mode
 - 27 October dated access report: https://puranoticia.pnt.cl/region-valparaiso/seremi-de-salud-levanta-prohibicion-de-bano-en-playa-de-algarrobo-no-han
 - UPLA regional environmental study: https://hubambientalupla.cl/estudio-detecta-alta-presencia-de-metales-pesados-en-bahia-de-quintero-puchuncavi/
 
-**Do not publish a numerical Ventanas recommendation solely from this source ledger.** The live FARO four-pilot score and Ventanas research-only guide are deliberately separate.
+**Do not publish a Ventanas surfing recommendation solely from this source ledger.** A numerical offshore-potential estimate is now available, but the reported access restriction has not been verified lifted, the two actual breaking locations are not georeferenced, and no surf-quality calibration exists.

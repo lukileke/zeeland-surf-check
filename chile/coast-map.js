@@ -421,7 +421,7 @@ function create(opts){
   regionSummary.replaceChildren();
   if(mapView==="region"){
    const regionalTitle=document.createElement("strong");
-   regionalTitle.textContent=es?"4 PRONÓSTICOS · 1 REFERENCIA":"4 FORECASTS · 1 REFERENCE";
+   regionalTitle.textContent=es?"5 MODELOS · VENTANAS RESTRINGIDA":"5 MODELS · VENTANAS RESTRICTED";
    const regionalText=document.createElement("span");
    regionalText.textContent=es?
     "S/W muestran la lectura modelada de la franja seleccionada con la guía de cada playa. No son olas observadas.":

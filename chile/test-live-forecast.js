@@ -11,25 +11,30 @@ const L=globalThis.FaroChileLive;
 const config=json('valparaiso-live.config.json'),profile=json('valparaiso-score.config.json'),registry=json('regions/CL-VS.json');
 assert.equal(config.region,'CL-VS');
 assert.equal(config.noOfficialAlertAssertions,true);
-assert.equal(config.pilots.length,4);
-assert.equal(config.referenceSpots?.length,1,'Ventanas is a fifth geographical reference, not a forecast pilot');
-const ventanas=config.referenceSpots[0];
-assert.equal(ventanas.id,'CL-VS:ventanas');
-assert.equal(ventanas.forecastEnabled,false);
-assert.equal(ventanas.scoreEnabled,false);
-assert.ok(ventanas.coordinateStatus.includes('not_surf_break'));
-assert.equal(config.pilots.some(p=>p.id===ventanas.id),false,
- 'Ventanas must never receive an uncalibrated surf recommendation during a reported access restriction');
-const candidate=registry.spots.find(p=>p.id===ventanas.id);
-assert.ok(candidate&&candidate.forecastEnabled===false&&candidate.coordinates===null);
-assert.equal(candidate.accessNotice?.automaticClearance,false);
-assert.equal(candidate.accessNotice?.status,'restriction_reported_not_live_verified');
-const manifest=json('regions.json');
-assert.equal(manifest.regions.find(r=>r.code==='CL-VS')?.spotCount,registry.spots.length);
+assert.equal(config.pilots.length,5);
+assert.equal(config.referenceSpots.length,0);
+const modelledVentanas=config.pilots.find(x=>x.id==='CL-VS:ventanas');
+assert.ok(modelledVentanas,'Ventanas is now a fifth experimental model point');
+assert.equal(modelledVentanas.forecastCategory,'research-only-model-estimate');
+assert.equal(modelledVentanas.accessNotice.publicRecommendationAllowed,false);
+assert.equal(modelledVentanas.accessNotice.clearanceVerified,false);
+assert.equal(modelledVentanas.coastalReference.siteId,'CL15QTN03');
+const candidate=registry.spots.find(p=>p.id===modelledVentanas.id);
+assert.ok(candidate&&candidate.coordinates===null,
+ 'Coastal coordinates must NOT be presented as exact surf take-off');
+assert.equal(candidate.accessNotice.automaticClearance,false);
 const sources=json('sources.json').sources;
-for(const id of candidate.sources)assert.ok(sources[id]?.url,'Ventanas claim needs an attributable source: '+id);
-
-assert.equal(profile.active,false);
+for(const id of candidate.sources)assert.ok(sources[id]?.url,'Source missing '+id);
+const estimated=globalThis.FaroChileScoreLab.evaluate(profile,modelledVentanas.id,{
+ windFromDeg:8,windKmh:3,gustKmh:5,
+ swellFromDeg:355,swellHeightM:1.6,swellPeriodS:12
+},{locale:'es'});
+assert.ok(typeof estimated.score==='number'&&estimated.score>=0&&estimated.score<=10,
+ 'Ventanas must have numerical wave potential');
+assert.equal(estimated.status,'experimental-restricted');
+assert.equal(estimated.publicRecommendationAllowed,false);
+assert.equal(estimated.accessStatus,'reported-restricted-unverified-lift');
+assert.equal(estimated.safetyAssessed,false);
 for(const p of config.pilots){
  assert.equal(p.coordinateStatus.includes('not_'),true,'Coordinates cannot masquerade as calibrated wave breaks');
  assert.ok(registry.spots.some(s=>s.id===p.id),'Every live-model pilot needs a local guide record');

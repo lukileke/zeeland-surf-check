@@ -62,6 +62,15 @@ function waveBars(h){
 
 const spot=()=>state.config?.pilots?.[state.selected], profile=()=>state.profiles?.profiles?.[spot()?.id];
 const regionRecord=()=>state.registry?.spots?.find(s=>s.id===spot()?.id);
+const restricted=()=>spot()?.accessNotice?.status==="restriction_reported_not_live_verified"&&
+ spot()?.accessNotice?.clearanceVerified!==true;
+function paintAccessNotice(){
+ const note=$("ventanasAccessNotice");
+ if(!note)return;
+ note.hidden=!restricted();
+ if(!note.hidden)txt("ventanasNoticeText",
+  state.lang==="es"?spot().accessNotice.es:spot().accessNotice.en);
+}
 const localRead=(s,spotId=spot()?.id)=>window.FaroChileSpotIntelligence&&state.intelligence&&spotId?
  window.FaroChileSpotIntelligence.evaluate(s,spotId,state.intelligence,state.lang,
   {risk:Live.slotRisk(s,state.config)}):null;
@@ -471,6 +480,20 @@ function updateCoastMap(){
 }
 function vibeUI(s){
  const info=Live.vibe(s,state.lang),meta=s?.scoreMeta,local=localRead(s);
+ if(restricted()){
+  txt("chileDecisionHeadline",tr("Potencial oceánico · acceso no habilitado",
+   "Offshore potential · access not cleared"));
+  txt("chileDecisionDriver",tr("Ventanas tiene un índice experimental de oleaje, pero la restricción recreativa fue reportada y su levantamiento no ha sido verificado.",
+   "Ventanas has a modelled swell index, but a recreational restriction was reported and no lifting has been verified."));
+  txt("chileVibeTag",tr("RESTRICCIÓN REPORTADA","REPORTED RESTRICTION"));
+  txt("chileVibeHeadline",tr("No es una recomendación de sesión","This is not a session recommendation"));
+  txt("chileVibeRead",meta?.read||tr("Guías direccionales no calibradas","Uncalibrated directional guides"));
+  txt("chileVibeAction",tr("No entrar al agua sin confirmación de la autoridad sanitaria y marítima.",
+   "Do not enter the water without health and maritime authority clearance."));
+  $("chileVibeExplained").replaceChildren();
+  $("chileVibeEvidence").replaceChildren();
+  return;
+ }
  const actionable=local?.status==="guide_compared"&&local.decision;
  txt("chileDecisionHeadline",actionable?local.decision.verdict:tr("Sin recomendación para esta franja","No recommendation for this window"));
  txt("chileDecisionDriver",actionable?local.decision.reason:
@@ -513,7 +536,8 @@ function outlook(){
  txt("datehead",dateLabel(d.date));txt("spotname",spot()?.name||"—");
  const opportunity=localRead(s)?.decision;
  txt("bestTime",sessionTime(s));
- txt("bestTimeKicker",!s?tr("SIN VENTANA SUGERIDA","NO SUGGESTED WINDOW"):
+ txt("bestTimeKicker",restricted()?tr("FRANJA MODELADA · NO RECOMENDADA",
+  "MODELLED WINDOW · NOT RECOMMENDED"):!s?tr("SIN VENTANA SUGERIDA","NO SUGGESTED WINDOW"):
   opportunity?.priority>=3?tr("MEJOR VENTANA","BEST WINDOW"):
    tr("VENTANA PARA EVALUAR","WINDOW TO REVIEW"));
  txt("dayWave",s?num(s.totalWaveHeightM)+" m":"—");
@@ -657,6 +681,7 @@ function session(){
 }
 function render(){
  if(!state.forecast)return;
+ paintAccessNotice();
  const session=selection();
  txt("sessionDetailSummary",session?
   sessionTime(session)+" · "+wetsuit(session):
@@ -685,16 +710,19 @@ async function refresh(force=false,onSettled=null){
  }
 }
 function picker(){
+ paintAccessNotice();
  const list=$("chileSpotSelect");list.replaceChildren();
  for(const s of state.config.pilots){const item=el("option",s.name);item.value=s.id;list.append(item)}
  list.value=spot().id;
 }
 async function rankings(){
  const host=$("highlights"),more=$("additionalWeekPicks"),moreHost=$("additionalWeekList");
- host.replaceChildren(el("p",tr("Comparando los cuatro modelos…","Comparing the four models…"),"muted"));
+ host.replaceChildren(el("p",tr("Comparando spots con acceso no restringido…","Comparing unrestricted model spots…"),"muted"));
  more.hidden=true;more.open=false;moreHost.replaceChildren();
  txt("rankingstatus",tr("Consultando franjas","Loading windows"));
- const results=await Promise.allSettled(state.config.pilots.map(async sp=>{
+ const candidateSpots=state.config.pilots.filter(sp=>
+   sp.accessNotice?.publicRecommendationAllowed!==false);
+ const results=await Promise.allSettled(candidateSpots.map(async sp=>{
   const cached=state.cache.get(sp.id);
   if(cached&&Date.now()-cached.at<15*60*1000)return cached.forecast;
   const data=await Live.fetchSpot(state.config,sp,state.profiles,fetch,state.lang);
@@ -769,6 +797,14 @@ async function rankings(){
  }
 }
 function match(){
+ if(restricted()){
+  const host=$("matchResult");host.replaceChildren(
+   el("strong",tr("Ventanas · sin recomendación de equipo o sesión",
+    "Ventanas · no gear or session recommendation")),
+   el("p",tr("El modelo puede calcular potencial oceánico, pero no se ha verificado el levantamiento de la restricción sanitaria. Consulta fuentes oficiales antes de cualquier actividad.",
+    "The model can estimate offshore potential but the health restriction has not been verified lifted. Check official sources before any activity.")));
+  return;
+ }
  const s=selection(),fit=Live.boardFit(s,$("matchBoard").value,$("matchAbility").value,$("matchStyle").value,state.lang,state.forecast?.hazard);
  const host=$("matchResult");host.replaceChildren(el("strong",fit.label),el("p",fit.reason),el("p",tr("Spot: ","Spot: ")+(spot()?.name||"—")+(s?" · "+sessionTime(s):"")));
  const button=el("button",tr("Ver pronóstico","View forecast"));button.type="button";button.addEventListener("click",()=>tab("forecast"));host.append(button);
@@ -868,6 +904,7 @@ async function initialize(){
     };
     if(supportsAnchor)coastSwitchCleanup=settleCoast;
     state.selected=i;state.day=0;state.hour=null;state.forecast=null;
+    paintAccessNotice();
     // Never present prior-spot conditions as if they belong to a newly
     // selected beach while a provider request is still in flight.
     $("dayStripItems").replaceChildren();

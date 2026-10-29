@@ -41,7 +41,7 @@
       "tertiary_swell_wave_direction"
     ]
   },
-  "sourcePolicy": "Live means regularly updated third-party model output, not observation at the breaking wave. Experimental spot-fit scores remain uncalibrated. Official marine/weather alerts from DMC, Armada and SENAPRED require manual verification until a dependable licensed API is implemented. API timestamps are requested as Unix UTC instants and rendered with the IANA spot timezone, not the provider's response-wide fixed UTC offset. Secondary and tertiary partitions are optional and never imputed.",
+  "sourcePolicy": "Live means regularly updated third-party model output, not observation at the breaking wave. Experimental spot-fit scores remain uncalibrated. Official marine/weather alerts from DMC, Armada and SENAPRED require manual verification until a dependable licensed API is implemented. API timestamps are requested as Unix UTC instants and rendered with the IANA spot timezone, not the provider's response-wide fixed UTC offset. Secondary and tertiary partitions are optional and never imputed. Ventanas is a fifth modelled research-only break with a separately maintained access restriction; no surfing recommendation or ranking while reported restriction remains unverified lifted.",
   "marinePointPolicy": "Coordinates are documented approximate coastal reference locations; nearest eligible sea grid cell may be several kilometres offshore. Not calibrated to a sandbank.",
   "slots": {
     "startHour": 6,
@@ -157,6 +157,41 @@
       "coordinateSource": "https://www.munipuchuncavi.cl/pdf/pladetur/pladetur2025.pdf",
       "coordinateStatus": "municipal_beach_town_coordinate_not_exact_break",
       "priority": 4
+    },
+    {
+      "id": "CL-VS:ventanas",
+      "name": "Ventanas · Muelle Chico / Pilotes",
+      "shortName": "Ventanas",
+      "locality": "Puchuncaví · bahía de Quintero",
+      "latitude": -32.74445,
+      "longitude": -71.48821,
+      "coordinateSource": "https://mapcarta.com/W150935216",
+      "coordinateStatus": "approximate_beach_centre_not_surf_takeoff",
+      "priority": 5,
+      "forecastEnabled": true,
+      "modelEvaluated": true,
+      "scoreEnabled": true,
+      "forecastCategory": "research-only-model-estimate",
+      "coastalReference": {
+        "label": "Universidad de Valparaíso · Puerto Ventanas (20 m)",
+        "url": "https://marejadas.uv.cl/CL15QTN03",
+        "siteId": "CL15QTN03",
+        "depthM": 20,
+        "sourceType": "coastal_model_forecast",
+        "autoIntegrated": false,
+        "interface": "visual_reports_only"
+      },
+      "accessNotice": {
+        "status": "restriction_reported_not_live_verified",
+        "reportedOn": "2026-10-24",
+        "lastConfirmedReport": "2026-10-27",
+        "source": "ventanas-restriction-still-20261027",
+        "autoChecked": false,
+        "clearanceVerified": false,
+        "publicRecommendationAllowed": false,
+        "es": "Restricción de actividades recreativas reportada como vigente el 27 de octubre de 2026 por fragata portuguesa. No se ha verificado una resolución que la levante. El índice FARO es sólo modelado: no constituye recomendación de entrar al agua.",
+        "en": "Recreational-use restriction reported still in effect on 27 October 2026 due to Portuguese man-of-war. No lifting resolution verified. FARO's number is a model estimate, NOT permission or advice to enter the water."
+      }
     }
   ],
   "unavailable": [
@@ -194,23 +229,5 @@
       "Cerrón"
     ]
   },
-  "referenceSpots": [
-    {
-      "id": "CL-VS:ventanas",
-      "name": "Ventanas · Muelle Chico / Pilotes",
-      "shortName": "Ventanas",
-      "locality": "Puchuncaví · bahía de Quintero",
-      "latitude": -32.74445,
-      "longitude": -71.48821,
-      "coordinateSource": "https://mapcarta.com/W150935216",
-      "coordinateStatus": "approximate_beach_centre_not_surf_break",
-      "forecastEnabled": false,
-      "modelEvaluated": false,
-      "scoreEnabled": false,
-      "catalogueUrl": "atlas.html?region=CL-VS&q=Ventanas",
-      "sourceUrl": "https://www.biobiochile.cl/noticias/servicios/explicado/2026/10/26/cierran-2-playas-en-region-de-valparaiso-por-fragata-portuguesa-que-hacer-ante-una-picadura.shtml",
-      "noticeDate": "2026-10-24",
-      "noticeState": "reported_restriction_unverified_current_status"
-    }
-  ]
+  "referenceSpots": []
 }

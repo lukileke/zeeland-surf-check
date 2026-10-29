@@ -1,0 +1,23 @@
+name: FARO Chile - capture raw coastal forecast models
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Capture five Open-Meteo model snapshots
+        run: node chile/research/capture-open-meteo.cjs coastal-archive
+      - name: Retain source snapshots for offline scientific comparison
+        uses: actions/upload-artifact@v4
+        with:
+          name: faro-five-spot-open-meteo-${{ github.run_id }}
+          path: coastal-archive/*.json
+          retention-days: 14
+          if-no-files-found: error

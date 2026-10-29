@@ -3,7 +3,7 @@
   "status": "experimental",
   "region": "CL-VS",
   "active": false,
-  "statement": "FARO offshore surf-potential index 0–10: separate wave partitions (Hs² × modelled period, not true Te), source-guide directional exposure, speed-sensitive wind and bounded cross-sea modifiers. No breaking-wave predictions, coastal transformation or empirical validation.",
+  "statement": "FARO offshore surf-potential index 0–10: separate wave partitions (Hs² × modelled period, not true Te), source-guide directional exposure, speed-sensitive wind and bounded cross-sea modifiers. No breaking-wave predictions, coastal transformation or empirical validation. Ventanas has a modelled exploratory index but cannot appear as an actionable pick while its reported legal/recreational restriction remains unverified lifted.",
   "calibration": {
     "fieldSessions": 0,
     "requiredBeforeLaunch": true,
@@ -192,9 +192,9 @@
     "CL-VS:ventanas": {
       "name": "Ventanas · Muelle Chico / Pilotes",
       "kind": "multi-section point/beach (community description)",
-      "scoreEnabled": false,
-      "forecastEnabled": false,
-      "calibrationStage": "guide-prior-only-no-measured-sessions",
+      "scoreEnabled": true,
+      "forecastEnabled": true,
+      "calibrationStage": "physics-informed-guide-prior-no-observational-validation",
       "guideOnly": true,
       "guideAngleInterpretation": "North/South cardinal labels from one community-derived text, converted to 45° compass bins (±22.5°). Hypotheses only; no demonstrated favourable angular interval or nearshore refraction model.",
       "windFromDeg": [
@@ -252,11 +252,12 @@
         "status": "restriction_reported_not_live_verified",
         "since": "2026-10-23",
         "source": "biobio-ventanas-restriction-20261026",
-        "newResolutionVerified": false
+        "newResolutionVerified": false,
+        "publicRecommendationAllowed": false
       },
-      "hazardContextEs": "Playa Ventanas: restricción sanitaria de uso recreativo reportada en octubre de 2026 por fragata portuguesa, aún sin levantamiento verificado. Área portuaria y riesgos ambientales. NO recomendar entrar al agua; el índice investigativo está deshabilitado.",
-      "hazardContextEn": "Playa Ventanas: October 2026 health-related recreation restriction reported due to Portuguese man-of-war, not verified lifted. Port and environmental concerns. Do NOT recommend water entry; research-only index disabled.",
-      "status": "research-hypothesis-only",
+      "hazardContextEs": "Ventanas: índice experimental de potencial oceánico, NO pronóstico calibrado de rompiente ni recomendación para entrar al agua. Restricción sanitaria por fragata portuguesa reportada vigente al 27 de octubre; no se ha verificado levantamiento. Entorno industrial/portuario: verificar condiciones ambientales y restricciones marítimas.",
+      "hazardContextEn": "Ventanas: experimental offshore potential estimate, NOT calibrated breaking-wave forecast or water-entry recommendation. Portuguese man-of-war recreation restriction still reported on 27 October; no lifting verified. Industrial/port setting requires independent environmental and maritime access verification.",
+      "status": "experimental-research-only-restricted",
       "observations": 0,
       "rawCommunitySourcesIndependent": 1,
       "validationTargets": [
@@ -272,7 +273,10 @@
         "reference": "Puerto Ventanas",
         "depthM": 20,
         "directApiIntegration": false,
-        "surfaceBreakingWaveCalibration": false
+        "surfaceBreakingWaveCalibration": false,
+        "url": "https://marejadas.uv.cl/CL15QTN03",
+        "siteId": "CL15QTN03",
+        "providerDataStatus": "visual_page_no_structured_api_verified"
       }
     }
   }
