@@ -56,7 +56,7 @@ export default function App(){
   tr("Una ventana para revisar en "+sp.name,"A window worth checking at "+sp.name);
  return <main className={"app theme-"+theme} data-lang={lang}>
   <header className="top">
-   <div className="brand"><b>FAR<span>◉</span></b><small>{tr("PRONÓSTICO COSTERO · VALPARAÍSO","COASTAL FORECAST · VALPARAÍSO")}</small></div>
+   <div className="brand"><b>FAR<img src="/zeeland-surf-check/assets/faro-o-favicon.svg" alt="O"/></b><small>{tr("PRONÓSTICO COSTERO · VALPARAÍSO","COASTAL FORECAST · VALPARAÍSO")}</small></div>
    <nav aria-label={tr("Secciones","Sections")}>
     {["forecast","method"].map(v=><button key={v} type="button" aria-current={view===v?"page":undefined}
       onClick={()=>setView(v)}>{v==="forecast"?tr("Pronóstico","Forecast"):tr("Método y evidencia","Method & evidence")}</button>)}
