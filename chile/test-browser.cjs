@@ -89,7 +89,7 @@ function fixture(){
      wind:$('faroLeadWind').textContent,
      minWidth:document.documentElement.clientWidth,
      scrollWidth:document.documentElement.scrollWidth,
-     grid:heroStyle.gridTemplateColumns.split(' ').length};
+     grid:heroStyle.display==="flex"?1:heroStyle.gridTemplateColumns.split(' ').length};
    });
    assert.ok(brand.bottom<=brand.toolbar+3,
     'Ocean-led FARO hero must precede timestamps and controls: '+JSON.stringify(brand));
