@@ -1,0 +1,73 @@
+/*
+ * FARO SCORE COLOUR CONTRACT — KEEP DARK/LIGHT IDENTICAL.
+ * Applies to Chile numerical QUALITY scores (day strip, hourly slots,
+ * best-of-week, session score and the Deep Ocean hero).
+ *
+ * Single source of colour values: ../assets/faro-visual-system-v2.css
+ * --faro-score-0 to --faro-score-4. Never add a light-mode darkening,
+ * opacity fade, desaturation, or a second five-colour palette.
+ * The page surfaces/text may change theme. Quality pigments must not.
+ *
+ * Independence: coastal-teal indicates selection; blue indicates physical
+ * waves; safety/UV colours are separate, and missing scores remain neutral.
+ */
+
+/* Lock exact five canonical score inks onto the SCORED component itself.
+ * Specific selectors outrank older light-only !important rules.
+ * No hard-coded pigments here: the shared FARO design system owns them.
+ */
+html :is(#forecastPage,#bestPage,#boardPage) .brand-band-verylow {
+  --brand-score-color:var(--faro-score-0)!important;
+  --brand-score-ink:var(--faro-score-0)!important;
+}
+html :is(#forecastPage,#bestPage,#boardPage) .brand-band-low {
+  --brand-score-color:var(--faro-score-1)!important;
+  --brand-score-ink:var(--faro-score-1)!important;
+}
+html :is(#forecastPage,#bestPage,#boardPage) .brand-band-mid {
+  --brand-score-color:var(--faro-score-2)!important;
+  --brand-score-ink:var(--faro-score-2)!important;
+}
+html :is(#forecastPage,#bestPage,#boardPage) .brand-band-regular {
+  --brand-score-color:var(--faro-score-3)!important;
+  --brand-score-ink:var(--faro-score-3)!important;
+}
+html :is(#forecastPage,#bestPage,#boardPage) .brand-band-high {
+  --brand-score-color:var(--faro-score-4)!important;
+  --brand-score-ink:var(--faro-score-4)!important;
+}
+html :is(#forecastPage,#bestPage,#boardPage) [class*="brand-band-"] {
+  --tone:var(--brand-score-ink)!important;
+  --quality-ink:var(--brand-score-ink)!important;
+  --quality-accent:var(--brand-score-color)!important;
+  --quality-border:var(--brand-score-color)!important;
+  --cl-score-numeral:var(--brand-score-ink)!important;
+}
+
+/* Number ink is invariant across theme, hover, selection and viewport. */
+html #forecastPage #dayStripItems .day-chip[class*="brand-band-"] .chile-chip-number,
+html #forecastPage #dayStripItems .day-chip[class*="brand-band-"] .day-chip-score,
+html #forecastPage #dayview .hourly-section .slots > button[class*="brand-band-"] .chile-slot-score,
+html #forecastPage #dayview .chile-session-rating[class*="brand-band-"] .chile-session-score,
+html #forecastPage #dayview .session-glance .hero-score[class*="brand-band-"] .hero-score-value,
+html #bestPage .highlight.chile-ranking[class*="brand-band-"] .chile-rank-score,
+html #bestPage .hero-rank .hero-score[class*="brand-band-"] .hero-score-value,
+html #boardPage .score-tint[class*="brand-band-"],
+html #forecastPage > .faro-forecast-lead[class*="brand-band-"] #faroLeadScore {
+  color:var(--brand-score-ink)!important;
+  -webkit-text-fill-color:var(--brand-score-ink)!important;
+}
+
+/* Keep the quality-border stroke identical in light and dark without
+ * changing selection outlines, card surfaces or non-quality status colours. */
+html #forecastPage #dayview .hourly-section .slots > button[class*="brand-band-"] {
+  border-top-color:var(--brand-score-color)!important;
+}
+html #bestPage .highlight.chile-ranking[class*="brand-band-"] .chile-rank-rating {
+  --tone:var(--brand-score-ink)!important;
+}
+/* Never paint offline/blocked/unevaluated scores with quality pigments. */
+html #forecastPage > .faro-forecast-lead.is-unavailable #faroLeadScore {
+  color:var(--faro-quiet)!important;
+  -webkit-text-fill-color:var(--faro-quiet)!important;
+}
