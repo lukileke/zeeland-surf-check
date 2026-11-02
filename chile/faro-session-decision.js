@@ -8,7 +8,7 @@
 const finite=x=>typeof x==="number"&&Number.isFinite(x);
 const round=x=>Math.round(x*10)/10;
 const known=new Set(["none","caution","danger","unknown"]);
-function evaluate({potentialScore=null,slotRisk="unknown",access=null,officialAlert=null,modelCoverage="unknown",daylight=true}={}){
+function evaluate({potentialScore=null,slotRisk="unknown",access=null,officialAlert=null,modelCoverage="unknown",daylight=true,windSpeedRangeKmh=null}={}){
  const raw=finite(potentialScore)?Math.max(0,Math.min(10,potentialScore)):null;
  const restricted=access?.publicRecommendationAllowed===false||
    (access?.status==="restriction_reported_not_live_verified"&&access?.clearanceVerified!==true);
@@ -25,7 +25,13 @@ function evaluate({potentialScore=null,slotRisk="unknown",access=null,officialAl
  const caution=risk==="caution"||officialLevel==="caution";
  // Bounded, explicit conservative *session* policy: when caution is known,
  // cap recommended opportunity at 5.9, but preserve raw offshore potential.
- const adjusted=blocked?null:caution?round(Math.min(raw,5.9)):raw;
+ // Explicitly provisional forecast-window regulariser (not empirically
+ // fitted): rapid 2-hour changes may reduce usable time inside the window.
+ // No assumption of a 'stable' sea state if optional variability is absent.
+ const variationPenalty=finite(windSpeedRangeKmh)&&windSpeedRangeKmh>10?
+  round(Math.min(0.5,(windSpeedRangeKmh-10)/40)):0;
+ const adjusted=blocked?null:round(Math.max(0,
+  (caution?Math.min(raw,5.9):raw)-variationPenalty));
  const reasons=[];
  if(restricted)reasons.push("reported_access_restriction");
  if(officialLevel==="danger")reasons.push("verified_official_danger");
@@ -37,6 +43,8 @@ function evaluate({potentialScore=null,slotRisk="unknown",access=null,officialAl
  if(caution)reasons.push("model_or_official_caution");
  return Object.freeze({
   potentialScore:raw,sessionScore:adjusted,canRecommend:!blocked,
+  windVariabilityAdjustment:variationPenalty,
+  windVariabilityEvidence:finite(windSpeedRangeKmh)?"complete_2h_model":"not_measured",
   status:hard?"blocked":blocked?"unassessed":caution?"caution":"eligible",
   reasons,officialAlertChecked:verified,officialLevel,
   safetyProbability:null,confidenceInterval:null,
