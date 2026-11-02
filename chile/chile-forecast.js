@@ -352,7 +352,21 @@ function renderDNA(){
   lower.append(el("p",tr("El ajuste por dirección requiere datos válidos para la franja elegida.",
    "Directional compatibility requires valid data for the selected window."),"faro-dna-method"));
  }
- const safety=state.lang==="es"?p?.hazardContextEs:p?.hazardContextEn;
+ const diagnostics=window.FaroSpotDiagnostics?.diagnose(selection(),p);
+ if(diagnostics&&selection()){
+  const change=diagnostics.windTwoHourRangeKmh;
+  lower.append(el("p",tr(
+   "Variabilidad del viento durante 2 h: "+(ok(change)?num(change)+" km/h":"sin dato")+
+   ". Sensibilidad ±15°: "+(ok(diagnostics.bearingSensitivityScoreSpan)?
+    num(diagnostics.bearingSensitivityScoreSpan)+" puntos":"sin dato")+
+   ". Confianza empírica: no calibrada; bancos y resacas no observados.",
+   "2h wind variation: "+(ok(change)?num(change)+" km/h":"unavailable")+
+   ". ±15° bearing sensitivity: "+(ok(diagnostics.bearingSensitivityScoreSpan)?
+    num(diagnostics.bearingSensitivityScoreSpan)+" points":"unavailable")+
+   ". Empirical confidence uncalibrated; sandbars and rips unobserved."
+  ),"faro-dna-method"));
+ }
+  const safety=state.lang==="es"?p?.hazardContextEs:p?.hazardContextEn;
  if(safety)lower.append(el("p",safety,"faro-dna-safety"));
  lower.append(el("p",tr(
   "Las direcciones proceden de guías; no determinan altura rompiente, marea óptima, zonas permitidas ni seguridad.",
@@ -1128,6 +1142,11 @@ async function initialize(){
    if(!window.FaroChileSpotIntelligence||state.intelligence?.region!=="CL-VS")throw Error("Spot Intelligence version missing");
   if(state.config.region!=="CL-VS"||state.profiles.active!==false||state.registry.forecastEnabled!==false||state.config.noOfficialAlertAssertions!==true)throw Error("Risk isolation failure");
   for(const s of state.config.pilots)if(!state.profiles.profiles?.[s.id]||!state.registry.spots.find(r=>r.id===s.id))throw Error("Unattributed pilot "+s.id);
+  state.profileLibrary=window.FaroSpotRegistry?.build({
+   live:state.config,score:state.profiles,intelligence:state.intelligence
+  })||[];
+  const libraryCheck=window.FaroSpotRegistry?.audit(state.profileLibrary);
+  if(libraryCheck&&!libraryCheck.valid)throw Error("Spot library invalid: "+libraryCheck.errors.join(","));
   const requested=new URLSearchParams(location.search).get("spot");
   state.selected=Math.max(0,state.config.pilots.findIndex(s=>s.id===requested));
   spotChooser=window.FaroChileSpotChooser?.mount({
