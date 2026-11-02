@@ -13,6 +13,7 @@ const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const html=read('chile/index.html');
 const css=read('chile/faro-mobile-reading-order-v1.css');
 const originalHero=read('chile/faro-beacon-atmosphere-v4.css');
+const pulse=read('chile/faro-hero-synchronised-pulse-v1.css');
 const editor=read('chile/faro-editorial-experience-v2.css');
 
 test('sign-off is after the model content in DOM AND explicitly last in flex order',()=>{
@@ -54,8 +55,9 @@ test('high-specificity theme-symmetric variables defeat desktop optical centre',
 });
 
 test('underwater pulse is kept and WebKit shadow seam is not reintroduced',()=>{
- assert.match(css,/animation:faro-deep-ocean-pulse 6\.4s ease-in-out infinite/);
- assert.match(css,/-webkit-animation:faro-deep-ocean-pulse 6\.4s ease-in-out infinite/);
+ assert.doesNotMatch(css,/faro-deep-ocean-pulse 6\.4s/);
+ assert.ok(pulse.includes('animation:faro-hero-core-breathe 5.4s ease-in-out 0s infinite both!important'));
+ assert.ok(pulse.includes('-webkit-animation:faro-hero-core-breathe 5.4s ease-in-out 0s infinite both!important'));
  assert.match(css,/filter:blur\(2px\)!important/);
  assert.doesNotMatch(css,/drop-shadow\(/);
  assert.match(css,/@media\(max-width:710px\) and \(prefers-reduced-motion:reduce\)/);
@@ -65,9 +67,32 @@ test('underwater pulse is kept and WebKit shadow seam is not reintroduced',()=>{
 test('new CSS is before the invariant score palette, with no model changes',()=>{
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-mobile-reading-order-v1.css?v=1');
+ assert.equal(links.at(-2),'faro-hero-synchronised-pulse-v1.css?v=1');
+ assert.equal(links.at(-3),'faro-mobile-reading-order-v1.css?v=2');
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(css));
  assert.ok(html.includes('faro-beacon-atmosphere-v4.css?v=1'));
  assert.ok(html.includes('faro-chile-live.js?v=11'));
  assert.ok(html.includes('chile-forecast.js?v=42'));
+});
+
+test('five decorative layers share one 5.4-second peak at half-cycle',()=>{
+ const layers=['water','halo','core','beam','mark'];
+ for(const layer of layers){
+  assert.ok(pulse.includes('@keyframes faro-hero-'+layer+'-breathe'));
+  assert.ok(pulse.includes('animation:faro-hero-'+layer+'-breathe 5.4s ease-in-out 0s infinite both!important'));
+ }
+ const keys=pulse.split('@keyframes faro-hero-').slice(1);
+ assert.equal(keys.length,5);
+ assert.ok(keys.every(k=>k.includes('50%')));
+ assert.doesNotMatch(pulse,/drop-shadow/);
+ assert.ok(!pulse.includes('--brand-score-ink:'));
+ assert.ok(!pulse.includes('html[data-theme'));
+});
+test('iPhone halo is no longer opacity-locked; all five layers stop for reduced motion',()=>{
+ assert.ok(css.includes('opacity:.77; /* let synchronised keyframes modulate luminance */'));
+ assert.ok(pulse.includes('@media(prefers-reduced-motion:reduce)'));
+ assert.ok(pulse.includes('animation:none!important'));
+ assert.ok(pulse.includes('-webkit-animation:none!important'));
+ for(const selector of ['::before','::after','.faro-beacon-pulse','.faro-beacon-light','.faro-lead-signature'])
+  assert.ok(pulse.includes(selector));
 });
