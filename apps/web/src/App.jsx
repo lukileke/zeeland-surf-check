@@ -18,7 +18,8 @@ function decide(s,sp){
  return Decision.evaluate({
   potentialScore:s?.score,slotRisk:s?Live.slotRisk(s,liveConfig):"unknown",
   access:sp?.access,modelCoverage:s?.modelComplete?"complete":"unknown",
-  daylight:s?.daylight?.eligible===true
+  daylight:s?.daylight?.eligible===true,
+  windSpeedRangeKmh:s?.windSpeedRangeKmh
  });
 }
 function time(s){return s?pad(s.hour)+":00–"+pad(s.hour+2)+":00":"—"}
