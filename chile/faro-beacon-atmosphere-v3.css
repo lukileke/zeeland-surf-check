@@ -1,5 +1,5 @@
 /*
- * FARO Chile | Beacon atmosphere v3, aligned optical centre
+ * FARO Chile | Beacon atmosphere v3.1, unified light/dark pulse and iOS softened O
  * 2026-11-02
  *
  * The ORIGINAL FARO O and its light occupy the same full-hero decorative
@@ -22,7 +22,7 @@ html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead {
 }
 html[data-theme="light"] #forecastPage > .faro-forecast-lead {
   background:
-    radial-gradient(ellipse 46% 77% at 53% 49%,rgba(68,163,159,.185),transparent 81%),
+    radial-gradient(ellipse 46% 77% at 53% 49%,rgba(44,143,149,.22),transparent 81%),
     radial-gradient(ellipse 60% 75% at 18% 105%,rgba(127,200,196,.09),transparent 81%),
     linear-gradient(120deg,#edf7f4 0%,#e3f1ed 54%,#d7ebe7 100%)!important;
 }
@@ -45,7 +45,8 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead {
     rgba(87,193,184,.105) 27%,
     rgba(60,149,159,.045) 52%,
     transparent 78%);
-  filter:blur(33px);opacity:.78;
+  filter:blur(35px);opacity:.72;
+  animation:faro-hero-ambient-breathe 8.5s ease-in-out infinite alternate;
   z-index:0;
 }
 /* Brightest exactly at the O, fading into sea-coloured scattering. */
@@ -61,7 +62,8 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead {
     rgba(151,226,208,.19) 29%,
     rgba(85,194,190,.095) 52%,
     transparent 79%);
-  filter:blur(22px);opacity:.94;
+  filter:blur(24px);opacity:.88;
+  animation:faro-hero-halo-breathe 7.8s ease-in-out infinite alternate;
   z-index:0;
 }
 
@@ -82,7 +84,9 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead {
     rgba(112,207,204,.065) 56%,
     transparent 85%)!important;
   clip-path:none!important;-webkit-clip-path:none!important;
-  filter:blur(26px)!important;opacity:.84!important;
+  filter:blur(29px)!important;opacity:.80!important;
+  scale:1;
+  animation:faro-hero-beam-breathe 7.8s ease-in-out infinite alternate;
   z-index:1;
 }
 
@@ -134,33 +138,43 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon
 }
 html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon::before {
   background:radial-gradient(circle,
-    rgba(245,216,136,.115) 0%,
-    rgba(102,194,178,.19) 25%,
-    rgba(56,148,158,.075) 52%,transparent 78%);
-  opacity:.84;
+    rgba(245,216,136,.135) 0%,
+    rgba(78,170,170,.22) 25%,
+    rgba(42,132,148,.105) 52%,transparent 78%);
+  opacity:.80;
 }
 html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
   background:radial-gradient(circle,
-    rgba(244,205,116,.265) 0%,
-    rgba(235,202,130,.145) 13%,
-    rgba(70,166,163,.24) 32%,
-    rgba(55,146,157,.105) 55%,transparent 80%);
-  filter:blur(23px);
-  opacity:.86;
-  animation:faro-daylight-breathe 8.5s ease-in-out infinite alternate;
+    rgba(244,207,116,.29) 0%,
+    rgba(235,202,130,.15) 13%,
+    rgba(59,151,156,.265) 32%,
+    rgba(42,129,149,.135) 55%,transparent 80%);
+  filter:blur(24px);
+  opacity:.88;
+  animation:faro-hero-halo-breathe 7.8s ease-in-out infinite alternate;
 }
 html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
   background:radial-gradient(ellipse 92% 62% at 99% 50%,
-    rgba(99,184,172,.205),rgba(91,188,184,.12) 38%,
+    rgba(86,171,169,.24),rgba(69,164,173,.14) 38%,
     transparent 85%)!important;
-  opacity:.73!important;
+  opacity:.76!important;
 }
 
-/* The lighter ocean cannot rely on pale light alone: gently breathe the
- * teal/warm halo while leaving all textual and scientific UI static. */
-@keyframes faro-daylight-breathe {
-  from {opacity:.68;transform:translate(-50%,-50%) scale(.965)}
-  to   {opacity:.98;transform:translate(-50%,-50%) scale(1.045)}
+/* Shared optical rhythm. Dark and light use precisely the same timing.
+ * Pulsation changes the halo opacity/size, rather than moving any data UI.
+ * The beam animates the independent CSS scale property since the positioning
+ * transform and opacity are important overrides of older style layers. */
+@keyframes faro-hero-halo-breathe {
+  from {opacity:.69;transform:translate(-50%,-50%) scale(.97)}
+  to   {opacity:.97;transform:translate(-50%,-50%) scale(1.045)}
+}
+@keyframes faro-hero-ambient-breathe {
+  from {opacity:.61}
+  to   {opacity:.84}
+}
+@keyframes faro-hero-beam-breathe {
+  from {scale:.965}
+  to   {scale:1.035}
 }
 
 @media(max-width:1119px) and (min-width:711px) {
@@ -182,38 +196,38 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon
  */
 @media(max-width:710px) {
   #forecastPage > .faro-forecast-lead {
-    --beacon-x:81%;
-    --beacon-y:17%;
-    --beacon-size:clamp(84px,23vw,106px);
-    --beacon-halo:clamp(220px,73vw,310px);
-    --beacon-ambient:clamp(270px,95vw,400px);
-    --beacon-beam:clamp(130px,45vw,215px);
+    --beacon-x:80%;
+    --beacon-y:19%;
+    --beacon-size:clamp(90px,24vw,110px);
+    --beacon-halo:clamp(235px,72vw,310px);
+    --beacon-ambient:clamp(300px,88vw,395px);
+    --beacon-beam:clamp(145px,43vw,220px);
     overflow:hidden!important;
   }
   #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
-    opacity:.25!important;
+    opacity:.28!important;
   }
-  /* iOS WebKit can paint a dark horizontal texture at the upper SVG filter
-   * boundary. Remove that filter on narrow screens; the radial halo behind
-   * the original FARO paths supplies the luminous effect instead. */
+  /* The previous multi-drop-shadow SVG filter caused a dark top-edge seam
+   * in iPhone Safari. Restore a soft underwater O with Gaussian blur ONLY:
+   * no stacked shadows, no clipping and no filtered parent wrapper. */
   #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
-    filter:none!important;
-    -webkit-filter:none!important;
-    overflow:hidden!important;
+    filter:blur(1.6px)!important;
+    -webkit-filter:blur(1.6px)!important;
+    overflow:visible!important;
   }
   #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
-    height:140px!important;
-    opacity:.45!important;
-    filter:blur(30px)!important;
+    height:148px!important;
+    opacity:.50!important;
+    filter:blur(31px)!important;
   }
   #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
-    filter:blur(27px);opacity:.65;
+    filter:blur(29px);opacity:.73;
   }
   html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
-    opacity:.19!important;
+    opacity:.21!important;
   }
   html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
-    filter:blur(23px);
+    filter:blur(27px);
   }
   #forecastPage > .faro-forecast-lead #faroLeadHeadline {
     position:relative;z-index:2;text-wrap:balance;
@@ -221,11 +235,12 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon
 }
 @media(max-width:370px) {
   #forecastPage > .faro-forecast-lead {
-    --beacon-x:82%;
-    --beacon-y:16%;
-    --beacon-size:82px;
-    --beacon-halo:225px;
-    --beacon-ambient:290px;
+    --beacon-x:81%;
+    --beacon-y:18%;
+    --beacon-size:80px;
+    --beacon-halo:220px;
+    --beacon-ambient:280px;
+    --beacon-beam:130px;
   }
 }
 @media(prefers-reduced-motion:reduce) {
