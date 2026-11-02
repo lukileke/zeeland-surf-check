@@ -82,17 +82,17 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
   }
   /* Visible pulse is on an independent radial div rather than the SVG.
    * Preserve the existing 6.4 s animation in both themes. */
+  /* Pulse timing is now owned by faro-hero-synchronised-pulse-v1.css.
+   * Do not introduce a second iPhone animation clock. */
   html body main #forecastPage:not(.hide) > .faro-forecast-lead
   > .faro-lead-beacon > .faro-beacon-pulse {
-    -webkit-animation:faro-deep-ocean-pulse 6.4s ease-in-out infinite;
-    animation:faro-deep-ocean-pulse 6.4s ease-in-out infinite;
     filter:blur(20px)!important;
     -webkit-filter:blur(20px)!important;
   }
   html body main #forecastPage:not(.hide) > .faro-forecast-lead
   > .faro-lead-beacon::after {
     filter:blur(28px)!important;
-    opacity:.77!important;
+    opacity:.77; /* let synchronised keyframes modulate luminance */
   }
 
   /* Compact working coast picker. Keeps the live model timestamp, beach
