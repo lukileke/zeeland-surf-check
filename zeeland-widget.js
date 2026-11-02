@@ -1,4 +1,4 @@
-// FARO Widget · Deep Ocean Editorial v15 · legible model-first widgets · Scriptable iOS
+// FARO Widget · Quiet Tide Editorial v16 · legible model-first widgets · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -134,104 +134,68 @@ function applyFallbackGradient(){
 if(family==="small"||lockFamily)applyFallbackGradient();
 widget.url=SITE;
 widget.setPadding(13,14,12,14);
-/* Deep Ocean is STATIC in Scriptable: no animated home-screen widgets.
- * DrawContext paints a visible rescue-ring and marine light, with fallback.
- * Small/lock-screen families retain their original uncluttered design.
+/* FARO Quiet Tide v16 — keep a useful forecast, not a poster.
+ * A real FARO logo already appears in the header. The v15 giant ghost O,
+ * horizontal wave rules and sharp diagonal beam obscured the model tile.
+ * We deliberately REMOVE these. A smooth marine gradient plus a single
+ * diffused edge-light is enough to carry the Deep Ocean identity.
+ *
+ * Scriptable home-screen widgets are snapshots; there is no live pulse.
+ * Keep original gradient for small / accessory sizes, without overlaying
+ * a backgroundGradient on medium/large native DrawContext images.
  */
-/* V15 · A legible marine composition, not a subtle invisible tint.
- * The four-sector rescue-ring mark echoes the ORIGINAL FARO O silhouette,
- * while the real official SVG continues to be used for the header logo.
- * This static graphic makes no claims about wave direction or water safety.
- */
-function drawRescueRing(dc,cx,cy,size,light){
- const outer=size,inner=size*.71;
- const ink=new Color(light?"#4C9293":"#C2E6DE",light?.19:.23);
- dc.setFillColor(ink);
- // Four parted quadrants: real brand geometry, rendered natively without
- // an extra request, live animation or an external artwork dependency.
- for(let quadrant=0;quadrant<4;quadrant++){
-  const a=quadrant*90+12,b=quadrant*90+78,points=[];
-  for(let degree=a;degree<=b;degree+=3){
-   const rad=degree*Math.PI/180;
-   points.push(new Point(cx+outer*Math.cos(rad),cy+outer*Math.sin(rad)));
-  }
-  for(let degree=b;degree>=a;degree-=3){
-   const rad=degree*Math.PI/180;
-   points.push(new Point(cx+inner*Math.cos(rad),cy+inner*Math.sin(rad)));
-  }
-  const path=new Path();
-  path.addLines(points);path.closeSubpath();
-  dc.addPath(path);dc.fillPath();
- }
- dc.setFillColor(new Color("#FFDA71",light?.11:.18));
- dc.fillEllipse(new Rect(cx-inner*.72,cy-inner*.72,inner*1.44,inner*1.44));
+function faroMixColour(from,to,t){
+ const values=[0,2,4].map(i=>{
+  const a=parseInt(from.slice(i,i+2),16),b=parseInt(to.slice(i,i+2),16);
+  return Math.round(a+(b-a)*t).toString(16).padStart(2,"0");
+ });
+ return "#"+values.join("");
 }
 function deepOceanCanvas(kind){
  if(kind==="small"||String(kind).startsWith("accessory"))return null;
  const large=kind==="large"||kind==="extraLarge";
- // Retina-friendly (source ratio matches actual medium/large widget);
- // no network, no device-dependent screen capture.
  const w=large?720:760,h=large?720:355;
- const dc=new DrawContext();
- dc.size=new Size(w,h);dc.opaque=true;dc.respectScreenScale=false;
+ const dc=new DrawContext();dc.size=new Size(w,h);dc.opaque=true;
+ dc.respectScreenScale=false;
  const light=EFFECTIVE_THEME==="LIGHT";
- const sea=light?"#ECF5F2":"#10282D";
- dc.setFillColor(new Color(sea));dc.fillRect(new Rect(0,0,w,h));
+ const upper=light?"F6FAF9":"10292F",lower=light?"E9F3F0":"153A3F";
 
- // Deep-water tonal bands: clear at a glance, softer than individual cards.
- const bands=light?["#F4FAF7","#EEF7F3","#E4F1ED","#DAEAE6"]:
-                  ["#102A30","#10363B","#104248","#123D43"];
- for(let i=0;i<bands.length;i++){
-  dc.setFillColor(new Color(bands[i],light?.39:.43));
-  dc.fillRect(new Rect(0,i*h/bands.length,w,h/bands.length+2));
+ // Two-pixel blended scanlines read as one smooth gradient at iPhone scale.
+ // No visible rectangular bands and no lines crossing text or meter.
+ for(let y=0;y<h;y+=2){
+  const progress=y/(h-1);
+  dc.setFillColor(new Color(faroMixColour(upper,lower,progress)));
+  dc.fillRect(new Rect(0,y,w,Math.min(2,h-y)));
  }
 
- // One coherent bloom centred on the FARO beacon — no tiny .01 alpha rings.
- // Light stays away from the score on the left.
- const cx=w*(large?.79:.86),cy=h*(large?.23:.39);
- const radii=large?[320,275,225,185,143]:[255,222,185,148,109];
- const levels=light?[.055,.065,.080,.096,.110]:
-                    [.075,.090,.105,.126,.132];
- for(let i=0;i<radii.length;i++){
-  const radius=radii[i];
-  dc.setFillColor(new Color(light?"#54B0AA":"#73CDBD",levels[i]));
-  dc.fillEllipse(new Rect(cx-radius,cy-radius,radius*2,radius*2));
+ // A diffuse bloom at the lower-right edge, well clear of the main score.
+ // Many near-transparent circles approximate Gaussian falloff, without
+ // visible concentric rings even on a scaled iOS medium widget.
+ const cx=w*(large?.93:.94),cy=h*(large?.71:.75);
+ const outer=large?320:275;
+ for(let i=0;i<72;i++){
+  const t=i/71,r=outer-(outer*.88*t);
+  const a=light?.0018+.0026*t:.0026+.0040*t;
+  dc.setFillColor(new Color(light?"#70ADA4":"#66C0B0",a));
+  dc.fillEllipse(new Rect(cx-r,cy-r,2*r,2*r));
  }
 
- // Muted diagonal water-beam recedes behind the foreground text.
- dc.setFillColor(new Color(light?"#70ACA5":"#B4DDCF",light?.035:.055));
- const beam=new Path();
- beam.move(new Point(cx,cy-25));
- beam.addLine(new Point(0,h*.21));
- beam.addLine(new Point(0,h*.69));
- beam.addLine(new Point(cx,cy+31));
- beam.closeSubpath();
- dc.addPath(beam);dc.fillPath();
-
- // Ghost rescue-ring O, genuinely discernible, but never high-contrast.
- drawRescueRing(dc,cx,cy,large?105:88,light);
-
- // A pair of subtle waterlines unite the canvas with the FARO web hero.
- for(let i=0;i<2;i++){
-  const y=h*(large?.75:.84)+i*15;
-  const wave=new Path();
-  wave.move(new Point(0,y));
-  wave.addCurve(new Point(w,y-11),new Point(w*.29,y-27),
-                             new Point(w*.63,y+31));
-  dc.setStrokeColor(new Color(light?"#5BABA5":"#A9E7DE",light?.12:.12));
-  dc.setLineWidth(i===0?2.3:1.2);
-  dc.addPath(wave);dc.strokePath();
+ // Tiny warm reflection far from the score, not a second logo or icon.
+ const warmX=w*.94,warmY=h*.20;
+ for(let i=0;i<25;i++){
+  const t=i/24,r=(large?85:64)*(1-.83*t);
+  dc.setFillColor(new Color("#FFDA71",light?.0010+.0009*t:.0013+.0012*t));
+  dc.fillEllipse(new Rect(warmX-r,warmY-r,2*r,2*r));
  }
  return dc.getImage();
 }
 function applyCoastalAtmosphere(kind){
  try{
   const image=deepOceanCanvas(kind);
-  if(image){
-   widget.backgroundImage=image;
-   return;
-  }
- }catch(e){console.warn("FARO widget background fallback: "+String(e));}
+  if(image){widget.backgroundImage=image;return;}
+ }catch(error){
+  console.warn("FARO widget background fallback: "+String(error));
+ }
  applyFallbackGradient();
 }
 function label(parent,value,size=12,color=C.ink,weight="regular",limit=1){
