@@ -49,7 +49,7 @@ test('dark/light shared hero and scores are retained, logo unchanged',()=>{
  assert.ok(html.includes('src="../assets/faro-logo-dark.svg"'));
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)];
  assert.equal(links.at(-1)[1],'faro-score-colour-lock-v1.css?v=1');
- assert.ok(links.some(x=>x[1]==='faro-editorial-experience-v2.css?v=1'));
+ assert.ok(links.some(x=>x[1]==='faro-editorial-experience-v2.css?v=2'));
  assert.ok(!css.includes('--brand-score-ink:')&&!css.includes('--faro-score-0:'));
 });
 test('editorial finishing preserves external pages and scientific disclaimers',()=>{
@@ -58,4 +58,36 @@ test('editorial finishing preserves external pages and scientific disclaimers',(
  assert.ok(html.includes('href="lab.html"'));
  assert.ok(html.includes('data-expand-target="forecastSources"'));
  assert.ok(html.includes('avisos oficiales requieren comprobación independiente'));
+});
+
+test('desktop old 12-track grid cannot override forecast flex container',()=>{
+ const reset='html body main #forecastPage:not(.hide)';
+ assert.ok(css.includes(reset));
+ const block=css.slice(css.indexOf(reset),css.indexOf('}',css.indexOf(reset)));
+ assert.ok(block.includes('display:flex!important'));
+ assert.ok(block.includes('grid-template-columns:none!important'));
+ const panel='html body main #forecastPage:not(.hide)>#dayview:not(.hide)';
+ assert.ok(css.includes(panel));
+ const day=css.slice(css.indexOf(panel),css.indexOf('}',css.indexOf(panel)));
+ assert.ok(day.includes('display:grid!important'));
+ assert.ok(day.includes('grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr)'));
+ assert.ok(!day.includes('display:contents'));
+});
+test('the two-up desktop pair becomes one column on iPhone',()=>{
+ const media=css.slice(css.indexOf('@media(max-width:1030px)'));
+ assert.ok(media.includes('grid-template-columns:minmax(0,1fr)!important'));
+ assert.ok(media.includes('>.hourly-section'));
+ assert.ok(media.includes('grid-row:auto!important'));
+ assert.ok(css.includes('html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group'));
+});
+test('direction guide is colour keyed; no redundant compass graphic',()=>{
+ assert.ok(controller.includes('faro-direction-facts'));
+ assert.ok(controller.includes('faro-direction-fact--'));
+ assert.ok(!controller.includes('chile-compass-svg'));
+ assert.ok(html.includes('class="faro-compass-legend"'));
+ assert.ok(css.includes('.faro-legend-wind i'));
+});
+test('section titles are editorial, not numbered assignments',()=>{
+ for(const numbered of ['01 / DECIDE','03 / PREPÁRATE','04 / PROFUNDIZA','01 · Lee las condiciones','02 · Conoce la playa'])
+  assert.ok(!html.includes(numbered),numbered);
 });
