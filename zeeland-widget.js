@@ -1,4 +1,4 @@
-// FARO Widget · Coastal Editorial v13 · legible model-first widgets · Scriptable iOS
+// FARO Widget · Deep Ocean Editorial v14 · legible model-first widgets · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -127,6 +127,47 @@ try{
 }catch(e){/* Solid fallback is intentional for older Scriptable versions. */}
 widget.url=SITE;
 widget.setPadding(13,14,12,14);
+/* Deep Ocean is STATIC in Scriptable: no animated home-screen widgets.
+ * DrawContext adds restrained underwater light, with gradient fallback.
+ * Small/lock-screen families retain their original uncluttered design.
+ */
+function deepOceanCanvas(kind){
+ if(kind==="small"||String(kind).startsWith("accessory"))return null;
+ const large=kind==="large"||kind==="extraLarge";
+ const w=large?720:760,h=large?720:355;
+ const dc=new DrawContext();dc.size=new Size(w,h);dc.opaque=true;dc.respectScreenScale=false;
+ const light=EFFECTIVE_THEME==="LIGHT";
+ dc.setFillColor(new Color(light?"#F5FAF9":"#102A30"));dc.fillRect(new Rect(0,0,w,h));
+ const bands=light?["#F5FAF9","#F1F8F7","#ECF5F2","#E8F3F1"]:
+                   ["#102A30","#103138","#10363B","#113A40"];
+ for(let i=0;i<bands.length;i++){
+  dc.setFillColor(new Color(bands[i],light?.24:.31));
+  dc.fillRect(new Rect(0,i*h/bands.length,w,h/bands.length+2));
+ }
+ const cx=w*(large?.77:.84),cy=h*(large?.19:.29);
+ const radii=large?[275,235,191,150,111]:[203,170,135,101,70];
+ for(let i=0;i<radii.length;i++){
+  const radius=radii[i];
+  const alpha=(light?[.012,.017,.024,.028,.024]:[.018,.028,.038,.047,.045])[i];
+  dc.setFillColor(new Color(light?"#4A9998":"#A5E9CF",alpha));
+  dc.fillEllipse(new Rect(cx-radius,cy-radius,2*radius,2*radius));
+ }
+ const warmR=large?72:48;
+ dc.setFillColor(new Color("#FFDA71",light?.040:.085));
+ dc.fillEllipse(new Rect(cx-warmR,cy-warmR,2*warmR,2*warmR));
+ const beamW=large?260:310;
+ for(let i=0;i<5;i++){
+  const n=5-i;
+  dc.setFillColor(new Color(light?"#89C4B9":"#C9E2BE",light?.005:.009));
+  dc.fillEllipse(new Rect(cx-beamW-i*11,cy-(large?85:52)-n*7,
+    beamW+i*36,(large?170:104)+n*14));
+ }
+ return dc.getImage();
+}
+function applyCoastalAtmosphere(kind){
+ try{const bg=deepOceanCanvas(kind);if(bg)widget.backgroundImage=bg;}
+ catch(e){console.warn("FARO widget background fallback: "+String(e));}
+}
 function label(parent,value,size=12,color=C.ink,weight="regular",limit=1){
  const t=parent.addText(String(value));
  t.font=weight==="black"?Font.heavySystemFont(size):
@@ -471,7 +512,7 @@ function editorialHero(parent,best,large=false){
  if(large)label(quality,T[gradeOf(best.score)].toUpperCase(),10,C.ink,"bold",1);
  row.addSpacer();
  const wave=vstack(row,large?6:3);
- wave.backgroundColor=C.panel;wave.cornerRadius=large?15:12;
+ wave.backgroundColor=EFFECTIVE_THEME==="LIGHT"?new Color("#FFFFFF",.84):new Color("#234347",.80);wave.cornerRadius=large?15:12;
  wave.setPadding(large?10:6,large?12:9,large?10:6,large?12:9);
  label(wave,word("OLAS MODELO · MAR ABIERTO","MODEL · OFFSHORE WAVES"),large?9:8,C.quiet,"bold",1);
  const measurement=hstack(wave,5);measurement.centerAlignContent();
@@ -483,7 +524,7 @@ function editorialHero(parent,best,large=false){
 function vibeRibbon(parent,best,large=false){
  const ribbon=hstack(parent,large?10:7);
  ribbon.centerAlignContent();
- ribbon.backgroundColor=C.subtle;ribbon.cornerRadius=large?13:10;
+ ribbon.backgroundColor=EFFECTIVE_THEME==="LIGHT"?new Color("#EFF5F5",.92):new Color("#193337",.89);ribbon.cornerRadius=large?13:10;
  ribbon.setPadding(large?8:5,large?12:8,large?8:5,large?12:8);
  const stripe=ribbon.addStack();stripe.size=new Size(large?4:3,large?24:17);
  stripe.cornerRadius=2;stripe.backgroundColor=scoreInk(best.score);
@@ -521,6 +562,7 @@ function renderSmall(best,data,hazard,sessions){
  if(data.stale)label(widget,T.stale,8,C.caution,"bold");
 }
 function renderMedium(best,data,hazard,sessions){
+ applyCoastalAtmosphere("medium");
  widget.setPadding(7,13,7,13);
  brandRow(widget,true);
  widget.addSpacer(4);
@@ -551,6 +593,7 @@ function renderMedium(best,data,hazard,sessions){
  if(data.stale)label(widget,T.stale,8,C.caution,"bold");
 }
 function renderLarge(best,data,hazard,sessions){
+ applyCoastalAtmosphere(family);
  widget.setPadding(13,17,11,17);
  brandRow(widget);
  widget.addSpacer(9);
