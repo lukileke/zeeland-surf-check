@@ -22,7 +22,7 @@ html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead {
 }
 html[data-theme="light"] #forecastPage > .faro-forecast-lead {
   background:
-    radial-gradient(ellipse 43% 76% at 53% 49%,rgba(98,181,173,.14),transparent 81%),
+    radial-gradient(ellipse 46% 77% at 53% 49%,rgba(68,163,159,.185),transparent 81%),
     radial-gradient(ellipse 60% 75% at 18% 105%,rgba(127,200,196,.09),transparent 81%),
     linear-gradient(120deg,#edf7f4 0%,#e3f1ed 54%,#d7ebe7 100%)!important;
 }
@@ -133,19 +133,34 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon
   fill:#347a79!important;
 }
 html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon::before {
-  opacity:.65;
+  background:radial-gradient(circle,
+    rgba(245,216,136,.115) 0%,
+    rgba(102,194,178,.19) 25%,
+    rgba(56,148,158,.075) 52%,transparent 78%);
+  opacity:.84;
 }
 html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
   background:radial-gradient(circle,
-    rgba(242,203,111,.17) 0%,rgba(98,188,174,.18) 25%,
-    rgba(108,200,185,.075) 52%,transparent 80%);
-  opacity:.79;
+    rgba(244,205,116,.265) 0%,
+    rgba(235,202,130,.145) 13%,
+    rgba(70,166,163,.24) 32%,
+    rgba(55,146,157,.105) 55%,transparent 80%);
+  filter:blur(23px);
+  opacity:.86;
+  animation:faro-daylight-breathe 8.5s ease-in-out infinite alternate;
 }
 html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
   background:radial-gradient(ellipse 92% 62% at 99% 50%,
-    rgba(103,191,175,.16),rgba(115,207,192,.09) 38%,
+    rgba(99,184,172,.205),rgba(91,188,184,.12) 38%,
     transparent 85%)!important;
-  opacity:.60!important;
+  opacity:.73!important;
+}
+
+/* The lighter ocean cannot rely on pale light alone: gently breathe the
+ * teal/warm halo while leaving all textual and scientific UI static. */
+@keyframes faro-daylight-breathe {
+  from {opacity:.68;transform:translate(-50%,-50%) scale(.965)}
+  to   {opacity:.98;transform:translate(-50%,-50%) scale(1.045)}
 }
 
 @media(max-width:1119px) and (min-width:711px) {
@@ -167,9 +182,9 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon
  */
 @media(max-width:710px) {
   #forecastPage > .faro-forecast-lead {
-    --beacon-x:79%;
-    --beacon-y:18%;
-    --beacon-size:clamp(88px,25vw,114px);
+    --beacon-x:81%;
+    --beacon-y:17%;
+    --beacon-size:clamp(84px,23vw,106px);
     --beacon-halo:clamp(220px,73vw,310px);
     --beacon-ambient:clamp(270px,95vw,400px);
     --beacon-beam:clamp(130px,45vw,215px);
@@ -177,6 +192,14 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon
   }
   #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
     opacity:.25!important;
+  }
+  /* iOS WebKit can paint a dark horizontal texture at the upper SVG filter
+   * boundary. Remove that filter on narrow screens; the radial halo behind
+   * the original FARO paths supplies the luminous effect instead. */
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+    filter:none!important;
+    -webkit-filter:none!important;
+    overflow:hidden!important;
   }
   #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
     height:140px!important;
@@ -187,7 +210,10 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon
     filter:blur(27px);opacity:.65;
   }
   html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
-    opacity:.15!important;
+    opacity:.19!important;
+  }
+  html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
+    filter:blur(23px);
   }
   #forecastPage > .faro-forecast-lead #faroLeadHeadline {
     position:relative;z-index:2;text-wrap:balance;
@@ -195,9 +221,9 @@ html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon
 }
 @media(max-width:370px) {
   #forecastPage > .faro-forecast-lead {
-    --beacon-x:81%;
+    --beacon-x:82%;
     --beacon-y:16%;
-    --beacon-size:84px;
+    --beacon-size:82px;
     --beacon-halo:225px;
     --beacon-ambient:290px;
   }
