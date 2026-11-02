@@ -102,13 +102,27 @@ function dateLabel(iso){
  return new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{weekday:"long",day:"numeric",month:"short",timeZone:"UTC"}).format(date);
 }
 function sessionTime(s){return s?h(s.hour)+":00–"+h(s.hour+2)+":00":"—"}
+function sessionDecision(s,beach=spot()){
+ const fn=window.FaroSessionDecision?.evaluate;
+ if(!fn)return {potentialScore:s?.score??null,sessionScore:s?.score??null,
+  canRecommend:!!s,status:"eligible",reasons:[]};
+ const notice=beach?.accessNotice;
+ return fn({
+  potentialScore:s?.score,slotRisk:s?Live.slotRisk(s,state.config):"unknown",
+  access:notice,modelCoverage:s?.modelComplete===true?"complete":"unknown",
+  daylight:s?.daylight?.eligible===true,
+  windSpeedRangeKmh:s?.windSpeedRangeKmh
+ });
+}
 function bestRemaining(day,spotId=spot()?.id){
  if(!day)return null;
  const present=now();
  // Opportunity first, old guide-fit score only as a tie-breaker.
  // A caution/unknown risk does not become the "best time" by high score.
- return day.slots.filter(s=>s.daylight.eligible&&ok(s.score)&&!["danger","unknown","caution"].includes(Live.slotRisk(s,state.config))&&(day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
-  .sort((a,b)=>b.score-a.score||
+ return day.slots.filter(s=>sessionDecision(s,state.config.pilots.find(p=>p.id===spotId)).canRecommend&&
+  (day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
+  .sort((a,b)=>sessionDecision(b,state.config.pilots.find(p=>p.id===spotId)).sessionScore-
+   sessionDecision(a,state.config.pilots.find(p=>p.id===spotId)).sessionScore||
    (localRead(b,spotId)?.decision?.priority??2)-(localRead(a,spotId)?.decision?.priority??2)||
    a.hour-b.hour)[0]||null;
 }
@@ -338,7 +352,21 @@ function renderDNA(){
   lower.append(el("p",tr("El ajuste por dirección requiere datos válidos para la franja elegida.",
    "Directional compatibility requires valid data for the selected window."),"faro-dna-method"));
  }
- const safety=state.lang==="es"?p?.hazardContextEs:p?.hazardContextEn;
+ const diagnostics=window.FaroSpotDiagnostics?.diagnose(selection(),p);
+ if(diagnostics&&selection()){
+  const change=diagnostics.windTwoHourRangeKmh;
+  lower.append(el("p",tr(
+   "Variabilidad del viento durante 2 h: "+(ok(change)?num(change)+" km/h":"sin dato")+
+   ". Sensibilidad ±15°: "+(ok(diagnostics.bearingSensitivityScoreSpan)?
+    num(diagnostics.bearingSensitivityScoreSpan)+" puntos":"sin dato")+
+   ". Confianza empírica: no calibrada; bancos y resacas no observados.",
+   "2h wind variation: "+(ok(change)?num(change)+" km/h":"unavailable")+
+   ". ±15° bearing sensitivity: "+(ok(diagnostics.bearingSensitivityScoreSpan)?
+    num(diagnostics.bearingSensitivityScoreSpan)+" points":"unavailable")+
+   ". Empirical confidence uncalibrated; sandbars and rips unobserved."
+  ),"faro-dna-method"));
+ }
+  const safety=state.lang==="es"?p?.hazardContextEs:p?.hazardContextEn;
  if(safety)lower.append(el("p",safety,"faro-dna-safety"));
  lower.append(el("p",tr(
   "Las direcciones proceden de guías; no determinan altura rompiente, marea óptima, zonas permitidas ni seguridad.",
@@ -601,13 +629,21 @@ function vibeUI(s){
 function renderLead(day,session){
  const lead=$("faroForecastLead");
  if(!lead)return;
- lead.className="faro-forecast-lead "+(session?scoreTone(session.score):"is-unavailable");
+ const decision=sessionDecision(session);
+ const displayScore=decision.sessionScore;
+ lead.className="faro-forecast-lead "+(ok(displayScore)?scoreTone(displayScore):"is-unavailable");
+ lead.classList.toggle("has-model-caution",decision.status==="caution");
+ lead.classList.toggle("has-model-danger",decision.status==="blocked");
  lead.classList.toggle("is-restricted",restricted());
  txt("faroLeadLocation",(spot()?.shortName||spot()?.name||"—")+" · "+dateLabel(day?.date));
  const selected=Boolean(session);
  const seaHeight=selected?num(session.totalWaveHeightM)+" m":"—";
- txt("faroLeadScore",selected?num(session.score):"—");
- txt("faroLeadGrade",selected?restricted()?tr("Solo modelo","Model only"):experimentalLabel(session):tr("No evaluado","Unavailable"));
+ txt("faroLeadScore",ok(displayScore)?num(displayScore):"—");
+ txt("faroLeadGrade",selected?decision.status==="blocked"?tr("NO RECOMENDADO","NOT RECOMMENDED"):
+  decision.status==="unassessed"?tr("No evaluado","Unassessed"):
+  decision.status==="caution"?tr("Precaución","Caution"):grade(displayScore):tr("No evaluado","Unavailable"));
+ const title=$("faroLeadSignalTitle");
+ if(title)title.textContent=tr("ÍNDICE DE SESIÓN · MODELO","SESSION INDEX · MODEL");
  txt("faroLeadWindowLabel",restricted()?tr("FRANJA MODELADA · NO RECOMENDADA","MODELLED · NOT RECOMMENDED"):
   state.hour!==null?tr("FRANJA SELECCIONADA","SELECTED WINDOW"):
   tr("MEJOR FRANJA EVALUABLE","BEST ELIGIBLE WINDOW"));
@@ -615,11 +651,21 @@ function renderLead(day,session){
  txt("faroLeadWave",seaHeight);
  txt("faroLeadPeriod",selected?num(session.swellPeriodS)+" s":"—");
  txt("faroLeadWind",selected?num(session.windKmh,0)+" km/h":"—");
- txt("faroLeadStatus",restricted()?
-  tr("Restricción de acceso reportada · el score no recomienda entrar al agua",
-     "Reported access restriction · score is not permission to surf"):
-  tr("Índice experimental · guías locales y modelos, sin validación de rompiente",
-     "Experimental index · guides and models, without breaking-surf validation"));
+ txt("faroLeadStatus",decision.status==="caution"?
+  tr("Precaución del modelo: índice de sesión limitado a 5,9. Potencial oceánico "+num(session.score)+"/10.",
+     "Model caution: session index capped at 5.9. Offshore potential "+num(session.score)+"/10."):
+  decision.status==="blocked"?
+   tr("Sesión bloqueada por restricción o riesgo grave. Potencial oceánico independiente: "+num(session?.score)+"/10.",
+      "Session blocked by restriction or serious model risk. Independent offshore potential: "+num(session?.score)+"/10."):
+  tr("Índice experimental de sesión; no equivale a seguridad ni valida la rompiente.",
+    "Experimental session index; not a safety certificate or calibrated breaking surf."));
+ if(decision.status==="blocked"&&!restricted()){
+  txt("faroLeadHeadline",tr("Riesgo detectado: no se recomienda la sesión","Risk flagged: session not recommended"));
+  txt("faroLeadDeck",tr("El modelo ha detectado condiciones peligrosas o insuficientemente verificadas. Comprueba las alertas oficiales.",
+    "The model flags hazardous or insufficiently assessed conditions. Check official warnings."));
+  return;
+ }
+
  if(restricted()){
   txt("faroLeadHeadline",tr("Ventanas: el mar se modela, el acceso no está habilitado",
    "Ventanas: modelled ocean, access not cleared"));
@@ -630,7 +676,16 @@ function renderLead(day,session){
       "Reported recreational restriction: no lifting has been verified. No eligible window available."));
   return;
  }
- if(!selected){
+ if(!selected&&state.forecast?.hazard?.level==="danger"){
+  lead.classList.add("has-model-danger");
+  txt("faroLeadHeadline",tr("Riesgo importante en el pronóstico","Significant model risk flagged"));
+  txt("faroLeadDeck",tr("FARO detecta posibles condiciones peligrosas en el horizonte del modelo. No hay franja recomendada; consulta avisos oficiales.",
+   "FARO flags potential hazards in the model horizon. No recommended session; check official warnings."));
+  txt("faroLeadStatus",tr("Riesgo modelado · avisos oficiales no sincronizados",
+   "Modelled risk · official warnings not automatically checked"));
+  return;
+ }
+  if(!selected){
   txt("faroLeadHeadline",tr("Sin una ventana evaluable por ahora","No eligible window right now"));
   txt("faroLeadDeck",tr("Revisa el pronóstico completo, la disponibilidad de luz y los avisos oficiales.",
    "Check the full outlook, daylight and official notices."));
@@ -679,12 +734,14 @@ function slots(){
  for(const s of day.slots){
   const slotSafety=Live.slotRisk(s,state.config);
   const dangerous=slotSafety==="danger",unknownRisk=slotSafety==="unknown";
-  const eligible=s.daylight.eligible&&ok(s.score)&&!dangerous&&!unknownRisk;
-  const button=el("button",null,(eligible?scoreTone(s.score):"chile-unavailable")+(selection()?.hour===s.hour?" selected":""));
+  const decision=sessionDecision(s),eligible=decision.canRecommend,display=decision.sessionScore;
+  const button=el("button",null,(eligible?scoreTone(display):"chile-unavailable")+(selection()?.hour===s.hour?" selected":""));
   button.type="button";button.setAttribute("aria-pressed",String(selection()?.hour===s.hour));button.disabled=!s.modelComplete;
   button.append(el("span",h(s.hour)+"–"+h(s.hour+2),"chile-slot-hour"));
-  button.append(el("strong",eligible?num(s.score):"—","chile-slot-score"));
- if(eligible)button.append(el("span",experimentalLabel(s),"chile-slot-quality faro-grade "+gradeClass(s.score)));
+  button.append(el("strong",eligible?num(display):"—","chile-slot-score"));
+ if(eligible)button.append(el("span",grade(display),"chile-slot-quality faro-grade "+gradeClass(display)));
+  if(decision.status==="caution")button.title=tr("Precaución: potencial oceánico "+num(s.score)+"/10, índice de sesión "+num(display)+"/10.",
+  "Caution: offshore potential "+num(s.score)+"/10, session index "+num(display)+"/10.");
   button.append(el("small",dangerous?tr(" Riesgo modelo"," Model risk"):unknownRisk?tr(" Riesgo sin evaluar"," Risk unassessed"):Live.slotRisk(s,state.config)==="caution"?tr(" Precaución"," Caution"):eligible?(localRead(s)?.decision?.shortLabel||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
@@ -861,10 +918,11 @@ async function rankings(){
   const model=result.value;
   for(const day of model.days){
    const selected=bestRemaining(day,model.spot.id);
-   if(selected&&ok(selected.score))all.push({model,day,s:selected});
+   if(selected&&ok(sessionDecision(selected,model.spot).sessionScore))
+    all.push({model,day,s:selected,effective:sessionDecision(selected,model.spot).sessionScore});
   }
  }
- all.sort((a,b)=>b.s.score-a.s.score||
+ all.sort((a,b)=>b.effective-a.effective||
   (localRead(b.s,b.model.spot.id)?.decision?.priority??2)-
   (localRead(a.s,a.model.spot.id)?.decision?.priority??2)||
   a.day.date.localeCompare(b.day.date));
@@ -889,10 +947,10 @@ async function rankings(){
   host.append(el("p",tr("Sin candidatos evaluables por ahora.","No assessable candidates yet."),"muted"));return;
  }
  const card=item=>{
-  const b=el("button",null,"highlight chile-ranking "+scoreTone(item.s.score));
+  const b=el("button",null,"highlight chile-ranking "+scoreTone(item.effective));
   b.type="button";
   b.setAttribute("aria-label",item.model.spot.name+" · "+dateLabel(item.day.date)+" · "+
-   sessionTime(item.s)+" · "+num(item.s.score)+"/10");
+   sessionTime(item.s)+" · "+num(item.effective)+"/10");
   const content=el("div",null,"faro-week-pick-content");
   content.append(
    el("strong",item.model.spot.name,"chile-rank-name"),
@@ -905,7 +963,7 @@ async function rankings(){
    num(item.s.windKmh,0)+" km/h"));
   content.append(facts);
   const rating=el("div",null,"chile-rank-rating");
-  rating.append(el("strong",num(item.s.score),"chile-rank-score"),
+  rating.append(el("strong",num(item.effective),"chile-rank-score"),
    el("span","/10","chile-rank-denominator"));
   b.append(content,rating);
   b.addEventListener("click",()=>{
@@ -1093,6 +1151,11 @@ async function initialize(){
    if(!window.FaroChileSpotIntelligence||state.intelligence?.region!=="CL-VS")throw Error("Spot Intelligence version missing");
   if(state.config.region!=="CL-VS"||state.profiles.active!==false||state.registry.forecastEnabled!==false||state.config.noOfficialAlertAssertions!==true)throw Error("Risk isolation failure");
   for(const s of state.config.pilots)if(!state.profiles.profiles?.[s.id]||!state.registry.spots.find(r=>r.id===s.id))throw Error("Unattributed pilot "+s.id);
+  state.profileLibrary=window.FaroSpotRegistry?.build({
+   live:state.config,score:state.profiles,intelligence:state.intelligence
+  })||[];
+  const libraryCheck=window.FaroSpotRegistry?.audit(state.profileLibrary);
+  if(libraryCheck&&!libraryCheck.valid)throw Error("Spot library invalid: "+libraryCheck.errors.join(","));
   const requested=new URLSearchParams(location.search).get("spot");
   state.selected=Math.max(0,state.config.pilots.findIndex(s=>s.id===requested));
   spotChooser=window.FaroChileSpotChooser?.mount({

@@ -156,6 +156,6 @@ test('FARO lighthouse identity uses the original ring and core, not washed-out n
 test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=16"/);
  assert.match(html,/src="coast-map\.js\?v=20"/);
- assert.match(html,/src="chile-forecast\.js\?v=34"/);
+ assert.match(html,/src="chile-forecast\.js\?v=36"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });

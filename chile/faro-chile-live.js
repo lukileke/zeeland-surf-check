@@ -137,6 +137,14 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
  const swellPeriod=mean(vals(mar,"swell_wave_period"));
  const totalPeriod=mean(vals(mar,"wave_period"));
  const wind=mean(vals(met,"wind_speed_10m"));
+ // Two-hour variability is measured from the model's two distinct hourly
+ // steps, NOT an empirical local gustiness or surf quality observation.
+ const windValues=vals(met,"wind_speed_10m");
+ const windSpeedRangeKmh=complete&&windValues.length===2&&windValues.every(finite)?
+  +Math.abs(windValues[1]-windValues[0]).toFixed(1):null;
+ const swellHsValues=vals(mar,"swell_wave_height");
+ const swellHeightRangeM=complete&&swellHsValues.length===2&&swellHsValues.every(finite)?
+  +Math.abs(swellHsValues[1]-swellHsValues[0]).toFixed(2):null;
  const gust=max(vals(met,"wind_gusts_10m"));
  const windDirection=circleMean(vals(met,"wind_direction_10m"));
  const uvIndex=max(vals(met,"uv_index"));
@@ -172,7 +180,10 @@ function summarize(slotHours,marineHours,weatherHours,profileConfig,spot,config,
    tertiary:tertiaryValid?'complete':'not-available-or-partial',
    seaLevel:seaLevelComplete?'complete':'not-available-or-partial',
    oceanCurrent:currentComplete?'complete':'not-available-or-partial'},
-  windKmh:wind,windDirection,gustKmh:gust,uvIndex,uv:statusUV(uvIndex,locale),
+  windKmh:wind,windDirection,gustKmh:gust,
+  windSpeedRangeKmh,swellHeightRangeM,
+  variabilitySource:complete?'two_hour_model_values_not_observed':'not_evaluable',
+  uvIndex,uv:statusUV(uvIndex,locale),
   temperatureC:temperature,waterTemperatureC:sst,cloudPercent:cloud,precipitationMm:precipMissing?null:precip,
   weatherCode,weatherSource:"Open-Meteo",observed:false,nearshoreHeightEstimated:false
  };

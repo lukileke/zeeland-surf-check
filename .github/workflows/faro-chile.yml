@@ -30,6 +30,9 @@ jobs:
           node --check chile/faro-coastal-lens.js
           node --check chile/video-observation-lab.js
           node --check chile/calibrate-observations.cjs
+          node --check chile/faro-session-decision.js
+          node --check chile/faro-spot-registry.js
+          node --check chile/faro-spot-diagnostics.js
           node --check chile/train-breaking-priors.cjs
           node --check chile/research/compare-ocean-series.cjs
           node --check chile/research/capture-open-meteo.cjs
@@ -49,5 +52,6 @@ jobs:
           node --test tests/faro-coastal-lens-v4.test.cjs
           node assets/test-icons.cjs
           node chile/test-calibrate-observations.cjs
+          node chile/test-session-and-registry.cjs
           node chile/test-real-breaking-priors.cjs
           node chile/research/wave-breaking-baseline/test-priors.cjs

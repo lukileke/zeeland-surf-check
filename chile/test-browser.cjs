@@ -89,7 +89,7 @@ function fixture(){
      wind:$('faroLeadWind').textContent,
      minWidth:document.documentElement.clientWidth,
      scrollWidth:document.documentElement.scrollWidth,
-     grid:heroStyle.gridTemplateColumns.split(' ').length};
+     grid:heroStyle.display==="flex"?1:heroStyle.gridTemplateColumns.split(' ').length};
    });
    assert.ok(brand.bottom<=brand.toolbar+3,
     'Ocean-led FARO hero must precede timestamps and controls: '+JSON.stringify(brand));
@@ -135,8 +135,14 @@ function fixture(){
     'Light and dark treatments must be intentionally distinct: '+JSON.stringify(art));
    assert.notEqual(art.light.headlineInk,art.dark.headlineInk,
     'Hero text must contrast with its respective light/dark surface');
-   assert.notEqual(art.light.scorePanelBackground,art.dark.scorePanelBackground,
-    'Signal panel must be tuned separately for daylight and nighttime themes');
+   if(width>710)assert.notEqual(art.light.scorePanelBackground,art.dark.scorePanelBackground,
+    'Desktop score panel must be tuned separately for daylight and nighttime themes');
+   else{
+    assert.equal(art.light.scorePanelBackground,'none',
+     'Light-mode mobile has an integrated instrument, not a nested tinted card');
+    assert.equal(art.dark.scorePanelBackground,'none',
+     'Dark-mode mobile has an integrated instrument, not a nested tinted card');
+   }
    assert.notEqual(art.light.activeNavBackground,art.dark.activeNavBackground,
     'Premium three-tab navigation should follow the theme');
    assert.ok(art.light.activeNavRadius>=9&&art.dark.activeNavRadius>=9,
@@ -148,6 +154,45 @@ function fixture(){
     'Brand lead should be concise, not another giant Daily Take: '+JSON.stringify(brand));
    if(width>=1120)assert.equal(brand.grid,2,'Desktop hero splits editorial read and model signal');
    if(width<=430)assert.equal(brand.grid,1,'Mobile hero stacks into one coherent ocean moment');
+   if(width<=430){
+    const mobileHero=await page.evaluate(()=>{
+     const html=document.documentElement,previous=html.dataset.theme;
+     const lead=document.getElementById('faroForecastLead');
+     const panel=lead.querySelector('.faro-lead-signal');
+     const logo=lead.querySelector('.faro-lead-signature .faro-beacon-symbol');
+     const main=lead.querySelector('.faro-lead-main');
+     const data={};
+     for(const theme of ['light','dark']){
+      html.dataset.theme=theme;
+      const style=getComputedStyle(panel);
+      const panelBox=panel.getBoundingClientRect(),mainBox=main.getBoundingClientRect(),
+       symbolBox=logo.getBoundingClientRect(),heroBox=lead.getBoundingClientRect();
+      data[theme]={
+       display:getComputedStyle(lead).display,
+       backgroundImage:style.backgroundImage,
+       backgroundColor:style.backgroundColor,
+       radius:parseFloat(style.borderTopLeftRadius),
+       borderTop:parseFloat(style.borderTopWidth),
+       panelWidth:panelBox.width,heroWidth:heroBox.width,
+       withinHero:panelBox.left>=heroBox.left-1&&panelBox.right<=heroBox.right+1,
+       symbolWithinHero:symbolBox.left>=heroBox.left&&symbolBox.right<=heroBox.right+1,
+       symbolClearFromContent:symbolBox.bottom<=mainBox.top+75
+      };
+     }
+     html.dataset.theme=previous;
+     return data;
+    });
+    for(const theme of ['light','dark']){
+     const p=mobileHero[theme];
+     assert.equal(p.display,'flex','Mobile hero uses a single-column flex layout');
+     assert.equal(p.backgroundImage,'none','No inset rectangular glass score box on '+theme);
+     assert.equal(p.backgroundColor,'rgba(0, 0, 0, 0)','Transparent integrated score rail on '+theme);
+     assert.equal(p.radius,0,'Score rail is not a floating square tile on '+theme);
+     assert.ok(p.borderTop<=1,'One hairline divider, not full boxed border: '+JSON.stringify(p));
+     assert.ok(p.withinHero&&p.symbolWithinHero&&p.symbolClearFromContent,
+      'Mobile icon and instrument must fit the hero, without overlap: '+JSON.stringify(p));
+    }
+   }
    const modelScore=Number(brand.score);
    if(Number.isFinite(modelScore)){
     assert.ok(brand.wave.includes('m')&&brand.period.includes('s')&&brand.wind.includes('km/h'),
@@ -439,8 +484,13 @@ function fixture(){
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),true);
     await page.locator('#ventanasAccessNotice > summary').click();
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),false);
-    await page.waitForFunction(()=>document.querySelector('#dayStripItems .day-chip .chile-chip-number')?.textContent?.includes('.'),
+    // A reported restriction MUST suppress an actionable numerical session
+    // index. Wait for the restricted hero, not for the old unsafe score tile.
+    await page.waitForFunction(()=>/acceso|access/i.test(
+     document.querySelector('#faroLeadHeadline')?.textContent||""),
      {timeout:15000});
+    assert.equal((await page.locator('#faroLeadScore').textContent()).trim(),"—",
+     'Restricted Ventanas must not show an actionable model score');
     assert.match(await page.locator('#chileDecisionHeadline').textContent(),/acceso|access/i);
     assert.match(await page.locator('#faroLeadHeadline').textContent(),/acceso|access/i);
     assert.match(await page.locator('#faroLeadStatus').textContent(),/restricci[oó]n|restriction/i);
