@@ -14,14 +14,16 @@ const h=n=>String(n).padStart(2,"0");
 const modelCachePrefix="faro-cl-last-valid-v1:";
 const maxModelAgeMs=4*60*60*1000;
 function saveLastValid(id,forecast){
- if(!forecast?.model?.fetchedAt||!forecast?.days?.length)return;
+ if(!forecast?.model?.fetchedAt||!forecast?.days?.some(d=>
+  d.slots?.some(s=>s.modelComplete&&ok(s.score))))return;
  try{localStorage.setItem(modelCachePrefix+id,JSON.stringify({id,forecast}))}catch(e){}
 }
 function readLastValid(id){
  try{
   const saved=JSON.parse(localStorage.getItem(modelCachePrefix+id)||"null");
   const forecast=saved?.forecast,age=Date.now()-Date.parse(forecast?.model?.fetchedAt||"");
-  if(saved?.id!==id||!forecast?.days?.length||!forecast?.model?.coverage?.completeSlots||
+  if(saved?.id!==id||!forecast?.days?.some(d=>d.slots?.some(s=>s.modelComplete&&ok(s.score)))||
+    !forecast?.model?.coverage?.completeSlots||
     !Number.isFinite(age)||age<0||age>maxModelAgeMs||
     !forecast.days.some(d=>d.date>=now().date))return null;
   return forecast;
@@ -917,6 +919,7 @@ function render(){
  txt("updated",tr("Modelo consultado ","Model fetched ")+new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(state.forecast.model.fetchedAt))+" · CL");
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
  state.videoLab?.refreshCameras();updateCoastMap();renderHourlyPreview();if(state.tab==="board")match();
+ if(state.dataStale)showStaleModel();
 }
 async function refresh(force=false,onSettled=null){
  if(!state.config)return;
@@ -941,7 +944,7 @@ async function refresh(force=false,onSettled=null){
   if(previous){
    state.forecast=previous;state.day=0;state.hour=null;
    state.loadFailed=false;state.dataStale=true;
-   render();showStaleModel();
+   render();
    onSettled?.();return;
   }
   state.forecast=null;state.loadFailed=true;state.dataStale=false;
