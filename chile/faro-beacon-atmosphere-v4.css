@@ -1,0 +1,263 @@
+/*
+ * FARO Chile — Deep Ocean Hero v4
+ * Identical editorial hero for dark and light pages; the rest of the
+ * application still follows the chosen theme. Original FARO logo unchanged.
+ * The pulse is a standalone HTML layer (not an animated SVG filter) so
+ * iOS Safari and desktop share the same visible optical rhythm.
+ */
+
+/* A single dark-water surface in BOTH page themes. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead {
+  --beacon-x:53%;
+  --beacon-y:51%;
+  --beacon-size:clamp(130px,10.4vw,165px);
+  --beacon-halo:clamp(305px,31vw,460px);
+  --beacon-ambient:clamp(435px,49vw,680px);
+  --beacon-beam:clamp(225px,29vw,440px);
+  --faro-lead-text:#f4faf7;
+  --faro-lead-secondary:#cfe3df;
+  --faro-lead-caption:#b5d0cc;
+  --faro-lead-key:#a5d7d0;
+  position:relative;isolation:isolate;overflow:hidden;
+  color:var(--faro-lead-text)!important;
+  background:
+    radial-gradient(ellipse 39% 72% at 53% 50%,rgba(84,175,170,.16),transparent 83%),
+    radial-gradient(ellipse 55% 74% at 23% 107%,rgba(33,128,144,.10),transparent 82%),
+    linear-gradient(118deg,#123a40 0%,#10363b 50%,#092932 100%)!important;
+  border:1px solid rgba(154,210,206,.26)!important;
+  box-shadow:0 18px 48px rgba(9,35,40,.11)!important;
+}
+
+/* Full-hero coordinate system; layers cannot obscure headings or taps. */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon {
+  position:absolute!important;inset:0!important;
+  isolation:isolate;overflow:hidden;
+  pointer-events:none;z-index:0!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon::before {
+  content:"";position:absolute;
+  left:var(--beacon-x);top:var(--beacon-y);
+  width:var(--beacon-ambient);height:var(--beacon-ambient);
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(154,236,217,.14),rgba(87,193,184,.10) 28%,
+    rgba(60,149,159,.045) 52%,transparent 78%);
+  filter:blur(33px);opacity:.77;z-index:0;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
+  content:"";position:absolute;
+  left:var(--beacon-x);top:var(--beacon-y);
+  width:var(--beacon-halo);height:var(--beacon-halo);
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(255,228,143,.22),rgba(255,228,154,.15) 12%,
+    rgba(151,226,208,.145) 29%,rgba(85,194,190,.07) 53%,
+    transparent 80%);
+  filter:blur(25px);opacity:.80;z-index:0;
+}
+
+/* Separate animated aura: no !important opacity or competing animations.
+ * transform + opacity are GPU-friendly even on modern iPhone Safari.
+ * The light breathes; the original SVG and all forecast data remain still.
+ */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-pulse {
+  position:absolute;display:block;
+  left:var(--beacon-x);top:var(--beacon-y);
+  width:var(--beacon-halo);height:var(--beacon-halo);
+  border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,
+    rgba(255,226,148,.38) 0%,
+    rgba(255,233,168,.265) 13%,
+    rgba(135,237,215,.21) 30%,
+    rgba(69,177,185,.085) 57%,
+    transparent 80%);
+  filter:blur(17px);-webkit-filter:blur(17px);
+  opacity:.37;
+  transform:translate3d(-50%,-50%,0) scale(.93);
+  -webkit-animation:faro-deep-ocean-pulse 6.4s ease-in-out infinite;
+  animation:faro-deep-ocean-pulse 6.4s ease-in-out infinite;
+  will-change:opacity,transform;
+}
+@-webkit-keyframes faro-deep-ocean-pulse {
+  0%,100%{opacity:.30;-webkit-transform:translate3d(-50%,-50%,0) scale(.92)}
+  50%{opacity:.88;-webkit-transform:translate3d(-50%,-50%,0) scale(1.08)}
+}
+@keyframes faro-deep-ocean-pulse {
+  0%,100%{opacity:.30;transform:translate3d(-50%,-50%,0) scale(.92)}
+  50%{opacity:.88;transform:translate3d(-50%,-50%,0) scale(1.08)}
+}
+
+/* Blurred refracted illumination extending leftwards from the source. */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
+  position:absolute!important;
+  left:var(--beacon-x)!important;right:auto!important;
+  top:var(--beacon-y)!important;
+  width:var(--beacon-beam)!important;
+  height:clamp(135px,19vw,265px)!important;
+  transform:translate(-93%,-50%) rotate(-7deg)!important;
+  transform-origin:92% 50%!important;
+  background:radial-gradient(ellipse 92% 62% at 99% 50%,
+    rgba(242,237,187,.19),rgba(155,235,216,.13) 32%,
+    rgba(112,207,204,.065) 56%,transparent 85%)!important;
+  clip-path:none!important;-webkit-clip-path:none!important;
+  filter:blur(29px)!important;
+  opacity:.76!important;z-index:1;
+  animation:none!important;
+}
+
+/* Original four-segment emblem aligned with the aura; decorative only. */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
+  position:absolute!important;
+  left:var(--beacon-x)!important;top:var(--beacon-y)!important;
+  right:auto!important;width:var(--beacon-size)!important;
+  height:var(--beacon-size)!important;
+  display:grid!important;place-items:center!important;
+  margin:0!important;padding:0!important;
+  opacity:.44!important;
+  transform:translate(-50%,-50%) rotate(-8deg)!important;
+  pointer-events:none!important;z-index:2!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+  position:static!important;display:block!important;
+  width:100%!important;height:100%!important;
+  opacity:1!important;transform:none!important;
+  overflow:visible!important;
+  filter:blur(1.15px)!important;
+  -webkit-filter:blur(1.15px)!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon .faro-beacon-core {fill:#ffdc85!important}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon .faro-beacon-ring {fill:#d0ebe3!important}
+#forecastPage > .faro-forecast-lead > .faro-lead-main,
+#forecastPage > .faro-forecast-lead > .faro-lead-signal {
+  position:relative;z-index:2!important;min-width:0;
+}
+
+/* Light mode no longer overrides the Deep Ocean hero with paper, black
+ * typography or white panels. Scores retain their CANONICAL pigments. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead #faroLeadHeadline,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead #faroLeadHeadline {
+  color:#f4faf7!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-kicker,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-kicker {
+  color:#acd7ce!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-location,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead #faroLeadDeck,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-location,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead #faroLeadDeck {
+  color:#d3e5df!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-qualification,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-qualification {
+  color:#b8d0ca!important;
+}
+
+/* Same smoked-glass forecast instrument in both page themes. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-signal,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-signal {
+  color:#e9f7f2!important;
+  background:linear-gradient(145deg,rgba(238,251,245,.12),rgba(221,245,235,.07))!important;
+  border:1px solid rgba(220,240,233,.19)!important;
+  backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-signal-top,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-best small,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-metrics small,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-fineprint {
+  color:#bddad3!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-score-row>span:nth-child(2),
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-best strong,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-metrics strong {
+  color:#eff9f5!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-best,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-metrics {
+  border-color:rgba(220,240,233,.21)!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-grade {
+  color:#eaf8f3!important;
+  border-color:rgba(206,237,226,.38)!important;
+  background:rgba(20,59,62,.11)!important;
+}
+
+/* Do not alter the numeric /10 pigment for valid readings. Missing data
+ * is neutral grey and is never assigned an invented score. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead.is-unavailable #faroLeadScore {
+  color:#c9dad5!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-action-main {
+  color:#10383e!important;background:#d9ebe6!important;
+  border:1px solid rgba(255,255,255,.68)!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-action-secondary {
+  color:#e6f4f0!important;background:transparent!important;
+  border:1px solid rgba(215,235,230,.38)!important;
+}
+
+/* Intermediate widths preserve one shared centre. */
+@media(max-width:1119px) and (min-width:711px) {
+  #forecastPage > .faro-forecast-lead {
+    --beacon-x:55%;--beacon-y:49%;
+    --beacon-size:clamp(105px,12vw,145px);
+    --beacon-halo:clamp(240px,30vw,390px);
+    --beacon-ambient:clamp(350px,43vw,560px);
+    --beacon-beam:clamp(170px,26vw,300px);
+  }
+}
+
+/* iPhone: blur the emblem only (no stacked SVG shadows); pulse a separate
+ * radial layer, which does not have the Safari horizontal-filter seam. */
+@media(max-width:710px) {
+  #forecastPage > .faro-forecast-lead {
+    --beacon-x:80%;--beacon-y:19%;
+    --beacon-size:clamp(90px,24vw,110px);
+    --beacon-halo:clamp(235px,72vw,310px);
+    --beacon-ambient:clamp(300px,88vw,395px);
+    --beacon-beam:clamp(145px,43vw,220px);
+    overflow:hidden!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
+    opacity:.27!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+    filter:blur(1.8px)!important;
+    -webkit-filter:blur(1.8px)!important;
+    overflow:visible!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-pulse {
+    filter:blur(21px);-webkit-filter:blur(21px);
+    animation-duration:6.4s;-webkit-animation-duration:6.4s;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
+    height:148px!important;opacity:.47!important;
+    filter:blur(30px)!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {filter:blur(28px);opacity:.76}
+  /* No white instrument panel in light mode; mobile's integrated horizontal
+   * instrument rule overrides the desktop glass treatment. */
+  html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-signal,
+  html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-signal {
+    background:transparent!important;border:0!important;
+    border-top:1px solid rgba(203,230,224,.29)!important;
+    box-shadow:none!important;
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  }
+  #forecastPage > .faro-forecast-lead #faroLeadHeadline {text-wrap:balance}
+}
+@media(max-width:370px) {
+  #forecastPage > .faro-forecast-lead {
+    --beacon-x:81%;--beacon-y:18%;
+    --beacon-size:80px;--beacon-halo:220px;
+    --beacon-ambient:280px;--beacon-beam:130px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-pulse {
+    animation:none!important;-webkit-animation:none!important;
+    opacity:.55;transform:translate3d(-50%,-50%,0) scale(1);
+  }
+}
