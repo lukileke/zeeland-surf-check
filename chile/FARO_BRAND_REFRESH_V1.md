@@ -34,7 +34,7 @@ El fallo actual es informacional, no solo estético: el visitante primero ve mar
 - `FARO ocean mint`: texto o señal blanca-menta de interfaz, no sustituye la escala numérica de calidad.
 - `FARO signal scale`: conservar bandas verde/amarillo/naranja existentes sin reatribuirlas a alturas oceánicas.
 - `FARO surface`: fondos claros u oscuros de la UI según tema. Los capítulos secundarios usan fondo simple y hairlines discretos.
-- `FARO contour`: **3 curvas topográficas CSS** derivadas de la identidad costera, sin fingir que son isóbatas reales. La O original del logo aparece como marca de agua sutil, nunca como pegatina.
+- `FARO beacon / v2`: geometría **exacta de la O** del emblema FARO: núcleo amarillo y cuatro segmentos independientes tomados del SVG de marca. Una sola cuña de luz suave proyectada hacia la interfaz; no se representa como dirección física de olas o mapa batimétrico. Se eliminaron las tres curvas decorativas anteriores.
 - `Typography`: Archivo Black exclusivamente para titulares editoriales; Manrope para cifras, etiquetas y lectura funcional.
 - `Interaction`: CTAs accesibles con estados teclado, hover 150–190 ms y reducción de movimiento cuando se solicita.
 
@@ -136,3 +136,18 @@ No se debe ocultar la advertencia de Ventanas en el hero. Si el spot está restr
 
 ## Validación científica
 Los campos y el índice se derivan del proveedor actual y las guías, sin afirmar altura de ola rompiente ni condiciones seguras. FARO no supera a Surfline por una renovación visual. Este cambio no altera `valparaiso-score-lab.js`, datos fuente, comentarios de riesgo ni el estado de Ventanas.
+
+## Identidad v2 — decisión aprobada para la siguiente iteración
+
+**Problema observado en las capturas desktop:** el `favicon` completo como filtro gris agrandado parecía una masa negativa, no una señal luminosa. Las curvas de contorno sugerían cartografía no medida. El usuario identificó correctamente que la **O es el foco del faro**: núcleo amarillo + segmentos oscuros.
+
+**Solución implementada:**
+- Reutilizar los cuatro trazos originales de `assets/faro-o-favicon.svg` como geometría vectorial inline, con el núcleo amarillo separado. Mantener la estructura de marca; nada de barras CSS inventadas o siluetas completas en negativo.
+- Una sola cuña/halo de iluminación muy tenue que emerge del foco. Es un tratamiento de identidad, **no** una predicción del swell.
+- Sustituir `faro-lead-contours` por `faro-lead-beacon`; retirar el pequeño sello gris redundante del panel numérico.
+- **Dark:** petróleo profundo, texto blanco, segmentos menta pálido y halo cálido ligero.
+- **Light:** superficie bruma marina realmente clara, texto petróleo, segmentos oscuros y score dentro de un panel blanco translúcido. El núcleo amarillo es el mismo en ambos. Contraste y semántica de puntuaciones preservados.
+- **Navegación:** único contenedor segmentado con tres entradas, estados activos elevados de forma sutil y subrayado tipo señal luminosa. Móvil mantiene las tres entradas completas; sin nuevas secciones falsas ni controles duplicados.
+- Sin animaciones perpetuas, sin líneas topográficas genéricas, sin ocultar los datos ni nuevos logos competidores.
+
+**Validación:** comparaciones automáticas de estilos calculados light/dark, presencia de cuatro segmentos y núcleo del símbolo, ausencia de contornos, navegación con superficie redondeada, estados activos de marca y regresiones de desbordamiento en 375–1440 px. Chromium no reemplaza un control final en Safari físico.

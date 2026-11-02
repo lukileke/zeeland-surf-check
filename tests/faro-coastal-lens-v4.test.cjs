@@ -123,7 +123,7 @@ test('FARO refresh replaces empty utility-first top with real-data branded lead'
  assert.match(html,/id="faroLeadTime"/);
  assert.match(html,/id="faroLeadRead"/);
  assert.match(html,/id="faroLeadMap"/);
- assert.match(html,/faro-brand-refresh-v1\.css\?v=1/);
+ assert.match(html,/faro-brand-refresh-v1\.css\?v=2/);
  const lead=html.indexOf('id="faroForecastLead"');
  const tools=html.indexOf('class="forecast-toolbar"');
  const detailed=html.indexOf('id="dailyOverview"');
@@ -136,6 +136,22 @@ test('FARO refresh replaces empty utility-first top with real-data branded lead'
  assert.match(controller,/renderLead\(d,s\)/);
  assert.match(controller,/faroLeadMap.*addEventListener/);
  assert.match(controller,/is-restricted/);
+});
+test('FARO lighthouse identity uses the original ring and core, not washed-out negative or contour lines',()=>{
+ const hero=html.match(/<div class="faro-lead-beacon"[\s\S]+?<\/svg>\s*<\/div>/);
+ assert.ok(hero,'FARO beacon is in DOM');
+ assert.match(hero[0],/class="faro-beacon-core"/);
+ assert.match(hero[0],/class="faro-beacon-ring"/);
+ assert.equal((hero[0].match(/<path d=/g)||[]).length,4,
+  'Four original disconnected FARO lighthouse O segments, not fake CSS rectangles');
+ assert.doesNotMatch(html,/class="faro-lead-contours"/);
+ assert.doesNotMatch(html,/class="faro-lead-seal"/);
+ const styles=read('chile/faro-brand-refresh-v1.css');
+ assert.doesNotMatch(styles,/\.faro-lead-contours/);
+ assert.match(styles,/\.faro-beacon-light/);
+ assert.match(styles,/\.faro-beacon-core/);
+ assert.match(styles,/html\[data-theme="light"\].*faro-forecast-lead/);
+ assert.match(styles,/main>\.app-nav button\.active/);
 });
 test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=16"/);

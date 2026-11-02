@@ -32,7 +32,7 @@
 <link rel="stylesheet" href="chile-visual-contract.css?v=8">
 <!-- FARO coastal art direction: finish, not a new competing design system -->
 <link rel="stylesheet" href="faro-coastal-editorial-v3.css?v=2">
-<link rel="stylesheet" href="faro-brand-refresh-v1.css?v=1">
+<link rel="stylesheet" href="faro-brand-refresh-v1.css?v=2">
 </head>
 <body>
 <main>
@@ -88,7 +88,14 @@
   <!-- Brand refresh v1: one actual forecast-informed editorial lead, not a
        duplicated Daily Take. The detailed daily science remains below. -->
   <section id="faroForecastLead" class="faro-forecast-lead is-loading" aria-labelledby="faroLeadHeadline">
-   <div class="faro-lead-contours" aria-hidden="true"><span></span><span></span><span></span></div>
+   <!-- Original FARO O geometry: warm beacon core plus four separate arcs.
+        The beam is an atmospheric UI motif, never actual swell directions. -->
+   <div class="faro-lead-beacon" aria-hidden="true">
+    <span class="faro-beacon-light"></span>
+    <svg class="faro-beacon-symbol" viewBox="89 3 38 39" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+     <circle cx="108.11" cy="22.27" r="12.65" class="faro-beacon-core"/><g class="faro-beacon-ring"><path d="M99.98,22.07c0-.39.02-.76.07-1.14.03-.27-.13-.53-.4-.6l-6.99-1.85c-.31-.08-.63.11-.69.42-.2,1.03-.31,2.09-.31,3.18,0,1.22.13,2.41.38,3.55.07.31.38.49.69.41l6.97-1.84c.28-.07.44-.35.4-.63-.08-.49-.12-.99-.12-1.51Z"/><path d="M116.24,22.07c0,.52-.04,1.02-.12,1.51-.05.28.12.56.4.63l6.97,1.84c.3.08.62-.1.69-.41.26-1.14.39-2.33.39-3.55,0-1.09-.11-2.15-.32-3.18-.06-.31-.38-.5-.69-.42l-6.99,1.85c-.27.07-.43.33-.4.6.04.37.07.75.07,1.14Z"/><path d="M104.83,14.2c.99-.44,2.08-.67,3.26-.67s2.28.22,3.27.67c.82.36,1.54.84,2.17,1.43.24.22.59.27.86.09l5.65-3.6c.41-.26.47-.81.15-1.17-.15-.17-.31-.34-.47-.51-1-1-2.12-1.86-3.33-2.57s-2.53-1.26-3.94-1.66c-1.41-.39-2.86-.59-4.37-.59s-2.98.2-4.38.59-2.71.95-3.93,1.66c-1.22.71-2.33,1.57-3.32,2.57-.16.16-.32.33-.47.51-.32.36-.25.92.16,1.17l5.65,3.6c.27.17.62.13.86-.09.63-.59,1.35-1.06,2.16-1.43Z"/><path d="M111.38,29.95c-.99.44-2.08.67-3.26.67s-2.28-.22-3.27-.67c-.82-.36-1.54-.84-2.17-1.43-.24-.22-.59-.27-.86-.09l-5.65,3.6c-.41.26-.47.81-.15,1.17.15.17.31.34.47.51,1,1,2.12,1.86,3.33,2.57s2.53,1.26,3.94,1.66c1.41.39,2.86.59,4.37.59s2.98-.2,4.38-.59,2.71-.95,3.93-1.66c1.22-.71,2.33-1.57,3.32-2.57.16-.16.32-.33.47-.51.32-.36.25-.92-.16-1.17l-5.65-3.6c-.27-.17-.62-.13-.86.09-.63.59-1.35,1.06-2.16,1.43Z"/></g>
+    </svg>
+   </div>
    <div class="faro-lead-main">
     <small class="faro-lead-kicker" data-es="FARO · LEE LA COSTA" data-en="FARO · READ THE COAST">FARO · LEE LA COSTA</small>
     <span class="faro-lead-location" id="faroLeadLocation">Valparaíso · Chile</span>
@@ -101,7 +108,7 @@
     <small class="faro-lead-qualification" data-es="Potencial oceánico estimado · no altura rompiente observada" data-en="Modelled offshore potential · not observed breaking surf">Potencial oceánico estimado · no altura rompiente observada</small>
    </div>
    <aside class="faro-lead-signal" aria-label="Resumen de condiciones modeladas">
-    <div class="faro-lead-signal-top"><span data-es="POTENCIAL DEL MODELO" data-en="MODELLED POTENTIAL">POTENCIAL DEL MODELO</span><span class="faro-lead-seal" aria-hidden="true"></span></div>
+    <div class="faro-lead-signal-top"><span data-es="POTENCIAL DEL MODELO" data-en="MODELLED POTENTIAL">POTENCIAL DEL MODELO</span></div>
     <div class="faro-lead-score-row"><strong id="faroLeadScore">—</strong><span>/10</span><span id="faroLeadGrade" class="faro-lead-grade">—</span></div>
     <div class="faro-lead-best"><small id="faroLeadWindowLabel" data-es="MEJOR FRANJA EVALUABLE" data-en="BEST ELIGIBLE WINDOW">MEJOR FRANJA EVALUABLE</small><strong id="faroLeadTime">—</strong></div>
     <div class="faro-lead-metrics">

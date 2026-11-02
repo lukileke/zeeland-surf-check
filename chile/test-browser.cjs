@@ -95,6 +95,53 @@ function fixture(){
     'Ocean-led FARO hero must precede timestamps and controls: '+JSON.stringify(brand));
    assert.ok(brand.daily>brand.top,
     'Branded model read must precede detailed Daily Take');
+
+   const art=await page.evaluate(()=>{
+    const lead=document.getElementById('faroForecastLead');
+    const mark=lead.querySelector('.faro-beacon-symbol');
+    const nav=document.querySelector('main > .app-nav');
+    const active=nav.querySelector('button.active');
+    const theme=document.documentElement.dataset.theme;
+    const values={};
+    for(const mode of ['dark','light']){
+     document.documentElement.dataset.theme=mode;
+     values[mode]={
+      heroBackground:getComputedStyle(lead).backgroundImage,
+      headlineInk:getComputedStyle(document.getElementById('faroLeadHeadline')).color,
+      scorePanelBackground:getComputedStyle(lead.querySelector('.faro-lead-signal')).backgroundImage,
+      beamOpacity:getComputedStyle(lead.querySelector('.faro-beacon-light')).opacity,
+      iconOpacity:getComputedStyle(mark).opacity,
+      activeNavBackground:getComputedStyle(active).backgroundImage,
+      activeNavRadius:parseFloat(getComputedStyle(active).borderTopLeftRadius),
+      navBg:getComputedStyle(nav).backgroundColor
+     };
+    }
+    document.documentElement.dataset.theme=theme;
+    return {
+     ringSegments:mark.querySelectorAll('.faro-beacon-ring path').length,
+     yellowCore:mark.querySelectorAll('.faro-beacon-core').length,
+     markRect:mark.getBoundingClientRect().toJSON(),
+     contourCount:lead.querySelectorAll('.faro-lead-contours').length,
+     navButtons:nav.querySelectorAll('button').length,
+     ...values
+    };
+   });
+   assert.equal(art.ringSegments,4,'Beacon must preserve all four original FARO O segments');
+   assert.equal(art.yellowCore,1,'Beacon must contain its warm yellow centre');
+   assert.equal(art.contourCount,0,'Hero must not include decorative fake depth/swell curves');
+   assert.equal(art.navButtons,3);
+   assert.ok(art.markRect.width>35,'FARO symbol must be recognisable, not reduced to a tiny icon');
+   assert.notEqual(art.light.heroBackground,art.dark.heroBackground,
+    'Light and dark treatments must be intentionally distinct: '+JSON.stringify(art));
+   assert.notEqual(art.light.headlineInk,art.dark.headlineInk,
+    'Hero text must contrast with its respective light/dark surface');
+   assert.notEqual(art.light.scorePanelBackground,art.dark.scorePanelBackground,
+    'Signal panel must be tuned separately for daylight and nighttime themes');
+   assert.notEqual(art.light.activeNavBackground,art.dark.activeNavBackground,
+    'Premium three-tab navigation should follow the theme');
+   assert.ok(art.light.activeNavRadius>=9&&art.dark.activeNavRadius>=9,
+    'Tabs must use a unified rounded navigation surface, not outlined rectangles');
+
    assert.ok(brand.width>=width*.75&&brand.scrollWidth<=brand.minWidth+3,
     'Responsive full-width FARO lead overflows: '+JSON.stringify(brand));
    assert.ok(brand.height<(width<=430?560:550),
