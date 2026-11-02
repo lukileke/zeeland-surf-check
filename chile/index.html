@@ -148,13 +148,13 @@
   <!-- Zeeland FARO safety-centre hierarchy, with the FARO mark. -->
   <details id="ventanasAccessNotice" class="faro-access-notice faro-safety-center caution" hidden>
    <summary class="faro-safety-summary faro-access-summary">
-    <!-- FARO O is a subtle watermark in the notice surface, not a foreground sticker. -->
+    <!-- Authentic brand O watermark is styled in CSS with the original coloured SVG. -->
     <span class="faro-safety-top faro-access-top">
      <strong class="faro-safety-kicker" id="faroAccessKicker">FARO · AVISOS</strong>
-     <span class="faro-safety-severity" id="faroAccessSeverity">RESTRICCIÓN REPORTADA</span>
+     <span class="faro-safety-severity" id="faroAccessSeverity">ANTECEDENTE REPORTADO</span>
     </span>
     <span class="faro-safety-headline" id="faroAccessHeadline">Ventanas · restricción recreativa reportada</span>
-    <span class="faro-safety-inline-source" id="faroAccessSubline">Último reporte 27 oct 2026 · vigencia actual no verificada</span>
+    <span class="faro-safety-inline-source" id="faroAccessSubline">Reporte del 27 oct 2026 · vigencia actual no verificada</span>
     <span class="faro-safety-chevron" aria-hidden="true"></span>
    </summary>
    <div class="faro-safety-expanded faro-access-expanded">
@@ -232,7 +232,10 @@
     <div class="forecast-section-heading"><div><h3 data-es="Elige tu horario" data-en="Find your time">Elige tu horario</h3><p data-es="Compara franjas de 2 horas" data-en="Compare 2-hour windows">Compara franjas de 2 horas</p></div></div>
     <div id="slots" class="slots"></div>
      <div id="faroHourlyPreview" class="faro-hourly-preview" aria-live="polite">
-      <small>FARO · COASTAL READ</small>
+      <div class="faro-hourly-read-meta">
+       <small data-es="FARO · LECTURA SELECCIONADA" data-en="FARO · SELECTED READ">FARO · LECTURA SELECCIONADA</small>
+       <span id="faroHourlySelectedTime" class="faro-hourly-selected-time">—</span>
+      </div>
       <strong id="faroHourlyHeadline">—</strong>
       <span id="faroHourlyExplanation">—</span>
       <button id="faroHourlyGoLens" type="button" data-es="Leer el mapa" data-en="Read the map">Leer el mapa</button>
@@ -367,6 +370,15 @@
    <p data-es="FARO combina pronósticos de Open-Meteo y referencias locales de surf. La altura oceánica no es la altura de rompiente; el índice no está calibrado con observaciones de cada banco. La marea, las corrientes, la contaminación y los avisos oficiales requieren comprobación independiente. Una cámara visible gratis no autoriza su uso para entrenar IA."
       data-en="FARO combines Open-Meteo forecasts with published local surf guidance. Offshore wave height is not breaking-wave height, and the index lacks local sandbank calibration. Check tide, currents, water quality and official notices independently. Free-to-view cameras are not licensed AI training data.">FARO combina pronósticos de Open-Meteo y referencias locales de surf. La altura oceánica no es la altura de rompiente; el índice no está calibrado con observaciones de cada banco. La marea, las corrientes, la contaminación y los avisos oficiales requieren comprobación independiente. Una cámara visible gratis no autoriza su uso para entrenar IA.</p>
   </details>
+  <div class="faro-footer-bridge">
+   <div class="faro-footer-bridge-copy">
+    <small data-es="UN POCO MÁS ALLÁ" data-en="BEYOND THE NUMBERS">UN POCO MÁS ALLÁ</small>
+    <strong data-es="El pronóstico es el inicio de la lectura." data-en="The forecast is where the read begins.">El pronóstico es el inicio de la lectura.</strong>
+    <p data-es="Observa la playa, contrasta las señales y vuelve con una lectura más completa."
+       data-en="Observe the break, compare the signals and return with a more complete read.">Observa la playa, contrasta las señales y vuelve con una lectura más completa.</p>
+   </div>
+   <a href="atlas.html" class="faro-footer-bridge-link" data-es="Explorar spots" data-en="Explore spots">Explorar spots <span aria-hidden="true">↗</span></a>
+  </div>
  </div>
  <section id="bestPage" class="hide">
   <div class="best-intro"><small data-es="DESCUBRE · VALPARAÍSO" data-en="DISCOVER · VALPARAÍSO">DESCUBRE · VALPARAÍSO</small><h2 data-es="Señales para la semana" data-en="Weekly outlook">Señales para la semana</h2><p class="muted" data-es="Una selección breve de franjas estimadas. Los índices limitados al mismo techo no permiten ordenar su calidad real." data-en="A short comparison of estimated windows. Similar capped scores are not meaningful ties to break.">Una selección breve de franjas estimadas. Los índices limitados al mismo techo no permiten ordenar su calidad real.</p></div>
