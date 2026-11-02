@@ -1,0 +1,180 @@
+/*
+ * FARO | iPhone hero restoration | 2026-11-02
+ *
+ * Regression causes:
+ * (1) The footer bridge was a child of flex #forecastPage with order:auto
+ *     (effectively 0), while the hero carried order:1. Consequently the
+ *     actual END chapter was visually placed BEFORE the main hero.
+ * (2) The root Deep Ocean theme selector has higher specificity than the
+ *     original mobile :root custom-property override. The phone retained
+ *     --beacon-y:51% and --beacon-size:165px, positioning the blurred
+ *     mark over the buttons instead of at the upper-right.
+ *
+ * Keep this small cascade fix after the editorial styles and before the
+ * canonical five-colour score lock. No model, score or desktop hero edits.
+ */
+
+/* FIX 1: the editorial sign-off always follows the detailed model notes.
+ * All other desktop order values remain as authored. */
+html body main #forecastPage:not(.hide) > .faro-footer-bridge {
+  order: 6!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+}
+
+/* The mobile page starts with the actual offshore read again.
+ * Context (spot selection) remains fully functional but is supporting UI,
+ * not a tall opening card that precedes the main message. */
+@media(max-width:710px) {
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead {
+    order:0!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock {
+    order:1!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-access-notice {
+    order:2!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-journey-nav {
+    order:3!important;
+  }
+  html body main #forecastPage:not(.hide) > #dayview {
+    order:4!important;
+  }
+  html body main #forecastPage:not(.hide) > .chile-method-disclaimer {
+    order:5!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-footer-bridge {
+    order:6!important;
+  }
+
+  /* FIX 2: override the BOTH-theme desktop custom properties with a
+   * selector of genuinely higher specificity. Previous mobile variables
+   * lost to html[data-theme] #forecastPage > .faro-forecast-lead. */
+  html[data-theme="light"] body main #forecastPage:not(.hide) > .faro-forecast-lead,
+  html:not([data-theme="light"]) body main #forecastPage:not(.hide) > .faro-forecast-lead {
+    --beacon-x:81%;
+    --beacon-y:16%;
+    --beacon-size:clamp(85px,23vw,106px);
+    --beacon-halo:clamp(230px,74vw,320px);
+    --beacon-ambient:clamp(285px,92vw,415px);
+    --beacon-beam:clamp(135px,44vw,220px);
+    margin:0!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    isolation:isolate!important;
+    overflow:hidden!important;
+  }
+  /* Underwater O stays behind all data and uses only Gaussian blur,
+   * avoiding the Safari WebKit dark-line artifact of SVG drop-shadows. */
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-lead-signature {
+    opacity:.29!important;
+    pointer-events:none!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+    filter:blur(2px)!important;
+    -webkit-filter:blur(2px)!important;
+    overflow:visible!important;
+  }
+  /* Visible pulse is on an independent radial div rather than the SVG.
+   * Preserve the existing 6.4 s animation in both themes. */
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-pulse {
+    -webkit-animation:faro-deep-ocean-pulse 6.4s ease-in-out infinite;
+    animation:faro-deep-ocean-pulse 6.4s ease-in-out infinite;
+    filter:blur(20px)!important;
+    -webkit-filter:blur(20px)!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon::after {
+    filter:blur(28px)!important;
+    opacity:.77!important;
+  }
+
+  /* Compact working coast picker. Keeps the live model timestamp, beach
+   * dropdown and Zeeland/Chile control, without stealing hero attention. */
+  html body main #forecastPage:not(.hide) > .faro-context-dock {
+    padding:13px 14px!important;
+    margin:13px 0 5px!important;
+    gap:10px!important;
+    border-radius:14px!important;
+    box-shadow:none!important;
+  }
+  #forecastPage .faro-context-dock .faro-context-heading {
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    flex-wrap:wrap!important;
+    gap:7px 12px!important;
+  }
+  #forecastPage .faro-context-dock .faro-context-heading > div:first-child {
+    display:block!important;
+  }
+  #forecastPage .faro-context-dock .faro-context-heading > div:first-child strong {
+    display:none!important;
+  }
+  #forecastPage .faro-context-dock .faro-context-heading > div:first-child small {
+    font-size:9px!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .faro-context-controls > .picker-grid {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:0!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .picker-grid > .chile-spot-picker:first-child {
+    display:none!important; /* region is shown in the branded header */
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .picker-grid > .faro-spot-choice {
+    width:100%!important;
+    min-height:58px!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .faro-spot-choice-trigger {
+    min-height:35px!important;
+    font-size:14px!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .forecast-toolbar {
+    min-height:0!important;
+    margin:0!important;
+    padding:7px 2px 0!important;
+    gap:7px!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock #updated {
+    overflow-wrap:break-word!important;
+    font-size:10px!important;
+  }
+  /* Never hide the prediction, the alert or a score at any viewport. */
+}
+
+@media(max-width:370px) {
+  html[data-theme="light"] body main #forecastPage:not(.hide) > .faro-forecast-lead,
+  html:not([data-theme="light"]) body main #forecastPage:not(.hide) > .faro-forecast-lead {
+    --beacon-x:83%;
+    --beacon-y:15%;
+    --beacon-size:80px;
+    --beacon-halo:228px;
+    --beacon-ambient:290px;
+    --beacon-beam:132px;
+  }
+  #forecastPage .faro-context-dock .faro-country-options > a {
+    padding:5px 7px!important;
+  }
+}
+/* Reduced Motion preference must take priority even over this mobile
+ * high-specificity rule. The static glow remains but does not animate. */
+@media(max-width:710px) and (prefers-reduced-motion:reduce) {
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-pulse {
+    -webkit-animation:none!important;
+    animation:none!important;
+    opacity:.55!important;
+  }
+}
