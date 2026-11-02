@@ -1,0 +1,60 @@
+name: FARO React preview build and publish
+on:
+  pull_request:
+    paths:
+      - "apps/web/**"
+      - "chile/faro-session-decision.js"
+      - "chile/faro-spot-registry.js"
+      - "chile/faro-spot-diagnostics.js"
+      - "chile/valparaiso-score-lab.js"
+      - "chile/faro-chile-live.js"
+      - ".github/workflows/faro-react-preview.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/web/**"
+      - "chile/faro-session-decision.js"
+      - "chile/faro-spot-registry.js"
+      - "chile/faro-spot-diagnostics.js"
+      - "chile/valparaiso-score-lab.js"
+      - "chile/faro-chile-live.js"
+      - ".github/workflows/faro-react-preview.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: faro-react-preview-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install React dependencies
+        working-directory: apps/web
+        run: npm install --no-fund --no-audit --package-lock=false
+      - name: Build React preview with actual FARO core
+        working-directory: apps/web
+        run: npm run build
+      - name: Upload built preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: faro-react-preview
+          path: react/
+      - name: Publish isolated React preview under /react without replacing live Chile
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f react/
+          if git diff --cached --quiet; then
+            echo "React preview unchanged"
+          else
+            git commit -m "Build FARO React preview [skip ci]"
+            git push
+          fi
