@@ -3,14 +3,14 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const w=fs.readFileSync(path.join(__dirname,'..','zeeland-widget.js'),'utf8');
-test('v14 uses native offline illumination only for medium and large',()=>{
- assert.match(w,/Deep Ocean Editorial v14/);
+test('v15 uses native offline illumination only for medium and large',()=>{
+ assert.match(w,/Deep Ocean Editorial v15/);
  assert.match(w,/function deepOceanCanvas\(kind\)/);
  assert.match(w,/kind==="small"\|\|String\(kind\)\.startsWith\("accessory"\)/);
  assert.match(w,/function applyCoastalAtmosphere\(kind\)/);
  assert.match(w,/applyCoastalAtmosphere\("medium"\)/);
  assert.match(w,/applyCoastalAtmosphere\(family\)/);
- assert.match(w,/widget\.backgroundImage=bg/);
+ assert.match(w,/widget\.backgroundImage=image/);
 });
 test('preserves canonical numerical score inks, hazards, logo and engine',()=>{
  for(const pigment of ['#ef9b77','#efbd6e','#e0cc73','#b1d574','#8cc584'])
