@@ -60,13 +60,7 @@
   <button id="navBest" aria-pressed="false" type="button" data-es="Lo mejor" data-en="Best of Week">Lo mejor</button>
   <button id="navBoard" aria-pressed="false" type="button">FARO Match</button>
  </nav>
- <nav class="faro-country-switch" aria-label="Ubicación">
-  <span class="faro-country-label" data-es="UBICACIÓN" data-en="LOCATION">UBICACIÓN</span>
-  <div class="faro-country-options">
-   <a href="../"><span>ZEELAND</span><small>LIVE</small></a>
-   <a href="./" aria-current="page"><span>CHILE</span><small data-es="MODELO" data-en="MODEL">MODELO</small></a>
-  </div>
- </nav>
+
 
  <!-- OFFICIAL STATUS IS NEVER INFERRED FROM THRESHOLD SCREENING -->
  <section id="faroSafetyCenter" class="faro-safety-center advisory" aria-label="Riesgos meteorológicos modelados en Valparaíso" hidden>
@@ -90,6 +84,33 @@
   </details>
  </section>
  <div id="forecastPage">
+  <section class="faro-context-dock" aria-label="Seleccionar lugar de pronóstico">
+   <div class="faro-context-heading">
+    <div><small data-es="EXPLORA EL MAR" data-en="EXPLORE THE COAST">EXPLORA EL MAR</small>
+    <strong data-es="Tu costa, tu lectura." data-en="Your coast, your read.">Tu costa, tu lectura.</strong></div>
+    <nav class="faro-country-switch" aria-label="Ubicación">
+  <span class="faro-country-label" data-es="UBICACIÓN" data-en="LOCATION">UBICACIÓN</span>
+  <div class="faro-country-options">
+   <a href="../"><span>ZEELAND</span><small>LIVE</small></a>
+   <a href="./" aria-current="page"><span>CHILE</span><small data-es="MODELO" data-en="MODEL">MODELO</small></a>
+  </div>
+ </nav>
+   </div>
+   <div class="faro-context-controls">
+   <div class="picker-grid">
+   <label class="chile-spot-picker"><small data-es="REGIÓN" data-en="REGION">REGIÓN</small><strong>Valparaíso · Chile</strong><span class="chile-field-hint" data-es="Primera región disponible" data-en="First supported region">Primera región disponible</span></label>
+   <div class="chile-spot-picker faro-spot-choice"><small data-es="PLAYA / SPOT" data-en="BEACH / SPOT">PLAYA / SPOT</small>
+    <select id="chileSpotSelect" class="faro-spot-native" aria-hidden="true" tabindex="-1" aria-label="Playa o spot"></select>
+    <button type="button" id="chileSpotButton" class="faro-spot-choice-trigger" aria-label="Seleccionar playa" aria-haspopup="listbox" aria-controls="chileSpotOptions" aria-expanded="false"><span class="faro-spot-choice-text">—</span><span class="faro-spot-choice-chevron" aria-hidden="true"></span></button>
+    <div id="chileSpotOptions" class="faro-spot-choice-options" role="listbox" aria-label="Playa o spot" hidden></div>
+   </div>
+  </div>
+   </div>
+   <div class="forecast-toolbar">
+   <div class="forecast-updated"><span class="live-indicator" aria-hidden="true"></span><span class="forecast-updated-label" id="updated" role="status" aria-live="polite">Conectando al modelo…</span></div>
+   <button id="refreshForecast" class="forecast-refresh" type="button" aria-label="Actualizar pronóstico">↻ <span data-es="Actualizar" data-en="Refresh">Actualizar</span></button>
+  </div>
+  </section>
   <!-- Brand refresh v1: one actual forecast-informed editorial lead, not a
        duplicated Daily Take. The detailed daily science remains below. -->
   <section id="faroForecastLead" class="faro-forecast-lead is-loading" aria-labelledby="faroLeadHeadline">
@@ -123,18 +144,6 @@
     <small class="faro-lead-fineprint" id="faroLeadStatus" data-es="Guías locales + modelo · sin calibración en la rompiente" data-en="Local guides + model · not calibrated at the break">Guías locales + modelo · sin calibración en la rompiente</small>
    </aside>
   </section>
-  <div class="forecast-toolbar">
-   <div class="forecast-updated"><span class="live-indicator" aria-hidden="true"></span><span class="forecast-updated-label" id="updated" role="status" aria-live="polite">Conectando al modelo…</span></div>
-   <button id="refreshForecast" class="forecast-refresh" type="button" aria-label="Actualizar pronóstico">↻ <span data-es="Actualizar" data-en="Refresh">Actualizar</span></button>
-  </div>
-  <div class="picker-grid">
-   <label class="chile-spot-picker"><small data-es="REGIÓN" data-en="REGION">REGIÓN</small><strong>Valparaíso · Chile</strong><span class="chile-field-hint" data-es="Primera región disponible" data-en="First supported region">Primera región disponible</span></label>
-   <div class="chile-spot-picker faro-spot-choice"><small data-es="PLAYA / SPOT" data-en="BEACH / SPOT">PLAYA / SPOT</small>
-    <select id="chileSpotSelect" class="faro-spot-native" aria-hidden="true" tabindex="-1" aria-label="Playa o spot"></select>
-    <button type="button" id="chileSpotButton" class="faro-spot-choice-trigger" aria-label="Seleccionar playa" aria-haspopup="listbox" aria-controls="chileSpotOptions" aria-expanded="false"><span class="faro-spot-choice-text">—</span><span class="faro-spot-choice-chevron" aria-hidden="true"></span></button>
-    <div id="chileSpotOptions" class="faro-spot-choice-options" role="listbox" aria-label="Playa o spot" hidden></div>
-   </div>
-  </div>
   <!-- Zeeland FARO safety-centre hierarchy, with the FARO mark. -->
   <details id="ventanasAccessNotice" class="faro-access-notice faro-safety-center caution" hidden>
    <summary class="faro-safety-summary faro-access-summary">
@@ -162,7 +171,21 @@
   </details>
   <!-- Single-step exploration: choose a forecast window, inspect coastal context,
        then open local beach knowledge or external cameras. -->
-  <section class="forecast-section day-outlook-section" aria-label="Resumen diario">
+  <nav class="faro-journey-nav" aria-label="Ir a las secciones del pronóstico">
+   <span class="faro-journey-kicker" data-es="TU RUTA" data-en="YOUR ROUTE">TU RUTA</span>
+   <button type="button" data-jump="slots" data-es="01 · Horarios" data-en="01 · Sessions">01 · Horarios</button>
+   <button type="button" data-jump="coastMapExpand" data-es="02 · Mapa" data-en="02 · Map">02 · Mapa</button>
+   <button type="button" data-jump="spotInsightExpand" data-es="03 · Spot DNA" data-en="03 · Spot DNA">03 · Spot DNA</button>
+   <button type="button" data-jump="cameraExpand" data-es="04 · Cámaras" data-en="04 · Cameras">04 · Cámaras</button>
+  </nav>
+  <div id="dayview">
+   <div class="faro-decision-intro">
+    <div><small data-es="01 / DECIDE" data-en="01 / DECIDE">01 / DECIDE</small>
+    <h2 data-es="La lectura de hoy" data-en="Today's read">La lectura de hoy</h2></div>
+    <p data-es="Una vista de la costa, una franja para explorar. Lee primero; contrasta en la playa."
+       data-en="One coastal read, one time window to examine. Read first; verify on the beach.">Una vista de la costa, una franja para explorar. Lee primero; contrasta en la playa.</p>
+   </div>
+   <section class="forecast-section day-outlook-section" aria-label="Resumen diario">
    <div class="forecast-overview" id="dailyOverview">
     <div class="day-editorial-overline"><span data-es="FARO · EL PANORAMA" data-en="FARO · THE DAILY TAKE">FARO · EL PANORAMA</span> <span>·</span> VALPARAÍSO</div>
     <div class="row day-overview-row">
@@ -174,6 +197,7 @@
      <strong id="chileDecisionHeadline">—</strong>
      <span id="chileDecisionDriver">—</span>
     </div>
+    <div id="faroPrepHints" class="faro-prep-hints" aria-live="polite"></div>
     <div class="chile-day-uv" id="dayUVBadge" role="note"><span id="dayUVLabel"> UV —</span><small id="dayUVAdvice">—</small></div>
     <div id="daySignalMetrics" class="day-signal-metrics">
      <div class="day-signal-metric chile-day-wave-feature">
@@ -203,14 +227,17 @@
     </button>
    </div>
   </section>
-  <nav class="faro-journey-nav" aria-label="Ir a las secciones del pronóstico">
-   <span class="faro-journey-kicker" data-es="TU RUTA" data-en="YOUR ROUTE">TU RUTA</span>
-   <button type="button" data-jump="slots" data-es="01 · Horarios" data-en="01 · Sessions">01 · Horarios</button>
-   <button type="button" data-jump="coastMapExpand" data-es="02 · Mapa" data-en="02 · Map">02 · Mapa</button>
-   <button type="button" data-jump="spotInsightExpand" data-es="03 · Spot DNA" data-en="03 · Spot DNA">03 · Spot DNA</button>
-   <button type="button" data-jump="cameraExpand" data-es="04 · Cámaras" data-en="04 · Cameras">04 · Cámaras</button>
-  </nav>
-  <details id="dayStrip" class="day-strip-wrap forecast-section faro-week-disclosure">
+   <section class="forecast-section hourly-section" aria-label="Horario">
+    <div class="forecast-section-heading"><div><h3 data-es="Elige tu horario" data-en="Find your time">Elige tu horario</h3><p data-es="Compara franjas de 2 horas" data-en="Compare 2-hour windows">Compara franjas de 2 horas</p></div></div>
+    <div id="slots" class="slots"></div>
+     <div id="faroHourlyPreview" class="faro-hourly-preview" aria-live="polite">
+      <small>FARO · COASTAL READ</small>
+      <strong id="faroHourlyHeadline">—</strong>
+      <span id="faroHourlyExplanation">—</span>
+      <button id="faroHourlyGoLens" type="button" data-es="Leer el mapa" data-en="Read the map">Leer el mapa</button>
+     </div>
+   </section>
+   <details id="dayStrip" class="day-strip-wrap forecast-section faro-week-disclosure">
    <summary class="faro-week-summary">
     <span class="faro-week-summary-heading"><small data-es="EXPLORA MÁS DÍAS" data-en="EXPLORE OTHER DAYS">EXPLORA MÁS DÍAS</small><strong data-es="Pronóstico de los próximos 7 días" data-en="Next 7 days">Pronóstico de los próximos 7 días</strong></span>
     <span id="dayStripSelected" class="faro-week-current" aria-live="polite">—</span>
@@ -225,27 +252,16 @@
    <div id="dayStripItems" class="day-strip" role="group" aria-label="Seleccionar día"></div>
    <div class="day-strip-progress" aria-hidden="true"><span id="dayStripProgress"></span></div></div>
   </details>
-  <div id="dayview">
-   <section class="forecast-section hourly-section" aria-label="Horario">
-    <div class="forecast-section-heading"><div><h3 data-es="Elige tu horario" data-en="Find your time">Elige tu horario</h3><p data-es="Compara franjas de 2 horas" data-en="Compare 2-hour windows">Compara franjas de 2 horas</p></div></div>
-    <div id="slots" class="slots"></div>
-     <div id="faroHourlyPreview" class="faro-hourly-preview" aria-live="polite">
-      <small>FARO · COASTAL READ</small>
-      <strong id="faroHourlyHeadline">—</strong>
-      <span id="faroHourlyExplanation">—</span>
-      <button id="faroHourlyGoLens" type="button" data-es="Ver brújula y mapa" data-en="See compass and map">Ver brújula y mapa</button>
-     </div>
-   </section>
    <section class="faro-ocean-explorer" aria-labelledby="oceanToolsHeading">
     <div class="faro-ocean-explorer-header">
      <div class="faro-ocean-tools-copy">
       <small data-es="FARO · LECTURA COSTERA" data-en="FARO · COASTAL READ">FARO · LECTURA COSTERA</small>
-      <h3 id="oceanToolsHeading" data-es="Mapa y brújula" data-en="Map & swell compass">Mapa y brújula</h3>
+      <h3 id="oceanToolsHeading" data-es="Lectura del mar" data-en="Reading the sea">Lectura del mar</h3>
       <p data-es="Explora el oleaje y el viento, sin confundir la altura oceánica con la ola rompiente." data-en="Read the swell and wind without confusing offshore height with breaking waves.">Explora el oleaje y el viento, sin confundir la altura oceánica con la ola rompiente.</p>
      </div>
      <div class="faro-ocean-tool-actions" role="group" aria-label="Lectura del mar">
       <button type="button" id="openOceanMap" aria-controls="coastMapExpand" aria-pressed="true" data-es="Mapa" data-en="Map">Mapa</button>
-      <button type="button" id="openOceanCompass" aria-controls="waveInsightExpand" aria-pressed="false" data-es="Brújula" data-en="Compass">Brújula</button>
+      <button type="button" id="openOceanCompass" aria-controls="waveInsightExpand" aria-pressed="false" data-es="Orientación técnica" data-en="Direction details">Orientación técnica</button>
      </div>
     </div>
     <div class="faro-ocean-explorer-content">
@@ -254,15 +270,21 @@
       <div id="chileCoastMap" class="chile-coast-map"></div>
      </details>
      <details id="waveInsightExpand" class="forecast-expand">
-      <summary data-es="Brújula de swell" data-en="Swell compass">Brújula de swell</summary>
+      <summary data-es="Detalle técnico · direcciones" data-en="Technical detail · directions">Detalle técnico · direcciones</summary>
       <div id="waveinsight" class="insight-panel"><p class="muted">—</p></div>
      </details>
     </div>
    </section>
    <section class="forecast-section session-section" aria-label="Sesión seleccionada">
+    <div class="faro-session-intro">
+     <div><small data-es="03 / PREPÁRATE" data-en="03 / PREPARE">03 / PREPÁRATE</small>
+     <h3 data-es="Antes de entrar" data-en="Before paddling out">Antes de entrar</h3></div>
+     <p data-es="Traje, luz y condiciones de la sesión elegida. Una preparación práctica, sin perder de vista los avisos."
+        data-en="Wetsuit, daylight and selected conditions. Practical preparation, with official notices still essential.">Traje, luz y condiciones de la sesión elegida. Una preparación práctica, sin perder de vista los avisos.</p>
+    </div>
     <details id="sessionDetailExpand" class="chile-session-disclosure">
      <summary class="chile-session-toggle">
-      <span class="chile-session-toggle-name"><small data-es="SESIÓN ELEGIDA" data-en="SELECTED SESSION">SESIÓN ELEGIDA</small><strong data-es="Equipo y preparación" data-en="Gear & preparation">Equipo y preparación</strong></span>
+      <span class="chile-session-toggle-name"><small data-es="SESIÓN ELEGIDA" data-en="SELECTED SESSION">SESIÓN ELEGIDA</small><strong data-es="Tu equipo y preparación" data-en="Your session kit">Tu equipo y preparación</strong></span>
       <span id="sessionDetailSummary" class="chile-session-toggle-value" aria-live="polite">—</span>
       <span class="chile-session-toggle-arrow" aria-hidden="true">+</span>
      </summary>
@@ -289,9 +311,9 @@
    </section>
    <section class="faro-detail-hub" aria-labelledby="faroExploreHeading">
     <header class="faro-detail-hub-heading">
-      <div><small data-es="SIGUE EXPLORANDO" data-en="KEEP EXPLORING">SIGUE EXPLORANDO</small>
-      <h3 id="faroExploreHeading" data-es="Conoce la costa. Prepara tu sesión." data-en="Know the coast. Plan your session.">Conoce la costa. Prepara tu sesión.</h3></div>
-      <p data-es="Los detalles cuando los necesitas. La lectura del mar va primero." data-en="The details when you need them. The ocean read comes first.">Los detalles cuando los necesitas. La lectura del mar va primero.</p>
+      <div><small data-es="04 / PROFUNDIZA" data-en="04 / EXPLORE DEEPER">04 / PROFUNDIZA</small>
+      <h3 id="faroExploreHeading" data-es="Más allá del pronóstico." data-en="Beyond the forecast.">Más allá del pronóstico.</h3></div>
+      <p data-es="Conocimiento local, mediciones y observación: la segunda capa de FARO." data-en="Local knowledge, model evidence and observations: FARO’s deeper layer.">Conocimiento local, mediciones y observación: la segunda capa de FARO.</p>
     </header>
     <div class="faro-detail-hub-grid">
     <section class="faro-hub-group is-read">
@@ -376,6 +398,11 @@
   </div>
  </section>
  <footer class="chile-footer faro-footer-v2">
+  <div class="faro-footer-manifesto">
+   <small data-es="FARO · LEE LA COSTA" data-en="FARO · READ THE COAST">FARO · LEE LA COSTA</small>
+   <strong data-es="El mar cambia. Tu lectura también." data-en="The ocean changes. So should your read.">El mar cambia. Tu lectura también.</strong>
+   <span data-es="Entiende la señal. Conoce la playa. Decide tú." data-en="Understand the signal. Know the break. Make your call.">Entiende la señal. Conoce la playa. Decide tú.</span>
+  </div>
   <div class="faro-footer-brand">
    <strong>FARO <span>· READ THE COAST</span></strong>
    <p data-es="Una lectura del mar para decidir cuándo salir. Pronósticos modelados, sin garantía de seguridad ni ola rompiente."
