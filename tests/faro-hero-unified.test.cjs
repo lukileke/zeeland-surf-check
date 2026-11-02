@@ -36,7 +36,7 @@ test('iPhone pulse does not animate an SVG shadow filter and respects reduced mo
 });
 test('HTTP 503 does not create fictional scores or masquerade as a bad surf day',()=>{
  assert.match(live,/\[502,503,504\]\.includes\(status\)/);
- assert.match(ctl,/state\.loadFailed=true;renderLead\(null,null\)/);
+ assert.match(ctl,/state\.loadFailed=true;state\.dataStale=false;\s*renderPrepHints\(null\);renderLead\(null,null\)/);
  assert.match(ctl,/Sin datos válidos no se calcula ni se inventa un score/);
  assert.match(ctl,/No existe una franja elegible/);
  assert.match(ctl,/ok\(displayScore\)\?num\(displayScore\):"—"/);
