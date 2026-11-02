@@ -1,0 +1,73 @@
+/* FARO iPhone visual-order regression.
+ * Run: node --test tests/faro-mobile-hero-regression.test.cjs
+ *
+ * This checks the exact DOM/CSS-specificity failure behind the November 2
+ * regression, including dark/light parity and reduced-motion guarantees.
+ * Static checks do not substitute for a rendered iOS Safari screenshot.
+ */
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
+const html=read('chile/index.html');
+const css=read('chile/faro-mobile-reading-order-v1.css');
+const originalHero=read('chile/faro-beacon-atmosphere-v4.css');
+const editor=read('chile/faro-editorial-experience-v2.css');
+
+test('sign-off is after the model content in DOM AND explicitly last in flex order',()=>{
+ const a=html.indexOf('id="faroForecastLead"');
+ const b=html.indexOf('id="dayview"');
+ const c=html.indexOf('class="faro-footer-bridge"');
+ assert.ok(a>=0 && a<b && b<c);
+ // Default flex order:0 put the sign-off ahead of an explicit order:1 hero.
+ assert.ok(editor.includes('>.faro-forecast-lead{order:1!important'));
+ assert.match(css,/\.faro-footer-bridge\s*\{\s*order:\s*6!important/);
+});
+
+test('mobile iPhone prioritises hero and keeps beach selection usable below it',()=>{
+ assert.match(css,/@media\(max-width:710px\)/);
+ for(const [selector,order] of [
+  ['.faro-forecast-lead',0],['.faro-context-dock',1],
+  ['.faro-access-notice',2],['.faro-journey-nav',3],
+  ['#dayview',4],['.chile-method-disclaimer',5],
+  ['.faro-footer-bridge',6]
+ ]){
+  const sel=selector.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const re=new RegExp(sel+'\\s*\\{\\s*order:'+order+'!important');
+  assert.match(css,re,'mobile flex order '+selector);
+ }
+ for(const id of ['chileSpotSelect','chileSpotButton','chileSpotOptions'])
+  assert.equal(html.split('id="'+id+'"').length,2);
+ assert.match(css,/\.picker-grid\s*>\s*\.chile-spot-picker:first-child\s*\{/);
+});
+
+test('high-specificity theme-symmetric variables defeat desktop optical centre',()=>{
+ assert.match(originalHero,/--beacon-y:51%/);
+ assert.match(originalHero,/--beacon-size:clamp\(130px,10\.4vw,165px\)/);
+ assert.match(css,/html\[data-theme="light"\] body main #forecastPage:not\(\.hide\)/);
+ assert.match(css,/html:not\(\[data-theme="light"\]\) body main #forecastPage:not\(\.hide\)/);
+ assert.match(css,/--beacon-y:16%/);
+ assert.match(css,/--beacon-x:81%/);
+ assert.match(css,/--beacon-size:clamp\(85px,23vw,106px\)/);
+ assert.match(css,/@media\(max-width:370px\)/);
+});
+
+test('underwater pulse is kept and WebKit shadow seam is not reintroduced',()=>{
+ assert.match(css,/animation:faro-deep-ocean-pulse 6\.4s ease-in-out infinite/);
+ assert.match(css,/-webkit-animation:faro-deep-ocean-pulse 6\.4s ease-in-out infinite/);
+ assert.match(css,/filter:blur\(2px\)!important/);
+ assert.doesNotMatch(css,/drop-shadow\(/);
+ assert.match(css,/@media\(max-width:710px\) and \(prefers-reduced-motion:reduce\)/);
+ assert.match(css,/animation:none!important/);
+});
+
+test('new CSS is before the invariant score palette, with no model changes',()=>{
+ const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
+ assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
+ assert.equal(links.at(-2),'faro-mobile-reading-order-v1.css?v=1');
+ assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(css));
+ assert.ok(html.includes('faro-beacon-atmosphere-v4.css?v=1'));
+ assert.ok(html.includes('faro-chile-live.js?v=11'));
+ assert.ok(html.includes('chile-forecast.js?v=42'));
+});
