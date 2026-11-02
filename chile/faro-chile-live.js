@@ -251,6 +251,8 @@ function extract(config,spot,marine,weather,profileConfig,locale="es"){
   issueAt:null,validFrom:utcInstant(weatherTimes[0]),timeBasis:typeof weatherTimes[0]==="number"?"epoch_utc":"legacy_local_unverified",source:"Open-Meteo",
   coverage:{completeSlots,totalSlots:windows.length},
   optionalSwellFallback:marine.optionalSwellFallback===true,
+  waveModelFallback:marine.waveModelFallback||null,
+  reducedMarineRequest:marine.reducedMarineRequest===true,
   seaLevelFallback:marine.seaLevelFallback===true,
   oceanCurrentFallback:marine.oceanCurrentFallback===true,
   offshoreApproximation:true,referencePointStatus:spot.coordinateStatus||"unverified"},days,windows,hazard:screenRisk(config,weather,locale),fitExperimental:true};
@@ -367,14 +369,34 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
    // to the CORE marine forecast before blanking all Chile scores.
    // No values are imputed; optional fields remain unavailable.
    if([502,503,504].includes(error.status)){
+    // The primary source may have a missing model run for this coordinate.
+    // Retry essential wave data alone; then explicitly try independent
+    // wave MODELS documented by Open-Meteo (GFS Wave and Meteo-France).
+    // Never substitute wind/sea variables or generate missing values.
     const core=new URL(urls.marine);
-    core.searchParams.set("hourly",config.modelProviders.requiredVariables.marine.join(","));
-    const minimal=await fetchJSON(core.toString(),fetcher);
-    minimal.optionalSwellFallback=true;
-    minimal.seaLevelFallback=true;
-    minimal.oceanCurrentFallback=true;
-    minimal.reducedMarineRequest=true;
-    return minimal;
+    const essentials=["wave_height","wave_direction","wave_period",
+     "swell_wave_height","swell_wave_direction","swell_wave_period"];
+    core.searchParams.set("hourly",essentials.join(","));
+    let lastError=error;
+    for(const model of [null,"ncep_gfswave025","meteofrance_wave"]){
+     const request=new URL(core);
+     if(model)request.searchParams.set("models",model);
+     try{
+      const minimal=await fetchJSON(request.toString(),fetcher);
+      minimal.optionalSwellFallback=true;
+      minimal.seaLevelFallback=true;
+      minimal.oceanCurrentFallback=true;
+      minimal.reducedMarineRequest=true;
+      minimal.waveModelFallback=model||"best_match_core";
+      return minimal;
+     }catch(e){
+      // A provider-wide 429 must not trigger more requests; neither should
+      // a client/network error that model selection cannot repair.
+      if(![400,502,503,504].includes(e.status))throw e;
+      lastError=e;
+     }
+    }
+    throw lastError;
    }
    // Unsupported optional fields may yield HTTP 400. Keep the existing
    // stepwise fallback, preserving as many real partitions as possible.
