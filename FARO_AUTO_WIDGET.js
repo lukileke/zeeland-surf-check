@@ -7,7 +7,7 @@
 const FARO_RAW =
   "https://raw.githubusercontent.com/lukileke/zeeland-surf-check/main/zeeland-widget.js";
 const FARO_HOME = "https://lukileke.github.io/zeeland-surf-check/";
-const FARO_CACHE = "faro-auto-zeeland-last-good.js";
+const FARO_CACHE = "faro-auto-zeeland-last-good.txt";
 
 const fm = FileManager.local();
 const cachePath = fm.joinPath(fm.documentsDirectory(), FARO_CACHE);
