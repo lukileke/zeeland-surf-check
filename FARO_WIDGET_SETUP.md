@@ -4,6 +4,25 @@
 
 The same **`zeeland-widget.js`** script adapts to the widget size chosen in iOS. Add more than one copy of the widget and give each one a different **Parameter** in Scriptable's widget configuration.
 
+## Actualización automática desde GitHub (recomendado)
+
+Instala **una sola vez** el cargador de FARO. La lógica del pronóstico sigue estando en `zeeland-widget.js`, pero Scriptable descarga automáticamente su versión más reciente desde `main` cada vez que iOS vuelve a ejecutar el widget.
+
+**Si ya utilizas FARO Zeeland v14/v15:** ejecuta una vez `FARO_AUTO_SETUP.js`. Este instalador localiza tu script, guarda una copia de seguridad de texto y reemplaza únicamente el contenido por `FARO_AUTO_WIDGET.js`. Conserva el **nombre** y, por tanto, la selección previa del widget en el iPhone. Si renombraste el script, crea en su lugar `FARO Auto`, que deberás seleccionar una vez.
+
+**Instalación breve (copiar una vez en un nuevo script de Scriptable):**
+
+```javascript
+const url="https://raw.githubusercontent.com/lukileke/zeeland-surf-check/main/FARO_AUTO_SETUP.js";
+const code=await new Request(url).loadString();
+if(!code.includes("FARO · ONE-TIME Scriptable auto-update installer"))throw Error("Instalador inesperado");
+await new ((async function(){}).constructor)(code)();
+```
+
+La próxima vez que iOS actualice el widget, el cargador consultará GitHub y ejecutará el código válido más reciente. La última copia descargada queda almacenada **en local** (`faro-auto-zeeland-last-good.txt`) para funcionar sin conexión. Si el archivo remoto es inválido o su ejecución falla, se intenta restaurar la versión anterior.
+
+El intervalo real de refresco es **decisión de iOS**, no un mecanismo en tiempo real. El código descargado se ejecuta con los permisos de Scriptable: **confía únicamente en tu repositorio GitHub** y revisa los cambios antes de incorporarlos a `main`. Este mecanismo no comprueba firmas criptográficas. La revisión de sintaxis y estructura es una barrera básica contra descargas incorrectas, no una garantía frente a código malicioso.
+
 ## Widget sizes
 
 | iOS widget size | FARO layout | Use |
