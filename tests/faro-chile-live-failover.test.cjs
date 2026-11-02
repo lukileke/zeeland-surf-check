@@ -105,3 +105,47 @@ test('controller labels 4h local cache as OLD and refuses an unscored snapshot',
  assert.match(controllerSource,/state\.dataStale=true/);
  assert.match(controllerSource,/No es una actualización en vivo/);
 });
+
+test('HTTP 200 with null wave arrays is NOT treated as a successful marine forecast',async()=>{
+ const calls=[];
+ const empty=payload('marine');
+ for(const key of ['wave_height','wave_direction','wave_period',
+  'swell_wave_height','swell_wave_direction','swell_wave_period'])
+  empty.hourly[key]=empty.hourly[key].map(()=>null);
+ const fetcher=async url=>{
+  const u=new URL(url);calls.push(u);
+  if(u.pathname==='/v1/forecast')return response(200,payload('weather'));
+  if(u.searchParams.get('models')==='ncep_gfswave025')
+   return response(200,payload('marine'));
+  return response(200,empty);
+ };
+ const model=await controller().fetchSpot(config,spot,profiles,fetcher,'es');
+ assert.equal(model.model.waveModelFallback,'ncep_gfswave025');
+ assert.ok(model.model.coverage.completeSlots>0);
+ assert.ok(calls.find(u=>u.searchParams.get('models')==='ncep_gfswave025'));
+});
+
+test('HTTP 200 with null weather fields falls back to GFS weather',async()=>{
+ const empty=payload('weather');
+ for(const key of ['wind_speed_10m','wind_direction_10m',
+  'wind_gusts_10m','precipitation','weather_code'])
+  empty.hourly[key]=empty.hourly[key].map(()=>null);
+ const fetcher=async url=>{
+  const u=new URL(url);
+  if(u.pathname==='/v1/marine')return response(200,payload('marine'));
+  if(u.pathname==='/v1/gfs')return response(200,payload('weather'));
+  return response(200,empty);
+ };
+ const model=await controller().fetchSpot(config,spot,profiles,fetcher,'es');
+ assert.equal(model.model.weatherModelFallback,'gfs');
+ assert.ok(model.model.coverage.completeSlots>0);
+});
+
+test('all marine models failing includes source-specific diagnostics',async()=>{
+ const fetcher=async url=>new URL(url).pathname==='/v1/forecast'?
+  response(200,payload('weather')):response(503);
+ await assert.rejects(
+  controller().fetchSpot(config,spot,profiles,fetcher,'es'),
+  e=>e.source==='marine'&&/oleaje: HTTP 503/.test(e.message)
+ );
+});
