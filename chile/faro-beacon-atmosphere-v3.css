@@ -1,0 +1,211 @@
+/*
+ * FARO Chile | Beacon atmosphere v3, aligned optical centre
+ * 2026-11-02
+ *
+ * The ORIGINAL FARO O and its light occupy the same full-hero decorative
+ * layer, not different layout columns. One centre for mark, glow and beam.
+ * CSS only: no images, no score/model/safety data changes.
+ */
+#forecastPage > .faro-forecast-lead {
+  --beacon-x:53%;
+  --beacon-y:52%;
+  --beacon-size:clamp(130px,10.4vw,165px);
+  --beacon-halo:clamp(305px,31vw,460px);
+  --beacon-ambient:clamp(435px,49vw,680px);
+  --beacon-beam:clamp(225px,29vw,440px);
+}
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead {
+  background:
+    radial-gradient(ellipse 39% 72% at 53% 50%,rgba(84,175,170,.16),transparent 83%),
+    radial-gradient(ellipse 55% 74% at 23% 107%,rgba(33,128,144,.10),transparent 82%),
+    linear-gradient(118deg,#123a40 0%,#10363b 50%,#092932 100%)!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead {
+  background:
+    radial-gradient(ellipse 43% 76% at 53% 49%,rgba(98,181,173,.14),transparent 81%),
+    radial-gradient(ellipse 60% 75% at 18% 105%,rgba(127,200,196,.09),transparent 81%),
+    linear-gradient(120deg,#edf7f4 0%,#e3f1ed 54%,#d7ebe7 100%)!important;
+}
+
+/* Full hero is the ONLY coordinate system for the visual beacon. */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon {
+  position:absolute!important;
+  inset:0!important;isolation:isolate;
+  overflow:hidden;pointer-events:none;
+  z-index:0!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon::before {
+  content:"";
+  position:absolute;
+  left:var(--beacon-x);top:var(--beacon-y);
+  width:var(--beacon-ambient);height:var(--beacon-ambient);
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(154,236,217,.14) 0%,
+    rgba(87,193,184,.105) 27%,
+    rgba(60,149,159,.045) 52%,
+    transparent 78%);
+  filter:blur(33px);opacity:.78;
+  z-index:0;
+}
+/* Brightest exactly at the O, fading into sea-coloured scattering. */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
+  content:"";
+  position:absolute;
+  left:var(--beacon-x);top:var(--beacon-y);
+  width:var(--beacon-halo);height:var(--beacon-halo);
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(255,228,143,.30) 0%,
+    rgba(255,228,154,.22) 11%,
+    rgba(151,226,208,.19) 29%,
+    rgba(85,194,190,.095) 52%,
+    transparent 79%);
+  filter:blur(22px);opacity:.94;
+  z-index:0;
+}
+
+/* A wide, feathered pool of light leaves the mark to the left.
+ * No clipped triangles, straight bands, or directional-swell implication.
+ */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
+  position:absolute!important;
+  left:var(--beacon-x)!important;right:auto!important;
+  top:var(--beacon-y)!important;
+  width:var(--beacon-beam)!important;
+  height:clamp(135px,19vw,265px)!important;
+  transform:translate(-93%,-50%) rotate(-7deg)!important;
+  transform-origin:92% 50%!important;
+  background:radial-gradient(ellipse 92% 62% at 99% 50%,
+    rgba(242,237,187,.19) 0%,
+    rgba(155,235,216,.13) 31%,
+    rgba(112,207,204,.065) 56%,
+    transparent 85%)!important;
+  clip-path:none!important;-webkit-clip-path:none!important;
+  filter:blur(26px)!important;opacity:.84!important;
+  z-index:1;
+}
+
+/* Emblem is now a direct child of the full-hero beacon, not the headline.
+ * This permanently eliminates container-relative percentage drift.
+ */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
+  position:absolute!important;
+  left:var(--beacon-x)!important;
+  top:var(--beacon-y)!important;
+  right:auto!important;
+  width:var(--beacon-size)!important;
+  height:var(--beacon-size)!important;
+  display:grid!important;place-items:center!important;
+  margin:0!important;padding:0!important;
+  opacity:.49!important;
+  transform:translate(-50%,-50%) rotate(-8deg)!important;
+  pointer-events:none!important;
+  z-index:2!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+  position:static!important;display:block!important;
+  width:100%!important;height:100%!important;
+  overflow:visible!important;
+  opacity:1!important;transform:none!important;
+  filter:blur(.8px)
+    drop-shadow(0 0 10px rgba(255,228,151,.43))
+    drop-shadow(0 0 25px rgba(136,238,216,.37))!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon .faro-beacon-core {
+  fill:#ffdc85!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon .faro-beacon-ring {
+  fill:#d0ebe3!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-main {
+  position:relative;z-index:2!important;min-width:0;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-signal {
+  position:relative;z-index:2!important;
+}
+
+/* Daylight: translucent water imprint, focused but quieter illumination. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
+  opacity:.29!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon .faro-beacon-ring {
+  fill:#347a79!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon::before {
+  opacity:.65;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
+  background:radial-gradient(circle,
+    rgba(242,203,111,.17) 0%,rgba(98,188,174,.18) 25%,
+    rgba(108,200,185,.075) 52%,transparent 80%);
+  opacity:.79;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
+  background:radial-gradient(ellipse 92% 62% at 99% 50%,
+    rgba(103,191,175,.16),rgba(115,207,192,.09) 38%,
+    transparent 85%)!important;
+  opacity:.60!important;
+}
+
+@media(max-width:1119px) and (min-width:711px) {
+  #forecastPage > .faro-forecast-lead {
+    --beacon-x:55%;
+    --beacon-y:49%;
+    --beacon-size:clamp(105px,12vw,145px);
+    --beacon-halo:clamp(240px,30vw,390px);
+    --beacon-ambient:clamp(350px,43vw,560px);
+    --beacon-beam:clamp(170px,26vw,300px);
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
+    opacity:.36!important;
+  }
+}
+
+/* On phones the watermark remains within the upper water surface.
+ * Text, time window and score never depend on its presence.
+ */
+@media(max-width:710px) {
+  #forecastPage > .faro-forecast-lead {
+    --beacon-x:79%;
+    --beacon-y:18%;
+    --beacon-size:clamp(88px,25vw,114px);
+    --beacon-halo:clamp(220px,73vw,310px);
+    --beacon-ambient:clamp(270px,95vw,400px);
+    --beacon-beam:clamp(130px,45vw,215px);
+    overflow:hidden!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
+    opacity:.25!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
+    height:140px!important;
+    opacity:.45!important;
+    filter:blur(30px)!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
+    filter:blur(27px);opacity:.65;
+  }
+  html[data-theme="light"] #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
+    opacity:.15!important;
+  }
+  #forecastPage > .faro-forecast-lead #faroLeadHeadline {
+    position:relative;z-index:2;text-wrap:balance;
+  }
+}
+@media(max-width:370px) {
+  #forecastPage > .faro-forecast-lead {
+    --beacon-x:81%;
+    --beacon-y:16%;
+    --beacon-size:84px;
+    --beacon-halo:225px;
+    --beacon-ambient:290px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon *,
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon::before,
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
+    animation:none!important;transition:none!important;
+  }
+}
