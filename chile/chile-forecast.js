@@ -704,13 +704,13 @@ function renderLead(day,session){
  }
 
  if(restricted()){
-  txt("faroLeadHeadline",tr("Ventanas: el mar se modela, el acceso no está habilitado",
-   "Ventanas: modelled ocean, access not cleared"));
+  txt("faroLeadHeadline",tr("Ventanas: restricción reportada",
+   "Ventanas: reported restriction"));
   txt("faroLeadDeck",selected?
-   tr("Existe potencial oceánico estimado, pero la restricción reportada impide recomendar la sesión.",
-      "Modelled offshore potential is available, but the reported restriction prevents a session recommendation."):
-   tr("Restricción recreativa reportada: no se ha verificado el levantamiento. No hay franja evaluable.",
-      "Reported recreational restriction: no lifting has been verified. No eligible window available."));
+   tr("Hay una restricción recreativa reportada. FARO no recomienda entrar al agua.",
+      "A recreational restriction has been reported. FARO does not recommend entering the water."):
+   tr("No se ha verificado el levantamiento de la restricción reportada. Consulta la autoridad.",
+      "The reported restriction has not been verified as lifted. Check with authorities."));
   return;
  }
  if(!selected&&state.forecast?.hazard?.level==="danger"){
@@ -744,12 +744,14 @@ function renderLead(day,session){
   tr("Potencial alto frente a "+name,"Strong model signal at "+name):
   session.score>=6?tr("Una ventana para mirar en "+name,"A window worth checking at "+name):
   tr("Lectura moderada frente a "+name,"A mixed ocean read at "+name));
- const read=localRead(session)?.decision;
- txt("faroLeadDeck",tr(
-  "FARO estima "+seaHeight+" de oleaje oceánico, "+num(session.swellPeriodS)+" s y viento de "+
-   num(session.windKmh,0)+" km/h. Comprueba la rompiente antes de decidir.",
-  "FARO estimates "+seaHeight+" offshore swell, "+num(session.swellPeriodS)+" s and "+
-   num(session.windKmh,0)+" km/h wind. Check the actual break before deciding."));
+ txt("faroLeadDeck",session.score>=8?
+  tr("Una señal prometedora. Confirma las condiciones en la rompiente.",
+     "A promising signal. Confirm conditions at the break."):
+  session.score>=6?
+  tr("Hay una ventana interesante. Mira cómo entra el mar antes de salir.",
+     "A window worth a closer look. Check how the swell reaches the break."):
+  tr("Condiciones variables. Revisa las franjas y el viento en detalle.",
+     "Mixed conditions. Review the hourly windows and wind below."));
 }
 function renderPrepHints(s){
  const host=$("faroPrepHints");if(!host)return;
