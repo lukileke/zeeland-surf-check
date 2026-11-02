@@ -1,0 +1,110 @@
+/*
+ * FARO / Synchronized underwater illumination — 02 Nov 2026
+ *
+ * A single optical rhythm for dark, light, desktop and iPhone.
+ * Every layer starts, peaks (50%), and settles (100%) together:
+ *   ambient water | warm halo | leftward beam | blurred FARO O.
+ *
+ * The authentic SVG stays Gaussian-blurred, never animated with SVG
+ * drop shadows (the source of the former iOS horizontal-line artifact).
+ * "scale" is animated independently of existing !important transforms.
+ * All layers are decorative and do not modify forecast or score colours.
+ */
+@keyframes faro-hero-water-breathe {
+  0%,100% { opacity:.60; transform:translate3d(-50%,-50%,0) scale(.98); }
+  50%     { opacity:.83; transform:translate3d(-50%,-50%,0) scale(1.03); }
+}
+@-webkit-keyframes faro-hero-water-breathe {
+  0%,100% { opacity:.60; -webkit-transform:translate3d(-50%,-50%,0) scale(.98); }
+  50%     { opacity:.83; -webkit-transform:translate3d(-50%,-50%,0) scale(1.03); }
+}
+@keyframes faro-hero-halo-breathe {
+  0%,100% { opacity:.61; transform:translate3d(-50%,-50%,0) scale(.97); }
+  50%     { opacity:.90; transform:translate3d(-50%,-50%,0) scale(1.055); }
+}
+@-webkit-keyframes faro-hero-halo-breathe {
+  0%,100% { opacity:.61; -webkit-transform:translate3d(-50%,-50%,0) scale(.97); }
+  50%     { opacity:.90; -webkit-transform:translate3d(-50%,-50%,0) scale(1.055); }
+}
+@keyframes faro-hero-core-breathe {
+  0%,100% { opacity:.37; transform:translate3d(-50%,-50%,0) scale(.945); }
+  50%     { opacity:.96; transform:translate3d(-50%,-50%,0) scale(1.08); }
+}
+@-webkit-keyframes faro-hero-core-breathe {
+  0%,100% { opacity:.37; -webkit-transform:translate3d(-50%,-50%,0) scale(.945); }
+  50%     { opacity:.96; -webkit-transform:translate3d(-50%,-50%,0) scale(1.08); }
+}
+@keyframes faro-hero-beam-breathe {
+  0%,100% { scale:.975; }
+  50%     { scale:1.045; }
+}
+@keyframes faro-hero-mark-breathe {
+  0%,100% { scale:1; }
+  50%     { scale:1.028; }
+}
+
+/* Every animation shares the same duration, easing and zero delay.
+ * Include both colour schemes with one selector: theme cannot desynchronise
+ * the light or generate a separate aesthetic for the same hero. */
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon::before {
+  animation:faro-hero-water-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-water-breathe 5.4s ease-in-out 0s infinite both!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon::after {
+  animation:faro-hero-halo-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-halo-breathe 5.4s ease-in-out 0s infinite both!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon > .faro-beacon-pulse {
+  animation:faro-hero-core-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-core-breathe 5.4s ease-in-out 0s infinite both!important;
+  filter:blur(21px)!important;
+  -webkit-filter:blur(21px)!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon > .faro-beacon-light {
+  /* Override the older animation:none!important, without changing the
+   * original position/rotation or fixed beam translucency. */
+  animation:faro-hero-beam-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-beam-breathe 5.4s ease-in-out 0s infinite both!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon > .faro-lead-signature {
+  /* No animated SVG filter or transform, only the independent scale value. */
+  animation:faro-hero-mark-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-mark-breathe 5.4s ease-in-out 0s infinite both!important;
+}
+
+@media(max-width:710px) {
+  /* A touch more diffusion in the smaller hero, not stronger text overlays. */
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-pulse {
+    filter:blur(23px)!important;
+    -webkit-filter:blur(23px)!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+    filter:blur(2px)!important;
+    -webkit-filter:blur(2px)!important;
+  }
+}
+
+/* Motion-sensitive visitors retain the luminous still frame. */
+@media(prefers-reduced-motion:reduce) {
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon::before,
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon::after,
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-pulse,
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-light,
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-lead-signature {
+    animation:none!important;
+    -webkit-animation:none!important;
+    scale:1!important;
+  }
+}
