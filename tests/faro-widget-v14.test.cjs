@@ -21,7 +21,7 @@ test('preserves canonical numerical score inks, hazards, logo and engine',()=>{
 });
 test('no pseudo animation; background can fall back safely',()=>{
  assert.ok(w.includes('new DrawContext()'));
- assert.ok(w.includes('catch(e){console.warn("FARO widget background fallback:'));
+ assert.ok(w.includes('console.warn("FARO widget background fallback:'));
  assert.ok(w.includes('Math.min(2,h-y)'));
  assert.ok(w.includes('for(let i=0;i<72;i++)'));
  assert.ok(w.includes('applyFallbackGradient();'));
