@@ -439,8 +439,13 @@ function fixture(){
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),true);
     await page.locator('#ventanasAccessNotice > summary').click();
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),false);
-    await page.waitForFunction(()=>document.querySelector('#dayStripItems .day-chip .chile-chip-number')?.textContent?.includes('.'),
+    // A reported restriction MUST suppress an actionable numerical session
+    // index. Wait for the restricted hero, not for the old unsafe score tile.
+    await page.waitForFunction(()=>/acceso|access/i.test(
+     document.querySelector('#faroLeadHeadline')?.textContent||""),
      {timeout:15000});
+    assert.equal((await page.locator('#faroLeadScore').textContent()).trim(),"—",
+     'Restricted Ventanas must not show an actionable model score');
     assert.match(await page.locator('#chileDecisionHeadline').textContent(),/acceso|access/i);
     assert.match(await page.locator('#faroLeadHeadline').textContent(),/acceso|access/i);
     assert.match(await page.locator('#faroLeadStatus').textContent(),/restricci[oó]n|restriction/i);
