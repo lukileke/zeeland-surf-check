@@ -1,0 +1,167 @@
+/*
+ FARO Chile | Soft underwater beacon v2 (2026-11-02)
+ Restore a sense of refracted light without a logo-shaped sticker.
+ Use the original SVG paths already present in the DOM. No new image assets.
+ Intentionally last in the cascade, after responsive safety.
+*/
+
+/* Atmospheric water, rather than a spotlight with hard edges. */
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead {
+  background:
+    radial-gradient(ellipse 34% 62% at 64% 49%,rgba(113,195,187,.105),transparent 82%),
+    radial-gradient(ellipse 54% 70% at 28% 109%,rgba(35,130,143,.105),transparent 81%),
+    linear-gradient(118deg,#123a40 0%,#10363b 50%,#092932 100%)!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead {
+  background:
+    radial-gradient(ellipse 39% 73% at 65% 42%,rgba(97,183,176,.115),transparent 79%),
+    radial-gradient(ellipse 56% 70% at 18% 104%,rgba(130,202,197,.10),transparent 81%),
+    linear-gradient(120deg,#edf7f4 0%,#e3f1ed 54%,#d7ebe7 100%)!important;
+}
+
+#forecastPage > .faro-forecast-lead .faro-lead-beacon {
+  position:absolute;inset:0;isolation:isolate;
+  pointer-events:none;overflow:hidden;z-index:0!important;
+}
+
+/* Distant caustic colour and underwater haze. No straight triangular rays. */
+#forecastPage > .faro-forecast-lead .faro-lead-beacon::before {
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 25% 29% at 58% 22%,rgba(190,243,226,.075),transparent 86%),
+    radial-gradient(ellipse 28% 37% at 64% 81%,rgba(83,199,199,.09),transparent 83%);
+  filter:blur(24px);opacity:.65;
+}
+#forecastPage > .faro-forecast-lead .faro-lead-beacon::after {
+  content:"";position:absolute;
+  left:61%;top:45%;transform:translate(-50%,-50%);
+  width:clamp(235px,29vw,420px);
+  height:clamp(235px,29vw,420px);
+  background:radial-gradient(circle,
+    rgba(253,228,156,.115) 0%,
+    rgba(148,221,208,.125) 22%,
+    rgba(92,195,191,.06) 46%,transparent 76%);
+  filter:blur(26px);opacity:.74;
+}
+
+/* A diffused sideways bloom; no polygon or linear bands crossing the title. */
+#forecastPage > .faro-forecast-lead .faro-lead-beacon .faro-beacon-light {
+  position:absolute!important;
+  left:36%!important;right:auto!important;
+  top:10%!important;
+  width:36%!important;height:74%!important;
+  background:radial-gradient(ellipse 70% 45% at 78% 49%,
+    rgba(190,239,213,.15) 0%,rgba(112,214,202,.095) 39%,
+    rgba(100,191,191,.035) 64%,transparent 85%)!important;
+  clip-path:none!important;
+  -webkit-clip-path:none!important;
+  transform:rotate(-12deg)!important;transform-origin:center center!important;
+  filter:blur(25px)!important;opacity:.57!important;
+}
+
+/* Keep all wording and controls visually above the atmospheric brand mark. */
+#forecastPage > .faro-forecast-lead .faro-lead-main {
+  position:relative;z-index:2;isolation:isolate;min-width:0;
+}
+#forecastPage > .faro-forecast-lead .faro-lead-main > :not(.faro-lead-signature) {
+  position:relative;z-index:2;
+}
+#forecastPage > .faro-forecast-lead .faro-lead-main > .faro-lead-signature {
+  position:absolute!important;
+  right:clamp(10px,1.6vw,26px)!important;
+  top:clamp(37px,4.1vw,64px)!important;
+  width:clamp(120px,10.8vw,174px)!important;
+  height:clamp(120px,10.8vw,174px)!important;
+  display:grid!important;place-items:center!important;
+  z-index:0!important;pointer-events:none!important;
+  opacity:.27!important;transform:rotate(-10deg)!important;
+}
+#forecastPage > .faro-forecast-lead .faro-lead-main > .faro-lead-signature .faro-beacon-symbol {
+  display:block!important;position:static!important;
+  width:100%!important;height:100%!important;
+  opacity:1!important;transform:none!important;overflow:visible!important;
+  filter:blur(2.3px)
+    drop-shadow(0 0 11px rgba(255,225,147,.26))
+    drop-shadow(0 0 27px rgba(122,224,208,.29))!important;
+}
+#forecastPage > .faro-forecast-lead .faro-lead-signature .faro-beacon-ring {
+  fill:#bce4de!important;
+}
+#forecastPage > .faro-forecast-lead .faro-lead-signature .faro-beacon-core {
+  fill:#ffdb81!important;
+}
+
+/* Daylight: coherent sea-mist, softer mark, and no change to quality inks. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-main > .faro-lead-signature {
+  opacity:.19!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-signature .faro-beacon-ring {
+  fill:#317c7b!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-beacon::after {
+  background:radial-gradient(circle,
+    rgba(241,202,108,.095),rgba(88,177,166,.12) 25%,
+    rgba(109,199,185,.05) 48%,transparent 78%);
+  opacity:.60;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-beacon-light {
+  background:radial-gradient(ellipse 70% 48% at 78% 49%,
+    rgba(88,178,169,.12),rgba(107,190,182,.065) 47%,transparent 85%)!important;
+  opacity:.45!important;
+}
+
+/* Intermediate widths: the O stays in the open edge of the text column. */
+@media(max-width:1119px) and (min-width:711px) {
+  #forecastPage > .faro-forecast-lead .faro-lead-main > .faro-lead-signature {
+    right:4px!important;top:27px!important;
+    width:clamp(108px,12vw,145px)!important;
+    height:clamp(108px,12vw,145px)!important;
+    opacity:.20!important;
+  }
+  #forecastPage > .faro-forecast-lead .faro-lead-beacon::after {
+    left:60%;top:42%;
+  }
+}
+
+/* iPhone: small ghost of a beacon, no intrusion into the heading or score. */
+@media(max-width:710px) {
+  #forecastPage > .faro-forecast-lead {
+    overflow:hidden!important;min-width:0!important;
+  }
+  #forecastPage > .faro-forecast-lead .faro-lead-main > .faro-lead-signature {
+    top:-14px!important;right:-22px!important;
+    width:clamp(90px,25vw,112px)!important;
+    height:clamp(90px,25vw,112px)!important;
+    opacity:.17!important;transform:rotate(-13deg)!important;
+  }
+  #forecastPage > .faro-forecast-lead .faro-lead-beacon::after {
+    left:90%;top:11%;width:240px;height:240px;
+    opacity:.52;filter:blur(30px);
+  }
+  #forecastPage > .faro-forecast-lead .faro-lead-beacon .faro-beacon-light {
+    left:49%!important;top:-8%!important;
+    width:62%!important;height:44%!important;
+    opacity:.31!important;filter:blur(26px)!important;
+  }
+  #forecastPage > .faro-forecast-lead .faro-lead-beacon::before {
+    opacity:.36;
+  }
+  html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-main > .faro-lead-signature {
+    opacity:.115!important;
+  }
+  #forecastPage > .faro-forecast-lead #faroLeadHeadline {
+    position:relative;z-index:2;text-wrap:balance;
+  }
+}
+@media(max-width:370px) {
+  #forecastPage > .faro-forecast-lead .faro-lead-main > .faro-lead-signature {
+    right:-27px!important;top:-6px!important;
+    width:88px!important;height:88px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  #forecastPage > .faro-forecast-lead .faro-lead-beacon *,
+  #forecastPage > .faro-forecast-lead .faro-lead-main > .faro-lead-signature {
+    animation:none!important;transition:none!important;
+  }
+}
