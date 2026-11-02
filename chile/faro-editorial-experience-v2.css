@@ -1,3 +1,243 @@
+
+/* CRITICAL LAYOUT RECOVERY / 02 Nov 2026
+ * faro-desktop.css sets #forecastPage:not(.hide) to twelve grid columns
+ * and #forecastPage > #dayview:not(.hide) to display:contents. The extra
+ * :not(.hide) class outweighed previous 'html body' selectors. A page with
+ * a display:contents dayview silently promoted the daily/hourly contents
+ * to 90px grid cells. This fixes THE CASCADE, not the text by adding width.
+ */
+html body main #forecastPage:not(.hide){
+ display:flex!important;flex-direction:column!important;
+ align-items:stretch!important;justify-content:flex-start!important;
+ gap:0!important;
+ grid-template-columns:none!important;grid-auto-columns:auto!important;
+ width:100%!important;max-width:100%!important;
+ min-width:0!important;box-sizing:border-box!important;
+}
+html body main #forecastPage:not(.hide)>*{
+ flex:0 0 auto!important;align-self:stretch!important;
+ min-width:0!important;max-width:100%!important;
+ grid-column:auto!important;grid-row:auto!important;
+ box-sizing:border-box!important;
+}
+/* DOM order is the natural reading order. Prior responsive 'order'
+ * declarations are not allowed to send the header dock below the hero. */
+html body main #forecastPage:not(.hide)>.faro-context-dock{order:0!important;width:100%!important}
+html body main #forecastPage:not(.hide)>.faro-forecast-lead{order:1!important;width:100%!important}
+html body main #forecastPage:not(.hide)>.faro-access-notice{order:2!important}
+html body main #forecastPage:not(.hide)>.faro-journey-nav{order:3!important}
+html body main #forecastPage:not(.hide)>#dayview{order:4!important}
+html body main #forecastPage:not(.hide)>.chile-method-disclaimer{order:5!important}
+/* The surviving dayview element must be a LAYOUT BOX at every viewport.
+ * It may never become display:contents. */
+html body main #forecastPage:not(.hide)>#dayview:not(.hide){
+ display:grid!important;
+ grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr)!important;
+ grid-auto-flow:row!important;
+ grid-auto-columns:auto!important;
+ grid-auto-rows:auto!important;
+ align-items:stretch!important;
+ gap:clamp(14px,1.6vw,22px)!important;
+ width:100%!important;max-width:100%!important;
+ min-width:0!important;margin:clamp(12px,1.8vw,24px) 0 0!important;
+ padding:0!important;box-sizing:border-box!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-decision-intro{
+ grid-column:1/-1!important;grid-row:1!important;order:0!important;
+ min-width:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section{
+ display:block!important;
+ grid-column:1!important;grid-row:2!important;order:0!important;
+ width:100%!important;min-width:0!important;margin:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
+ display:flex!important;
+ grid-column:2!important;grid-row:2!important;order:0!important;
+ width:100%!important;min-width:0!important;margin:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-week-disclosure{
+ grid-column:1/-1!important;grid-row:3!important;order:0!important;
+ width:100%!important;min-width:0!important;margin:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-ocean-explorer{
+ display:block!important;
+ grid-column:1/-1!important;grid-row:4!important;order:0!important;
+ min-width:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.session-section{
+ display:grid!important;
+ grid-column:1/-1!important;grid-row:5!important;order:0!important;
+ width:100%!important;min-width:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-detail-hub{
+ display:block!important;
+ grid-column:1/-1!important;grid-row:6!important;order:0!important;
+ width:100%!important;min-width:0!important;
+}
+html body main #forecastPage:not(.hide) #dailyOverview #faroPrepHints{
+ order:3!important;
+}
+/* A centred reading instrument cannot collapse to the former grid's cell
+ * width; use explicit min-width zero only INSIDE the correctly sized grids. */
+html body main #forecastPage:not(.hide)>.faro-context-dock{
+ grid-column:1/-1!important;overflow:visible!important;
+}
+html body main #forecastPage:not(.hide) .faro-context-controls,
+html body main #forecastPage:not(.hide) .faro-context-controls>.picker-grid{
+ width:100%!important;min-width:0!important;
+}
+html body main #forecastPage:not(.hide) #dailyOverview,
+html body main #forecastPage:not(.hide) .hourly-section .slots{
+ min-width:0!important;width:100%!important;
+}
+/* Re-skin the closing research columns as actual tappable webpage modules,
+ * not bare text and lines scattered across a blank viewport. */
+html body main #forecastPage:not(.hide) .faro-detail-hub-grid{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:clamp(12px,1.35vw,20px)!important;align-items:stretch!important;
+}
+html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group{
+ display:flex!important;flex-direction:column!important;
+ min-width:0!important;min-height:270px!important;
+ grid-column:auto!important;grid-row:auto!important;
+ padding:clamp(18px,2vw,27px)!important;
+ border-radius:17px!important;
+ border:1px solid var(--faro-line)!important;
+ background:linear-gradient(152deg,
+  color-mix(in srgb,var(--faro-selection) 9%,var(--faro-raised)),
+  var(--faro-raised) 73%)!important;
+ box-shadow:0 8px 29px rgba(4,35,42,.06)!important;
+}
+html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group>.faro-hub-group-head{
+ min-height:0!important;
+ padding:0 0 16px!important;margin:0 0 7px!important;
+}
+html body main #forecastPage:not(.hide) .faro-hub-group>details.forecast-expand{
+ display:block!important;width:100%!important;margin:0!important;
+ border:1px solid var(--faro-line)!important;
+ border-radius:11px!important;
+ background:var(--faro-raised)!important;
+}
+html body main #forecastPage:not(.hide) .faro-hub-group>details.forecast-expand+details.forecast-expand{
+ margin-top:7px!important;
+}
+html body main #forecastPage:not(.hide) .faro-hub-group>details.forecast-expand>summary{
+ min-height:57px!important;padding:11px 13px!important;
+ justify-content:flex-start!important;text-align:left!important;
+ cursor:pointer!important;
+}
+html body main #forecastPage:not(.hide) .faro-hub-group>details.forecast-expand>summary:hover{
+ background:color-mix(in srgb,var(--faro-selection) 8%,transparent)!important;
+}
+html body main #forecastPage:not(.hide) .faro-detail-hub-grid .faro-hub-group .forecast-accordion-meta{
+ display:none!important;
+}
+/* The beach map already owns the directional HUD. An optional field-guide
+ * explanation stays readable, compact and explicitly keyed by colour. */
+html body main #forecastPage:not(.hide) #dayview #waveInsightExpand .insight-panel{
+ display:grid!important;gap:12px!important;
+ padding:14px 17px!important;
+}
+#forecastPage .faro-compass-legend{
+ margin-left:auto;display:inline-flex;flex-wrap:wrap;gap:12px;
+ align-items:center;font:700 11px/1.4 var(--faro-text);
+ color:var(--faro-quiet);
+}
+#forecastPage .faro-compass-legend>span{display:inline-flex;align-items:center;gap:5px}
+#forecastPage .faro-compass-legend i,
+#forecastPage .faro-direction-dot{
+ display:inline-block;width:9px;height:9px;flex:0 0 9px;
+ border-radius:50%;background:#4d9cc1;
+}
+#forecastPage :is(.faro-legend-wind i,.faro-direction-fact--wind .faro-direction-dot){
+ background:#d9ba6f;
+}
+#forecastPage .faro-direction-facts{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:12px!important;
+}
+#forecastPage .faro-direction-fact{
+ display:flex;flex-direction:column;gap:6px;
+ padding:15px 16px;border-radius:12px;
+ background:color-mix(in srgb,var(--faro-selection) 4%,var(--faro-raised));
+ border:1px solid var(--faro-line);min-width:0;
+}
+#forecastPage .faro-direction-fact-label{
+ display:flex;align-items:center;gap:8px;
+ font:800 12px/1.3 var(--faro-text);
+}
+#forecastPage .faro-direction-fact>b{
+ font:850 clamp(23px,2.7vw,32px)/1.15 var(--faro-text);
+ color:var(--fg);
+}
+#forecastPage .faro-direction-fact small,
+#forecastPage .faro-direction-period{
+ font:600 12px/1.5 var(--faro-text);color:var(--faro-quiet);
+ margin:0;
+}
+#forecastPage #waveInsightExpand .chile-compass-note{
+ max-width:78ch;margin:0!important;font-size:12px!important;
+ line-height:1.6!important;
+}
+/* Footer should behave like a website, not an enormous poster tagline. */
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto strong{
+ font-size:clamp(31px,4.2vw,54px)!important;
+ max-width:24ch!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a{
+ display:inline-flex!important;
+ align-items:center;gap:10px;
+ padding:6px 0!important;
+ text-decoration:none!important;
+ transition:opacity .18s ease!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a::after{
+ content:"↗";opacity:.66;font-size:12px;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a:hover{
+ opacity:.78;text-decoration:underline!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a:focus-visible{
+ outline:2px solid #a7d0c8!important;outline-offset:4px!important;
+}
+@media(max-width:1030px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide){
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-decision-intro,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-week-disclosure,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-ocean-explorer,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.session-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-detail-hub{
+  grid-column:1/-1!important;grid-row:auto!important;order:0!important;
+ }
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group.is-ready{
+  grid-column:1/-1!important;
+ }
+}
+@media(max-width:700px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide){gap:16px!important}
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group,
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group.is-ready{
+  grid-column:1/-1!important;min-height:0!important;
+ }
+ #forecastPage .faro-direction-facts{grid-template-columns:minmax(0,1fr)!important}
+ #forecastPage .faro-compass-legend{gap:7px!important;font-size:10px!important}
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto strong{
+  font-size:clamp(30px,9vw,44px)!important;
+ }
+}
+
 /*
  FARO | Editorial experience v2 | 02 Nov 2026
  Narrative: CHOOSE COAST -> READ -> DECIDE -> UNDERSTAND -> PREPARE -> LEARN.
