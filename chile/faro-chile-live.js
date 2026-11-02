@@ -432,8 +432,24 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
    return data;
   }
  };
- const [marine,weather]=await Promise.all([marineRequest(),fetchJSON(urls.weather,fetcher)]);
- return extract(config,spot,marine,weather,profiles,locale);
+ const weatherRequest=async()=>{
+  try{return await fetchJSON(urls.weather,fetcher)}
+  catch(error){
+   if(![502,503,504].includes(error.status))throw error;
+   // The GFS global-weather endpoint is separately documented by
+   // Open-Meteo and supports the same hourly wind / hazard schema.
+   // It provides an independent forecast model when Best Match fails.
+   const gfs=new URL(urls.weather);
+   gfs.pathname="/v1/gfs";
+   const data=await fetchJSON(gfs.toString(),fetcher);
+   data.weatherModelFallback="gfs";
+   return data;
+  }
+ };
+ const [marine,weather]=await Promise.all([marineRequest(),weatherRequest()]);
+ const parsed=extract(config,spot,marine,weather,profiles,locale);
+ parsed.model.weatherModelFallback=weather.weatherModelFallback||null;
+ return parsed;
 }
 root.FaroChileLive=Object.freeze({buildUrls,fetchSpot,extract,screenRisk,slotRisk,statusUV,vibe,boardFit,cardinal,formatDay,daylight,mean,circleMean,wallClock});
 })(typeof globalThis!=="undefined"?globalThis:this);
