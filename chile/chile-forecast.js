@@ -604,7 +604,7 @@ function renderLead(day,session){
  lead.className="faro-forecast-lead "+(session?scoreTone(session.score):"is-unavailable");
  lead.classList.toggle("is-restricted",restricted());
  txt("faroLeadLocation",(spot()?.shortName||spot()?.name||"—")+" · "+dateLabel(day?.date));
- const selected=Boolean(session),unrestricted=selected&&!restricted();
+ const selected=Boolean(session);
  const seaHeight=selected?num(session.totalWaveHeightM)+" m":"—";
  txt("faroLeadScore",selected?num(session.score):"—");
  txt("faroLeadGrade",selected?restricted()?tr("Solo modelo","Model only"):experimentalLabel(session):tr("No evaluado","Unavailable"));
@@ -620,17 +620,20 @@ function renderLead(day,session){
      "Reported access restriction · score is not permission to surf"):
   tr("Índice experimental · guías locales y modelos, sin validación de rompiente",
      "Experimental index · guides and models, without breaking-surf validation"));
+ if(restricted()){
+  txt("faroLeadHeadline",tr("Ventanas: el mar se modela, el acceso no está habilitado",
+   "Ventanas: modelled ocean, access not cleared"));
+  txt("faroLeadDeck",selected?
+   tr("Existe potencial oceánico estimado, pero la restricción reportada impide recomendar la sesión.",
+      "Modelled offshore potential is available, but the reported restriction prevents a session recommendation."):
+   tr("Restricción recreativa reportada: no se ha verificado el levantamiento. No hay franja evaluable.",
+      "Reported recreational restriction: no lifting has been verified. No eligible window available."));
+  return;
+ }
  if(!selected){
   txt("faroLeadHeadline",tr("Sin una ventana evaluable por ahora","No eligible window right now"));
   txt("faroLeadDeck",tr("Revisa el pronóstico completo, la disponibilidad de luz y los avisos oficiales.",
    "Check the full outlook, daylight and official notices."));
-  return;
- }
- if(restricted()){
-  txt("faroLeadHeadline",tr("Ventanas: el mar se modela, el acceso no está habilitado",
-   "Ventanas: modelled ocean, access not cleared"));
-  txt("faroLeadDeck",tr("Existe potencial oceánico estimado, pero la restricción reportada impide recomendar la sesión.",
-   "Modelled offshore potential is available, but the reported restriction prevents a session recommendation."));
   return;
  }
  const name=spot()?.shortName||spot()?.name||tr("este spot","this break");
