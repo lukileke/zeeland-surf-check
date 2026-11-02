@@ -1,0 +1,149 @@
+/* FARO 2026-11-02: one authentic beacon and one global score palette.
+   This loads LAST; legacy visual contracts stay for reversible rollback. */
+#forecastPage>.faro-forecast-lead .faro-lead-beacon{z-index:0!important}
+#forecastPage .faro-lead-main{position:relative;z-index:2}
+#forecastPage .faro-lead-signature{
+ position:absolute;right:clamp(0px,1vw,18px);top:-5px;
+ width:56px;height:56px;display:grid;place-items:center;
+ pointer-events:none;z-index:4
+}
+#forecastPage .faro-lead-signature .faro-beacon-symbol{
+ display:block;position:static!important;width:50px!important;height:50px!important;
+ opacity:1!important;transform:none!important;
+ filter:none!important;overflow:visible
+}
+#forecastPage .faro-lead-signature .faro-beacon-core{fill:#ffda71}
+#forecastPage .faro-lead-signature .faro-beacon-ring{fill:#d4ece5}
+html[data-theme="light"] #forecastPage .faro-lead-signature .faro-beacon-ring{fill:#153b3f}
+#forecastPage .faro-lead-beacon .faro-beacon-light{
+ right:8%!important;top:40%!important;width:57%!important;height:57%!important;
+ background:radial-gradient(ellipse at 70% 50%,
+  rgba(99,181,174,.13),rgba(116,178,171,.06) 35%,transparent 75%)!important;
+ clip-path:none!important;filter:blur(28px)!important;
+ transform:none!important;opacity:.58!important
+}
+html[data-theme="light"] #forecastPage .faro-lead-beacon .faro-beacon-light{
+ background:radial-gradient(ellipse at 65% 40%,
+  rgba(102,170,161,.12),rgba(102,170,161,.035) 38%,transparent 75%)!important
+}
+/* Score: EXACT 5 canonical FARO inks regardless of page theme/background. */
+html #forecastPage>.faro-forecast-lead #faroLeadScore{
+ color:var(--brand-score-ink,var(--fg))!important;
+}
+html #forecastPage>.faro-forecast-lead.is-unavailable #faroLeadScore{
+ color:var(--faro-quiet)!important
+}
+html #forecastPage>.faro-forecast-lead .faro-lead-grade{
+ border-color:color-mix(in srgb,var(--brand-score-ink,var(--fg)) 48%,transparent)!important;
+}
+html #forecastPage>.faro-forecast-lead.is-restricted .faro-lead-grade{
+ color:var(--fg)!important
+}
+#forecastPage .faro-lead-signal{
+ justify-content:space-between!important;gap:clamp(12px,1.3vw,19px)!important;
+ padding:clamp(18px,2.1vw,27px)!important;
+ min-height:0!important;align-self:stretch
+}
+#forecastPage .faro-lead-score-row{
+ align-items:center!important;justify-content:flex-start!important;gap:4px 9px!important
+}
+#forecastPage .faro-lead-grade{margin-left:auto!important}
+#forecastPage .faro-lead-metrics{min-width:0}
+#forecastPage .faro-lead-metrics>div{min-width:0}
+#forecastPage .faro-lead-fineprint{
+ margin-top:0!important;max-width:35ch
+}
+#forecastPage .faro-lead-qualification{max-width:53ch}
+/* iPhone-specific structure: always keep score, window and metrics in-view,
+   never overlap O, and never stretch the score into a separate giant tile. */
+@media(max-width:710px){
+ #forecastPage>.faro-forecast-lead{
+  display:flex!important;flex-direction:column!important;
+  align-items:stretch!important;gap:16px!important;
+  padding:clamp(17px,4.6vw,23px)!important;
+  min-width:0!important;
+ }
+ #forecastPage .faro-lead-main{
+  width:100%!important;min-width:0!important;
+  padding-right:0!important;gap:9px!important
+ }
+ #forecastPage .faro-lead-kicker{
+  max-width:calc(100% - 68px)!important;font-size:9px!important
+ }
+ #forecastPage .faro-lead-signature{
+  width:47px;height:47px;right:0;top:-2px
+ }
+ #forecastPage .faro-lead-signature .faro-beacon-symbol{
+  width:43px!important;height:43px!important
+ }
+ #forecastPage #faroLeadHeadline{
+  max-width:100%!important;overflow-wrap:break-word!important;
+  font-size:clamp(25px,6.4vw,37px)!important;
+  line-height:1.11!important;letter-spacing:-.046em!important;
+ }
+ #forecastPage #faroLeadDeck{
+  max-width:100%!important;font-size:12px!important;line-height:1.52!important
+ }
+ #forecastPage .faro-lead-actions{margin-top:3px!important;max-width:100%}
+ #forecastPage .faro-lead-actions button{
+  min-width:0!important;min-height:40px!important;
+  padding:8px 11px!important
+ }
+ #forecastPage .faro-lead-qualification{font-size:9px!important;line-height:1.35!important}
+ #forecastPage .faro-lead-signal{
+  width:100%!important;box-sizing:border-box!important;
+  align-self:stretch!important;
+  padding:13px 0 0!important;gap:7px 13px!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  background:transparent!important;border:0!important;border-top:1px solid rgba(203,230,224,.3)!important;
+  border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important
+ }
+ html[data-theme="light"] #forecastPage .faro-lead-signal{
+  background:transparent!important;border:0!important;
+  border-top:1px solid rgba(23,85,91,.19)!important;
+  box-shadow:none!important
+ }
+ #forecastPage .faro-lead-signal-top{grid-column:1/-1!important;grid-row:1!important}
+ #forecastPage .faro-lead-score-row{
+  grid-column:1!important;grid-row:2!important;display:flex!important;flex-wrap:wrap!important;
+  align-content:center!important;gap:2px 5px!important
+ }
+ #forecastPage #faroLeadScore{font-size:clamp(38px,10vw,54px)!important}
+ #forecastPage .faro-lead-grade{
+  margin-left:0!important;font-size:9px!important;
+  padding:3px 5px!important
+ }
+ #forecastPage .faro-lead-best{
+  grid-column:2!important;grid-row:2!important;
+  display:flex!important;align-items:flex-start!important;
+  justify-content:center!important;gap:6px!important
+ }
+ #forecastPage .faro-lead-best strong{
+  font-size:clamp(15px,4vw,19px)!important;
+  white-space:normal!important;overflow-wrap:anywhere!important
+ }
+ #forecastPage .faro-lead-metrics{grid-column:1/-1!important;grid-row:3!important}
+ #forecastPage .faro-lead-metrics strong{
+  white-space:normal!important;overflow-wrap:anywhere!important;
+  font-size:clamp(11px,3vw,14px)!important
+ }
+ #forecastPage .faro-lead-fineprint{grid-column:1/-1!important;grid-row:4!important;max-width:100%}
+ #forecastPage>.picker-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  max-width:100%!important
+ }
+ #forecastPage .faro-spot-choice-text{font-size:clamp(12px,3.5vw,16px)!important}
+}
+@media(max-width:385px){
+ #forecastPage .faro-lead-actions button{font-size:10px!important;padding:8px!important}
+ #forecastPage .faro-lead-metrics{gap:5px!important}
+ #forecastPage .faro-lead-metrics small{font-size:7px!important}
+ #forecastPage .faro-lead-signature .faro-beacon-symbol{
+  width:38px!important;height:38px!important
+ }
+}
+/* no infinite motion, reduced motion keeps all content identical */
+@media(prefers-reduced-motion:reduce){
+ #forecastPage .faro-lead-signature *,
+ #forecastPage .faro-lead-beacon *{animation:none!important;transition:none!important}
+}
