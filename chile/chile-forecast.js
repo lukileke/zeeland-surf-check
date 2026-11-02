@@ -818,38 +818,34 @@ function basicTable(rows){
  for(const [name,value]of rows){const row=el("tr");row.append(el("td",name),el("td",value));t.append(row)}
  return t;
 }
+/* The map already visualises bearing vectors at the actual break.
+ * No oversized duplicate compass diagram: the optional technical drawer
+ * exists to explain line colours, origin angles and limits clearly.
+ */
 function compass(s){
  const box=$("waveinsight");box.replaceChildren();
  if(!s){box.append(el("p",tr("Sin dirección disponible.","Direction unavailable."),"muted"));return}
- const xmlns="http://www.w3.org/2000/svg",svg=document.createElementNS(xmlns,"svg");
- svg.setAttribute("viewBox","0 0 200 200");svg.setAttribute("class","chile-compass-svg");
- svg.setAttribute("role","img");svg.setAttribute("aria-label",tr("Brújula de direcciones del swell y viento","Swell and wind direction compass"));
- const shape=(tag,attrs,value)=>{
-  const x=document.createElementNS(xmlns,tag);for(const [key,val]of Object.entries(attrs))x.setAttribute(key,String(val));
-  if(value)x.textContent=value;svg.append(x);
- };
- shape("circle",{cx:100,cy:100,r:75,fill:"none",stroke:"currentColor","stroke-opacity":".38","stroke-width":"1.5"});
- for(const [letter,deg]of [["N",0],["E",90],["S",180],["W",270]]){
-  const a=deg*Math.PI/180;
-  shape("text",{x:100+Math.sin(a)*90,y:104-Math.cos(a)*90,"text-anchor":"middle",fill:"currentColor","font-size":"12","font-weight":"800"},letter);
+ const grid=el("div",null,"faro-direction-facts");
+ for(const [kind,name,value,detail] of [
+   ["swell",tr("Swell · azul","Swell · blue"),s.swellDirection,
+    tr("De dónde llega el oleaje oceánico.","Where offshore swell comes from.")],
+   ["wind",tr("Viento · ocre","Wind · ochre"),s.windDirection,
+    tr("De dónde sopla el viento.","Where the wind blows from.")]
+  ]){
+  const card=el("div",null,"faro-direction-fact faro-direction-fact--"+kind);
+  const header=el("span",null,"faro-direction-fact-label");
+  header.append(el("i",null,"faro-direction-dot"),el("strong",name));
+  card.append(header,el("b",ok(value)?num(value,0)+"°":"—"),
+   el("small",detail));
+  grid.append(card);
  }
- function arrow(from,color,width){
-  if(!ok(from))return;
-  const a=from*Math.PI/180,ux=Math.sin(a),uy=-Math.cos(a);
-  const tail=[100+ux*60,100+uy*60],tip=[100-ux*9,100-uy*9];
-  shape("line",{x1:tail[0],y1:tail[1],x2:tip[0],y2:tip[1],stroke:color,"stroke-width":width,"stroke-linecap":"round"});
-  const left=[tip[0]+ux*10+uy*6,tip[1]+uy*10-ux*6],right=[tip[0]+ux*10-uy*6,tip[1]+uy*10+ux*6];
-  shape("polygon",{points:[tip,left,right].map(p=>p.join(",")).join(" "),fill:color});
- }
- arrow(s.swellDirection,"#4d9cc1",5);arrow(s.windDirection,"#d9ba6f",3);
- shape("circle",{cx:100,cy:100,r:3,fill:"currentColor"});
- const wrap=el("div",null,"chile-compass-panel");wrap.append(svg);
- const facts=el("div",null,"chile-compass-details");
- for(const [label,v,unit]of [[tr("Swell · DESDE","Swell · FROM"),s.swellDirection,"°"],[tr("Viento · DESDE","Wind · FROM"),s.windDirection,"°"],[tr("Período","Period"),s.swellPeriodS," s"]]){
-  const row=el("p",null,"chile-compass-fact");row.append(el("small",label),el("strong",num(v,0)+unit));facts.append(row);
- }
- wrap.append(facts);box.append(wrap);
- box.append(el("p",tr("Las flechas indican desplazamiento; los números muestran DE DÓNDE vienen. No predice refracción ni dirección de la ola al romper.","Arrows show travel; the numbers show FROM bearings. Local refraction and breaking angle are not modelled."),"chile-compass-note"));
+ box.append(grid);
+ const period=el("p",null,"faro-direction-period");
+ period.textContent=tr("Período swell: ","Swell period: ")+num(s.swellPeriodS)+" s";
+ box.append(period,el("p",tr(
+  "Los grados indican DE DÓNDE vienen swell y viento. Las flechas en el mapa muestran hacia dónde viajan. No se modela la refracción local ni el ángulo de rompiente.",
+  "Bearings indicate WHERE swell and wind come FROM. Arrows on the map show their direction of travel. Local refraction and breaking angle are not modelled."
+ ),"chile-compass-note"));
 }
 function wetsuit(s){
  if(!ok(s?.waterTemperatureC))return tr("Consultar temperatura real","Check observed water temperature");
