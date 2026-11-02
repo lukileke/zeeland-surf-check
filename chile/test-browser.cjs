@@ -148,6 +148,45 @@ function fixture(){
     'Brand lead should be concise, not another giant Daily Take: '+JSON.stringify(brand));
    if(width>=1120)assert.equal(brand.grid,2,'Desktop hero splits editorial read and model signal');
    if(width<=430)assert.equal(brand.grid,1,'Mobile hero stacks into one coherent ocean moment');
+   if(width<=430){
+    const mobileHero=await page.evaluate(()=>{
+     const html=document.documentElement,previous=html.dataset.theme;
+     const lead=document.getElementById('faroForecastLead');
+     const panel=lead.querySelector('.faro-lead-signal');
+     const logo=lead.querySelector('.faro-lead-signature .faro-beacon-symbol');
+     const main=lead.querySelector('.faro-lead-main');
+     const data={};
+     for(const theme of ['light','dark']){
+      html.dataset.theme=theme;
+      const style=getComputedStyle(panel);
+      const panelBox=panel.getBoundingClientRect(),mainBox=main.getBoundingClientRect(),
+       symbolBox=logo.getBoundingClientRect(),heroBox=lead.getBoundingClientRect();
+      data[theme]={
+       display:getComputedStyle(lead).display,
+       backgroundImage:style.backgroundImage,
+       backgroundColor:style.backgroundColor,
+       radius:parseFloat(style.borderTopLeftRadius),
+       borderTop:parseFloat(style.borderTopWidth),
+       panelWidth:panelBox.width,heroWidth:heroBox.width,
+       withinHero:panelBox.left>=heroBox.left-1&&panelBox.right<=heroBox.right+1,
+       symbolWithinHero:symbolBox.left>=heroBox.left&&symbolBox.right<=heroBox.right+1,
+       symbolClearFromContent:symbolBox.bottom<=mainBox.top+75
+      };
+     }
+     html.dataset.theme=previous;
+     return data;
+    });
+    for(const theme of ['light','dark']){
+     const p=mobileHero[theme];
+     assert.equal(p.display,'flex','Mobile hero uses a single-column flex layout');
+     assert.equal(p.backgroundImage,'none','No inset rectangular glass score box on '+theme);
+     assert.equal(p.backgroundColor,'rgba(0, 0, 0, 0)','Transparent integrated score rail on '+theme);
+     assert.equal(p.radius,0,'Score rail is not a floating square tile on '+theme);
+     assert.ok(p.borderTop<=1,'One hairline divider, not full boxed border: '+JSON.stringify(p));
+     assert.ok(p.withinHero&&p.symbolWithinHero&&p.symbolClearFromContent,
+      'Mobile icon and instrument must fit the hero, without overlap: '+JSON.stringify(p));
+    }
+   }
    const modelScore=Number(brand.score);
    if(Number.isFinite(modelScore)){
     assert.ok(brand.wave.includes('m')&&brand.period.includes('s')&&brand.wind.includes('km/h'),
