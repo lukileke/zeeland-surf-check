@@ -113,9 +113,9 @@ function paintAccessNotice(){
  note.classList.add(info.severity);
  txt("faroAccessKicker",info.kicker);
  txt("faroAccessSeverity",info.type==="reported_restriction"?
-  tr("REPORTADA","REPORTED"):info.severityLabel);
+  tr("REPORTE FECHADO","DATED REPORT"):info.severityLabel);
  txt("faroAccessHeadline",info.type==="reported_restriction"?
-  info.spotName+" · "+tr("restricción recreativa","recreation restriction"):info.headline);
+  info.spotName+" · "+tr("restricción recreativa reportada","reported recreational restriction"):info.headline);
  txt("faroAccessSubline",info.subline);
  txt("faroAccessEvidence",info.subline);
  txt("ventanasNoticeText",info.detail);
@@ -598,6 +598,7 @@ function waveExplanation(s){
 function renderHourlyPreview(){
  const s=selection(),local=localRead(s);
  const read=window.FaroChileCoastalLens?.reading(s,local,state.lang);
+ txt("faroHourlySelectedTime",s?sessionTime(s):tr("Sin franja seleccionada","No selected window"));
  txt("faroHourlyHeadline",read?.headline||tr("Sin lectura de esta franja","No outlook for this window"));
  txt("faroHourlyExplanation",read?.explanation||tr("Selecciona un horario para comparar las condiciones.","Select a time window to compare conditions."));
 }
@@ -753,8 +754,9 @@ function renderLead(day,session){
 function renderPrepHints(s){
  const host=$("faroPrepHints");if(!host)return;
  host.replaceChildren();
- const add=(label,value,type)=>{
+ const add=(label,value,type,level)=>{
   const item=el("span",null,"faro-prep-chip faro-prep-chip--"+type);
+  if(level)item.dataset.level=level;
   item.append(el("small",label),el("strong",value));host.append(item);
  };
  const day=state.forecast?.days?.[state.day];
@@ -763,7 +765,7 @@ function renderPrepHints(s){
   add(tr("TRAJE ORIENTATIVO","SUGGESTED SUIT"),wetsuit(s),"wetsuit");
  if(ok(s?.waterTemperatureC))
   add(tr("AGUA MODELO","MODEL WATER"),num(s.waterTemperatureC)+" °C","water");
- if(uv)add("UV",num(day.uvMax,0)+" · "+uv.name,"uv");
+ if(uv)add("UV",num(day.uvMax,0)+" · "+uv.name,"uv",uv.category);
  if(!s||!sessionDecision(s).canRecommend){
   add(tr("SESIÓN","SESSION"),tr("Sin franja confirmada","No confirmed window"),"neutral");
  }
@@ -809,6 +811,10 @@ function slots(){
   if(decision.status==="caution")button.title=tr("Precaución: potencial oceánico "+num(s.score)+"/10, índice de sesión "+num(display)+"/10.",
   "Caution: offshore potential "+num(s.score)+"/10, session index "+num(display)+"/10.");
   button.append(el("small",dangerous?tr(" Riesgo modelo"," Model risk"):unknownRisk?tr(" Riesgo sin evaluar"," Risk unassessed"):Live.slotRisk(s,state.config)==="caution"?tr(" Precaución"," Caution"):eligible?(localRead(s)?.decision?.shortLabel||Live.vibe(s,state.lang).label):s.daylight.eligible?tr("Sin score","No score"):tr("Sin luz","No daylight"),"chile-slot-vibe"));
+  if(selection()?.hour===s.hour){
+   const choice=el("span",tr("ELEGIDA","SELECTED"),"faro-slot-selected-label");
+   button.append(choice);
+  }
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
  }
  session();
