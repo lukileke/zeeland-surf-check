@@ -676,7 +676,16 @@ function renderLead(day,session){
       "Reported recreational restriction: no lifting has been verified. No eligible window available."));
   return;
  }
- if(!selected){
+ if(!selected&&state.forecast?.hazard?.level==="danger"){
+  lead.classList.add("has-model-danger");
+  txt("faroLeadHeadline",tr("Riesgo importante en el pronóstico","Significant model risk flagged"));
+  txt("faroLeadDeck",tr("FARO detecta posibles condiciones peligrosas en el horizonte del modelo. No hay franja recomendada; consulta avisos oficiales.",
+   "FARO flags potential hazards in the model horizon. No recommended session; check official warnings."));
+  txt("faroLeadStatus",tr("Riesgo modelado · avisos oficiales no sincronizados",
+   "Modelled risk · official warnings not automatically checked"));
+  return;
+ }
+  if(!selected){
   txt("faroLeadHeadline",tr("Sin una ventana evaluable por ahora","No eligible window right now"));
   txt("faroLeadDeck",tr("Revisa el pronóstico completo, la disponibilidad de luz y los avisos oficiales.",
    "Check the full outlook, daylight and official notices."));
