@@ -750,6 +750,24 @@ function renderLead(day,session){
   "FARO estimates "+seaHeight+" offshore swell, "+num(session.swellPeriodS)+" s and "+
    num(session.windKmh,0)+" km/h wind. Check the actual break before deciding."));
 }
+function renderPrepHints(s){
+ const host=$("faroPrepHints");if(!host)return;
+ host.replaceChildren();
+ const add=(label,value,type)=>{
+  const item=el("span",null,"faro-prep-chip faro-prep-chip--"+type);
+  item.append(el("small",label),el("strong",value));host.append(item);
+ };
+ const day=state.forecast?.days?.[state.day];
+ const uv=ok(day?.uvMax)?Live.statusUV(day.uvMax,state.lang):null;
+ if(s&&sessionDecision(s).canRecommend)
+  add(tr("TRAJE ORIENTATIVO","SUGGESTED SUIT"),wetsuit(s),"wetsuit");
+ if(ok(s?.waterTemperatureC))
+  add(tr("AGUA MODELO","MODEL WATER"),num(s.waterTemperatureC)+" °C","water");
+ if(uv)add("UV",num(day.uvMax,0)+" · "+uv.name,"uv");
+ if(!s||!sessionDecision(s).canRecommend){
+  add(tr("SESIÓN","SESSION"),tr("Sin franja confirmada","No confirmed window"),"neutral");
+ }
+}
 function outlook(){
  const d=state.forecast?.days?.[state.day],s=selection();if(!d)return;
  $("dailyOverview").className="forecast-overview "+band(s?.score);
@@ -772,6 +790,7 @@ function outlook(){
  txt("dayUVLabel"," UV "+num(uvMax,0)+" · "+uv.name);
  txt("dayUVAdvice",uvMax===null?tr("Sin dato UV","UV unavailable"):uv.protection);
  $("dayUVBadge").dataset.uv=uv.category;
+ renderPrepHints(s);
  vibeUI(s);
  renderLead(d,s);
 }
@@ -948,7 +967,7 @@ async function refresh(force=false,onSettled=null){
    onSettled?.();return;
   }
   state.forecast=null;state.loadFailed=true;state.dataStale=false;
-  renderLead(null,null);
+  renderPrepHints(null);renderLead(null,null);
   txt("status",tr("SIN CONEXIÓN","OFFLINE"));
   txt("updated",tr("No se puede cargar el pronóstico: ","Cannot load forecast: ")+String(err.message||err));
   $("dayStripItems").replaceChildren(el("p",tr("No hay datos nuevos; no se muestran scores ficticios.","Fresh data unavailable; no fictional scores shown."),"muted"));
@@ -1114,14 +1133,16 @@ async function initialize(){
  for(const [name,id]of [["forecast","navForecast"],["best","navBest"],["board","navBoard"]])$(id).addEventListener("click",()=>tab(name));
  $("refreshForecast").addEventListener("click",()=>refresh(true));
  function selectOcean(view,scroll=false){
-  const isMap=view!=="compass";
-  $("coastMapExpand").open=isMap;
-  $("waveInsightExpand").open=!isMap;
-  $("openOceanMap").setAttribute("aria-pressed",String(isMap));
-  $("openOceanCompass").setAttribute("aria-pressed",String(!isMap));
+  // Map is always the primary coastal reading; optional compass detail
+  // opens below it instead of replacing it with an empty second chapter.
+  const isTechnical=view==="compass";
+  $("coastMapExpand").open=true;
+  $("waveInsightExpand").open=isTechnical;
+  $("openOceanMap").setAttribute("aria-pressed","true");
+  $("openOceanCompass").setAttribute("aria-pressed",String(isTechnical));
   if(scroll){
    const motion=window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
-   $("oceanToolsHeading").scrollIntoView({block:"start",behavior:motion});
+   (isTechnical?$("waveInsightExpand"):$("oceanToolsHeading")).scrollIntoView({block:"start",behavior:motion});
   }
  }
  function revealOcean(id){
@@ -1138,18 +1159,13 @@ async function initialize(){
   $("faroHourlyGoLens").addEventListener("click",()=>revealOcean("coastMapExpand"));
  $("openOceanMap").addEventListener("click",()=>revealOcean("coastMapExpand"));
  $("openOceanCompass").addEventListener("click",()=>revealOcean("waveInsightExpand"));
- // Programmatic navigation from the compact coastal route and spot DNA.
- for(const [id,type]of [["coastMapExpand","map"],["waveInsightExpand","compass"]]){
-  const target=$(id);
-  target.addEventListener("toggle",()=>{
-   if(target.open){
-    const counterpart=$(type==="map"?"waveInsightExpand":"coastMapExpand");
-    if(counterpart.open)counterpart.open=false;
-    $("openOceanMap").setAttribute("aria-pressed",String(type==="map"));
-    $("openOceanCompass").setAttribute("aria-pressed",String(type==="compass"));
-   }
-  });
- }
+ // A direction detail never replaces or closes the primary coastal map.
+ $("waveInsightExpand").addEventListener("toggle",()=>{
+  $("openOceanCompass").setAttribute("aria-pressed",String($("waveInsightExpand").open));
+ });
+ $("coastMapExpand").addEventListener("toggle",()=>{
+  if(!$("coastMapExpand").open)$("coastMapExpand").open=true;
+ });
  $("chileSpotSelect").addEventListener("change",event=>{
   const i=state.config.pilots.findIndex(x=>x.id===$("chileSpotSelect").value);
   if(i>=0){
@@ -1186,6 +1202,7 @@ async function initialize(){
     // Never present prior-spot conditions as if they belong to a newly
     // selected beach while a provider request is still in flight.
     $("dayStripItems").replaceChildren();
+    renderPrepHints(null);
     $("slots").replaceChildren();
     $("sessionAtGlance").replaceChildren();
     txt("sessionDetailSummary",tr("Cargando spot…","Loading break…"));
