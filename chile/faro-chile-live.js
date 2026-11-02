@@ -359,96 +359,110 @@ function boardFit(slot,board="mid",ability="intermediate",style="flow",locale="e
  return {tag:supported?"promising":"mixed",label:supported?tr("Posible buen ajuste","Potential fit"):tr("Ajuste condicionado","Conditional fit"),
   reason:messages[board]||messages.mid,confidence:"heuristic_unvalidated",safetyAssessed:false};
 }
+/* A 200 OK response full of null wave fields is NOT a valid forecast.
+ * Only accept at least two consecutive UTC hourly timestamps containing all
+ * physical inputs required by the downstream score and risk gate.
+ */
+function hasConsecutiveCoreRows(data,fields){
+ const h=data?.hourly,ts=h?.time;
+ if(!Array.isArray(ts)||ts.length<2)return false;
+ for(let i=1;i<ts.length;i++){
+  const t0=ts[i-1],t1=ts[i];
+  const adjacent=typeof t0==="number"&&typeof t1==="number"?
+   t1-t0===3600:Math.abs(Date.parse(t1)-Date.parse(t0))===3600000;
+  if(!adjacent)continue;
+  if(fields.every(name=>finite(h[name]?.[i])&&finite(h[name]?.[i-1])))return true;
+ }
+ return false;
+}
+function providerError(status,source,reason){
+ const e=Error(source+": "+reason);
+ e.status=status;e.source=source;
+ return e;
+}
 async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
  const urls=buildUrls(spot,config);
+ const marineFields=["wave_height","wave_direction","wave_period",
+  "swell_wave_height","swell_wave_direction","swell_wave_period"];
+ const weatherFields=["wind_speed_10m","wind_direction_10m",
+  "wind_gusts_10m","precipitation","weather_code"];
+ const readMarine=async(url)=>{
+  const d=await fetchJSON(url,fetcher);
+  if(!hasConsecutiveCoreRows(d,marineFields))
+   throw providerError(424,"marine","HTTP 200 sin dos horas de oleaje completas");
+  return d;
+ };
+ const readWeather=async(url)=>{
+  const d=await fetchJSON(url,fetcher);
+  if(!hasConsecutiveCoreRows(d,weatherFields))
+   throw providerError(424,"weather","HTTP 200 sin dos horas meteorológicas completas");
+  return d;
+ };
  const marineRequest=async()=>{
-  try{return await fetchJSON(urls.marine,fetcher)}
-  catch(error){
-   // A full optional-variable request may fail upstream with 502/503/504
-   // although the six essential wave fields remain available. Degrade
-   // to the CORE marine forecast before blanking all Chile scores.
-   // No values are imputed; optional fields remain unavailable.
-   if([502,503,504].includes(error.status)){
-    // The primary source may have a missing model run for this coordinate.
-    // Retry essential wave data alone; then explicitly try independent
-    // wave MODELS documented by Open-Meteo (GFS Wave and Meteo-France).
-    // Never substitute wind/sea variables or generate missing values.
-    const core=new URL(urls.marine);
-    const essentials=["wave_height","wave_direction","wave_period",
-     "swell_wave_height","swell_wave_direction","swell_wave_period"];
-    core.searchParams.set("hourly",essentials.join(","));
-    let lastError=error;
-    for(const model of [null,"ncep_gfswave025","meteofrance_wave"]){
-     const request=new URL(core);
-     if(model)request.searchParams.set("models",model);
-     try{
-      const minimal=await fetchJSON(request.toString(),fetcher);
-      minimal.optionalSwellFallback=true;
-      minimal.seaLevelFallback=true;
-      minimal.oceanCurrentFallback=true;
-      minimal.reducedMarineRequest=true;
-      minimal.waveModelFallback=model||"best_match_core";
-      return minimal;
-     }catch(e){
-      // A provider-wide 429 must not trigger more requests; neither should
-      // a client/network error that model selection cannot repair.
-      if(![400,502,503,504].includes(e.status))throw e;
-      lastError=e;
-     }
-    }
-    throw lastError;
+  let previous;
+  try{
+   return await readMarine(urls.marine);
+  }catch(e){
+   previous=e;
+   if(![400,424,502,503,504].includes(e.status)){
+    e.source="marine";throw e;
    }
-   // Unsupported optional fields may yield HTTP 400. Keep the existing
-   // stepwise fallback, preserving as many real partitions as possible.
-   if(error.status!==400||!config.modelProviders.optionalMarineVariables?.length)throw error;
-   const initial=new URL(urls.marine);
-   const optional=config.modelProviders.optionalMarineVariables;
-   if(optional.includes("ocean_current_velocity")){
-    // Additional fallback preserves partition forecasts when the current
-    // model field is rejected by providers/territories.
-    const withoutCurrent=new URL(initial);
-    const fields=withoutCurrent.searchParams.get("hourly").split(",")
-     .filter(v=>v!=="ocean_current_velocity"&&v!=="ocean_current_direction");
-    withoutCurrent.searchParams.set("hourly",fields.join(","));
-    try{
-     const data=await fetchJSON(withoutCurrent.toString(),fetcher);
-     data.oceanCurrentFallback=true;return data;
-    }catch(e){if(e.status!==400)throw e;}
-   }
-   if(optional.includes("sea_level_height_msl")){
-    const withoutSeaLevel=new URL(initial);
-    const fields=withoutSeaLevel.searchParams.get("hourly").split(",")
-     .filter(v=>v!=="sea_level_height_msl"&&v!=="ocean_current_velocity"&&v!=="ocean_current_direction");
-    withoutSeaLevel.searchParams.set("hourly",fields.join(","));
-    try{
-     const data=await fetchJSON(withoutSeaLevel.toString(),fetcher);
-     data.seaLevelFallback=true;data.oceanCurrentFallback=true;return data;
-    }catch(e){if(e.status!==400)throw e;}
-   }
-   const fallback=new URL(initial);
-   fallback.searchParams.set("hourly",config.modelProviders.requiredVariables.marine.join(","));
-   const data=await fetchJSON(fallback.toString(),fetcher);
-   data.optionalSwellFallback=true;data.seaLevelFallback=true;data.oceanCurrentFallback=true;
-   return data;
   }
+  // Reduced wave variables can succeed when unsupported partitions/current
+  // variables, overloaded model combinations, or Best Match nulls cannot.
+  const core=new URL(urls.marine);
+  core.searchParams.set("hourly",marineFields.join(","));
+  const options=[null,"ncep_gfswave025","ncep_gfswave016","meteofrance_wave"];
+  for(const model of options){
+   const u=new URL(core);
+   if(model)u.searchParams.set("models",model);
+   try{
+    const d=await readMarine(u.toString());
+    d.optionalSwellFallback=true;
+    d.seaLevelFallback=true;
+    d.oceanCurrentFallback=true;
+    d.reducedMarineRequest=true;
+    d.waveModelFallback=model||"best_match_core";
+    return d;
+   }catch(e){
+    previous=e;
+    if(![400,424,502,503,504].includes(e.status)){
+     e.source="marine";throw e;
+    }
+   }
+  }
+  previous.source="marine";throw previous;
  };
  const weatherRequest=async()=>{
-  try{return await fetchJSON(urls.weather,fetcher)}
-  catch(error){
-   if(![502,503,504].includes(error.status))throw error;
-   // The GFS global-weather endpoint is separately documented by
-   // Open-Meteo and supports the same hourly wind / hazard schema.
-   // It provides an independent forecast model when Best Match fails.
+  try{return await readWeather(urls.weather)}
+  catch(e){
+   if(![424,502,503,504].includes(e.status)){
+    e.source="weather";throw e;
+   }
    const gfs=new URL(urls.weather);
    gfs.pathname="/v1/gfs";
-   const data=await fetchJSON(gfs.toString(),fetcher);
-   data.weatherModelFallback="gfs";
-   return data;
+   try{
+    const d=await readWeather(gfs.toString());
+    d.weatherModelFallback="gfs";
+    return d;
+   }catch(error){error.source="weather";throw error}
   }
  };
- const [marine,weather]=await Promise.all([marineRequest(),weatherRequest()]);
- const parsed=extract(config,spot,marine,weather,profiles,locale);
- parsed.model.weatherModelFallback=weather.weatherModelFallback||null;
+ // Wait for both results so errors report the actual failed API rather
+ // than the fastest rejection. No fake values, averaging or extrapolation.
+ const results=await Promise.allSettled([marineRequest(),weatherRequest()]);
+ const [sea,met]=results;
+ if(sea.status!=="fulfilled"||met.status!=="fulfilled"){
+  const failures=[];
+  if(sea.status==="rejected")failures.push("oleaje: "+String(sea.reason?.message||sea.reason));
+  if(met.status==="rejected")failures.push("meteorología: "+String(met.reason?.message||met.reason));
+  const e=Error(failures.join(" · "));
+  e.status=sea.status==="rejected"?sea.reason?.status:met.reason?.status;
+  e.source=sea.status==="rejected"?"marine":"weather";
+  throw e;
+ }
+ const parsed=extract(config,spot,sea.value,met.value,profiles,locale);
+ parsed.model.weatherModelFallback=met.value.weatherModelFallback||null;
  return parsed;
 }
 root.FaroChileLive=Object.freeze({buildUrls,fetchSpot,extract,screenRisk,slotRisk,statusUV,vibe,boardFit,cardinal,formatDay,daylight,mean,circleMean,wallClock});
