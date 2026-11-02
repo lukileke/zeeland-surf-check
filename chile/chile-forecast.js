@@ -110,7 +110,8 @@ function sessionDecision(s,beach=spot()){
  return fn({
   potentialScore:s?.score,slotRisk:s?Live.slotRisk(s,state.config):"unknown",
   access:notice,modelCoverage:s?.modelComplete===true?"complete":"unknown",
-  daylight:s?.daylight?.eligible===true
+  daylight:s?.daylight?.eligible===true,
+  windSpeedRangeKmh:s?.windSpeedRangeKmh
  });
 }
 function bestRemaining(day,spotId=spot()?.id){
