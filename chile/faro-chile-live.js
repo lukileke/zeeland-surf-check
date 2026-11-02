@@ -66,9 +66,23 @@ function buildUrls(spot,config){
  return {marine:marine.toString(),weather:weather.toString()};
 }
 async function fetchJSON(url,fetcher){
- const res=await fetcher(url);
- if(!res||!res.ok){const error=Error("HTTP "+(res?.status||"unknown")+" from model provider");error.status=res?.status;throw error;}
- return res.json();
+ // An intermittent 502/503/504 must not blank the whole forecast on the
+ // first failed GET. Retry ONCE; never retry a 400 or a 429 rate limit.
+ for(let attempt=0;attempt<2;attempt++){
+  const res=await fetcher(url);
+  if(res?.ok)return res.json();
+  const status=res?.status||"unknown";
+  if(attempt===0&&[502,503,504].includes(status)){
+   const retryAfter=Number(res.headers?.get?.("Retry-After"));
+   const pause=Number.isFinite(retryAfter)&&retryAfter>0?
+    Math.min(2500,Math.max(900,retryAfter*1000)):1100;
+   await new Promise(resolve=>setTimeout(resolve,pause));
+   continue;
+  }
+  const error=Error("HTTP "+status+" from model provider");
+  error.status=res?.status;
+  throw error;
+ }
 }
 function hourMap(data,fields,zone){
  const timestamps=data?.hourly?.time||[];
