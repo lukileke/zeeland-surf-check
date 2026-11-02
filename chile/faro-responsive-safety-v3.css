@@ -98,10 +98,20 @@ html #forecastPage>.faro-forecast-lead.is-restricted .faro-lead-grade{
   background:transparent!important;border:0!important;border-top:1px solid rgba(203,230,224,.3)!important;
   border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important
  }
+ /* Theme-scoped selectors in v2 have higher specificity than a bare
+    #forecastPage selector; override BOTH themes here so iOS Safari does not
+    render a square glass tile instead of the integrated instrument rail. */
+ html:not([data-theme="light"]) #forecastPage .faro-lead-signal{
+  background:none!important;border:0!important;
+  border-top:1px solid rgba(203,230,224,.27)!important;
+  border-radius:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important
+ }
  html[data-theme="light"] #forecastPage .faro-lead-signal{
-  background:transparent!important;border:0!important;
+  background:none!important;border:0!important;
   border-top:1px solid rgba(23,85,91,.19)!important;
-  box-shadow:none!important
+  border-radius:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important
  }
  #forecastPage .faro-lead-signal-top{grid-column:1/-1!important;grid-row:1!important}
  #forecastPage .faro-lead-score-row{
