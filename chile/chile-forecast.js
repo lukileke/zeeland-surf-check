@@ -2,12 +2,46 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id),Live=window.FaroChileLive;
-const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,cameras:null,videoLab:null,coastMap:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,loadFailed:false,cache:new Map(),serial:0,page:0};
+const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,cameras:null,videoLab:null,coastMap:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,loadFailed:false,dataStale:false,cache:new Map(),serial:0,page:0};
 let coastSwitchCleanup=null,spotChooser=null;
 const tr=(es,en)=>state.lang==="es"?es:en,ok=x=>typeof x==="number"&&Number.isFinite(x),num=(x,d=1)=>ok(x)?x.toFixed(d):"—";
 const el=(tag,value,cls)=>{const x=document.createElement(tag);if(value!==undefined&&value!==null)x.textContent=String(value);if(cls)x.className=cls;return x};
 const txt=(id,value)=>{$(id).textContent=value},clear=id=>$(id).replaceChildren(),add=(x,...nodes)=>{x.append(...nodes);return x};
 const h=n=>String(n).padStart(2,"0");
+// Store ONLY valid provider-generated numerical forecasts, for temporary
+// outage recovery after an iPhone tab reload. Each cache is spot-specific,
+// clearly labelled OLD, and expires after four hours.
+const modelCachePrefix="faro-cl-last-valid-v1:";
+const maxModelAgeMs=4*60*60*1000;
+function saveLastValid(id,forecast){
+ if(!forecast?.model?.fetchedAt||!forecast?.days?.length)return;
+ try{localStorage.setItem(modelCachePrefix+id,JSON.stringify({id,forecast}))}catch(e){}
+}
+function readLastValid(id){
+ try{
+  const saved=JSON.parse(localStorage.getItem(modelCachePrefix+id)||"null");
+  const forecast=saved?.forecast,age=Date.now()-Date.parse(forecast?.model?.fetchedAt||"");
+  if(saved?.id!==id||!forecast?.days?.length||!forecast?.model?.coverage?.completeSlots||
+    !Number.isFinite(age)||age<0||age>maxModelAgeMs||
+    !forecast.days.some(d=>d.date>=now().date))return null;
+  return forecast;
+ }catch(e){return null}
+}
+function showStaleModel(){
+ if(!state.forecast)return;
+ const fetched=new Date(state.forecast.model.fetchedAt);
+ const stamp=new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{
+  timeZone:"America/Santiago",hour:"2-digit",minute:"2-digit"
+ }).format(fetched);
+ txt("status",tr("MODELO GUARDADO","SAVED MODEL"));
+ txt("updated",tr("Sin conexión con el proveedor · mostrando el último modelo válido de las ","Provider unavailable · last valid forecast from ")+stamp+
+  tr(" CL. No es una actualización en vivo."," CL. Not live data."));
+ txt("faroLeadSignalTitle",tr("ÍNDICE DE SESIÓN · MODELO GUARDADO","SESSION INDEX · SAVED MODEL"));
+ txt("faroLeadWindowLabel",tr("FRANJA DEL MODELO ANTERIOR","WINDOW FROM EARLIER MODEL"));
+ txt("faroLeadStatus",tr("Último modelo válido de las ","Last valid forecast from ")+stamp+
+  tr(" CL · información no actualizada. Verifica las condiciones reales y alertas oficiales.",
+   " CL · not current. Verify live conditions and official warnings."));
+}
 const band=n=>!ok(n)?"":n>=8?"brand-band-high":n>=6?"brand-band-regular":n>=4?"brand-band-mid":n>=2?"brand-band-low":"brand-band-verylow";
 // Exact score bands and colour classes from Zeeland. Spot-fit in Chile is
 // still experimental, so a quality label is NOT a validated beach observation.
@@ -887,18 +921,31 @@ function render(){
 async function refresh(force=false,onSettled=null){
  if(!state.config)return;
  const id=spot().id,serial=++state.serial,stored=state.cache.get(id);
- if(!force&&stored&&Date.now()-stored.at<15*60*1000){state.forecast=stored.forecast;render();onSettled?.();return}
- state.loadFailed=false;
+ if(!force&&stored&&Date.now()-stored.at<15*60*1000){
+  state.forecast=stored.forecast;state.loadFailed=false;state.dataStale=false;
+  render();onSettled?.();return
+ }
+ state.loadFailed=false;state.dataStale=false;
  txt("updated",tr("Consultando modelos para ","Loading model for ")+spot().name+"…");
  txt("status",tr("ACTUALIZANDO…","UPDATING…"));
  try{
   const data=await Live.fetchSpot(state.config,spot(),state.profiles,fetch,state.lang);
-  state.cache.set(id,{forecast:data,at:Date.now()});if(serial!==state.serial)return;
-  state.forecast=data;state.loadFailed=false;
+  if(serial!==state.serial)return;
+  state.cache.set(id,{forecast:data,at:Date.now()});
+  saveLastValid(id,data);
+  state.forecast=data;state.loadFailed=false;state.dataStale=false;
   txt("status",tr("MODELO · EXPERIMENTAL","EXPERIMENTAL MODEL"));render();onSettled?.();
  }catch(err){
   if(serial!==state.serial)return;
-  state.forecast=null;state.loadFailed=true;renderLead(null,null);
+  const previous=readLastValid(id);
+  if(previous){
+   state.forecast=previous;state.day=0;state.hour=null;
+   state.loadFailed=false;state.dataStale=true;
+   render();showStaleModel();
+   onSettled?.();return;
+  }
+  state.forecast=null;state.loadFailed=true;state.dataStale=false;
+  renderLead(null,null);
   txt("status",tr("SIN CONEXIÓN","OFFLINE"));
   txt("updated",tr("No se puede cargar el pronóstico: ","Cannot load forecast: ")+String(err.message||err));
   $("dayStripItems").replaceChildren(el("p",tr("No hay datos nuevos; no se muestran scores ficticios.","Fresh data unavailable; no fictional scores shown."),"muted"));
