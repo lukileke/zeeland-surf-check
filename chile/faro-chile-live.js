@@ -362,9 +362,22 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
  const marineRequest=async()=>{
   try{return await fetchJSON(urls.marine,fetcher)}
   catch(error){
-   // If the coastal sea-level field is unavailable, preserve swell
-   // partitions in the first fallback; only an additional 400 warrants
-   // dropping optional swell partitions. Never mask non-400 outages.
+   // A full optional-variable request may fail upstream with 502/503/504
+   // although the six essential wave fields remain available. Degrade
+   // to the CORE marine forecast before blanking all Chile scores.
+   // No values are imputed; optional fields remain unavailable.
+   if([502,503,504].includes(error.status)){
+    const core=new URL(urls.marine);
+    core.searchParams.set("hourly",config.modelProviders.requiredVariables.marine.join(","));
+    const minimal=await fetchJSON(core.toString(),fetcher);
+    minimal.optionalSwellFallback=true;
+    minimal.seaLevelFallback=true;
+    minimal.oceanCurrentFallback=true;
+    minimal.reducedMarineRequest=true;
+    return minimal;
+   }
+   // Unsupported optional fields may yield HTTP 400. Keep the existing
+   // stepwise fallback, preserving as many real partitions as possible.
    if(error.status!==400||!config.modelProviders.optionalMarineVariables?.length)throw error;
    const initial=new URL(urls.marine);
    const optional=config.modelProviders.optionalMarineVariables;
