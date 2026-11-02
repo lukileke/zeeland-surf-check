@@ -117,9 +117,29 @@ test('Chile notices share FARO Zeeland presentation with both real map renderers
  assert.match(code,/stopPropagation\(\)/);
  assert.match(css,/\.faro-map-access-tooltip\[hidden\]/);
 });
+test('FARO refresh replaces empty utility-first top with real-data branded lead',()=>{
+ assert.match(html,/id="faroForecastLead"/);
+ assert.match(html,/id="faroLeadScore"/);
+ assert.match(html,/id="faroLeadTime"/);
+ assert.match(html,/id="faroLeadRead"/);
+ assert.match(html,/id="faroLeadMap"/);
+ assert.match(html,/faro-brand-refresh-v1\.css\?v=1/);
+ const lead=html.indexOf('id="faroForecastLead"');
+ const tools=html.indexOf('class="forecast-toolbar"');
+ const detailed=html.indexOf('id="dailyOverview"');
+ const route=html.indexOf('class="faro-journey-nav"');
+ const week=html.indexOf('id="dayStrip"');
+ assert.ok(lead<tools&&tools<detailed&&detailed<route&&route<week,
+  'FARO tells an ocean story before utility controls, and moves week/nav below detailed read');
+ const controller=read('chile/chile-forecast.js');
+ assert.match(controller,/function renderLead\(day,session\)/);
+ assert.match(controller,/renderLead\(d,s\)/);
+ assert.match(controller,/faroLeadMap.*addEventListener/);
+ assert.match(controller,/is-restricted/);
+});
 test('asset version and shared Zeeland colours remain unaffected',()=>{
  assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=16"/);
  assert.match(html,/src="coast-map\.js\?v=20"/);
- assert.match(html,/src="chile-forecast\.js\?v=33"/);
+ assert.match(html,/src="chile-forecast\.js\?v=34"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=5/);
 });

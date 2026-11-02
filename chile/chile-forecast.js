@@ -598,6 +598,56 @@ function vibeUI(s){
   for(const t of meta?.tags||[])tags.append(el("span",t.label,"chile-signal-tag "+(t.state==="positive"?"good":t.state==="negative"?"bad":t.state==="mixed"?"mixed":"unknown")));
  }
 }
+function renderLead(day,session){
+ const lead=$("faroForecastLead");
+ if(!lead)return;
+ lead.className="faro-forecast-lead "+(session?scoreTone(session.score):"is-unavailable");
+ lead.classList.toggle("is-restricted",restricted());
+ txt("faroLeadLocation",(spot()?.shortName||spot()?.name||"—")+" · "+dateLabel(day?.date));
+ const selected=Boolean(session);
+ const seaHeight=selected?num(session.totalWaveHeightM)+" m":"—";
+ txt("faroLeadScore",selected?num(session.score):"—");
+ txt("faroLeadGrade",selected?restricted()?tr("Solo modelo","Model only"):experimentalLabel(session):tr("No evaluado","Unavailable"));
+ txt("faroLeadWindowLabel",restricted()?tr("FRANJA MODELADA · NO RECOMENDADA","MODELLED · NOT RECOMMENDED"):
+  state.hour!==null?tr("FRANJA SELECCIONADA","SELECTED WINDOW"):
+  tr("MEJOR FRANJA EVALUABLE","BEST ELIGIBLE WINDOW"));
+ txt("faroLeadTime",selected?sessionTime(session):"—");
+ txt("faroLeadWave",seaHeight);
+ txt("faroLeadPeriod",selected?num(session.swellPeriodS)+" s":"—");
+ txt("faroLeadWind",selected?num(session.windKmh,0)+" km/h":"—");
+ txt("faroLeadStatus",restricted()?
+  tr("Restricción de acceso reportada · el score no recomienda entrar al agua",
+     "Reported access restriction · score is not permission to surf"):
+  tr("Índice experimental · guías locales y modelos, sin validación de rompiente",
+     "Experimental index · guides and models, without breaking-surf validation"));
+ if(restricted()){
+  txt("faroLeadHeadline",tr("Ventanas: el mar se modela, el acceso no está habilitado",
+   "Ventanas: modelled ocean, access not cleared"));
+  txt("faroLeadDeck",selected?
+   tr("Existe potencial oceánico estimado, pero la restricción reportada impide recomendar la sesión.",
+      "Modelled offshore potential is available, but the reported restriction prevents a session recommendation."):
+   tr("Restricción recreativa reportada: no se ha verificado el levantamiento. No hay franja evaluable.",
+      "Reported recreational restriction: no lifting has been verified. No eligible window available."));
+  return;
+ }
+ if(!selected){
+  txt("faroLeadHeadline",tr("Sin una ventana evaluable por ahora","No eligible window right now"));
+  txt("faroLeadDeck",tr("Revisa el pronóstico completo, la disponibilidad de luz y los avisos oficiales.",
+   "Check the full outlook, daylight and official notices."));
+  return;
+ }
+ const name=spot()?.shortName||spot()?.name||tr("este spot","this break");
+ txt("faroLeadHeadline",session.score>=8?
+  tr("Potencial alto frente a "+name,"Strong model signal at "+name):
+  session.score>=6?tr("Una ventana para mirar en "+name,"A window worth checking at "+name):
+  tr("Lectura moderada frente a "+name,"A mixed ocean read at "+name));
+ const read=localRead(session)?.decision;
+ txt("faroLeadDeck",tr(
+  "FARO estima "+seaHeight+" de oleaje oceánico, "+num(session.swellPeriodS)+" s y viento de "+
+   num(session.windKmh,0)+" km/h. Comprueba la rompiente antes de decidir.",
+  "FARO estimates "+seaHeight+" offshore swell, "+num(session.swellPeriodS)+" s and "+
+   num(session.windKmh,0)+" km/h wind. Check the actual break before deciding."));
+}
 function outlook(){
  const d=state.forecast?.days?.[state.day],s=selection();if(!d)return;
  $("dailyOverview").className="forecast-overview "+band(s?.score);
@@ -621,6 +671,7 @@ function outlook(){
  txt("dayUVAdvice",uvMax===null?tr("Sin dato UV","UV unavailable"):uv.protection);
  $("dayUVBadge").dataset.uv=uv.category;
  vibeUI(s);
+ renderLead(d,s);
 }
 function slots(){
  const container=$("slots");container.replaceChildren();
@@ -777,7 +828,8 @@ async function refresh(force=false,onSettled=null){
   state.forecast=data;txt("status",tr("MODELO · EXPERIMENTAL","EXPERIMENTAL MODEL"));render();onSettled?.();
  }catch(err){
   if(serial!==state.serial)return;
-  state.forecast=null;txt("status",tr("SIN CONEXIÓN","OFFLINE"));
+  state.forecast=null;renderLead(null,null);
+  txt("status",tr("SIN CONEXIÓN","OFFLINE"));
   txt("updated",tr("No se puede cargar el pronóstico: ","Cannot load forecast: ")+String(err.message||err));
   $("dayStripItems").replaceChildren(el("p",tr("No hay datos nuevos; no se muestran scores ficticios.","Fresh data unavailable; no fictional scores shown."),"muted"));
   $("slots").replaceChildren();$("sessionAtGlance").replaceChildren();
@@ -954,7 +1006,15 @@ async function initialize(){
  function revealOcean(id){
   selectOcean(id==="waveInsightExpand"?"compass":"map",true);
  }
- $("faroHourlyGoLens").addEventListener("click",()=>revealOcean("coastMapExpand"));
+ const scrollToLeadTarget=id=>{
+  const target=$(id);
+  if(!target)return;
+  const motion=window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+  target.scrollIntoView({block:"start",behavior:motion});
+ };
+ $("faroLeadRead").addEventListener("click",()=>scrollToLeadTarget("dailyOverview"));
+ $("faroLeadMap").addEventListener("click",()=>selectOcean("map",true));
+  $("faroHourlyGoLens").addEventListener("click",()=>revealOcean("coastMapExpand"));
  $("openOceanMap").addEventListener("click",()=>revealOcean("coastMapExpand"));
  $("openOceanCompass").addEventListener("click",()=>revealOcean("waveInsightExpand"));
  // Programmatic navigation from the compact coastal route and spot DNA.
@@ -1014,7 +1074,7 @@ async function initialize(){
     $("chileWaveHow").replaceChildren();
     $("chileVibeExplained").replaceChildren();
     txt("chileDecisionHeadline",tr("Cargando este spot…","Loading this spot…"));
-    txt("chileDecisionDriver","");txt("bestTime","—");
+    txt("chileDecisionDriver","");txt("bestTime","—");renderLead(null,null);
     renderDNA();renderCameras();updateCoastMap();
     keepCoastPosition();
     void refresh(false,settleCoast);

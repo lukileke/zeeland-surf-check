@@ -77,6 +77,45 @@ function fixture(){
     throw Error('Chile forecast boot failed: '+JSON.stringify({debug,scriptErrors,original:String(err)}));
    }
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
+   const brand=await page.evaluate(()=>{
+    const $=id=>document.getElementById(id),rect=id=>$(id).getBoundingClientRect();
+    const b=rect('faroForecastLead'),u=document.querySelector('.forecast-toolbar').getBoundingClientRect(),
+     d=rect('dailyOverview'),m=rect('faroLeadScore'),
+     heroStyle=getComputedStyle($('faroForecastLead'));
+    return {top:b.top,bottom:b.bottom,width:b.width,height:b.height,
+     toolbar:u.top,daily:d.top,scoreX:m.x,
+     headline:$('faroLeadHeadline').textContent,score:$('faroLeadScore').textContent,
+     wave:$('faroLeadWave').textContent,period:$('faroLeadPeriod').textContent,
+     wind:$('faroLeadWind').textContent,
+     minWidth:document.documentElement.clientWidth,
+     scrollWidth:document.documentElement.scrollWidth,
+     grid:heroStyle.gridTemplateColumns.split(' ').length};
+   });
+   assert.ok(brand.bottom<=brand.toolbar+3,
+    'Ocean-led FARO hero must precede timestamps and controls: '+JSON.stringify(brand));
+   assert.ok(brand.daily>brand.top,
+    'Branded model read must precede detailed Daily Take');
+   assert.ok(brand.width>=width*.75&&brand.scrollWidth<=brand.minWidth+3,
+    'Responsive full-width FARO lead overflows: '+JSON.stringify(brand));
+   assert.ok(brand.height<(width<=430?560:550),
+    'Brand lead should be concise, not another giant Daily Take: '+JSON.stringify(brand));
+   if(width>=1120)assert.equal(brand.grid,2,'Desktop hero splits editorial read and model signal');
+   if(width<=430)assert.equal(brand.grid,1,'Mobile hero stacks into one coherent ocean moment');
+   const modelScore=Number(brand.score);
+   if(Number.isFinite(modelScore)){
+    assert.ok(brand.wave.includes('m')&&brand.period.includes('s')&&brand.wind.includes('km/h'),
+     'Actual model variables must power the ocean lead');
+   }
+   assert.equal(await page.locator('#faroLeadRead').count(),1);
+   assert.equal(await page.locator('#faroLeadMap').count(),1);
+   const rects=await page.evaluate(()=>({
+    daily:document.querySelector('.day-outlook-section').getBoundingClientRect().top,
+    route:document.querySelector('.faro-journey-nav').getBoundingClientRect().top,
+    week:document.getElementById('dayStrip').getBoundingClientRect().top
+   }));
+   assert.ok(rects.daily<rects.route&&rects.route<rects.week,
+    'Quick navigation and week comparison must follow the detailed Daily Take');
+
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
    // One FARO design system, rather than contradictory inherited layout
    // overrides. Mobile has no giant blank vertical bands; desktop does
@@ -198,6 +237,12 @@ function fixture(){
     'A poor slot must point to a grounded better upcoming forecast window');
    await page.locator('#slots button').nth(1).click();
    const chosen=page.locator('#slots button').nth(1);
+   assert.equal(await page.locator('#faroLeadWindowLabel').textContent(),
+    'FRANJA SELECCIONADA','Lead must reflect manually chosen window, not another best pick');
+   assert.equal(await page.locator('#faroLeadScore').textContent(),
+    await chosen.locator('.chile-slot-score').textContent(),
+    'Branded hero and detailed slot share exactly the same score');
+
    const hourlyScore=Number(await chosen.locator('.chile-slot-score').textContent());
    assert.equal(await chosen.locator('.chile-slot-quality').textContent(),qualityOf(hourlyScore),
     'Hourly score must show the same Zeeland quality caption');
@@ -350,6 +395,11 @@ function fixture(){
     await page.waitForFunction(()=>document.querySelector('#dayStripItems .day-chip .chile-chip-number')?.textContent?.includes('.'),
      {timeout:15000});
     assert.match(await page.locator('#chileDecisionHeadline').textContent(),/acceso|access/i);
+    assert.match(await page.locator('#faroLeadHeadline').textContent(),/acceso|access/i);
+    assert.match(await page.locator('#faroLeadStatus').textContent(),/restricci[oó]n|restriction/i);
+    assert.notEqual(await page.locator('#faroLeadGrade').textContent(),'Excelente',
+     'A restricted beach must not present an excellent session recommendation');
+
     await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
     await page.waitForFunction(()=>document.querySelector('#ventanasAccessNotice')?.hidden===true,{timeout:12000});
     await regionButton.evaluate(el=>el.disabled=false);
@@ -382,7 +432,13 @@ function fixture(){
    assert.equal(await page.locator('#chileCoastMap .faro-lens-quick-metrics').count(),1,
     'Coastal read must separate swell and wind measures from the map');
    assert.match(await page.locator('#faroHourlyPreview').textContent(),/COASTAL READ/);
-   await page.locator('#faroHourlyGoLens').click();
+   await page.locator('#faroLeadRead').click();
+   assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
+    'Hero CTA leads to the existing detailed scientific read');
+   await page.locator('#faroLeadMap').click();
+   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true,
+    'Hero map CTA opens the same trusted Coastal Lens, no new fake map');
+      await page.locator('#faroHourlyGoLens').click();
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
    assert.equal(await page.locator('#openOceanMap').isVisible(),true,
     'Coastal map must have a prominent primary action');
