@@ -3,8 +3,8 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const w=fs.readFileSync(path.join(__dirname,'..','zeeland-widget.js'),'utf8');
-test('v15 uses native offline illumination only for medium and large',()=>{
- assert.match(w,/Deep Ocean Editorial v15/);
+test('v16 uses quiet native marine illumination only for medium and large',()=>{
+ assert.match(w,/Quiet Tide Editorial v16/);
  assert.match(w,/function deepOceanCanvas\(kind\)/);
  assert.match(w,/kind==="small"\|\|String\(kind\)\.startsWith\("accessory"\)/);
  assert.match(w,/function applyCoastalAtmosphere\(kind\)/);
@@ -24,10 +24,15 @@ test('no pseudo animation; background can fall back safely',()=>{
  assert.ok(w.includes('catch(e){console.warn("FARO widget background fallback:'));
  assert.ok(w.includes('if(family==="small"||lockFamily)applyFallbackGradient();'));
  assert.ok(w.includes('widget.backgroundImage=image;'));
- assert.ok(w.includes('drawRescueRing(dc,cx,cy'));
- assert.ok(w.includes('dc.addPath(wave);dc.strokePath()'));
+ assert.ok(w.includes('function faroMixColour('));
+ assert.ok(!w.includes('drawRescueRing('));
+ assert.ok(!w.includes('dc.addPath(wave);dc.strokePath()'));
+ assert.ok(!w.includes('beam.move('));
  assert.ok(w.includes('applyFallbackGradient();'));
  assert.ok(!w.includes('widget.backgroundGradient=grad;\n}catch(e)'));
+ assert.ok(w.includes('Math.min(2,h-y)'));
+ assert.ok(w.includes('for(let i=0;i<72;i++)'));
+ assert.ok(w.includes('applyFallbackGradient();'));
  assert.ok(!w.includes('setInterval('));
  assert.ok(!w.includes('setTimeout('));
 });
