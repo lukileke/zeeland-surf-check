@@ -767,7 +767,7 @@ function renderPrepHints(s){
   add(tr("TRAJE ORIENTATIVO","SUGGESTED SUIT"),wetsuit(s),"wetsuit");
  if(ok(s?.waterTemperatureC))
   add(tr("AGUA MODELO","MODEL WATER"),num(s.waterTemperatureC)+" °C","water");
- if(uv)add("UV",num(day.uvMax,0)+" · "+uv.name,"uv",uv.category);
+ if(uv)add(tr("UV MÁX. DÍA","DAY MAX UV"),num(day.uvMax,0)+" · "+uv.name,"uv",uv.category);
  if(!s||!sessionDecision(s).canRecommend){
   add(tr("SESIÓN","SESSION"),tr("Sin franja confirmada","No confirmed window"),"neutral");
  }
