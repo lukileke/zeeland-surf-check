@@ -1,0 +1,58 @@
+name: FARO responsive quality gate
+on:
+  push:
+    branches: [main]
+    paths:
+      - "chile/**"
+      - "assets/**"
+      - "faro-*.css"
+      - "tests/**"
+      - "zeeland-widget.js"
+      - ".github/workflows/faro-responsive-qa.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    name: Static design and Scriptable contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify FARO layouts, automatic updates and widget model semantics
+        run: |
+          node --test \
+            tests/faro-editorial-hero-focus.test.cjs \
+            tests/faro-mobile-hero-regression.test.cjs \
+            tests/faro-widget-v17.test.cjs \
+            tests/faro-auto-update.test.cjs
+
+  browser:
+    name: WebKit + Chromium iPhone / desktop / light / dark
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install browser driver
+        run: npm install --no-save playwright@1.56.1
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium webkit
+      - name: Start isolated FARO web server
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/faro-http.log 2>&1 &
+          sleep 2
+      - name: Responsive smoke tests and screenshots
+        run: node tests/faro-responsive-browser.mjs
+      - name: Upload screenshots for art-direction review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: faro-responsive-screenshots
+          path: artifacts/faro-browser/
+          if-no-files-found: ignore
+          retention-days: 14
