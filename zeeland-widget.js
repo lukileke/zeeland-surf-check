@@ -1,4 +1,4 @@
-// FARO Widget · Ocean Light Editorial v18 · legible model-first widgets · Scriptable iOS
+// FARO Widget · Native Tide Editorial v19 · legible model-first widgets · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -135,60 +135,43 @@ function applyFallbackGradient(){
 if(family==="small"||lockFamily)applyFallbackGradient();
 widget.url=SITE;
 widget.setPadding(13,14,12,14);
-/* FARO Ocean Light v18 — a smooth *visible* background with no overlays.
- * v17's .001-alpha ellipses vanished when scaled onto real iPhone pixels.
- * Paint one spatially blended ocean gradient instead of visible rings,
- * ray geometry, a second logo, or an unobservable transparent halo.
- * Medium/large iOS widgets are static snapshots, not animated.
+/* FARO Native Tide v19 — stable, legible, native Scriptable background.
+ * An iPhone screenshot confirmed the v18 DrawContext background was BLACK.
+ * Scriptable natively supports widget.backgroundGradient, and a single
+ * native gradient is lower-memory and avoids rasterisation/blank images.
+ * IMPORTANT: do not set widget.backgroundImage anywhere in this script.
+ * Four carefully chosen stops: dark ocean → turquoise coastal light.
+ * No rings, giant FARO duplicate, glow layer, pseudo pulse or web APIs.
  */
-function faroMixColour(from,to,t){
- const amount=Math.max(0,Math.min(1,t));
- return "#"+[0,2,4].map(i=>{
-  const a=parseInt(from.slice(i,i+2),16),b=parseInt(to.slice(i,i+2),16);
-  return Math.round(a+(b-a)*amount).toString(16).padStart(2,"0");
- }).join("");
-}
-function deepOceanCanvas(kind){
- if(kind==="small"||String(kind).startsWith("accessory"))return null;
- const large=kind==="large"||kind==="extraLarge";
- const w=large?720:760,h=large?720:355;
- const dc=new DrawContext();dc.size=new Size(w,h);
- dc.opaque=true;dc.respectScreenScale=false;
+function nativeTideGradient(){
+ const gradient=new LinearGradient();
  const light=EFFECTIVE_THEME==="LIGHT";
- const upper=light?"F5FAF8":"0D272E";
- const lower=light?"E5F1ED":"15393E";
- const aqua=light?"8BCAC1":"439E97";
- const warm=light?"D8B66F":"D7B476";
- const step=large?12:10;
- // A 2D spatial colour wash, not circles of translucent paint.
- // Moving towards the right or deeper into the frame changes the tone
- // continuously, and remains visible behind the semitransparent wave tile.
- for(let y=0;y<h;y+=step){
-  const v=(y+step*.5)/h;
-  for(let x=0;x<w;x+=step){
-   const u=(x+step*.5)/w;
-   const base=faroMixColour(upper,lower,Math.max(0,Math.min(1,v)));
-   const dx=(u-.88)/.39,dy=(v-.60)/.61;
-   const ocean=Math.exp(-.5*(dx*dx+dy*dy));
-   const glow=(light?.19:.31)*ocean;
-   let colour=faroMixColour(base,aqua,glow);
-   const wx=(u-.16)/.23,wy=(v-.10)/.31;
-   const golden=Math.exp(-.5*(wx*wx+wy*wy));
-   colour=faroMixColour(colour,warm,(light?.023:.042)*golden);
-   dc.setFillColor(new Color(colour));
-   dc.fillRect(new Rect(x,y,Math.min(step,w-x),Math.min(step,h-y)));
-  }
- }
- return dc.getImage();
+ gradient.colors=light?[
+  new Color("#F1F9F6"),
+  new Color("#E2F2ED"),
+  new Color("#D2EAE3"),
+  new Color("#BEDFD7")
+ ]:[
+  new Color("#0E282E"),
+  new Color("#143A40"),
+  new Color("#1C5052"),
+  new Color("#286B69")
+ ];
+ gradient.locations=[0,.31,.68,1];
+ gradient.startPoint=new Point(0,0);
+ gradient.endPoint=new Point(1,.9);
+ return gradient;
 }
 function applyCoastalAtmosphere(kind){
+ // Only the single native gradient. No black DrawContext image override.
  try{
-  const image=deepOceanCanvas(kind);
-  if(image){widget.backgroundImage=image;return;}
+  widget.backgroundGradient=nativeTideGradient();
  }catch(error){
-  console.warn("FARO widget background fallback: "+String(error));
+  // Safe dark petrol background even if the native gradient API is absent.
+  widget.backgroundColor=EFFECTIVE_THEME==="LIGHT"?
+   new Color("#DFEFEB"):new Color("#153B40");
+  console.warn("FARO native gradient fallback: "+String(error));
  }
- applyFallbackGradient();
 }
 function label(parent,value,size=12,color=C.ink,weight="regular",limit=1){
  const t=parent.addText(String(value));
