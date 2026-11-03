@@ -1,0 +1,123 @@
+/*
+ * FARO Chile — responsive quality & interaction pass (03 Nov 2026).
+ * The mobile-first hero and desktop editorial layout already exist:
+ * do not re-introduce another grid system, content ordering or score palette.
+ *
+ * This layer only improves touch hit-areas, smaller-size legibility, focus,
+ * and narrow viewport overflow protection. All visual and model scores remain
+ * under the final faro-score-colour-lock-v1.css contract.
+ */
+
+/* Modern mobile browsers may expose very narrow viewports with larger text
+ * settings. Keep layout boxes able to shrink without text spilling sideways. */
+html body main #forecastPage:not(.hide) > .faro-context-dock,
+html body main #forecastPage:not(.hide) > .faro-forecast-lead,
+html body main #forecastPage:not(.hide) > #dayview:not(.hide),
+html body main #forecastPage:not(.hide) > .faro-footer-bridge {
+ min-width:0!important;
+ max-width:100%!important;
+ box-sizing:border-box!important;
+}
+
+/* Shared feedback states: tap targets still need a visible keyboard focus
+ * (also helps external keyboard users on iPad and desktop). */
+#forecastPage :is(
+ .faro-country-options>a,.faro-spot-choice-trigger,#refreshForecast,
+ #faroLeadRead,#openOceanCompass,.faro-journey-nav button,
+ .faro-hourly-preview>button,.slots>button,
+ .faro-footer-bridge-link
+):focus-visible {
+ outline:2px solid var(--faro-selection,#75beb9)!important;
+ outline-offset:3px!important;
+}
+#forecastPage :is(
+ .faro-country-options>a,.faro-spot-choice-trigger,#refreshForecast,
+ #faroLeadRead,#openOceanCompass,.faro-journey-nav button,
+ .faro-hourly-preview>button,.slots>button
+) {
+ touch-action:manipulation;
+}
+
+/* The desktop two-column reading must not revive its predecessor's
+ * max-height stretching. The selected time interpretation follows its
+ * time grid, while the model input card may naturally be taller. */
+@media(min-width:1120px) {
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section {
+  justify-content:flex-start!important;
+  height:auto!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview{
+  margin-top:14px!important;
+ }
+}
+
+/* iPhone-sized displays: minimum 44pt (Apple touch-target convention)
+ * on the actual interactive buttons, not just their outer cards. */
+@media(max-width:710px) {
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-action-main,
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-country-options>a,
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice-trigger,
+ html body main #forecastPage:not(.hide)>.faro-context-dock #refreshForecast,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide) #openOceanCompass,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide) #faroHourlyPreview>button,
+ html body main #forecastPage:not(.hide)>.faro-footer-bridge .faro-footer-bridge-link{
+  min-height:44px!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice-trigger {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  overflow-wrap:anywhere!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-country-options {
+  min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock #updated {
+  min-width:0!important;
+  overflow-wrap:anywhere!important;
+  line-height:1.5!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-qualification {
+  font-size:10px!important;
+  line-height:1.5!important;
+  max-width:46ch!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-best small,
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-signal-top {
+  font-size:10px!important;
+  line-height:1.5!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots{
+  min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots>button {
+  min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-footer-bridge{
+  gap:14px!important;
+ }
+}
+
+/* At iPhone SE-like widths, preserve the 2-column score/window band while
+ * allowing its descriptions to wrap instead of forcing horizontal scroll. */
+@media(max-width:375px) {
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-best strong{
+  overflow-wrap:anywhere!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-score-row{
+  min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading{
+  gap:6px!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-country-options>a{
+  padding-inline:7px!important;
+  font-size:10px!important;
+ }
+}
+
+@media(prefers-reduced-motion:reduce) {
+ #forecastPage :is(.slots>button,.faro-lead-action-main,.faro-footer-bridge-link){
+  transition:none!important;
+ }
+}
