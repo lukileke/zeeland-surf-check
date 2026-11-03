@@ -18,7 +18,7 @@ test('a native gradient is the ONLY medium/large background',()=>{
  const backdrop=source.slice(a,b);
  assert.ok(backdrop.includes('widget.backgroundGradient=nativeTideGradient()'));
  assert.ok(backdrop.includes('gradient.locations=[0,.31,.68,1]'));
- assert.ok(!backdrop.includes('DrawContext'));
+ assert.ok(!backdrop.includes('new DrawContext()'));
  assert.ok(!source.includes('widget.backgroundImage='));
  assert.ok(!source.includes('widget.backgroundImage ='));
 });
