@@ -238,6 +238,7 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyGoLens{
 
 /* A true site footer, not a second cinematic hero below the actual hero.
  * No duplicative bridge or a second oversized manifesto panel. */
+html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2,
 html body main>footer.chile-footer.faro-footer-v2{
  display:grid!important;
  grid-template-columns:minmax(0,1.1fr) minmax(270px,.9fr)!important;
@@ -372,4 +373,15 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
  html body main #forecastPage:not(.hide) #faroHourlySignals>.faro-hourly-signal:last-child{
   grid-column:1/-1!important;
  }
+}
+
+/* The prior finish pass used :has(...), which outranks a normal footer
+ * selector even when that selector is loaded later. Match its specificity
+ * explicitly or the old rounded promo-card appearance would survive. */
+html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
+ border:0!important;
+ border-top:1px solid rgba(174,223,213,.27)!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ margin-top:clamp(28px,3.5vw,45px)!important;
 }
