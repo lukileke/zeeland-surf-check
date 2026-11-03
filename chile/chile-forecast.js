@@ -601,6 +601,22 @@ function renderHourlyPreview(){
  txt("faroHourlySelectedTime",s?sessionTime(s):tr("Sin franja seleccionada","No selected window"));
  txt("faroHourlyHeadline",read?.headline||tr("Sin lectura de esta franja","No outlook for this window"));
  txt("faroHourlyExplanation",read?.explanation||tr("Selecciona un horario para comparar las condiciones.","Select a time window to compare conditions."));
+ // Measured model quantities describe THIS selected two-hour slot, not a
+ // different day, the full-day UV maximum or an observed breaking wave.
+ const signals=$("faroHourlySignals");
+ signals.replaceChildren();
+ if(s?.modelComplete){
+  const facts=[
+   [tr("OLEAJE OCEÁNICO","OFFSHORE SWELL"),ok(s.totalWaveHeightM)?num(s.totalWaveHeightM)+" m":"—"],
+   [tr("PERÍODO","PERIOD"),ok(s.swellPeriodS)?num(s.swellPeriodS)+" s":"—"],
+   [tr("VIENTO MODELO","MODEL WIND"),ok(s.windKmh)?num(s.windKmh,0)+" km/h":"—"]
+  ];
+  for(const [label,value] of facts){
+   const fact=el("span",null,"faro-hourly-signal");
+   fact.append(el("small",label),el("strong",value));
+   signals.append(fact);
+  }
+ }
 }
 function updateCoastMap(){
  const s=selection();
