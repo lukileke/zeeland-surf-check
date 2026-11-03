@@ -3,8 +3,8 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const w=fs.readFileSync(path.join(__dirname,'..','zeeland-widget.js'),'utf8');
-test('v17 uses coastal beacon illumination only for medium and large',()=>{
- assert.match(w,/Coastal Beacon Editorial v17/);
+test('v18 uses spatial ocean light only for medium and large',()=>{
+ assert.match(w,/Ocean Light Editorial v18/);
  assert.match(w,/function deepOceanCanvas\(kind\)/);
  assert.match(w,/kind==="small"\|\|String\(kind\)\.startsWith\("accessory"\)/);
  assert.match(w,/function applyCoastalAtmosphere\(kind\)/);
@@ -22,8 +22,8 @@ test('preserves canonical numerical score inks, hazards, logo and engine',()=>{
 test('no pseudo animation; background can fall back safely',()=>{
  assert.ok(w.includes('new DrawContext()'));
  assert.ok(w.includes('console.warn("FARO widget background fallback:'));
- assert.ok(w.includes('Math.min(2,h-y)'));
- assert.ok(w.includes('for(let i=0;i<78;i++)'));
+ assert.ok(w.includes('Math.min(step,h-y)'));
+ assert.ok(w.includes('const step=large?12:10'));
  assert.ok(w.includes('applyFallbackGradient();'));
  assert.ok(!w.includes('setInterval('));
  assert.ok(!w.includes('setTimeout('));
