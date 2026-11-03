@@ -8,6 +8,7 @@ const get=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const html=get('chile/index.html');
 const js=get('chile/chile-forecast.js');
 const css=get('chile/faro-finish-pass-v1.css');
+const balance=get('chile/faro-decision-balance-v1.css');
 const config=JSON.parse(get('chile/valparaiso-live.config.json'));
 const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
 
@@ -50,18 +51,22 @@ test('prep tags use real selected session data, separate from surf-quality score
  assert.ok(css.includes('data-level="very-high"'));
 });
 
-test('forecast closes continuously into the actual website footer',()=>{
- assert.ok(html.includes('class="faro-footer-bridge"'));
- assert.ok(html.includes('class="faro-footer-bridge-link"'));
- assert.ok(html.indexOf('class="faro-footer-bridge"')<html.indexOf('<section id="bestPage"'));
- assert.ok(css.includes('main:has(#forecastPage:not(.hide))>footer'));
- assert.ok(css.includes('border-radius:0 0 22px 22px!important'));
- assert.ok(css.includes('@media(max-width:710px)'));
+test('the website ends in a real footer instead of a redundant second hero',()=>{
+ assert.ok(!html.includes('class="faro-footer-bridge"'));
+ assert.ok(html.includes('id="faroSiteFooter"'));
+ assert.ok(balance.includes('border-radius:0!important'));
+ assert.ok(balance.includes('grid-template-columns:minmax(0,1.1fr) minmax(270px,.9fr)!important'));
+ assert.ok(balance.includes('main:has(#forecastPage:not(.hide))>footer'));
+});
+test('selected session has model facts without altering the score engine',()=>{
+ assert.ok(html.includes('id="faroHourlySignals"'));
+ assert.ok(js.includes('const signals=$("faroHourlySignals")'));
+ assert.ok(balance.includes('grid-template-columns:repeat(3,minmax(0,1fr))!important'));
 });
 
 test('the model and the original lighthouse brand remain intact',()=>{
  assert.ok(html.includes('faro-chile-live.js?v=11'));
  assert.ok(html.includes('src="../assets/faro-logo-dark.svg"'));
  assert.ok(html.includes('src="../assets/faro-logo.svg"'));
- assert.ok(html.includes('chile-forecast.js?v=44'));
+ assert.ok(html.includes('chile-forecast.js?v=45'));
 });
