@@ -73,8 +73,11 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       overview:rect('#dayview>.day-outlook-section'),
       hours:rect('#dayview>.hourly-section'),
       dayview:rect('#dayview'),
-      bridge:rect('.faro-footer-bridge'),
       footer:rect('footer.chile-footer'),
+      wave:rect('#daySignalMetrics>.chile-day-wave-feature'),
+      period:rect('#daySignalMetrics>.day-signal-metric:nth-child(2)'),
+      wind:rect('#daySignalMetrics>.day-signal-metric:nth-child(3)'),
+      redundantBridge:!!document.querySelector('.faro-footer-bridge'),
       display:lead?getComputedStyle(lead).display:null,
       button:rect('#faroLeadRead')
      };
@@ -85,15 +88,16 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
      }
      return base;
     });
-    assert.ok(found.hero&&found.dock&&found.dayview&&found.bridge,
+    assert.ok(found.hero&&found.dock&&found.dayview&&found.footer,
       'key FARO layout missing');
     assert.ok(found.scrollWidth<=s.width+2,
       'horizontal page overflow '+JSON.stringify(found));
-    for(const k of ['hero','dock','dayview','bridge']){
+    assert.equal(found.redundantBridge,false,'duplicated promotional outro returned');
+    for(const k of ['hero','dock','dayview','footer']){
       assert.ok(found[k].width>s.width*.55,'collapsed '+k);
       assert.ok(found[k].left>=-3&&found[k].right<=s.width+3,'offscreen '+k);
     }
-    assert.ok(found.footer.top>found.bridge.top,'footer must end the page');
+    assert.ok(found.footer.top>found.dayview.top,'footer must end the page');
     assert.ok(found.button.height>=40,'hero action must be tappable');
     if(mobileLayout){
       assert.ok(found.nav.top<found.hero.top,'mobile navigation before hero');
@@ -106,6 +110,11 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     if(s.width>=1120){
       assert.ok(Math.abs(found.overview.top-found.hours.top)<=14,
         'desktop day/time panels are not paired');
+      // Check three metrics occupy one row, not the former orphan wind row.
+      if(found.wave&&found.period&&found.wind&&found.wave.height>0){
+        assert.ok(Math.abs(found.wave.top-found.period.top)<=10,'period dropped under wave');
+        assert.ok(Math.abs(found.wave.top-found.wind.top)<=10,'wind dropped under wave');
+      }
     }
     if(s.width>=711&&s.width<=1030){
       assert.ok(found.hours.top>=found.overview.top,'tablet day/hour order');
@@ -115,7 +124,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     if([390,1440].includes(s.width)){
       await page.screenshot({path:`${out}/${engine}-${s.name}-${theme}.png`});
       if(s.width===390&&theme==='dark'){
-       await page.locator('.faro-footer-bridge').scrollIntoViewIfNeeded();
+       await page.locator('footer.chile-footer').scrollIntoViewIfNeeded();
        await page.screenshot({path:`${out}/${engine}-${s.name}-footer.png`});
       }
     }
