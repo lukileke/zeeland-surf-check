@@ -75,5 +75,5 @@ test('automatic code is sourced from trusted main and remains valid for top-leve
  assert.ok(loader.includes('githubusercontent.com/lukileke/zeeland-surf-check/main/zeeland-widget.js'));
  assert.ok(!loader.includes('eval('));
  assert.doesNotThrow(()=>new (async function(){}).constructor(widget));
- assert.ok(widget.includes('Deep Ocean Editorial v15'));
+ assert.ok(widget.includes('Coastal Beacon Editorial v17'));
 });
