@@ -1,4 +1,4 @@
-// FARO Widget · Coastal Beacon Editorial v17 · legible model-first widgets · Scriptable iOS
+// FARO Widget · Ocean Light Editorial v18 · legible model-first widgets · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -135,47 +135,49 @@ function applyFallbackGradient(){
 if(family==="small"||lockFamily)applyFallbackGradient();
 widget.url=SITE;
 widget.setPadding(13,14,12,14);
-/* FARO Coastal Beacon v17 — accurate, restrained light rather than imagery.
- * Real O/logo in the header remains the ONLY brand mark.
- * On medium/large: one low-contrast upper-right caustic bloom, no giant O,
- * segmented rings, hard beams or wave stripes. Scriptable can't animate.
+/* FARO Ocean Light v18 — a smooth *visible* background with no overlays.
+ * v17's .001-alpha ellipses vanished when scaled onto real iPhone pixels.
+ * Paint one spatially blended ocean gradient instead of visible rings,
+ * ray geometry, a second logo, or an unobservable transparent halo.
+ * Medium/large iOS widgets are static snapshots, not animated.
  */
 function faroMixColour(from,to,t){
- const values=[0,2,4].map(i=>{
+ const amount=Math.max(0,Math.min(1,t));
+ return "#"+[0,2,4].map(i=>{
   const a=parseInt(from.slice(i,i+2),16),b=parseInt(to.slice(i,i+2),16);
-  return Math.round(a+(b-a)*t).toString(16).padStart(2,"0");
- });
- return "#"+values.join("");
+  return Math.round(a+(b-a)*amount).toString(16).padStart(2,"0");
+ }).join("");
 }
 function deepOceanCanvas(kind){
  if(kind==="small"||String(kind).startsWith("accessory"))return null;
  const large=kind==="large"||kind==="extraLarge";
  const w=large?720:760,h=large?720:355;
- const dc=new DrawContext();dc.size=new Size(w,h);dc.opaque=true;
- dc.respectScreenScale=false;
+ const dc=new DrawContext();dc.size=new Size(w,h);
+ dc.opaque=true;dc.respectScreenScale=false;
  const light=EFFECTIVE_THEME==="LIGHT";
- const top=light?"F5FAF9":"10282D",bottom=light?"E9F4F1":"13383C";
- // A continuous, optical falloff. Two physical pixels per colour, no bands.
- for(let y=0;y<h;y+=2){
-  dc.setFillColor(new Color(faroMixColour(top,bottom,y/(h-1))));
-  dc.fillRect(new Rect(0,y,w,Math.min(2,h-y)));
- }
- // Wide translucent diffusion rather than the previous bright corner spot.
- const cx=w*(large?.91:.90),cy=h*(large?.42:.44);
- const outer=large?360:365;
- for(let i=0;i<78;i++){
-  const t=i/77,r=outer*(1-.84*t);
-  const a=light?.00080+.00078*t:.00100+.00130*t;
-  dc.setFillColor(new Color(light?"#6AB5AD":"#64C7B7",a));
-  dc.fillEllipse(new Rect(cx-r,cy-r,2*r,2*r));
- }
- // Very faint warm lighthouse reflection, placed behind the header region.
- // It is light, not a duplicate logo, weather arrow or vector.
- const lx=w*.24,ly=h*.07;
- for(let i=0;i<21;i++){
-  const t=i/20,r=(large?96:73)*(1-.80*t);
-  dc.setFillColor(new Color("#FFDA71",light?.00042:.00062));
-  dc.fillEllipse(new Rect(lx-r,ly-r,2*r,2*r));
+ const upper=light?"F5FAF8":"0D272E";
+ const lower=light?"E5F1ED":"15393E";
+ const aqua=light?"8BCAC1":"439E97";
+ const warm=light?"D8B66F":"D7B476";
+ const step=large?12:10;
+ // A 2D spatial colour wash, not circles of translucent paint.
+ // Moving towards the right or deeper into the frame changes the tone
+ // continuously, and remains visible behind the semitransparent wave tile.
+ for(let y=0;y<h;y+=step){
+  const v=(y+step*.5)/h;
+  for(let x=0;x<w;x+=step){
+   const u=(x+step*.5)/w;
+   const base=faroMixColour(upper,lower,Math.max(0,Math.min(1,v)));
+   const dx=(u-.88)/.39,dy=(v-.60)/.61;
+   const ocean=Math.exp(-.5*(dx*dx+dy*dy));
+   const glow=(light?.19:.31)*ocean;
+   let colour=faroMixColour(base,aqua,glow);
+   const wx=(u-.16)/.23,wy=(v-.10)/.31;
+   const golden=Math.exp(-.5*(wx*wx+wy*wy));
+   colour=faroMixColour(colour,warm,(light?.023:.042)*golden);
+   dc.setFillColor(new Color(colour));
+   dc.fillRect(new Rect(x,y,Math.min(step,w-x),Math.min(step,h-y)));
+  }
  }
  return dc.getImage();
 }
@@ -543,7 +545,7 @@ function editorialHero(parent,best,large=false){
  if(large)label(quality,T[gradeOf(best.score)].toUpperCase(),10,C.ink,"bold",1);
  row.addSpacer();
  const wave=vstack(row,large?6:3);
- wave.backgroundColor=EFFECTIVE_THEME==="LIGHT"?new Color("#FFFFFF",.88):new Color("#25474A",.80);
+ wave.backgroundColor=EFFECTIVE_THEME==="LIGHT"?new Color("#FFFFFF",.82):new Color("#24484B",.66);
  wave.cornerRadius=large?15:12;
  wave.borderWidth=.6;
  wave.borderColor=EFFECTIVE_THEME==="LIGHT"?new Color("#8BBEBA",.24):new Color("#A8D9D0",.17);
