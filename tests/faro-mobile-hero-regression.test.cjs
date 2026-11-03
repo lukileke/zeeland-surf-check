@@ -16,14 +16,13 @@ const originalHero=read('chile/faro-beacon-atmosphere-v4.css');
 const pulse=read('chile/faro-hero-synchronised-pulse-v1.css');
 const editor=read('chile/faro-editorial-experience-v2.css');
 
-test('sign-off is after the model content in DOM AND explicitly last in flex order',()=>{
+test('the hero remains ahead of dayview, and the real footer ends the page',()=>{
  const a=html.indexOf('id="faroForecastLead"');
  const b=html.indexOf('id="dayview"');
- const c=html.indexOf('class="faro-footer-bridge"');
+ const c=html.indexOf('id="faroSiteFooter"');
  assert.ok(a>=0 && a<b && b<c);
- // Default flex order:0 put the sign-off ahead of an explicit order:1 hero.
+ assert.ok(!html.includes('class="faro-footer-bridge"'));
  assert.ok(editor.includes('>.faro-forecast-lead{order:1!important'));
- assert.match(css,/\.faro-footer-bridge\s*\{\s*order:\s*6!important/);
 });
 
 test('mobile iPhone prioritises hero and keeps beach selection usable below it',()=>{
@@ -31,8 +30,7 @@ test('mobile iPhone prioritises hero and keeps beach selection usable below it',
  for(const [selector,order] of [
   ['.faro-forecast-lead',0],['.faro-context-dock',1],
   ['.faro-access-notice',2],['.faro-journey-nav',3],
-  ['#dayview',4],['.chile-method-disclaimer',5],
-  ['.faro-footer-bridge',6]
+  ['#dayview',4],['.chile-method-disclaimer',5]
  ]){
   const sel=selector.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
   const re=new RegExp(sel+'\\s*\\{\\s*order:'+order+'!important');
@@ -67,14 +65,15 @@ test('underwater pulse is kept and WebKit shadow seam is not reintroduced',()=>{
 test('new CSS is before the invariant score palette, with no model changes',()=>{
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-responsive-quality-v1.css?v=1');
- assert.equal(links.at(-3),'faro-editorial-hero-focus-v1.css?v=1');
- assert.equal(links.at(-4),'faro-hero-synchronised-pulse-v1.css?v=1');
- assert.equal(links.at(-5),'faro-mobile-reading-order-v1.css?v=2');
+ assert.equal(links.at(-2),'faro-decision-balance-v1.css?v=1');
+ assert.equal(links.at(-3),'faro-responsive-quality-v1.css?v=1');
+ assert.equal(links.at(-4),'faro-editorial-hero-focus-v1.css?v=1');
+ assert.equal(links.at(-5),'faro-hero-synchronised-pulse-v1.css?v=1');
+ assert.equal(links.at(-6),'faro-mobile-reading-order-v1.css?v=2');
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(css));
  assert.ok(html.includes('faro-beacon-atmosphere-v4.css?v=1'));
  assert.ok(html.includes('faro-chile-live.js?v=11'));
- assert.ok(html.includes('chile-forecast.js?v=44'));
+ assert.ok(html.includes('chile-forecast.js?v=45'));
 });
 
 test('five decorative layers share one 5.4-second peak at half-cycle',()=>{
