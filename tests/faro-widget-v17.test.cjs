@@ -1,4 +1,4 @@
-/* FARO Ocean Light v18: bilingual, physical meaning, visual restraint.
+/* FARO Native Tide v19: bilingual, physical meaning, visual restraint.
  * Run node --test tests/faro-widget-v17.test.cjs
  */
 const test=require('node:test');
@@ -12,7 +12,7 @@ const loader=fs.readFileSync(path.join(root,'FARO_AUTO_WIDGET.js'),'utf8');
 
 test('Scriptable async syntax and GitHub hot-loader eligibility',()=>{
  assert.doesNotThrow(()=>new (async function(){}).constructor(widget));
- assert.match(widget,/Ocean Light Editorial v18/);
+ assert.match(widget,/Native Tide Editorial v19/);
  for(const item of ['// FARO Widget','Script.setWidget(widget)','Script.complete()',
   'const SITE="https://lukileke.github.io/zeeland-surf-check/"'])
   assert.ok(widget.includes(item),item);
@@ -64,14 +64,15 @@ test('small offshore wave height is labelled explicitly; model figures unchanged
  assert.ok(widget.includes('best.x.wind+" km/h"'));
  assert.ok(widget.includes('globalThis.ZeelandEngine'));
 });
-test('restrained ocean visual: no second logo, hard beams, fake wave-lines or animations',()=>{
- const from=widget.indexOf('/* FARO Ocean Light v18'),to=widget.indexOf('function label(',from);
+test('native ocean identity is present with no raster background',()=>{
+ const from=widget.indexOf('/* FARO Native Tide v19');
+ const to=widget.indexOf('function label(',from);
  const background=widget.slice(from,to);
- assert.ok(background.includes('new DrawContext()'));
- assert.ok(background.includes('const step=large?12:10'));
- assert.ok(background.includes('Math.exp(-.5*(dx*dx+dy*dy))'));
- assert.ok(background.includes('if(image){widget.backgroundImage=image;return;}'));
- for(const invalid of ['drawRescueRing','dc.addPath(wave)','beam.move(','setInterval(','drop-shadow'])
+ assert.ok(background.includes('new LinearGradient()'));
+ assert.ok(background.includes('widget.backgroundGradient=nativeTideGradient()'));
+ assert.ok(background.includes('gradient.startPoint=new Point(0,0)'));
+ assert.ok(background.includes('gradient.endPoint=new Point(1,.9)'));
+ for(const invalid of ['drawRescueRing','new DrawContext()','widget.backgroundImage=','setInterval(','drop-shadow'])
   assert.ok(!background.includes(invalid),invalid);
  assert.ok(widget.includes('if(family==="small"||lockFamily)applyFallbackGradient()'));
  assert.ok(widget.includes('ORIGINAL_FARO_SVG'));
