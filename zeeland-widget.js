@@ -1,8 +1,8 @@
-// FARO Widget · Quiet Tide Editorial v16 · legible model-first widgets · Scriptable iOS
+// FARO Widget · Coastal Beacon Editorial v17 · legible model-first widgets · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
-//   BEST|ES or Domburg|ES  (optional Spanish)
+//   BEST or Domburg  (Spanish default) · BEST|EN for English
 // iOS controls refresh timing; figures are Open-Meteo MODEL forecasts, never live beach observations.
 const SITE="https://lukileke.github.io/zeeland-surf-check/";
 const KNMI="https://www.knmi.nl/nederland-nu/weer/waarschuwingen/zeeland";
@@ -30,7 +30,8 @@ const nowMs=Date.now();
 const param=String((typeof args!=="undefined"&&args.widgetParameter)||"BEST").trim();
 const tokens=param.split("|").map(v=>v.trim()).filter(Boolean);
 const opt=k=>{const v=tokens.find(t=>t.toUpperCase().startsWith(k+"="));return v?v.slice(k.length+1).toUpperCase().trim():null};
-const LANG=opt("LANG")==="ES"||tokens.some(t=>t.toUpperCase()==="ES")?"es":"en";
+// Local owner preference: Spanish by default, English with EN or LANG=EN.
+const LANG=opt("LANG")==="EN"||tokens.some(t=>t.toUpperCase()==="EN")?"en":"es";
 const STYLE=["FLOW","MINIMAL","DATA","WEEK"].includes(opt("STYLE"))?opt("STYLE"):
  (tokens.find(t=>["FLOW","MINIMAL","DATA","WEEK"].includes(t.toUpperCase()))||"FLOW").toUpperCase();
 const THEME=["AUTO","LIGHT","DARK"].includes(opt("THEME"))?opt("THEME"):"DARK";
@@ -56,7 +57,7 @@ function palette(light,dark){return EFFECTIVE_THEME==="LIGHT"?new Color(light):n
 const C={
  bg:palette("#F7FAFA","#102427"),ink:palette("#1F3B3D","#F3F8F7"),
  quiet:palette("#526A74","#BBCBCD"),sun:new Color("#FFDA71"),
- wave:palette("#355BAF","#A5BAFF"),line:palette("#C9D8DA","#507074"),
+ wave:palette("#286F86","#9FC9D6"),line:palette("#C9D8DA","#507074"),
  panel:palette("#FFFFFF","#234347"),subtle:palette("#EFF5F5","#193337"),
  alert:palette("#D85B48","#FF9A87"),caution:palette("#CE762E","#EFBC62")
 };
@@ -134,15 +135,10 @@ function applyFallbackGradient(){
 if(family==="small"||lockFamily)applyFallbackGradient();
 widget.url=SITE;
 widget.setPadding(13,14,12,14);
-/* FARO Quiet Tide v16 — keep a useful forecast, not a poster.
- * A real FARO logo already appears in the header. The v15 giant ghost O,
- * horizontal wave rules and sharp diagonal beam obscured the model tile.
- * We deliberately REMOVE these. A smooth marine gradient plus a single
- * diffused edge-light is enough to carry the Deep Ocean identity.
- *
- * Scriptable home-screen widgets are snapshots; there is no live pulse.
- * Keep original gradient for small / accessory sizes, without overlaying
- * a backgroundGradient on medium/large native DrawContext images.
+/* FARO Coastal Beacon v17 — accurate, restrained light rather than imagery.
+ * Real O/logo in the header remains the ONLY brand mark.
+ * On medium/large: one low-contrast upper-right caustic bloom, no giant O,
+ * segmented rings, hard beams or wave stripes. Scriptable can't animate.
  */
 function faroMixColour(from,to,t){
  const values=[0,2,4].map(i=>{
@@ -158,34 +154,28 @@ function deepOceanCanvas(kind){
  const dc=new DrawContext();dc.size=new Size(w,h);dc.opaque=true;
  dc.respectScreenScale=false;
  const light=EFFECTIVE_THEME==="LIGHT";
- const upper=light?"F6FAF9":"10292F",lower=light?"E9F3F0":"153A3F";
-
- // Two-pixel blended scanlines read as one smooth gradient at iPhone scale.
- // No visible rectangular bands and no lines crossing text or meter.
+ const top=light?"F5FAF9":"10282D",bottom=light?"E9F4F1":"13383C";
+ // A continuous, optical falloff. Two physical pixels per colour, no bands.
  for(let y=0;y<h;y+=2){
-  const progress=y/(h-1);
-  dc.setFillColor(new Color(faroMixColour(upper,lower,progress)));
+  dc.setFillColor(new Color(faroMixColour(top,bottom,y/(h-1))));
   dc.fillRect(new Rect(0,y,w,Math.min(2,h-y)));
  }
-
- // A diffuse bloom at the lower-right edge, well clear of the main score.
- // Many near-transparent circles approximate Gaussian falloff, without
- // visible concentric rings even on a scaled iOS medium widget.
- const cx=w*(large?.93:.94),cy=h*(large?.71:.75);
- const outer=large?320:275;
- for(let i=0;i<72;i++){
-  const t=i/71,r=outer-(outer*.88*t);
-  const a=light?.0018+.0026*t:.0026+.0040*t;
-  dc.setFillColor(new Color(light?"#70ADA4":"#66C0B0",a));
+ // Wide translucent diffusion rather than the previous bright corner spot.
+ const cx=w*(large?.91:.90),cy=h*(large?.42:.44);
+ const outer=large?360:365;
+ for(let i=0;i<78;i++){
+  const t=i/77,r=outer*(1-.84*t);
+  const a=light?.00080+.00078*t:.00100+.00130*t;
+  dc.setFillColor(new Color(light?"#6AB5AD":"#64C7B7",a));
   dc.fillEllipse(new Rect(cx-r,cy-r,2*r,2*r));
  }
-
- // Tiny warm reflection far from the score, not a second logo or icon.
- const warmX=w*.94,warmY=h*.20;
- for(let i=0;i<25;i++){
-  const t=i/24,r=(large?85:64)*(1-.83*t);
-  dc.setFillColor(new Color("#FFDA71",light?.0010+.0009*t:.0013+.0012*t));
-  dc.fillEllipse(new Rect(warmX-r,warmY-r,2*r,2*r));
+ // Very faint warm lighthouse reflection, placed behind the header region.
+ // It is light, not a duplicate logo, weather arrow or vector.
+ const lx=w*.24,ly=h*.07;
+ for(let i=0;i<21;i++){
+  const t=i/20,r=(large?96:73)*(1-.80*t);
+  dc.setFillColor(new Color("#FFDA71",light?.00042:.00062));
+  dc.fillEllipse(new Rect(lx-r,ly-r,2*r,2*r));
  }
  return dc.getImage();
 }
@@ -414,17 +404,16 @@ function scoreRow(parent,best,size){
  label(row,"/10",Math.max(11,Math.floor(size*.28)),C.quiet,"semi");
 }
 function qualityStepInk(i){
- const light=["#F0A46D","#F0BF69","#E3D471","#B0DB75","#96C67A"];
- const dark=["#F0A46D","#F0BF69","#E3D471","#B0DB75","#96C67A"];
- return new Color((EFFECTIVE_THEME==="LIGHT"?light:dark)[i]||dark[4]);
+ // Exact canonical score pigments shared with FARO desktop and iPhone.
+ return new Color(["#ef9b77","#efbd6e","#e0cc73","#b1d574","#8cc584"][i]||"#8cc584");
 }
 function meter(parent,score,width=23,height=5,gap=5){
  const row=hstack(parent,gap);row.centerAlignContent();
  const active=Math.max(1,Math.min(5,Math.ceil(score/2)));
  for(let i=0;i<5;i++){
   const cell=row.addStack();
-  cell.size=new Size(width,height);
-  cell.cornerRadius=height/2;
+  cell.size=new Size(width+(i===active-1?2:0),height+(i===active-1?1:0));
+  cell.cornerRadius=(height+1)/2;
   cell.backgroundColor=i<active?qualityStepInk(i):C.line;
  }
  return row;
@@ -456,10 +445,22 @@ function waveText(best,short=false){
 }
 function hazardLine(parent,hazard,compact=false){
  if(!["danger","caution"].includes(hazard?.level))return false;
- const line=hstack(parent,5);line.centerAlignContent();
+ // Important: hazard scans the NEXT 48 HOURS across the chosen region,
+ // not the selected BEST 7D window. Never imply a same-session wind speed.
+ const line=hstack(parent,6);line.centerAlignContent();
  const tone=hazard.level==="danger"?C.alert:C.caution;
- label(line,"!",compact?10:12,tone,"black");
- const info=hazard.thunder?T.storm:(T.risk+" · "+Math.max(hazard.gust||0,hazard.mean||0)+" km/h");
+ if(family!=="small"&&!lockFamily){
+  line.backgroundColor=EFFECTIVE_THEME==="LIGHT"?
+   new Color("#FDF3E9",.91):new Color("#443A30",.66);
+  line.cornerRadius=8;
+  line.setPadding(3,7,3,7);
+ }
+ const marker=line.addStack();
+ marker.size=new Size(3,compact?12:15);
+ marker.cornerRadius=2;marker.backgroundColor=tone;
+ const maxWind=Math.max(hazard.gust||0,hazard.mean||0);
+ const info=hazard.thunder?word("TORMENTAS · 48 H","STORMS · NEXT 48 H"):
+  word("RIESGO VIENTO · 48 H","WIND RISK · NEXT 48 H")+" · "+maxWind+" km/h";
  label(line,info,compact?9:10,tone,"bold",1);
  return true;
 }
@@ -537,14 +538,18 @@ function vibePanel(parent,best,small=false){
 function editorialHero(parent,best,large=false){
  const row=hstack(parent,large?14:9);row.centerAlignContent();
  const quality=vstack(row,large?3:2);
- label(quality,large?word("CALIDAD DE SURF","SURF QUALITY"):word("CALIDAD · ","QUALITY · ")+T[gradeOf(best.score)].toUpperCase(),large?10:8,C.quiet,"bold",1);
+ label(quality,large?word("ÍNDICE FARO · MODELO","FARO INDEX · MODEL"):word("FARO · ","FARO READ · ")+T[gradeOf(best.score)].toUpperCase(),large?9:8,C.quiet,"bold",1);
  scoreRow(quality,best,large?56:40);
  if(large)label(quality,T[gradeOf(best.score)].toUpperCase(),10,C.ink,"bold",1);
  row.addSpacer();
  const wave=vstack(row,large?6:3);
- wave.backgroundColor=EFFECTIVE_THEME==="LIGHT"?new Color("#FFFFFF",.84):new Color("#234347",.80);wave.cornerRadius=large?15:12;
+ wave.backgroundColor=EFFECTIVE_THEME==="LIGHT"?new Color("#FFFFFF",.88):new Color("#25474A",.80);
+ wave.cornerRadius=large?15:12;
+ wave.borderWidth=.6;
+ wave.borderColor=EFFECTIVE_THEME==="LIGHT"?new Color("#8BBEBA",.24):new Color("#A8D9D0",.17);
  wave.setPadding(large?10:6,large?12:9,large?10:6,large?12:9);
- label(wave,word("OLAS MODELO · MAR ABIERTO","MODEL · OFFSHORE WAVES"),large?9:8,C.quiet,"bold",1);
+ label(wave,best.x.h<.45?word("OLEAJE BAJO · MODELO","SMALL SWELL · MODEL"):
+  word("MAR ABIERTO · MODELO","OFFSHORE · MODEL"),large?9:8,C.quiet,"bold",1);
  const measurement=hstack(wave,5);measurement.centerAlignContent();
  glyph(measurement,"water.waves",large?20:15,C.wave);
  label(measurement,best.x.h.toFixed(1)+" m",large?29:22,C.wave,"black",1);
@@ -570,7 +575,7 @@ function renderSmall(best,data,hazard,sessions){
  brandRow(widget,true);widget.addSpacer(8);
  const row=hstack(widget,5);row.centerAlignContent();
  const quality=vstack(row,2);
- label(quality,word("CALIDAD","QUALITY"),8,C.quiet,"bold");
+ label(quality,word("ÍNDICE","INDEX"),8,C.quiet,"bold");
  scoreRow(quality,best,41);
  row.addSpacer();
  const wave=vstack(row,2);
