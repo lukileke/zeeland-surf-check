@@ -17,10 +17,14 @@ const out='artifacts/faro-browser';
 await mkdir(out,{recursive:true});
 
 const sizes=[
+ {width:320,height:680,name:'iphone-narrow'},
  {width:375,height:812,name:'iphone-small'},
  {width:390,height:844,name:'iphone'},
+ {width:710,height:940,name:'mobile-breakpoint'},
+ {width:711,height:940,name:'tablet-breakpoint'},
  {width:768,height:1024,name:'tablet'},
  {width:1024,height:768,name:'tablet-wide'},
+ {width:1120,height:790,name:'desktop-breakpoint'},
  {width:1440,height:900,name:'desktop'}
 ];
 const rgbByEngine={};
@@ -32,6 +36,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
  try{
   for(const s of sizes)for(const theme of ['dark','light']){
    const mobile=s.width<=390;
+   const mobileLayout=s.width<=710;
    const ctx=await browser.newContext({
     viewport:{width:s.width,height:s.height},
     colorScheme:theme,
@@ -90,7 +95,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     }
     assert.ok(found.footer.top>found.bridge.top,'footer must end the page');
     assert.ok(found.button.height>=40,'hero action must be tappable');
-    if(mobile){
+    if(mobileLayout){
       assert.ok(found.nav.top<found.hero.top,'mobile navigation before hero');
       assert.ok(found.hero.top<found.dock.top,'mobile hero before selector');
       assert.equal(found.display,'flex');
