@@ -63,5 +63,5 @@ test('the model and the original lighthouse brand remain intact',()=>{
  assert.ok(html.includes('faro-chile-live.js?v=11'));
  assert.ok(html.includes('src="../assets/faro-logo-dark.svg"'));
  assert.ok(html.includes('src="../assets/faro-logo.svg"'));
- assert.ok(html.includes('chile-forecast.js?v=42'));
+ assert.ok(html.includes('chile-forecast.js?v=44'));
 });
