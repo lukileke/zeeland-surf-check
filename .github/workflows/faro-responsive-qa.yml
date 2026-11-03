@@ -27,6 +27,8 @@ jobs:
             tests/faro-editorial-hero-focus.test.cjs \
             tests/faro-mobile-hero-regression.test.cjs \
             tests/faro-widget-v17.test.cjs \
+            tests/faro-widget-v18.test.cjs \
+            tests/faro-desktop-footer-v18.test.cjs \
             tests/faro-auto-update.test.cjs
 
   browser:
