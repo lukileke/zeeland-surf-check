@@ -223,9 +223,14 @@ function fixture(){
    // not force the daily card to stretch to the height of hourly content.
    const visual=await page.evaluate(()=>{
     const $=s=>document.querySelector(s),style=s=>getComputedStyle($(s));
+    // Preparation chips are meaningful content between the decision and
+    // the UV notice. Omitting them falsely reports a 150px "empty" gap.
+    // Hidden low-risk UV notices must not enter spacing measurements.
     const selectors=['.day-editorial-overline','.day-overview-row','#chileDecisionBrief',
-      '#dayUVBadge','#daySignalMetrics','.chile-vibe','#openSpotDNA'];
-    const rects=selectors.map(selector=>{
+      '#faroPrepHints','#dayUVBadge','#daySignalMetrics','.chile-vibe','#openSpotDNA'];
+    const rects=selectors.filter(sel=>{
+      const node=$(sel);return node&&getComputedStyle(node).display!=='none'&&node.getBoundingClientRect().height>0;
+    }).map(selector=>{
      const r=$(selector).getBoundingClientRect();
      return {selector,top:r.top,bottom:r.bottom,height:r.height,width:r.width};
     });
