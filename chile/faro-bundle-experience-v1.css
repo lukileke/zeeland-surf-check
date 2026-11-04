@@ -2917,6 +2917,10 @@ html body #forecastPage #dailyOverview #dayUVBadge[hidden]{
 @media(max-width:430px){
  html body #forecastPage #dailyOverview{
   padding:16px!important;
+  /* Smaller editorial rhythm on narrow iPhones; existing inner margins
+   * preserve meaningful separation, and no content is hidden or reduced. */
+  gap:5px!important;
+  row-gap:5px!important;
  }
  html body #forecastPage #dailyOverview #faroPrepHints.faro-prep-hints{
   display:grid!important;
