@@ -207,8 +207,8 @@ function fixture(){
     route:document.querySelector('.faro-journey-nav').getBoundingClientRect().top,
     week:document.getElementById('dayStrip').getBoundingClientRect().top
    }));
-   assert.ok(rects.daily<rects.route&&rects.route<rects.week,
-    'Quick navigation and week comparison must follow the detailed Daily Take');
+   assert.ok(rects.route<rects.daily&&rects.daily<rects.week,
+    'Hero quick-navigation precedes daily evidence; week comparison follows it');
 
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
    // One FARO design system, rather than contradictory inherited layout

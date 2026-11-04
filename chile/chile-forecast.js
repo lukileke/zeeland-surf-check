@@ -710,6 +710,12 @@ function renderLead(day,session){
   decision.status==="blocked"?
    tr("Sesión bloqueada por restricción o riesgo grave. Potencial oceánico independiente: "+num(session?.score)+"/10.",
       "Session blocked by restriction or serious model risk. Independent offshore potential: "+num(session?.score)+"/10."):
+  selected&&decision.canRecommend&&ok(displayScore)&&displayScore>=6&&
+   ok(session.totalWaveHeightM)&&session.totalWaveHeightM<0.45?
+   tr("Índice de oportunidad "+num(displayScore)+"/10, pero solo "+num(session.totalWaveHeightM)+
+      " m de oleaje oceánico modelado. No confirma olas aprovechables en la rompiente.",
+      "Opportunity index "+num(displayScore)+"/10, but only "+num(session.totalWaveHeightM)+
+      " m of modelled offshore wave height. This does not confirm rideable breaking waves."):
   tr("Índice experimental de sesión; no equivale a seguridad ni valida la rompiente.",
     "Experimental session index; not a safety certificate or calibrated breaking surf."));
  if(decision.status==="blocked"&&!restricted()){
@@ -777,13 +783,12 @@ function renderPrepHints(s){
   if(level)item.dataset.level=level;
   item.append(el("small",label),el("strong",value));host.append(item);
  };
- const day=state.forecast?.days?.[state.day];
- const uv=ok(day?.uvMax)?Live.statusUV(day.uvMax,state.lang):null;
+ // The daily UV maximum already has a full-width risk notice just below.
+ // Do not render the same number again as a third miniature chip.
  if(s&&sessionDecision(s).canRecommend)
   add(tr("TRAJE ORIENTATIVO","SUGGESTED SUIT"),wetsuit(s),"wetsuit");
  if(ok(s?.waterTemperatureC))
   add(tr("AGUA MODELO","MODEL WATER"),num(s.waterTemperatureC)+" °C","water");
- if(uv)add(tr("UV MÁX. DÍA","DAY MAX UV"),num(day.uvMax,0)+" · "+uv.name,"uv",uv.category);
  if(!s||!sessionDecision(s).canRecommend){
   add(tr("SESIÓN","SESSION"),tr("Sin franja confirmada","No confirmed window"),"neutral");
  }
@@ -807,7 +812,7 @@ function outlook(){
  txt("dayWind",s?num(s.windKmh,0)+" km/h":"—");
  const uvMax=ok(d.uvMax)?d.uvMax:null;
  const uv=Live.statusUV(uvMax,state.lang);
- txt("dayUVLabel"," UV "+num(uvMax,0)+" · "+uv.name);
+ txt("dayUVLabel",tr("UV MÁX. DÍA · ","DAY MAX UV · ")+num(uvMax,0)+" · "+uv.name);
  txt("dayUVAdvice",uvMax===null?tr("Sin dato UV","UV unavailable"):uv.protection);
  $("dayUVBadge").dataset.uv=uv.category;
  renderPrepHints(s);
