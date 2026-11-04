@@ -1,0 +1,30 @@
+/* FARO Tide Read — contained progressive disclosure. No global/hero selectors. */
+#dailyOverview .faro-tide-read{position:relative;margin-top:18px;border-top:1px solid color-mix(in srgb,var(--border) 85%,transparent);isolation:isolate}
+#dailyOverview .faro-tide-read>summary{list-style:none;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:58px;padding:12px 4px;cursor:pointer;color:var(--fg);border-radius:10px}
+#dailyOverview .faro-tide-read>summary::-webkit-details-marker{display:none}
+#dailyOverview .faro-tide-summary-copy{display:grid;gap:4px;min-width:0}
+#dailyOverview .faro-tide-eyebrow{font-size:10px;font-weight:800;letter-spacing:.12em;color:#91c9d0}
+#dailyOverview .faro-tide-title{font-size:clamp(14px,1.5vw,17px);font-weight:750;line-height:1.35}
+#dailyOverview .faro-tide-right{display:inline-flex;align-items:center;gap:9px;flex-shrink:0;color:#9acbd0;font-size:12px;font-weight:750}
+#dailyOverview .faro-tide-chevron{display:grid;place-items:center;border:1px solid currentColor;border-radius:50%;width:28px;height:28px;transition:transform .32s ease}
+#dailyOverview .faro-tide-read[open] .faro-tide-chevron{transform:rotate(180deg)}
+#dailyOverview .faro-tide-read>summary:focus-visible{outline:2px solid #82c7cf;outline-offset:3px}
+#dailyOverview .faro-tide-read>summary::after{content:"";position:absolute;pointer-events:none;inset:-90% -15%;opacity:0;z-index:-1;background:radial-gradient(ellipse at 48% 52%,rgba(113,213,215,.22),transparent 55%);transform:scale(.3)}
+#dailyOverview .faro-tide-read[open]>summary::after{animation:faro-tidal-ripple .75s cubic-bezier(.17,.67,.28,1) both}
+@keyframes faro-tidal-ripple{0%{opacity:.9;transform:scale(.22)}100%{opacity:0;transform:scale(1.6)}}
+#dailyOverview .faro-tide-body{min-width:0;padding:3px 1px 13px;animation:faro-tidal-reveal .34s cubic-bezier(.2,.7,.3,1) both}
+@keyframes faro-tidal-reveal{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
+#dailyOverview .faro-tide-body .day-signal-metrics{margin-top:12px}
+#dailyOverview .faro-tide-body .faro-read{margin-top:14px}
+#dailyOverview .faro-tide-science{margin:12px 0 5px;padding:11px 13px;border-left:2px solid #83b9c7;border-radius:0 9px 9px 0;background:color-mix(in srgb,#6ba8b0 10%,transparent);color:var(--muted);font-size:12px;line-height:1.55}
+#faroHourlyPreview.faro-tide-hourly{position:relative}
+#faroHourlyPreview .faro-tide-hourly-toggle{appearance:none;display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid #7db5bb;border-radius:9px;background:transparent;color:inherit;font:inherit;font-size:12px;font-weight:750;cursor:pointer}
+#faroHourlyPreview .faro-tide-hourly-toggle:focus-visible{outline:2px solid #91d2d7;outline-offset:3px}
+#faroHourlyPreview.faro-tide-hourly:not(.faro-tide-hourly-expanded) #faroHourlyExplanation,
+#faroHourlyPreview.faro-tide-hourly:not(.faro-tide-hourly-expanded) #faroHourlySignals,
+#faroHourlyPreview.faro-tide-hourly:not(.faro-tide-hourly-expanded) #faroHourlyGoLens{display:none}
+#faroHourlyPreview.faro-tide-hourly-expanded #faroHourlyExplanation,
+#faroHourlyPreview.faro-tide-hourly-expanded #faroHourlySignals,
+#faroHourlyPreview.faro-tide-hourly-expanded #faroHourlyGoLens{animation:faro-tidal-reveal .3s both}
+@media(max-width:650px){#dailyOverview .faro-tide-read>summary{min-height:54px}#dailyOverview .faro-tide-right{font-size:11px}#faroHourlyPreview .faro-tide-hourly-toggle{padding:6px 8px}}
+@media(prefers-reduced-motion:reduce){#dailyOverview .faro-tide-read *,#dailyOverview .faro-tide-read>summary::after,#faroHourlyPreview.faro-tide-hourly *{animation:none!important;transition:none!important}}
