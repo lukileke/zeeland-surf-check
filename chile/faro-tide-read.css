@@ -287,3 +287,10 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #far
     animation:none!important;transition:none!important;transform:none!important
   }
 }
+
+/* Keep the real preparation / UV sequence: historical sheet forces prep last. */
+html body main #forecastPage:not(.hide) #dailyOverview #faroPrepHints{order:0!important}
+/* Explicitly avoid clipping safety messages in the UV stripe. */
+#forecastPage #dayview #dailyOverview #dayUVBadge{overflow:visible!important;white-space:normal!important}
+#forecastPage #dayview #dailyOverview #dayUVBadge #dayUVAdvice{white-space:normal!important}
+/* Never style grade tones: existing canonical FARO score ink owns them. */
