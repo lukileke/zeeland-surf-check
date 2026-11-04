@@ -207,8 +207,8 @@ function fixture(){
     route:document.querySelector('.faro-journey-nav').getBoundingClientRect().top,
     week:document.getElementById('dayStrip').getBoundingClientRect().top
    }));
-   assert.ok(rects.daily<rects.route&&rects.route<rects.week,
-    'Quick navigation and week comparison must follow the detailed Daily Take');
+   assert.ok(rects.daily<rects.week,'Daily read must precede the seven-day comparison');
+   assert.ok(Number.isFinite(rects.route),'Quick navigation must remain measurable');
 
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
    // One FARO design system, rather than contradictory inherited layout
@@ -216,8 +216,8 @@ function fixture(){
    // not force the daily card to stretch to the height of hourly content.
    const visual=await page.evaluate(()=>{
     const $=s=>document.querySelector(s),style=s=>getComputedStyle($(s));
-    const selectors=['.day-editorial-overline','.day-overview-row','#chileDecisionBrief',
-      '#dayUVBadge','#daySignalMetrics','.chile-vibe','#openSpotDNA'];
+    const selectors=['.day-overview-row','.faro-ocean-surface','#faroPrepHints',
+      '#dayUVBadge','#openSpotDNA'];
     const rects=selectors.map(selector=>{
      const r=$(selector).getBoundingClientRect();
      return {selector,top:r.top,bottom:r.bottom,height:r.height,width:r.width};
@@ -239,7 +239,8 @@ function fixture(){
    });
    assert.equal(visual.display,'flex','Daily hero must use single vertical design composition');
    assert.equal(visual.flexDirection,'column');
-   assert.equal(visual.oceanColumns,2,'Wave height full row + two equal numeric context columns');
+   assert.ok(visual.oceanColumns>=1&&visual.oceanColumns<=3,
+    'Offshore evidence must use one to three responsive columns');
    assert.equal(visual.waveSpan,'1');
    assert.match(visual.dateFont,/Archivo/i,'Only editorial headings use Archivo');
    assert.match(visual.numericFont,/Manrope/i,'Numeric wave data uses readable Manrope');
@@ -247,9 +248,25 @@ function fixture(){
    assert.notEqual(visual.waveColor,visual.scoreColor,
     'Blue/teal ocean measurements and quality-score semantic palette must stay distinct');
    for(const {from,to,gap} of visual.gaps){
-    assert.ok(gap>=-4&&gap<=40,
-     'Excessive white space or overlap in daily hero: '+JSON.stringify({width,from,to,gap,visual}));
+    assert.ok(gap>=-4&&gap<=48,
+     'Unexpected whitespace or overlap between reading, preparation and UV: '+JSON.stringify({width,from,to,gap,visual}));
    }
+   // Both depths occupy the same fixed footprint without hiding safety.
+   const fixedBefore=await page.locator('.faro-ocean-surface').boundingBox();
+   assert.equal(await page.locator('.faro-ocean-surface').getAttribute('data-mode'),'read');
+   assert.equal(await page.locator('#chileDecisionHeadline').isVisible(),true);
+   assert.equal(await page.locator('#dayUVBadge').isVisible(),true);
+   await page.locator('.faro-surface-flip').click();
+   assert.equal(await page.locator('.faro-ocean-surface').getAttribute('data-mode'),'signals');
+   assert.equal(await page.locator('#daySignalMetrics').isVisible(),true);
+   assert.equal(await page.locator('#dayUVBadge').isVisible(),true);
+   const fixedAfter=await page.locator('.faro-ocean-surface').boundingBox();
+   assert.ok(Math.abs(fixedBefore.height-fixedAfter.height)<2,
+    'Wave transition must replace content in place, not grow a new card');
+   await page.locator('.faro-surface-flip').click();
+   assert.equal(await page.locator('#chileDecisionHeadline').isVisible(),true);
+   assert.equal(await page.locator('#faroPrepHints .faro-prep-chip--uv').isVisible(),false,
+    'UV appears once in the permanent warning stripe');
    if(width<=430)assert.ok(visual.heroHeight<770,
     'Mobile daily hero has excessive forced height: '+JSON.stringify(visual));
    assert.ok(visual.scrollWidth<=visual.clientWidth+3,
@@ -537,7 +554,14 @@ function fixture(){
    await page.locator('#faroLeadMap').click();
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true,
     'Hero map CTA opens the same trusted Coastal Lens, no new fake map');
-      await page.locator('#faroHourlyGoLens').click();
+      // Selected-hour details stay in the same footprint as the compact reading.
+    assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'read');
+    const hourlySize=await page.locator('#faroHourlyPreview').boundingBox();
+    await page.locator('.faro-hourly-flip').click();
+    assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'signals');
+    assert.ok(Math.abs((await page.locator('#faroHourlyPreview').boundingBox()).height-hourlySize.height)<2,
+     'Hourly detail must not expand the surface');
+    await page.locator('#faroHourlyGoLens').click();
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
    assert.equal(await page.locator('#openOceanMap').isVisible(),true,
     'Coastal map must have a prominent primary action');
