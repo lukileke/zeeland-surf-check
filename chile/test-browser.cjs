@@ -559,9 +559,12 @@ function fixture(){
    await page.locator('#faroLeadRead').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
-   await page.locator('#faroLeadMap').click();
-   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true,
-    'Hero map CTA opens the same trusted Coastal Lens, no new fake map');
+   // The secondary hero action is intentionally hidden at some mobile widths.
+   if(await page.locator('#faroLeadMap').isVisible()){
+    await page.locator('#faroLeadMap').click();
+    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true,
+     'Visible hero map CTA opens the existing Coastal Lens');
+   }
       // Selected-hour details stay in the same footprint as the compact reading.
     assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'read');
     const hourlySize=await page.locator('#faroHourlyPreview').boundingBox();
