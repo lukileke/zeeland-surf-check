@@ -12,7 +12,7 @@ const loader=fs.readFileSync(path.join(root,'FARO_AUTO_WIDGET.js'),'utf8');
 
 test('Scriptable async syntax and GitHub hot-loader eligibility',()=>{
  assert.doesNotThrow(()=>new (async function(){}).constructor(widget));
- assert.match(widget,/Ambient Mark Editorial v20/);
+ assert.match(widget,/Coastal Signal Editorial v21/);
  for(const item of ['// FARO Widget','Script.setWidget(widget)','Script.complete()',
   'const SITE="https://lukileke.github.io/zeeland-surf-check/"'])
   assert.ok(widget.includes(item),item);
