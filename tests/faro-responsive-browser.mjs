@@ -98,6 +98,9 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       base.matchesBand=lead.matches('section#faroForecastLead.faro-forecast-lead.brand-band-regular');
       base.bandInk=getComputedStyle(lead).getPropertyValue('--brand-score-ink').trim();
       base.lockLoaded=[...document.styleSheets].some(sheet=>sheet.href?.includes('faro-score-colour-lock-v1.css'));
+      base.parentId=lead.parentElement?.id;
+      base.strongMatches=numeral.matches('html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-regular strong#faroLeadScore');
+      base.strongFallbackMatches=numeral.matches('html #forecastPage > .faro-forecast-lead[class*="brand-band-"] #faroLeadScore');
      }
      return base;
     });
@@ -142,7 +145,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     // An inherited CSS 'color' can remain neutral even though the actual
     // painted numerals are correctly green. Test the painted ink instead.
     assert.equal(found.scoreTextFill,'rgb(177, 213, 116)',
-      'visible FARO score pigment '+JSON.stringify({ink:found.scoreInk,paint:found.scoreTextFill,token:found.scoreToken,visibility:found.forecastVisibility,matched:found.matchesBand,band:found.bandInk,lockLoaded:found.lockLoaded}));
+      'visible FARO score pigment '+JSON.stringify({ink:found.scoreInk,paint:found.scoreTextFill,token:found.scoreToken,visibility:found.forecastVisibility,matched:found.matchesBand,band:found.bandInk,lockLoaded:found.lockLoaded,parent:found.parentId,strongMatches:found.strongMatches,baseMatches:found.strongFallbackMatches}));
     rgbByEngine[engine][s.width+'-'+theme]=found.scoreTextFill;
     if([390,1440].includes(s.width)){
       await page.screenshot({path:`${out}/${engine}-${s.name}-${theme}.png`});
