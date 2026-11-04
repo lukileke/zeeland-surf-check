@@ -83,9 +83,18 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       button:rect('#faroLeadRead')
      };
      if(lead){
+      // Offline API mocks can switch the forecast tab into .hide while loading.
+      // Explicitly activate the FORECAST viewport being measured rather than
+      // expecting colour/width contracts on a hidden application screen.
+      const forecast=document.querySelector('#forecastPage');
+      forecast.classList.remove('hide');
       lead.className='faro-forecast-lead brand-band-regular';
-      document.querySelector('#faroLeadScore').textContent='6.1';
-      base.scoreInk=getComputedStyle(document.querySelector('#faroLeadScore')).color;
+      const numeral=document.querySelector('#faroLeadScore');
+      numeral.textContent='6.1';
+      base.scoreInk=getComputedStyle(numeral).color;
+      base.scoreTextFill=getComputedStyle(numeral).webkitTextFillColor;
+      base.scoreToken=getComputedStyle(document.documentElement).getPropertyValue('--faro-score-3').trim();
+      base.forecastVisibility=getComputedStyle(forecast).display;
      }
      return base;
     });
@@ -125,7 +134,8 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     if(s.width>=711&&s.width<=1030){
       assert.ok(found.hours.top>=found.overview.top,'tablet day/hour order');
     }
-    assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score');
+    assert.equal(found.scoreToken,'#b1d574','canonical FARO token not loaded');
+    assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score '+JSON.stringify({ink:found.scoreInk,fill:found.scoreTextFill,token:found.scoreToken,visibility:found.forecastVisibility}));
     rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;
     if([390,1440].includes(s.width)){
       await page.screenshot({path:`${out}/${engine}-${s.name}-${theme}.png`});
@@ -147,4 +157,4 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
  }
 }
 assert.deepEqual(errors,[],'FARO responsive browser smoke checks failed');
-console.log('Browser responsive QA passed for Chrome + WebKit, 5 widths, both themes.');
+console.log('Browser responsive QA passed for Chrome + WebKit, 9 widths, both themes.');
