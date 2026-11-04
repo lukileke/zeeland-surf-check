@@ -74,6 +74,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       hours:rect('#dayview>.hourly-section'),
       dayview:rect('#dayview'),
       footer:rect('footer.chile-footer'),
+      footerColumns:getComputedStyle(document.querySelector('footer.chile-footer')).gridTemplateColumns.split(' ').filter(Boolean).length,
       wave:rect('#daySignalMetrics>.chile-day-wave-feature'),
       period:rect('#daySignalMetrics>.day-signal-metric:nth-child(2)'),
       wind:rect('#daySignalMetrics>.day-signal-metric:nth-child(3)'),
@@ -98,6 +99,11 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       assert.ok(found[k].left>=-3&&found[k].right<=s.width+3,'offscreen '+k);
     }
     assert.ok(found.footer.top>found.dayview.top,'footer must end the page');
+    if(s.width<=1119){
+      assert.equal(found.footerColumns,1,'tablet/iPhone footer must be a single column');
+    }else{
+      assert.equal(found.footerColumns,2,'desktop footer should retain a balanced two-column ending');
+    }
     assert.ok(found.button.height>=40,'hero action must be tappable');
     if(mobileLayout){
       assert.ok(found.nav.top<found.hero.top,'mobile navigation before hero');
