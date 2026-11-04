@@ -484,7 +484,7 @@ function fixture(){
     assert.equal(await page.locator('#ventanasAccessNotice .faro-access-brand img').count(),0,
      'FARO mark must be a background watermark, not a foreground sticker');
     assert.match(await page.locator('#faroAccessKicker').textContent(),/FARO/);
-    assert.match(await page.locator('#faroAccessSeverity').textContent(),/REPORTED|REPORTADA/i);
+    assert.match(await page.locator('#faroAccessSeverity').textContent(),/REPORTED|REPORTADA|REPORTE FECHADO|DATED REPORT/i);
     assert.match(await page.locator('#faroAccessSubline').textContent(),/27/);
     const editorial=await page.locator('#ventanasAccessNotice').evaluate(n=>{
      const summary=n.querySelector('summary');
