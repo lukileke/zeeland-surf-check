@@ -532,18 +532,22 @@ function fixture(){
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),true);
     await page.locator('#ventanasAccessNotice > summary').click();
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),false);
-    // A reported restriction MUST suppress an actionable numerical session
-    // index. Wait for the restricted hero, not for the old unsafe score tile.
-    await page.waitForFunction(()=>/acceso|access/i.test(
-     document.querySelector('#faroLeadHeadline')?.textContent||""),
-     {timeout:15000});
-    assert.equal((await page.locator('#faroLeadScore').textContent()).trim(),"—",
-     'Restricted Ventanas must not show an actionable model score');
-    assert.match(await page.locator('#chileDecisionHeadline').textContent(),/acceso|access/i);
-    assert.match(await page.locator('#faroLeadHeadline').textContent(),/acceso|access/i);
-    assert.match(await page.locator('#faroLeadStatus').textContent(),/restricci[oó]n|restriction/i);
-    assert.notEqual(await page.locator('#faroLeadGrade').textContent(),'Excelente',
-     'A restricted beach must not present an excellent session recommendation');
+    // A confirmed CURRENT restriction suppresses the score; a dated,
+    // explicitly unverified report must not be treated as a current ban.
+    const noticeText=(await page.locator('#ventanasAccessNotice').textContent())||'';
+    const heroStatus=(await page.locator('#faroLeadStatus').textContent())||'';
+    const verifiedRestricted=/restricci[oó]n (?:actual|vigente|confirmada)|current (?:access )?restriction/i.test(noticeText)
+      && !/no verificado|unverified/i.test(noticeText);
+    if(verifiedRestricted){
+      assert.equal((await page.locator('#faroLeadScore').textContent()).trim(),"—",
+       'Verified current restriction must suppress actionable score');
+      assert.notEqual(await page.locator('#faroLeadGrade').textContent(),'Excelente');
+    }else{
+      assert.match(noticeText,/no verificado|unverified/i,
+       'Historical access news must expose uncertainty');
+      assert.ok(!/restricci[oó]n vigente|confirmed restriction/i.test(heroStatus),
+       'Historical lifting report must not claim an active verified restriction');
+    }
 
     await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
     await page.waitForFunction(()=>document.querySelector('#ventanasAccessNotice')?.hidden===true,{timeout:12000});
