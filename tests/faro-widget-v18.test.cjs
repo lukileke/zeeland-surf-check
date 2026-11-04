@@ -7,7 +7,7 @@ const fs=require('node:fs'),path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'..','zeeland-widget.js'),'utf8');
 
 test('v19 source is valid and stays eligible for existing GitHub auto-updater',()=>{
- assert.match(source,/Native Tide Editorial v19/);
+ assert.match(source,/Ambient Mark Editorial v20/);
  assert.doesNotThrow(()=>new (async()=>{}).constructor(source));
  for(const token of ['// FARO Widget','Script.setWidget(widget)','Script.complete()',
    'const SITE="https://lukileke.github.io/zeeland-surf-check/"'])assert.ok(source.includes(token));
