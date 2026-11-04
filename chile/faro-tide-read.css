@@ -302,3 +302,29 @@ html body main #forecastPage:not(.hide) #dailyOverview>.faro-ocean-surface{order
 html body main #forecastPage:not(.hide) #dailyOverview>#faroPrepHints{order:2!important;margin:4px 0 3px!important}
 html body main #forecastPage:not(.hide) #dailyOverview>#dayUVBadge{order:3!important;margin:3px 0 4px!important}
 html body main #forecastPage:not(.hide) #dailyOverview>#openSpotDNA{order:4!important;margin:3px 0 0!important}
+
+/* The water gesture belongs to the reading, not merely the toggle.
+   A single travelling luminous crest, never an endlessly moving wallpaper. */
+#forecastPage #dayview #dailyOverview .faro-surface-window::after{
+  content:"";position:absolute;inset:-35% -65%;z-index:5;
+  pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse 29% 60% at 50% 50%,
+    transparent 32%,rgba(137,227,219,.20) 42%,rgba(137,227,219,.05) 51%,transparent 65%);
+}
+#forecastPage #dayview #dailyOverview .faro-ocean-surface[data-mode=signals] .faro-surface-window::after{
+  animation:faro-surface-wave-in .65s cubic-bezier(.2,.72,.2,1) both;
+}
+#forecastPage #dayview #dailyOverview .faro-ocean-surface[data-mode=read] .faro-surface-window::after{
+  animation:faro-surface-wave-out .65s cubic-bezier(.2,.72,.2,1) both;
+}
+@keyframes faro-surface-wave-in{
+  0%{opacity:0;transform:translateX(-62%) scale(.8)}
+  35%{opacity:.85}100%{opacity:0;transform:translateX(58%) scale(1.15)}
+}
+@keyframes faro-surface-wave-out{
+  0%{opacity:0;transform:translateX(58%) scale(1.15)}
+  35%{opacity:.8}100%{opacity:0;transform:translateX(-62%) scale(.8)}
+}
+@media(prefers-reduced-motion:reduce){
+ #forecastPage #dayview #dailyOverview .faro-surface-window::after{animation:none!important}
+}
