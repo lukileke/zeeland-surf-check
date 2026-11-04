@@ -91,8 +91,13 @@ function fixture(){
      scrollWidth:document.documentElement.scrollWidth,
      grid:heroStyle.display==="flex"?1:heroStyle.gridTemplateColumns.split(' ').length};
    });
-   assert.ok(brand.bottom<=brand.toolbar+3,
-    'Ocean-led FARO hero must precede timestamps and controls: '+JSON.stringify(brand));
+   if(width<=710){
+    assert.ok(brand.bottom<=brand.toolbar+3,
+     'Phone hero precedes toolbar: '+JSON.stringify(brand));
+   }else{
+    assert.ok(brand.toolbar<=brand.top+3,
+     'Tablet/desktop context controls precede model hero: '+JSON.stringify(brand));
+   }
    assert.ok(brand.daily>brand.top,
     'Branded model read must precede detailed Daily Take');
 
