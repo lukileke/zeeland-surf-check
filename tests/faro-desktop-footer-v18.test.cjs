@@ -15,7 +15,7 @@ test('fix loaded as the final layout sheet, then immutable score-colour lock',()
  assert.doesNotMatch(css,/--faro-score-[0-4]\s*:|--brand-score-ink\s*:/);
 });
 test('three desktop metrics share a single grid row and do not orphan wind',()=>{
- assert.ok(css.includes('grid-template-columns:minmax(0,1.3fr) minmax(0,.86fr) minmax(0,.86fr)!important'));
+ assert.ok(css.includes('grid-template-columns:minmax(0,1.28fr) minmax(0,.86fr) minmax(0,.86fr)!important'));
  assert.ok(css.includes('grid-template-rows:minmax(0,auto)!important'));
  for(const [type,col] of [['.chile-day-wave-feature',1],['.day-signal-metric:nth-child(2)',2],['.day-signal-metric:nth-child(3)',3]]){
   assert.ok(css.includes(type),'missing '+type);
@@ -38,6 +38,10 @@ test('the duplicate second hero is gone; footer is native and not card-shaped',(
  assert.ok(css.includes('main:has(#forecastPage:not(.hide))>footer'));
  assert.ok(css.includes('border-radius:0!important'));
  assert.ok(css.includes('box-shadow:none!important'));
+ assert.ok(css.includes('main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2,'));
+ assert.ok(css.includes('grid-template-columns:minmax(0,1fr)!important'));
+ assert.ok(css.includes('background:transparent!important'));
+ ;
  assert.ok(html.includes('class="faro-footer-manifesto"'));
 });
 test('narrow viewport keeps reading sequence and all facts',()=>{
