@@ -93,6 +93,7 @@
       "Experimental model: offshore height, not breaking-wave height. Local calibration pending."
     );
     hourlyTitle.textContent=tr("FARO · TU FRANJA","FARO · YOUR WINDOW");
+    hourlyReasonSummary.textContent=tr("¿Por qué?","Why this reading?");
     hourlyToggle.querySelector(".faro-hourly-flip-label").textContent=
       hourlyMode==="read"?tr("Ver datos","See data"):tr("Volver","Back");
     hourlyToggle.setAttribute("aria-expanded",String(hourlyMode!=="read"));
@@ -113,7 +114,10 @@
   hourlyBack.id="faroHourlyBack";
   const hourlyTitle=meta.querySelector("small");
   hourlyFront.append(headline);
-  hourlyBack.append(signals,explain,map);
+  const hourlyReason=node("details","faro-hourly-why");
+  const hourlyReasonSummary=node("summary","faro-hourly-why-summary");
+  hourlyReason.append(hourlyReasonSummary,explain);
+  hourlyBack.append(signals,map,hourlyReason);
   hourlyWindow.append(hourlyFront,hourlyBack);
   const hourlyToggle=node("button","faro-hourly-flip");
   hourlyToggle.type="button";
