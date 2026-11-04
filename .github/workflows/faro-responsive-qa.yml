@@ -8,6 +8,7 @@ on:
       - "faro-*.css"
       - "tests/**"
       - "zeeland-widget.js"
+      - "scripts/build-faro-css.cjs"
       - ".github/workflows/faro-responsive-qa.yml"
   pull_request:
     paths:
@@ -28,6 +29,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Verify CSS bundles reproduce ordered source exactly
+        run: node scripts/build-faro-css.cjs --check
       - name: Verify FARO layouts, automatic updates and widget model semantics
         run: |
           node --test \
