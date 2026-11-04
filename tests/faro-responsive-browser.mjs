@@ -83,25 +83,28 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       button:rect('#faroLeadRead')
      };
      if(lead){
-      lead.className='faro-forecast-lead brand-band-regular';
-      document.querySelector('#faroLeadScore').textContent='6.1';
-      // Flush two browser frames after the synthetic class change without
-      // waiting long enough for a late provider refresh to replace it.
+      // Test CSS on a temporary twin, not the live hero: an asynchronous
+      // model refresh legitimately changes its class to is-unavailable.
+      const sample=lead.cloneNode(false);
+      sample.className='faro-forecast-lead brand-band-regular';
+      const signal=document.createElement('aside');signal.className='faro-lead-signal';
+      const scoreRow=document.createElement('div');scoreRow.className='faro-lead-score-row';
+      const score=document.querySelector('#faroLeadScore').cloneNode(false);
+      score.textContent='6.1';
+      scoreRow.append(score);signal.append(scoreRow);sample.append(signal);
+      lead.after(sample);
       await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-      const score=document.querySelector('#faroLeadScore');
       const style=getComputedStyle(score);
       base.scoreInk=style.color;
       base.scoreProbe={
        matches:score.matches('html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-regular strong#faroLeadScore'),
-       parent:lead.parentElement?.id,grandparent:lead.parentElement?.parentElement?.tagName,
-       className:lead.className,forecastClass:document.querySelector('#forecastPage')?.className,
-       tone:getComputedStyle(lead).getPropertyValue('--brand-score-ink'),
+       className:sample.className,
+       tone:getComputedStyle(sample).getPropertyValue('--brand-score-ink'),
        canonical:getComputedStyle(document.documentElement).getPropertyValue('--faro-score-3'),
        fill:style.getPropertyValue('-webkit-text-fill-color'),
-       inline:score.getAttribute('style'),
-       transition:style.transitionProperty+' / '+style.transitionDuration,
-       css:document.querySelector('link[href*="faro-score-colour-lock-v1.css"]')?.sheet?.cssRules?.length||0
+       inline:score.getAttribute('style')
       };
+      sample.remove();
      }
      return base;
     });
