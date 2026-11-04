@@ -294,3 +294,11 @@ html body main #forecastPage:not(.hide) #dailyOverview #faroPrepHints{order:0!im
 #forecastPage #dayview #dailyOverview #dayUVBadge{overflow:visible!important;white-space:normal!important}
 #forecastPage #dayview #dailyOverview #dayUVBadge #dayUVAdvice{white-space:normal!important}
 /* Never style grade tones: existing canonical FARO score ink owns them. */
+
+/* The previous desktop/mobile layout assigns flex order to old siblings.
+   Reset explicitly so the new surface follows the date, not the reverse. */
+html body main #forecastPage:not(.hide) #dailyOverview>.day-overview-row{order:0!important}
+html body main #forecastPage:not(.hide) #dailyOverview>.faro-ocean-surface{order:1!important}
+html body main #forecastPage:not(.hide) #dailyOverview>#faroPrepHints{order:2!important;margin:4px 0 3px!important}
+html body main #forecastPage:not(.hide) #dailyOverview>#dayUVBadge{order:3!important;margin:3px 0 4px!important}
+html body main #forecastPage:not(.hide) #dailyOverview>#openSpotDNA{order:4!important;margin:3px 0 0!important}
