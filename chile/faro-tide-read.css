@@ -347,14 +347,17 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
 @media(min-width:1120px){
   html body main #forecastPage:not(.hide)>#dayview:not(.hide){
     grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-    align-items:stretch!important;column-gap:18px!important
+    align-items:start!important;column-gap:18px!important
   }
   html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section,
   html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
-    align-self:stretch!important;height:100%!important;min-height:440px!important
+    align-self:start!important;height:auto!important;min-height:0!important
   }
   html body main #forecastPage:not(.hide) #dailyOverview{
-    height:100%!important;min-height:440px!important
+    height:auto!important;min-height:0!important
+  }
+  #forecastPage #dayview #dailyOverview .faro-surface-window{
+    height:158px!important
   }
   html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
     padding:clamp(17px,1.65vw,24px)!important;gap:12px!important
@@ -363,11 +366,11 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
     grid-auto-rows:84px!important;gap:9px!important
   }
   html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview.faro-hourly-in-place{
-    flex:1 1 auto!important;height:auto!important;min-height:170px!important;
-    max-height:none!important;margin-top:0!important;overflow:hidden!important
+    flex:0 0 auto!important;height:147px!important;min-height:147px!important;
+    max-height:147px!important;margin-top:0!important;overflow:hidden!important
   }
   html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-window{
-    flex:1 1 auto!important;height:auto!important;min-height:80px!important;
+    flex:0 0 77px!important;height:77px!important;min-height:77px!important;
     width:100%!important
   }
   html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-front{
