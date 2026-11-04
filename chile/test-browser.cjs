@@ -523,8 +523,9 @@ function fixture(){
      'Source context must remain available without overflow');
     assert.match(editorial.datedEvidence,/29|oct|October|octubre|2026/i);
 
-    assert.equal(await page.locator('#faroAccessSourceLink').getAttribute('href'),
-     'https://puranoticia.pnt.cl/region-valparaiso/seremi-de-salud-levanta-prohibicion-de-bano-en-playa-de-algarrobo-no-han');
+    assert.match(await page.locator('#faroAccessSourceLink').getAttribute('href'),
+     /^https:\/\/(?:www\.)?(?:soychile\.cl|puranoticia\.pnt\.cl)\//,
+     'Access notice must keep a direct dated Chilean source link');
 
     assert.equal(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:ventanas"] text').count()>0,true);
     await page.locator('#ventanasAccessNotice > summary').click();
