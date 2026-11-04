@@ -36,7 +36,13 @@
   backTitle.setAttribute("aria-hidden","true");
   const science=node("p","faro-surface-science");
   front.append(brief,facts);
-  back.append(backTitle,metrics,reason,vibe,science);
+  // Preserve the original model-bound DOM, but keep the technical instrument
+  // out of the editorial face until a reader explicitly asks for it.
+  const technical=node("details","faro-technical-fold");
+  technical.id="faroTechnicalEvidence";
+  const technicalSummary=node("summary","faro-technical-summary");
+  technical.append(technicalSummary,metrics,science);
+  back.append(backTitle,reason,vibe,technical);
   windowBox.append(front,back);
 
   const control=node("div","faro-surface-control");
@@ -62,9 +68,9 @@
     }
     flip.setAttribute("aria-expanded",String(isDetail));
     const label=flip.querySelector(".faro-flip-label");
-    label.textContent=isDetail?tr("Volver a la lectura","Back to reading"):tr("Explorar señales","Explore signals");
+    label.textContent=isDetail?tr("Volver","Back"):tr("Ver señales","See signals");
     flip.querySelector(".faro-flip-icon").textContent=isDetail?"↶":"↗";
-    context.textContent=isDetail?tr("SEÑALES DEL MAR","OCEAN SIGNALS"):tr("LECTURA FARO","FARO READ");
+    context.textContent=isDetail?tr("FARO · SEÑALES","FARO · SIGNALS"):tr("FARO · LECTURA","FARO · READ");
   };
   flip.addEventListener("click",()=>switchMode(mode==="read"?"signals":"read"));
 
@@ -80,14 +86,16 @@
     }
   };
   const localise=()=>{
-    backTitle.textContent=tr("Las condiciones detrás del índice","Conditions behind the index");
+    backTitle.textContent=tr("¿Qué está leyendo FARO?","What is FARO reading?");
+    technicalSummary.textContent=tr("Datos oceánicos y límites del modelo","Ocean data and model limits");
     science.textContent=tr(
-      "Índice de calidad estimada ≠ tamaño de ola. Altura oceánica modelada, no rompiente. Sin calibración local.",
-      "Estimated quality index ≠ wave size. Modelled offshore height, not breaking-wave height. Not locally calibrated."
+      "Modelo experimental: altura oceánica, no de rompiente. Calibración local pendiente.",
+      "Experimental model: offshore height, not breaking-wave height. Local calibration pending."
     );
-    hourlyTitle.textContent=tr("FRANJA ELEGIDA","SELECTED WINDOW");
+    hourlyTitle.textContent=tr("FARO · TU FRANJA","FARO · YOUR WINDOW");
+    hourlyReasonSummary.textContent=tr("¿Por qué?","Why this reading?");
     hourlyToggle.querySelector(".faro-hourly-flip-label").textContent=
-      hourlyMode==="read"?tr("Ver detalles","See details"):tr("Volver","Go back");
+      hourlyMode==="read"?tr("Ver datos","See data"):tr("Volver","Back");
     hourlyToggle.setAttribute("aria-expanded",String(hourlyMode!=="read"));
     refreshFacts();
     switchMode(mode);
@@ -106,7 +114,10 @@
   hourlyBack.id="faroHourlyBack";
   const hourlyTitle=meta.querySelector("small");
   hourlyFront.append(headline);
-  hourlyBack.append(signals,explain,map);
+  const hourlyReason=node("details","faro-hourly-why");
+  const hourlyReasonSummary=node("summary","faro-hourly-why-summary");
+  hourlyReason.append(hourlyReasonSummary,explain);
+  hourlyBack.append(signals,hourlyReason);
   hourlyWindow.append(hourlyFront,hourlyBack);
   const hourlyToggle=node("button","faro-hourly-flip");
   hourlyToggle.type="button";
@@ -114,6 +125,9 @@
   hourlyToggle.innerHTML='<span class="faro-hourly-flip-label"></span><span aria-hidden="true">↗</span>';
   meta.append(hourlyToggle);
   meta.after(hourlyWindow);
+  // Keep the canonical map action outside the scrolling evidence viewport.
+  // This eliminates occluded clicks without duplicating a button or its ID.
+  hourly.append(map);
   hourly.classList.add("faro-hourly-in-place");
   let hourlyMode="read";
   const updateHourly=()=>{
@@ -123,7 +137,7 @@
       face.setAttribute("aria-hidden",String(!active));
     }
     hourlyToggle.querySelector(".faro-hourly-flip-label").textContent=
-      hourlyMode==="read"?tr("Ver detalles","See details"):tr("Volver","Go back");
+      hourlyMode==="read"?tr("Ver datos","See data"):tr("Volver","Back");
     hourlyToggle.setAttribute("aria-expanded",String(hourlyMode==="signals"));
   };
   hourlyToggle.addEventListener("click",()=>{

@@ -65,7 +65,7 @@ test('underwater pulse is kept and WebKit shadow seam is not reintroduced',()=>{
 test('new CSS is before the invariant score palette, with no model changes',()=>{
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=1');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=3');
  assert.equal(links.at(-3),'faro-decision-balance-v1.css?v=1');
  assert.equal(links.at(-4),'faro-responsive-quality-v1.css?v=1');
  assert.equal(links.at(-5),'faro-editorial-hero-focus-v1.css?v=1');
@@ -74,7 +74,7 @@ test('new CSS is before the invariant score palette, with no model changes',()=>
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(css));
  assert.ok(html.includes('faro-beacon-atmosphere-v4.css?v=1'));
  assert.ok(html.includes('faro-chile-live.js?v=11'));
- assert.ok(html.includes('chile-forecast.js?v=45'));
+ assert.ok(html.includes('chile-forecast.js?v=46'));
 });
 
 test('five decorative layers share one 5.4-second peak at half-cycle',()=>{

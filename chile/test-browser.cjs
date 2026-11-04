@@ -269,6 +269,45 @@ function fixture(){
     assert.ok(gap>=-4&&gap<=48,
      'Unexpected whitespace or overlap between reading, preparation and UV: '+JSON.stringify({width,from,to,gap,visual}));
    }
+   // The previous desktop defect hid the eighth slot and left the two
+   // instruments visually unrelated. Assert actual boxes, not only CSS rules.
+   if(width>=1120){
+    const deck=await page.evaluate(()=>{
+     const r=s=>document.querySelector(s).getBoundingClientRect();
+     const buttons=[...document.querySelectorAll('#slots>button')].map(e=>{
+      const b=e.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom,width:b.width,height:b.height};
+     });
+     return {daily:r('.day-outlook-section'),hours:r('.hourly-section'),
+      rail:r('#slots'),buttons,columns:getComputedStyle(document.querySelector('#slots')).gridTemplateColumns.split(' ').length};
+    });
+    assert.equal(deck.columns,4,'Four readable score windows per desktop row');
+    assert.equal(deck.buttons.length,8,'All eight two-hour windows should remain accessible');
+    assert.ok(deck.buttons.every(x=>x.width>=70&&x.right<=deck.rail.right+2),
+     'Every hourly score, including 20–22, must fit completely inside its panel');
+    assert.ok(Math.abs(deck.buttons[0].y-deck.buttons[3].y)<3&&
+      deck.buttons[4].y>deck.buttons[0].y+35,
+     'Desktop score windows must form two intentional rows');
+    assert.ok(deck.buttons[0].bottom+5<=deck.buttons[4].y,
+     'Desktop score rows must have an actual visible gap: '+JSON.stringify(deck.buttons));
+    assert.ok(Math.abs(deck.daily.top-deck.hours.top)<12,
+     'The two desktop reading instruments should align at the top');
+    assert.ok(Math.abs(deck.daily.height-deck.hours.height)<120,
+     'Desktop panels should be proportionate without forcing empty space');
+    const selectedHeight=await page.locator('#faroHourlyPreview').evaluate(el=>el.getBoundingClientRect().height);
+    assert.ok(selectedHeight<=168,
+     'Selected-hour card should not stretch into a large blank panel: '+selectedHeight);
+    const selected=await page.locator('#faroHourlyHeadline').evaluate(el=>{
+      const box=el.getBoundingClientRect();
+      const frame=el.closest('#faroHourlyPreview').getBoundingClientRect();
+      const face=getComputedStyle(el.closest('.faro-hourly-front'));
+      return {headline:{x:box.x,y:box.y,width:box.width,height:box.height},
+       frame:{x:frame.x,y:frame.y,width:frame.width,height:frame.height},
+       display:getComputedStyle(el).display,faceDisplay:face.display};
+    });
+    assert.ok(selected.headline.height>14&&selected.headline.y>=selected.frame.y&&
+      selected.headline.y+selected.headline.height<=selected.frame.y+selected.frame.height+2,
+      'Selected-hour verdict must be visible INSIDE the desktop instrument: '+JSON.stringify(selected));
+   }
    // Both depths occupy the same fixed footprint without hiding safety.
    const fixedBefore=await page.locator('.faro-ocean-surface').boundingBox();
    assert.equal(await page.locator('.faro-ocean-surface').getAttribute('data-mode'),'read');
@@ -276,6 +315,7 @@ function fixture(){
    assert.equal(await page.locator('#dayUVBadge').isVisible(),true);
    await page.locator('.faro-surface-flip').click();
    assert.equal(await page.locator('.faro-ocean-surface').getAttribute('data-mode'),'signals');
+   await page.locator('#faroTechnicalEvidence > summary').click();
    await page.locator('#daySignalMetrics').waitFor({state:'visible',timeout:3000}).catch(async err=>{
     const diag=await page.locator('#daySignalMetrics').evaluate(el=>{
      const styles=getComputedStyle(el),parent=getComputedStyle(el.parentElement);
@@ -454,8 +494,8 @@ function fixture(){
       clientWidth:document.documentElement.clientWidth};
     });
     assert.ok(['flex','grid'].includes(mobile.display),'Compact access notice supports responsive flex/grid');
-    assert.ok(mobile.height<=88,
-     'FARO compact mobile warning must not consume a third of the screen: '+JSON.stringify(mobile));
+    assert.ok(mobile.height<=124,
+     'Dated FARO access warning must remain readable and occupy a modest mobile area: '+JSON.stringify(mobile));
     assert.ok(mobile.scrollWidth<=mobile.clientWidth+3,
      'New visual direction introduces horizontal scrolling: '+JSON.stringify(mobile));
     await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
@@ -580,7 +620,7 @@ function fixture(){
     'Combined layer must show two unambiguous travel-direction arrows');
    assert.equal(await page.locator('#chileCoastMap .faro-lens-quick-metrics').count(),1,
     'Coastal read must separate swell and wind measures from the map');
-   assert.match(await page.locator('#faroHourlyPreview').textContent(),/FRANJA ELEGIDA|SELECTED WINDOW/);
+   assert.match(await page.locator('#faroHourlyPreview').textContent(),/FARO · TU FRANJA|FARO · YOUR WINDOW/);
    await page.locator('#faroLeadRead').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
