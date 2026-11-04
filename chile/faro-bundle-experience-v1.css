@@ -1,0 +1,2878 @@
+/* FARO CHILE | editorial interaction & breakpoint fixes, preserved cascade order. */
+
+/* ===== BEGIN chile/faro-beacon-atmosphere-v4.css ===== */
+/*
+ * FARO Chile — Deep Ocean Hero v4
+ * Identical editorial hero for dark and light pages; the rest of the
+ * application still follows the chosen theme. Original FARO logo unchanged.
+ * The pulse is a standalone HTML layer (not an animated SVG filter) so
+ * iOS Safari and desktop share the same visible optical rhythm.
+ */
+
+/* A single dark-water surface in BOTH page themes. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead {
+  --beacon-x:53%;
+  --beacon-y:51%;
+  --beacon-size:clamp(130px,10.4vw,165px);
+  --beacon-halo:clamp(305px,31vw,460px);
+  --beacon-ambient:clamp(435px,49vw,680px);
+  --beacon-beam:clamp(225px,29vw,440px);
+  --faro-lead-text:#f4faf7;
+  --faro-lead-secondary:#cfe3df;
+  --faro-lead-caption:#b5d0cc;
+  --faro-lead-key:#a5d7d0;
+  position:relative;isolation:isolate;overflow:hidden;
+  color:var(--faro-lead-text)!important;
+  background:
+    radial-gradient(ellipse 39% 72% at 53% 50%,rgba(84,175,170,.16),transparent 83%),
+    radial-gradient(ellipse 55% 74% at 23% 107%,rgba(33,128,144,.10),transparent 82%),
+    linear-gradient(118deg,#123a40 0%,#10363b 50%,#092932 100%)!important;
+  border:1px solid rgba(154,210,206,.26)!important;
+  box-shadow:0 18px 48px rgba(9,35,40,.11)!important;
+}
+
+/* Full-hero coordinate system; layers cannot obscure headings or taps. */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon {
+  position:absolute!important;inset:0!important;
+  isolation:isolate;overflow:hidden;
+  pointer-events:none;z-index:0!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon::before {
+  content:"";position:absolute;
+  left:var(--beacon-x);top:var(--beacon-y);
+  width:var(--beacon-ambient);height:var(--beacon-ambient);
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(154,236,217,.14),rgba(87,193,184,.10) 28%,
+    rgba(60,149,159,.045) 52%,transparent 78%);
+  filter:blur(33px);opacity:.77;z-index:0;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {
+  content:"";position:absolute;
+  left:var(--beacon-x);top:var(--beacon-y);
+  width:var(--beacon-halo);height:var(--beacon-halo);
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(255,228,143,.22),rgba(255,228,154,.15) 12%,
+    rgba(151,226,208,.145) 29%,rgba(85,194,190,.07) 53%,
+    transparent 80%);
+  filter:blur(25px);opacity:.80;z-index:0;
+}
+
+/* Separate animated aura: no !important opacity or competing animations.
+ * transform + opacity are GPU-friendly even on modern iPhone Safari.
+ * The light breathes; the original SVG and all forecast data remain still.
+ */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-pulse {
+  position:absolute;display:block;
+  left:var(--beacon-x);top:var(--beacon-y);
+  width:var(--beacon-halo);height:var(--beacon-halo);
+  border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,
+    rgba(255,226,148,.38) 0%,
+    rgba(255,233,168,.265) 13%,
+    rgba(135,237,215,.21) 30%,
+    rgba(69,177,185,.085) 57%,
+    transparent 80%);
+  filter:blur(17px);-webkit-filter:blur(17px);
+  opacity:.37;
+  transform:translate3d(-50%,-50%,0) scale(.93);
+  -webkit-animation:faro-deep-ocean-pulse 6.4s ease-in-out infinite;
+  animation:faro-deep-ocean-pulse 6.4s ease-in-out infinite;
+  will-change:opacity,transform;
+}
+@-webkit-keyframes faro-deep-ocean-pulse {
+  0%,100%{opacity:.30;-webkit-transform:translate3d(-50%,-50%,0) scale(.92)}
+  50%{opacity:.88;-webkit-transform:translate3d(-50%,-50%,0) scale(1.08)}
+}
+@keyframes faro-deep-ocean-pulse {
+  0%,100%{opacity:.30;transform:translate3d(-50%,-50%,0) scale(.92)}
+  50%{opacity:.88;transform:translate3d(-50%,-50%,0) scale(1.08)}
+}
+
+/* Blurred refracted illumination extending leftwards from the source. */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
+  position:absolute!important;
+  left:var(--beacon-x)!important;right:auto!important;
+  top:var(--beacon-y)!important;
+  width:var(--beacon-beam)!important;
+  height:clamp(135px,19vw,265px)!important;
+  transform:translate(-93%,-50%) rotate(-7deg)!important;
+  transform-origin:92% 50%!important;
+  background:radial-gradient(ellipse 92% 62% at 99% 50%,
+    rgba(242,237,187,.19),rgba(155,235,216,.13) 32%,
+    rgba(112,207,204,.065) 56%,transparent 85%)!important;
+  clip-path:none!important;-webkit-clip-path:none!important;
+  filter:blur(29px)!important;
+  opacity:.76!important;z-index:1;
+  animation:none!important;
+}
+
+/* Original four-segment emblem aligned with the aura; decorative only. */
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
+  position:absolute!important;
+  left:var(--beacon-x)!important;top:var(--beacon-y)!important;
+  right:auto!important;width:var(--beacon-size)!important;
+  height:var(--beacon-size)!important;
+  display:grid!important;place-items:center!important;
+  margin:0!important;padding:0!important;
+  opacity:.44!important;
+  transform:translate(-50%,-50%) rotate(-8deg)!important;
+  pointer-events:none!important;z-index:2!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+  position:static!important;display:block!important;
+  width:100%!important;height:100%!important;
+  opacity:1!important;transform:none!important;
+  overflow:visible!important;
+  filter:blur(1.15px)!important;
+  -webkit-filter:blur(1.15px)!important;
+}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon .faro-beacon-core {fill:#ffdc85!important}
+#forecastPage > .faro-forecast-lead > .faro-lead-beacon .faro-beacon-ring {fill:#d0ebe3!important}
+#forecastPage > .faro-forecast-lead > .faro-lead-main,
+#forecastPage > .faro-forecast-lead > .faro-lead-signal {
+  position:relative;z-index:2!important;min-width:0;
+}
+
+/* Light mode no longer overrides the Deep Ocean hero with paper, black
+ * typography or white panels. Scores retain their CANONICAL pigments. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead #faroLeadHeadline,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead #faroLeadHeadline {
+  color:#f4faf7!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-kicker,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-kicker {
+  color:#acd7ce!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-location,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead #faroLeadDeck,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-location,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead #faroLeadDeck {
+  color:#d3e5df!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-qualification,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-qualification {
+  color:#b8d0ca!important;
+}
+
+/* Same smoked-glass forecast instrument in both page themes. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-signal,
+html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-signal {
+  color:#e9f7f2!important;
+  background:linear-gradient(145deg,rgba(238,251,245,.12),rgba(221,245,235,.07))!important;
+  border:1px solid rgba(220,240,233,.19)!important;
+  backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-signal-top,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-best small,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-metrics small,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-fineprint {
+  color:#bddad3!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-score-row>span:nth-child(2),
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-best strong,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-metrics strong {
+  color:#eff9f5!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-best,
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-metrics {
+  border-color:rgba(220,240,233,.21)!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-grade {
+  color:#eaf8f3!important;
+  border-color:rgba(206,237,226,.38)!important;
+  background:rgba(20,59,62,.11)!important;
+}
+
+/* Do not alter the numeric /10 pigment for valid readings. Missing data
+ * is neutral grey and is never assigned an invented score. */
+html[data-theme="light"] #forecastPage > .faro-forecast-lead.is-unavailable #faroLeadScore {
+  color:#c9dad5!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-action-main {
+  color:#10383e!important;background:#d9ebe6!important;
+  border:1px solid rgba(255,255,255,.68)!important;
+}
+html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-action-secondary {
+  color:#e6f4f0!important;background:transparent!important;
+  border:1px solid rgba(215,235,230,.38)!important;
+}
+
+/* Intermediate widths preserve one shared centre. */
+@media(max-width:1119px) and (min-width:711px) {
+  #forecastPage > .faro-forecast-lead {
+    --beacon-x:55%;--beacon-y:49%;
+    --beacon-size:clamp(105px,12vw,145px);
+    --beacon-halo:clamp(240px,30vw,390px);
+    --beacon-ambient:clamp(350px,43vw,560px);
+    --beacon-beam:clamp(170px,26vw,300px);
+  }
+}
+
+/* iPhone: blur the emblem only (no stacked SVG shadows); pulse a separate
+ * radial layer, which does not have the Safari horizontal-filter seam. */
+@media(max-width:710px) {
+  #forecastPage > .faro-forecast-lead {
+    --beacon-x:80%;--beacon-y:19%;
+    --beacon-size:clamp(90px,24vw,110px);
+    --beacon-halo:clamp(235px,72vw,310px);
+    --beacon-ambient:clamp(300px,88vw,395px);
+    --beacon-beam:clamp(145px,43vw,220px);
+    overflow:hidden!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature {
+    opacity:.27!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+    filter:blur(1.8px)!important;
+    -webkit-filter:blur(1.8px)!important;
+    overflow:visible!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-pulse {
+    filter:blur(21px);-webkit-filter:blur(21px);
+    animation-duration:6.4s;-webkit-animation-duration:6.4s;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-light {
+    height:148px!important;opacity:.47!important;
+    filter:blur(30px)!important;
+  }
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon::after {filter:blur(28px);opacity:.76}
+  /* No white instrument panel in light mode; mobile's integrated horizontal
+   * instrument rule overrides the desktop glass treatment. */
+  html[data-theme="light"] #forecastPage > .faro-forecast-lead .faro-lead-signal,
+  html:not([data-theme="light"]) #forecastPage > .faro-forecast-lead .faro-lead-signal {
+    background:transparent!important;border:0!important;
+    border-top:1px solid rgba(203,230,224,.29)!important;
+    box-shadow:none!important;
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  }
+  #forecastPage > .faro-forecast-lead #faroLeadHeadline {text-wrap:balance}
+}
+@media(max-width:370px) {
+  #forecastPage > .faro-forecast-lead {
+    --beacon-x:81%;--beacon-y:18%;
+    --beacon-size:80px;--beacon-halo:220px;
+    --beacon-ambient:280px;--beacon-beam:130px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  #forecastPage > .faro-forecast-lead > .faro-lead-beacon > .faro-beacon-pulse {
+    animation:none!important;-webkit-animation:none!important;
+    opacity:.55;transform:translate3d(-50%,-50%,0) scale(1);
+  }
+}
+
+/* ===== END chile/faro-beacon-atmosphere-v4.css ===== */
+
+/* ===== BEGIN chile/faro-editorial-experience-v2.css ===== */
+
+/* CRITICAL LAYOUT RECOVERY / 02 Nov 2026
+ * faro-desktop.css sets #forecastPage:not(.hide) to twelve grid columns
+ * and #forecastPage > #dayview:not(.hide) to display:contents. The extra
+ * :not(.hide) class outweighed previous 'html body' selectors. A page with
+ * a display:contents dayview silently promoted the daily/hourly contents
+ * to 90px grid cells. This fixes THE CASCADE, not the text by adding width.
+ */
+html body main #forecastPage:not(.hide){
+ display:flex!important;flex-direction:column!important;
+ align-items:stretch!important;justify-content:flex-start!important;
+ gap:0!important;
+ grid-template-columns:none!important;grid-auto-columns:auto!important;
+ width:100%!important;max-width:100%!important;
+ min-width:0!important;box-sizing:border-box!important;
+}
+html body main #forecastPage:not(.hide)>*{
+ flex:0 0 auto!important;align-self:stretch!important;
+ min-width:0!important;max-width:100%!important;
+ grid-column:auto!important;grid-row:auto!important;
+ box-sizing:border-box!important;
+}
+/* DOM order is the natural reading order. Prior responsive 'order'
+ * declarations are not allowed to send the header dock below the hero. */
+html body main #forecastPage:not(.hide)>.faro-context-dock{order:0!important;width:100%!important}
+html body main #forecastPage:not(.hide)>.faro-forecast-lead{order:1!important;width:100%!important}
+html body main #forecastPage:not(.hide)>.faro-access-notice{order:2!important}
+html body main #forecastPage:not(.hide)>.faro-journey-nav{order:3!important}
+html body main #forecastPage:not(.hide)>#dayview{order:4!important}
+html body main #forecastPage:not(.hide)>.chile-method-disclaimer{order:5!important}
+/* The surviving dayview element must be a LAYOUT BOX at every viewport.
+ * It may never become display:contents. */
+html body main #forecastPage:not(.hide)>#dayview:not(.hide){
+ display:grid!important;
+ grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr)!important;
+ grid-auto-flow:row!important;
+ grid-auto-columns:auto!important;
+ grid-auto-rows:auto!important;
+ align-items:stretch!important;
+ gap:clamp(14px,1.6vw,22px)!important;
+ width:100%!important;max-width:100%!important;
+ min-width:0!important;margin:clamp(12px,1.8vw,24px) 0 0!important;
+ padding:0!important;box-sizing:border-box!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-decision-intro{
+ grid-column:1/-1!important;grid-row:1!important;order:0!important;
+ min-width:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section{
+ display:block!important;
+ grid-column:1!important;grid-row:2!important;order:0!important;
+ width:100%!important;min-width:0!important;margin:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
+ display:flex!important;
+ grid-column:2!important;grid-row:2!important;order:0!important;
+ width:100%!important;min-width:0!important;margin:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-week-disclosure{
+ grid-column:1/-1!important;grid-row:3!important;order:0!important;
+ width:100%!important;min-width:0!important;margin:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-ocean-explorer{
+ display:block!important;
+ grid-column:1/-1!important;grid-row:4!important;order:0!important;
+ min-width:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.session-section{
+ display:grid!important;
+ grid-column:1/-1!important;grid-row:5!important;order:0!important;
+ width:100%!important;min-width:0!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-detail-hub{
+ display:block!important;
+ grid-column:1/-1!important;grid-row:6!important;order:0!important;
+ width:100%!important;min-width:0!important;
+}
+html body main #forecastPage:not(.hide) #dailyOverview #faroPrepHints{
+ order:3!important;
+}
+/* A centred reading instrument cannot collapse to the former grid's cell
+ * width; use explicit min-width zero only INSIDE the correctly sized grids. */
+html body main #forecastPage:not(.hide)>.faro-context-dock{
+ grid-column:1/-1!important;overflow:visible!important;
+}
+html body main #forecastPage:not(.hide) .faro-context-controls,
+html body main #forecastPage:not(.hide) .faro-context-controls>.picker-grid{
+ width:100%!important;min-width:0!important;
+}
+html body main #forecastPage:not(.hide) #dailyOverview,
+html body main #forecastPage:not(.hide) .hourly-section .slots{
+ min-width:0!important;width:100%!important;
+}
+/* Re-skin the closing research columns as actual tappable webpage modules,
+ * not bare text and lines scattered across a blank viewport. */
+html body main #forecastPage:not(.hide) .faro-detail-hub-grid{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:clamp(12px,1.35vw,20px)!important;align-items:stretch!important;
+}
+html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group{
+ display:flex!important;flex-direction:column!important;
+ min-width:0!important;min-height:270px!important;
+ grid-column:auto!important;grid-row:auto!important;
+ padding:clamp(18px,2vw,27px)!important;
+ border-radius:17px!important;
+ border:1px solid var(--faro-line)!important;
+ background:linear-gradient(152deg,
+  color-mix(in srgb,var(--faro-selection) 9%,var(--faro-raised)),
+  var(--faro-raised) 73%)!important;
+ box-shadow:0 8px 29px rgba(4,35,42,.06)!important;
+}
+html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group>.faro-hub-group-head{
+ min-height:0!important;
+ padding:0 0 16px!important;margin:0 0 7px!important;
+}
+html body main #forecastPage:not(.hide) .faro-hub-group>details.forecast-expand{
+ display:block!important;width:100%!important;margin:0!important;
+ border:1px solid var(--faro-line)!important;
+ border-radius:11px!important;
+ background:var(--faro-raised)!important;
+}
+html body main #forecastPage:not(.hide) .faro-hub-group>details.forecast-expand+details.forecast-expand{
+ margin-top:7px!important;
+}
+html body main #forecastPage:not(.hide) .faro-hub-group>details.forecast-expand>summary{
+ min-height:57px!important;padding:11px 13px!important;
+ justify-content:flex-start!important;text-align:left!important;
+ cursor:pointer!important;
+}
+html body main #forecastPage:not(.hide) .faro-hub-group>details.forecast-expand>summary:hover{
+ background:color-mix(in srgb,var(--faro-selection) 8%,transparent)!important;
+}
+html body main #forecastPage:not(.hide) .faro-detail-hub-grid .faro-hub-group .forecast-accordion-meta{
+ display:none!important;
+}
+/* The beach map already owns the directional HUD. An optional field-guide
+ * explanation stays readable, compact and explicitly keyed by colour. */
+html body main #forecastPage:not(.hide) #dayview #waveInsightExpand .insight-panel{
+ display:grid!important;gap:12px!important;
+ padding:14px 17px!important;
+}
+#forecastPage .faro-compass-legend{
+ margin-left:auto;display:inline-flex;flex-wrap:wrap;gap:12px;
+ align-items:center;font:700 11px/1.4 var(--faro-text);
+ color:var(--faro-quiet);
+}
+#forecastPage .faro-compass-legend>span{display:inline-flex;align-items:center;gap:5px}
+#forecastPage .faro-compass-legend i,
+#forecastPage .faro-direction-dot{
+ display:inline-block;width:9px;height:9px;flex:0 0 9px;
+ border-radius:50%;background:#4d9cc1;
+}
+#forecastPage :is(.faro-legend-wind i,.faro-direction-fact--wind .faro-direction-dot){
+ background:#d9ba6f;
+}
+#forecastPage .faro-direction-facts{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:12px!important;
+}
+#forecastPage .faro-direction-fact{
+ display:flex;flex-direction:column;gap:6px;
+ padding:15px 16px;border-radius:12px;
+ background:color-mix(in srgb,var(--faro-selection) 4%,var(--faro-raised));
+ border:1px solid var(--faro-line);min-width:0;
+}
+#forecastPage .faro-direction-fact-label{
+ display:flex;align-items:center;gap:8px;
+ font:800 12px/1.3 var(--faro-text);
+}
+#forecastPage .faro-direction-fact>b{
+ font:850 clamp(23px,2.7vw,32px)/1.15 var(--faro-text);
+ color:var(--fg);
+}
+#forecastPage .faro-direction-fact small,
+#forecastPage .faro-direction-period{
+ font:600 12px/1.5 var(--faro-text);color:var(--faro-quiet);
+ margin:0;
+}
+#forecastPage #waveInsightExpand .chile-compass-note{
+ max-width:78ch;margin:0!important;font-size:12px!important;
+ line-height:1.6!important;
+}
+/* Footer should behave like a website, not an enormous poster tagline. */
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto strong{
+ font-size:clamp(31px,4.2vw,54px)!important;
+ max-width:24ch!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a{
+ display:inline-flex!important;
+ align-items:center;gap:10px;
+ padding:6px 0!important;
+ text-decoration:none!important;
+ transition:opacity .18s ease!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a::after{
+ content:"↗";opacity:.66;font-size:12px;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a:hover{
+ opacity:.78;text-decoration:underline!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a:focus-visible{
+ outline:2px solid #a7d0c8!important;outline-offset:4px!important;
+}
+@media(max-width:1030px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide){
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-decision-intro,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-week-disclosure,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-ocean-explorer,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.session-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-detail-hub{
+  grid-column:1/-1!important;grid-row:auto!important;order:0!important;
+ }
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group.is-ready{
+  grid-column:1/-1!important;
+ }
+}
+@media(max-width:700px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide){gap:16px!important}
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group,
+ html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group.is-ready{
+  grid-column:1/-1!important;min-height:0!important;
+ }
+ #forecastPage .faro-direction-facts{grid-template-columns:minmax(0,1fr)!important}
+ #forecastPage .faro-compass-legend{gap:7px!important;font-size:10px!important}
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto strong{
+  font-size:clamp(30px,9vw,44px)!important;
+ }
+}
+
+/*
+ FARO | Editorial experience v2 | 02 Nov 2026
+ Narrative: CHOOSE COAST -> READ -> DECIDE -> UNDERSTAND -> PREPARE -> LEARN.
+ Original hero, production models, quality pigment contract and header logo
+ are NOT redefined here. This is layout/art direction, not a theme rewrite.
+*/
+
+html body main #forecastPage{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:stretch!important;
+ gap:0!important;
+ width:100%;min-width:0;
+}
+html body main #forecastPage>*{min-width:0;max-width:100%}
+
+/* 01 / Select the geography BEFORE the hero. The controls are still the
+   original functioning FARO chooser, not a second disconnected selector. */
+html body #forecastPage>.faro-context-dock{
+ position:relative;z-index:8;
+ display:grid!important;gap:13px!important;
+ padding:clamp(15px,1.8vw,22px)!important;
+ margin:clamp(8px,1.4vw,16px) 0 16px!important;
+ border:1px solid var(--faro-line,var(--border));
+ border-radius:19px;
+ background:linear-gradient(125deg,
+  color-mix(in srgb,var(--faro-selection) 5%,var(--faro-raised,var(--panel))),
+  var(--faro-raised,var(--panel)) 75%);
+ box-shadow:0 10px 30px rgba(22,70,72,.035);
+ box-sizing:border-box;
+}
+#forecastPage .faro-context-heading{
+ display:flex;gap:14px 24px;align-items:center;justify-content:space-between;
+ flex-wrap:wrap;min-width:0;
+}
+#forecastPage .faro-context-heading>div:first-child{
+ display:grid;gap:3px;min-width:0;
+}
+#forecastPage .faro-context-heading>div:first-child small{
+ font:850 10px/1.4 var(--faro-text,Manrope,system-ui);
+ letter-spacing:.13em;color:var(--faro-selection);
+}
+#forecastPage .faro-context-heading>div:first-child strong{
+ font:800 clamp(16px,1.65vw,21px)/1.2 var(--faro-text,Manrope,system-ui);
+ letter-spacing:-.025em;color:var(--fg);
+}
+html body #forecastPage .faro-context-dock .faro-country-switch{
+ display:flex!important;flex:none;
+ align-items:center!important;justify-content:flex-end!important;
+ gap:12px!important;margin:0!important;
+ padding:0!important;min-height:0!important;
+ border:0!important;background:transparent!important;
+ width:auto!important;box-shadow:none!important;
+}
+#forecastPage .faro-context-dock .faro-country-label{
+ display:none!important;
+}
+#forecastPage .faro-context-dock .faro-country-options{
+ display:flex!important;align-items:center;gap:5px!important;
+ min-width:0;
+}
+#forecastPage .faro-context-dock .faro-country-options>a{
+ display:inline-flex!important;align-items:center!important;
+ gap:6px!important;min-height:34px!important;
+ padding:6px 13px!important;border-radius:9px!important;
+ font-size:12px!important;white-space:nowrap;
+}
+#forecastPage .faro-context-dock .faro-country-options>a small{
+ font-size:9px!important;
+}
+#forecastPage .faro-context-controls{min-width:0}
+html body #forecastPage .faro-context-dock .picker-grid{
+ display:grid!important;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)!important;
+ gap:12px!important;min-width:0!important;margin:0!important;
+}
+html body #forecastPage .faro-context-dock .chile-spot-picker{
+ display:flex!important;flex-direction:column!important;
+ justify-content:center!important;align-items:flex-start!important;
+ min-height:68px!important;padding:10px 15px!important;
+ gap:3px!important;min-width:0!important;
+ border-radius:12px!important;
+ background:var(--faro-raised,var(--panel))!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ box-shadow:none!important;
+}
+#forecastPage .faro-context-dock .chile-spot-picker>small{
+ font:850 9px/1.4 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:.11em!important;color:var(--faro-quiet,var(--muted))!important;
+}
+#forecastPage .faro-context-dock .chile-spot-picker>strong{
+ font:800 clamp(14px,1.4vw,18px)/1.25 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--fg)!important;
+}
+#forecastPage .faro-context-dock .chile-field-hint{
+ font-size:10px!important;line-height:1.3!important;color:var(--faro-quiet,var(--muted))!important;
+}
+#forecastPage .faro-context-dock .faro-spot-choice{
+ overflow:visible!important;position:relative;z-index:5;
+}
+#forecastPage .faro-context-dock .faro-spot-choice-trigger{
+ min-width:0!important;width:100%!important;
+ color:var(--fg)!important;text-align:left;
+}
+#forecastPage .faro-context-dock .faro-spot-choice-options{
+ z-index:65!important;
+}
+html body #forecastPage .faro-context-dock .forecast-toolbar{
+ display:flex!important;justify-content:space-between!important;
+ align-items:center!important;flex-wrap:wrap;
+ gap:8px 18px;min-height:0!important;
+ padding:9px 2px 0!important;margin:0!important;
+ border-top:1px solid var(--faro-line,var(--border))!important;
+ grid-column:auto!important;grid-row:auto!important;
+ background:none!important;
+}
+#forecastPage .faro-context-dock #updated{
+ font:650 11px/1.45 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--faro-quiet,var(--muted))!important;
+}
+#forecastPage .faro-context-dock #refreshForecast{
+ min-height:31px!important;font-size:11px!important;
+}
+
+/* Preserve the complete underwater hero. Close the gap to the first read. */
+html body #forecastPage>.faro-forecast-lead{
+ width:100%!important;min-width:0!important;
+ margin:0!important;grid-column:auto!important;grid-row:auto!important;
+}
+#forecastPage>.faro-access-notice{margin:10px 0!important;order:0!important}
+html body #forecastPage>.faro-journey-nav{
+ display:flex!important;align-items:center!important;
+ justify-content:flex-start!important;flex-wrap:wrap!important;
+ gap:8px 12px!important;
+ padding:14px 0 7px!important;margin:0!important;
+ background:transparent!important;border:0!important;
+ min-height:0!important;grid-column:auto!important;grid-row:auto!important;
+}
+#forecastPage .faro-journey-nav .faro-journey-kicker{
+ color:var(--faro-quiet,var(--muted))!important;font-size:9px!important;
+ letter-spacing:.1em!important;margin-right:7px!important;
+}
+#forecastPage .faro-journey-nav button{
+ font:750 11px/1.3 var(--faro-text,Manrope,system-ui)!important;
+ min-height:32px!important;padding:7px 10px!important;
+ border-radius:9px!important;
+ color:var(--faro-selection)!important;
+ background:color-mix(in srgb,var(--faro-selection) 5%,var(--faro-raised,var(--panel)))!important;
+ border:1px solid color-mix(in srgb,var(--faro-selection) 18%,var(--faro-line,var(--border)))!important;
+}
+
+/* 02 / ONE paired decision surface. Both sides now share one real grid row,
+   rather than occupying unrelated rows of an inherited 12-col dashboard. */
+html body #forecastPage #dayview{
+ display:grid!important;
+ grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr)!important;
+ grid-auto-rows:auto!important;
+ align-items:stretch!important;
+ gap:clamp(16px,1.7vw,23px)!important;
+ margin:clamp(10px,2vw,22px) 0 0!important;
+ padding:0!important;max-width:100%;min-width:0;
+}
+html body #forecastPage #dayview>.faro-decision-intro{
+ grid-column:1/-1!important;grid-row:1!important;
+ display:flex!important;align-items:flex-end;justify-content:space-between;
+ gap:12px 22px;min-width:0;
+ padding:0 2px 3px!important;margin:0!important;
+}
+#forecastPage .faro-decision-intro>div{display:grid;gap:6px}
+#forecastPage :is(.faro-decision-intro,.faro-session-intro)>div>small{
+ font:850 10px/1.2 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:.13em!important;color:var(--faro-selection)!important;
+}
+#forecastPage .faro-decision-intro h2{
+ font:850 clamp(25px,3vw,40px)/1.1 var(--faro-display,"Archivo Black",system-ui)!important;
+ color:var(--fg)!important;letter-spacing:-.025em;margin:0!important;
+}
+#forecastPage .faro-decision-intro>p{
+ margin:0 0 3px!important;max-width:49ch;
+ color:var(--faro-quiet,var(--muted))!important;
+ font:650 12px/1.6 var(--faro-text,Manrope,system-ui)!important;
+}
+html body #forecastPage #dayview>.day-outlook-section{
+ grid-column:1!important;grid-row:2!important;
+ display:block!important;align-self:stretch!important;
+ margin:0!important;padding:0!important;min-width:0!important;
+}
+html body #forecastPage #dayview>.day-outlook-section #dailyOverview{
+ height:100%!important;
+ margin:0!important;
+ padding:clamp(17px,1.8vw,25px)!important;
+ box-sizing:border-box!important;min-width:0!important;
+}
+html body #forecastPage #dayview>.hourly-section{
+ grid-column:2!important;grid-row:2!important;
+ display:flex!important;flex-direction:column!important;
+ justify-content:flex-start!important;align-self:stretch!important;
+ gap:13px!important;
+ height:100%!important;min-height:0!important;
+ margin:0!important;
+ padding:clamp(17px,1.8vw,25px)!important;
+ background:var(--faro-raised,var(--panel))!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-top:2px solid var(--faro-selection)!important;
+ border-radius:19px!important;box-shadow:none!important;
+ box-sizing:border-box!important;
+}
+#forecastPage #dayview>.hourly-section>.forecast-section-heading{
+ margin:0!important;padding:0 0 6px!important;
+}
+#forecastPage #dayview>.hourly-section>.forecast-section-heading h3{
+ font-size:clamp(24px,2.45vw,34px)!important;letter-spacing:-.025em!important;
+}
+#forecastPage #dayview>.hourly-section>.forecast-section-heading p{
+ margin:5px 0 0!important;font-size:12px!important;
+}
+html body #forecastPage #dayview>.hourly-section .slots{
+ display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-items:stretch!important;gap:9px!important;
+ margin:0!important;width:100%!important;
+}
+#forecastPage #dayview>.hourly-section .slots>button{
+ min-height:125px!important;padding:12px 6px!important;
+ border-radius:12px!important;
+}
+#forecastPage #dayview>.hourly-section #faroHourlyPreview{
+ display:grid!important;align-items:center;grid-template-columns:minmax(0,1fr) auto!important;
+ gap:7px 14px!important;margin:auto 0 0!important;
+ padding:17px 18px!important;min-height:132px;
+ border-radius:13px!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-left:3px solid var(--faro-selection)!important;
+ background:color-mix(in srgb,var(--faro-selection) 6%,var(--faro-raised,var(--panel)))!important;
+ box-sizing:border-box!important;
+}
+#forecastPage #dayview #faroHourlyPreview>strong{
+ color:var(--fg)!important;max-width:45ch;
+}
+#forecastPage #dayview #faroHourlyPreview>span{
+ grid-column:1!important;max-width:58ch;
+}
+#forecastPage #dayview #faroHourlyPreview>button{
+ grid-column:2!important;grid-row:1/span 3!important;justify-self:end!important;
+ margin:0!important;
+}
+
+/* The daily card is concise and action-oriented, not a second full-page
+   data table. The wetsuit/UV tokens reuse the actual selected model window. */
+#forecastPage #dailyOverview .faro-prep-hints{
+ display:flex!important;flex-wrap:wrap;gap:7px!important;
+ margin:11px 0 10px!important;
+}
+#forecastPage #dailyOverview .faro-prep-chip{
+ display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:5px!important;
+ padding:7px 9px!important;min-height:31px;
+ background:color-mix(in srgb,var(--faro-selection) 4%,var(--faro-raised,var(--panel)))!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-radius:9px!important;
+ color:var(--fg);
+}
+#forecastPage #dailyOverview .faro-prep-chip small{
+ font:800 9px/1.25 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:.065em;color:var(--faro-quiet,var(--muted))!important;
+}
+#forecastPage #dailyOverview .faro-prep-chip strong{
+ font:850 11px/1.35 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--fg)!important;
+}
+#forecastPage #dailyOverview .faro-prep-chip--uv{
+ border-color:color-mix(in srgb,var(--chile-uv-color,#ca934f) 46%,var(--faro-line,var(--border)))!important;
+}
+#forecastPage #dailyOverview .chile-day-uv{
+ padding:9px 12px!important;margin:0 0 9px!important;
+ font-size:11px!important;
+}
+html body #forecastPage #dailyOverview #daySignalMetrics{
+ display:grid!important;
+ grid-template-columns:minmax(0,1.4fr) minmax(0,.75fr) minmax(0,.75fr)!important;
+ gap:10px!important;margin:10px 0!important;min-width:0!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics>.day-signal-metric{
+ grid-column:auto!important;grid-row:auto!important;min-width:0!important;
+ padding:12px 9px!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-radius:11px!important;
+ background:color-mix(in srgb,var(--faro-selection) 3%,var(--faro-raised,var(--panel)))!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics>.chile-day-wave-feature{
+ display:flex!important;flex-direction:column!important;
+ gap:6px!important;min-width:0!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics .chile-wave-feature-number{
+ display:flex!important;align-items:baseline!important;
+ flex-wrap:wrap!important;gap:6px!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics #dayWave{
+ font-size:clamp(27px,3vw,42px)!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics .chile-wave-bars{
+ width:100%!important;min-width:0!important;max-width:100%!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics>.day-signal-metric:not(.chile-day-wave-feature){
+ display:flex!important;flex-direction:column!important;
+ align-items:flex-start!important;justify-content:center!important;
+ gap:4px!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics .day-signal-figure{
+ display:grid!important;gap:7px!important;min-width:0!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics .day-signal-figure strong{
+ font-size:clamp(19px,2vw,27px)!important;white-space:normal!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics .day-signal-icon{
+ opacity:.6;font-size:13px;
+}
+#forecastPage #dailyOverview .chile-vibe{
+ margin:10px 0 0!important;padding-top:13px!important;
+}
+#forecastPage #dailyOverview .faro-dna-jump{
+ margin-top:auto!important;padding-top:13px!important;
+}
+
+/* Seven days is a supporting chapter: it should not dislocate the primary
+   day/time pairing. It remains a native expandable disclosure. */
+html body #forecastPage #dayview>.faro-week-disclosure{
+ grid-column:1/-1!important;grid-row:3!important;
+ width:100%!important;margin:0!important;min-width:0!important;
+ padding:0!important;box-sizing:border-box!important;
+ border-top:1px solid var(--faro-line,var(--border))!important;
+ border-bottom:1px solid var(--faro-line,var(--border))!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+#forecastPage #dayview>.faro-week-disclosure>.faro-week-summary{
+ padding:16px 4px!important;min-height:64px!important;
+}
+
+/* 03 / A map-first ocean read. The map already has swell/wind bearings
+   in its HUD, so a large independent compass switch is unnecessary. */
+html body #forecastPage #dayview>.faro-ocean-explorer{
+ grid-column:1/-1!important;grid-row:4!important;
+ display:block!important;min-width:0!important;
+ margin:clamp(7px,1.4vw,19px) 0 0!important;
+ padding:0!important;align-self:stretch!important;
+}
+#forecastPage .faro-ocean-explorer-header{
+ padding:clamp(18px,2.2vw,30px)!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-bottom:0!important;border-radius:20px 20px 0 0!important;
+ background:linear-gradient(115deg,
+  color-mix(in srgb,var(--faro-selection) 8%,var(--faro-raised,var(--panel))),
+  var(--faro-raised,var(--panel)))!important;
+}
+#forecastPage #dayview .faro-ocean-tools-copy>small{letter-spacing:.14em!important}
+#forecastPage #dayview .faro-ocean-tools-copy>h3{
+ font-size:clamp(27px,3vw,42px)!important;
+}
+#forecastPage #dayview .faro-ocean-tool-actions #openOceanMap{
+ display:none!important;
+}
+#forecastPage #dayview .faro-ocean-tool-actions #openOceanCompass{
+ min-height:38px!important;
+ padding:8px 12px!important;
+ background:transparent!important;color:var(--faro-selection)!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-radius:9px!important;font-size:11px!important;
+}
+#forecastPage .faro-ocean-explorer-content{
+ display:block!important;padding:0 clamp(13px,2vw,25px) clamp(13px,2vw,25px)!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-top:0!important;border-radius:0 0 20px 20px!important;
+ background:var(--faro-raised,var(--panel))!important;
+ box-sizing:border-box!important;min-width:0!important;
+}
+#forecastPage #dayview #coastMapExpand{
+ display:block!important;margin:0!important;border:0!important;
+ background:transparent!important;border-radius:0!important;min-width:0!important;
+}
+#forecastPage #dayview #coastMapExpand>summary{
+ display:none!important;
+}
+#forecastPage #dayview #chileCoastMap{min-width:0!important}
+#forecastPage #dayview #waveInsightExpand{
+ margin:12px 0 0!important;display:block!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-radius:12px!important;background:transparent!important;
+}
+#forecastPage #dayview #waveInsightExpand>summary{
+ min-height:46px!important;padding:12px 16px!important;
+ color:var(--faro-quiet,var(--muted))!important;
+ font:750 12px/1.45 var(--faro-text,Manrope,system-ui)!important;
+}
+
+/* 04 / Practical preparation, but not an oversized second dashboard. */
+html body #forecastPage #dayview>.session-section{
+ grid-column:1/-1!important;grid-row:5!important;
+ display:grid!important;gap:13px!important;
+ margin:clamp(3px,.8vw,12px) 0 0!important;
+ padding:0!important;min-width:0!important;
+}
+#forecastPage .faro-session-intro{
+ display:flex;justify-content:space-between;align-items:end;
+ gap:12px 24px;flex-wrap:wrap;
+ padding:0 2px 4px!important;
+}
+#forecastPage .faro-session-intro>div{display:grid;gap:5px}
+#forecastPage .faro-session-intro h3{
+ color:var(--fg)!important;margin:0!important;
+ font:850 clamp(23px,2.5vw,33px)/1.15 var(--faro-display,"Archivo Black",system-ui)!important;
+ letter-spacing:-.028em;
+}
+#forecastPage .faro-session-intro>p{
+ margin:0!important;max-width:58ch;
+ font:650 12px/1.6 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--faro-quiet,var(--muted))!important;
+}
+#forecastPage #dayview .session-section #sessionDetailExpand{
+ margin:0!important;border:1px solid var(--faro-line,var(--border))!important;
+ border-radius:15px!important;
+ background:var(--faro-raised,var(--panel))!important;
+ overflow:hidden;
+}
+#forecastPage #dayview .session-section .chile-session-toggle{
+ min-height:78px!important;padding:17px clamp(15px,2vw,24px)!important;
+ background:linear-gradient(100deg,
+  color-mix(in srgb,var(--faro-selection) 5%,var(--faro-raised,var(--panel))),
+  var(--faro-raised,var(--panel)))!important;
+}
+#forecastPage #dayview .session-section .chile-official-inline{
+ border-radius:12px!important;background:var(--faro-raised,var(--panel))!important;
+}
+#forecastPage #dayview .chile-session-body{
+ padding:clamp(14px,1.8vw,23px)!important;
+}
+
+/* 05 / Editorial finishing chapters. No more blank bare accordions in a
+   pale expanse. Three intentional research/spot/prep volumes. */
+html body #forecastPage #dayview>.faro-detail-hub{
+ grid-column:1/-1!important;grid-row:6!important;
+ display:block!important;
+ margin:clamp(15px,2.4vw,31px) 0 0!important;
+ padding:clamp(20px,2.8vw,38px) 0 0!important;
+ border-top:1px solid var(--faro-line,var(--border))!important;
+}
+#forecastPage .faro-detail-hub-heading{
+ display:flex!important;justify-content:space-between!important;
+ align-items:flex-end!important;gap:15px 28px!important;
+ margin:0 0 22px!important;
+}
+#forecastPage .faro-detail-hub-heading>div{display:grid;gap:8px}
+#forecastPage .faro-detail-hub-heading small{
+ font:850 10px/1.25 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--faro-selection)!important;letter-spacing:.13em!important;
+}
+#forecastPage .faro-detail-hub-heading h3{
+ font:850 clamp(27px,3vw,42px)/1.12 var(--faro-display,"Archivo Black",system-ui)!important;
+ letter-spacing:-.027em!important;margin:0!important;max-width:25ch;
+ color:var(--fg)!important;
+}
+#forecastPage .faro-detail-hub-heading p{
+ max-width:38ch!important;margin:0!important;
+ color:var(--faro-quiet,var(--muted))!important;
+ font:600 13px/1.55 var(--faro-text,Manrope,system-ui)!important;
+}
+html body #forecastPage .faro-detail-hub-grid{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:clamp(10px,1.5vw,19px)!important;
+ align-items:stretch!important;
+}
+html body #forecastPage .faro-hub-group{
+ position:relative;isolation:isolate;
+ display:flex!important;flex-direction:column!important;gap:10px!important;
+ grid-column:auto!important;grid-row:auto!important;
+ min-width:0!important;min-height:275px!important;
+ margin:0!important;
+ padding:clamp(19px,2vw,28px)!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-radius:18px!important;
+ background:linear-gradient(160deg,
+  color-mix(in srgb,var(--faro-selection) 5%,var(--faro-raised,var(--panel))),
+  var(--faro-raised,var(--panel)) 70%)!important;
+ box-shadow:0 12px 28px rgba(16,48,53,.04)!important;
+ overflow:hidden;
+}
+#forecastPage .faro-hub-group::before{
+ content:"";position:absolute;right:-35px;top:-40px;
+ width:180px;height:180px;border-radius:50%;
+ pointer-events:none;z-index:-1;
+ background:radial-gradient(circle,
+  color-mix(in srgb,var(--faro-selection) 13%,transparent),
+  transparent 67%);
+}
+#forecastPage .faro-hub-group.is-know::before{
+ background:radial-gradient(circle,rgba(128,185,174,.18),transparent 67%);
+}
+#forecastPage .faro-hub-group.is-ready::before{
+ background:radial-gradient(circle,rgba(228,193,121,.12),transparent 67%);
+}
+#forecastPage .faro-hub-group .faro-hub-group-head{
+ display:grid!important;gap:8px!important;
+ margin:0 0 17px!important;padding:0 0 18px!important;
+ border-bottom:1px solid var(--faro-line,var(--border))!important;
+ min-height:104px!important;
+}
+#forecastPage .faro-hub-group .faro-hub-group-head h4{
+ margin:0!important;
+ font:850 clamp(17px,1.4vw,20px)/1.25 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:-.025em!important;color:var(--fg)!important;
+}
+#forecastPage .faro-hub-group .faro-hub-group-head p{
+ margin:0!important;max-width:32ch;
+ font:600 12px/1.55 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--faro-quiet,var(--muted))!important;
+}
+#forecastPage .faro-hub-group>details.forecast-expand{
+ display:block!important;width:100%!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-radius:11px!important;
+ background:var(--faro-raised,var(--panel))!important;
+ box-shadow:none!important;margin:0!important;
+}
+html body #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary{
+ display:flex!important;align-items:center!important;gap:9px!important;
+ padding:15px 13px!important;min-height:61px!important;
+ background:none!important;color:var(--fg)!important;
+ font:750 12px/1.5 var(--faro-text,Manrope,system-ui)!important;
+}
+#forecastPage .faro-detail-hub-grid .faro-hub-group .forecast-accordion-title{
+ flex:1 1 auto!important;min-width:0!important;
+ font-size:12px!important;line-height:1.45!important;
+}
+#forecastPage .faro-detail-hub-grid .faro-hub-group .forecast-accordion-meta{
+ display:none!important;
+}
+#forecastPage .faro-hub-group>details[open]{
+ border-color:color-mix(in srgb,var(--faro-selection) 37%,var(--faro-line,var(--border)))!important;
+}
+#forecastPage .faro-hub-group>details.forecast-expand+details.forecast-expand{margin-top:0!important}
+
+/* Science limitations are a designed section, not an orphaned white rail. */
+html body #forecastPage>.chile-method-disclaimer{
+ width:100%!important;margin:19px 0 0!important;
+ padding:0!important;min-width:0!important;
+ border:1px solid var(--faro-line,var(--border))!important;
+ border-left:3px solid var(--faro-selection)!important;
+ border-radius:12px!important;
+ background:color-mix(in srgb,var(--faro-selection) 4%,var(--faro-raised,var(--panel)))!important;
+}
+#forecastPage>.chile-method-disclaimer>summary{
+ min-height:60px!important;padding:17px 22px!important;
+ color:var(--fg)!important;font-weight:800!important;
+}
+#forecastPage>.chile-method-disclaimer>p{
+ max-width:95ch!important;padding:0 22px 19px!important;
+ font-size:12px!important;line-height:1.7!important;
+}
+
+/* Deep Ocean finale: the same FARO signature atmosphere closes the page,
+   with proper information, no unrelated imagery and no fake safety promise. */
+html body main>footer.chile-footer.faro-footer-v2{
+ position:relative;isolation:isolate;overflow:hidden;
+ display:grid!important;
+ grid-template-columns:minmax(0,1.5fr) minmax(270px,.85fr)!important;
+ gap:26px 45px!important;align-items:start!important;
+ margin:clamp(31px,4vw,55px) 0 0!important;
+ padding:clamp(25px,4vw,53px)!important;
+ background:
+  radial-gradient(ellipse 65% 88% at 85% 12%,rgba(119,202,184,.16),transparent 70%),
+  radial-gradient(ellipse 44% 77% at 5% 105%,rgba(62,144,153,.14),transparent 75%),
+  linear-gradient(119deg,#10393d,#0d2f35 57%,#09252f)!important;
+ color:#edf8f4!important;border:1px solid rgba(174,223,213,.24)!important;
+ border-radius:25px!important;box-shadow:0 20px 45px rgba(10,45,50,.10)!important;
+}
+main>footer.faro-footer-v2 .faro-footer-manifesto{
+ display:grid;grid-column:1/-1;gap:15px;
+ padding:0 0 28px!important;
+ border-bottom:1px solid rgba(205,233,226,.23);
+}
+main>footer.faro-footer-v2 .faro-footer-manifesto small{
+ font:850 10px/1.3 var(--faro-text,Manrope,system-ui)!important;
+ color:#acd9d0!important;letter-spacing:.17em!important;
+}
+main>footer.faro-footer-v2 .faro-footer-manifesto strong{
+ font:850 clamp(32px,4.8vw,68px)/1.08 var(--faro-display,"Archivo Black",system-ui)!important;
+ letter-spacing:-.045em;color:#f4faf7!important;max-width:19ch;
+}
+main>footer.faro-footer-v2 .faro-footer-manifesto span{
+ font:700 clamp(13px,1.5vw,17px)/1.5 var(--faro-text,Manrope,system-ui)!important;
+ color:#c7e0d9!important;
+}
+main>footer.faro-footer-v2 .faro-footer-brand{grid-column:1!important;grid-row:auto!important}
+main>footer.faro-footer-v2 .faro-footer-nav{grid-column:2!important;grid-row:auto!important}
+main>footer.faro-footer-v2 .faro-footer-brand>strong{
+ font:850 clamp(21px,2.2vw,28px)/1.2 var(--faro-text,Manrope,system-ui)!important;
+ color:#f4faf7!important;
+}
+main>footer.faro-footer-v2 .faro-footer-brand>strong span{
+ font-size:11px!important;letter-spacing:.065em;color:#a7d0c8!important;
+}
+main>footer.faro-footer-v2 .faro-footer-brand p{
+ max-width:48ch;color:#bed7d1!important;line-height:1.7!important;
+ font-size:13px!important;
+}
+main>footer.faro-footer-v2 .faro-footer-nav{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:18px!important;
+}
+main>footer.faro-footer-v2 .faro-footer-nav>div{display:grid;align-content:start;gap:9px}
+main>footer.faro-footer-v2 .faro-footer-nav small{
+ color:#a9d7cf!important;font-size:9px!important;letter-spacing:.1em!important;
+}
+main>footer.faro-footer-v2 .faro-footer-nav a{
+ color:#f0f7f3!important;font:700 12px/1.55 var(--faro-text,Manrope,system-ui)!important;
+ width:fit-content;
+}
+main>footer.faro-footer-v2 .faro-footer-nav a:hover{text-decoration:underline!important}
+main>footer.faro-footer-v2 .faro-footer-legal{
+ grid-column:1/-1!important;
+ padding:15px 0 0!important;margin:0!important;
+ border-top:1px solid rgba(205,233,226,.20)!important;
+ color:#aacdc6!important;font-size:10px!important;letter-spacing:.04em!important;
+}
+
+/* Tablet & smaller mobile: one column, no hidden decision content. */
+@media(max-width:1030px){
+ html body #forecastPage #dayview{
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:16px!important;
+ }
+ html body #forecastPage #dayview>.faro-decision-intro,
+ html body #forecastPage #dayview>.day-outlook-section,
+ html body #forecastPage #dayview>.hourly-section,
+ html body #forecastPage #dayview>.faro-week-disclosure,
+ html body #forecastPage #dayview>.faro-ocean-explorer,
+ html body #forecastPage #dayview>.session-section,
+ html body #forecastPage #dayview>.faro-detail-hub{
+  grid-column:1/-1!important;grid-row:auto!important;
+ }
+ #forecastPage .faro-decision-intro{align-items:flex-start!important}
+ #forecastPage #dayview>.hourly-section #faroHourlyPreview{margin-top:0!important}
+ #forecastPage .faro-detail-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #forecastPage .faro-hub-group.is-ready{grid-column:1/-1!important}
+}
+@media(max-width:700px){
+ html body #forecastPage>.faro-context-dock{
+  padding:14px!important;gap:12px!important;margin:5px 0 13px!important;border-radius:15px;
+ }
+ #forecastPage .faro-context-heading{
+  align-items:flex-start;gap:10px;
+ }
+ #forecastPage .faro-context-heading>div:first-child strong{font-size:16px!important}
+ #forecastPage .faro-context-dock .faro-country-options>a{
+  padding:5px 9px!important;min-height:30px!important;font-size:10px!important;
+ }
+ html body #forecastPage .faro-context-dock .picker-grid{
+  grid-template-columns:minmax(0,.83fr) minmax(0,1.17fr)!important;
+  gap:8px!important;
+ }
+ html body #forecastPage .faro-context-dock .chile-spot-picker{
+  min-height:63px!important;padding:10px!important;
+ }
+ #forecastPage .faro-context-dock .chile-field-hint{display:none!important}
+ #forecastPage .faro-context-dock .chile-spot-picker>strong{font-size:12px!important}
+ #forecastPage .faro-context-dock #updated{font-size:10px!important}
+ html body #forecastPage #dayview{margin-top:11px!important}
+ #forecastPage .faro-decision-intro,
+ #forecastPage .faro-session-intro,
+ #forecastPage .faro-detail-hub-heading{flex-direction:column!important;align-items:flex-start!important}
+ #forecastPage .faro-decision-intro>p{max-width:50ch}
+ #forecastPage #dayview>.hourly-section{padding:16px!important}
+ #forecastPage #dayview>.hourly-section .slots{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #forecastPage #dayview>.hourly-section .slots>button{min-height:105px!important}
+ #forecastPage #dayview #faroHourlyPreview{
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:6px!important;padding:15px!important;
+ }
+ #forecastPage #dayview #faroHourlyPreview>button{
+  grid-column:1!important;grid-row:auto!important;justify-self:start!important;
+ }
+ html body #forecastPage #dailyOverview #daySignalMetrics{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ #forecastPage #dailyOverview #daySignalMetrics>.chile-day-wave-feature{
+  grid-column:1/-1!important;
+ }
+ #forecastPage .faro-ocean-explorer-header{
+  border-radius:15px 15px 0 0!important;
+  padding:19px 16px!important;
+ }
+ #forecastPage .faro-ocean-explorer-content{
+  padding:0 11px 13px!important;border-radius:0 0 15px 15px!important;
+ }
+ #forecastPage .faro-ocean-tool-actions{
+  width:auto!important;display:block!important;
+ }
+ #forecastPage .faro-ocean-tool-actions #openOceanCompass{
+  width:auto!important;min-height:35px!important;
+ }
+ html body #forecastPage .faro-detail-hub-grid{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html body #forecastPage .faro-hub-group{
+  grid-column:1!important;min-height:0!important;
+  padding:19px!important;
+ }
+ #forecastPage .faro-hub-group .faro-hub-group-head{
+  min-height:0!important;margin-bottom:8px!important;padding-bottom:15px!important;
+ }
+ html body main>footer.chile-footer.faro-footer-v2{
+  grid-template-columns:minmax(0,1fr)!important;gap:20px!important;
+  padding:27px 20px!important;border-radius:18px!important;
+ }
+ main>footer.faro-footer-v2 :is(.faro-footer-brand,.faro-footer-nav){
+  grid-column:1!important;
+ }
+ main>footer.faro-footer-v2 .faro-footer-nav{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+}
+@media(max-width:400px){
+ #forecastPage .faro-context-heading{gap:8px}
+ #forecastPage .faro-context-heading>div:first-child strong{font-size:14px!important}
+ #forecastPage .faro-context-dock .faro-country-options>a{padding:5px 7px!important}
+ #forecastPage .faro-context-dock .chile-spot-picker>strong{font-size:11px!important}
+ #forecastPage .faro-context-dock .faro-spot-choice-trigger{font-size:12px!important}
+ #forecastPage .faro-prep-hints .faro-prep-chip{flex:1 1 120px!important}
+ main>footer.faro-footer-v2 .faro-footer-nav{gap:12px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #forecastPage .faro-context-dock *,
+ #forecastPage .faro-hub-group *{scroll-behavior:auto!important}
+}
+
+/* ===== END chile/faro-editorial-experience-v2.css ===== */
+
+/* ===== BEGIN chile/faro-finish-pass-v1.css ===== */
+/*
+ * FARO / Visual finish v1 — 02 Nov 2026.
+ * Editorial polish on stable structure, no model, score-band or hero changes.
+ * Keep loaded after editorial experience and BEFORE score-colour-lock.
+ */
+
+/* COASTAL NOTICE — dated evidence, not a realtime official closure.
+ * Same serious FARO risk language as Zeeland without a false danger claim.
+ */
+html body main #forecastPage:not(.hide)>.faro-access-notice.faro-safety-center {
+ --safety-accent:#c18b4f;
+ --safety-ink:#efc68d;
+ position:relative!important;isolation:isolate;
+ overflow:hidden!important;
+ border:1px solid color-mix(in srgb,var(--safety-accent) 49%,var(--faro-line))!important;
+ border-inline-start:4px solid var(--safety-accent)!important;
+ border-radius:15px!important;
+ background:linear-gradient(100deg,
+  color-mix(in srgb,var(--safety-accent) 11%,var(--faro-raised)),
+  color-mix(in srgb,var(--safety-accent) 3%,var(--faro-raised)) 83%)!important;
+ box-shadow:0 8px 28px rgba(9,40,46,.055)!important;
+ margin:13px 0 16px!important;
+}
+html body main #forecastPage:not(.hide)>.faro-access-notice.faro-safety-center.danger{
+ --safety-accent:#d46b71;--safety-ink:#f4b1ad;
+}
+html body main #forecastPage:not(.hide)>.faro-access-notice.faro-safety-center.advisory{
+ --safety-accent:#6cbdba;--safety-ink:#b8e4db;
+}
+/* Retire the stale grayscale background image: true original FARO O is
+ * now a real decorative SVG in the notice summary, theme-correctly inked. */
+html body main #forecastPage:not(.hide)>.faro-access-notice.faro-safety-center::before{
+ content:none!important;display:none!important;
+}
+html body main #forecastPage:not(.hide)>.faro-access-notice>.faro-access-summary.faro-safety-summary{
+ position:relative!important;overflow:hidden!important;
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) 18px!important;
+ grid-template-rows:repeat(3,auto)!important;
+ gap:6px 20px!important;
+ min-height:91px!important;
+ padding:15px clamp(17px,2.1vw,27px)!important;
+ align-items:center!important;
+ isolation:isolate!important;
+ cursor:pointer!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-top{
+ grid-column:1!important;grid-row:1!important;
+ display:flex!important;justify-content:flex-start!important;
+ flex-wrap:wrap!important;gap:8px!important;
+ width:fit-content!important;max-width:100%!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-top .faro-safety-kicker{
+ color:var(--safety-ink)!important;font-weight:850!important;
+ font-size:10px!important;letter-spacing:.095em!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-top #faroAccessSeverity{
+ padding:4px 9px!important;border-radius:999px!important;
+ font:850 10px/1.1 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:.035em!important;
+ color:var(--safety-ink)!important;
+ border:1px solid color-mix(in srgb,var(--safety-accent) 48%,transparent)!important;
+ background:color-mix(in srgb,var(--safety-accent) 11%,transparent)!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-summary #faroAccessHeadline{
+ grid-column:1!important;grid-row:2!important;
+ font:850 clamp(14px,1.4vw,17px)/1.38 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--fg)!important;
+ letter-spacing:-.014em!important;
+ max-width:75ch!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-summary #faroAccessSubline{
+ grid-column:1!important;grid-row:3!important;
+ display:block!important;max-width:75ch!important;
+ font:650 11px/1.45 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--faro-quiet,var(--muted))!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-summary .faro-safety-chevron{
+ grid-column:2!important;grid-row:1/4!important;
+ justify-self:center!important;
+ z-index:2!important;
+ border-color:var(--safety-ink)!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-watermark {
+ position:absolute!important;
+ right:clamp(38px,6vw,110px)!important;
+ top:50%!important;
+ transform:translateY(-50%) rotate(-9deg)!important;
+ width:clamp(85px,9vw,133px)!important;
+ height:clamp(85px,9vw,133px)!important;
+ opacity:.17!important;
+ filter:blur(.25px)!important;
+ pointer-events:none!important;
+ z-index:-1!important;
+}
+#forecastPage .faro-access-watermark .faro-access-mark-core{fill:#ffda71!important}
+#forecastPage .faro-access-watermark .faro-access-mark-ring{fill:#d7eee7!important}
+html[data-theme="light"] #forecastPage .faro-access-watermark .faro-access-mark-ring{
+ fill:#256065!important;
+}
+html[data-theme="light"] body #forecastPage>.faro-access-notice.faro-safety-center{
+ --safety-ink:#95652e;
+}
+html[data-theme="light"] body #forecastPage>.faro-access-notice .faro-access-watermark{
+ opacity:.10!important;
+}
+html body #forecastPage>.faro-access-notice>.faro-access-expanded{
+ background:color-mix(in srgb,var(--safety-accent) 3%,var(--faro-raised))!important;
+ border-top:1px solid color-mix(in srgb,var(--safety-accent) 24%,var(--faro-line))!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-links{
+ display:flex!important;flex-wrap:wrap!important;gap:9px!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-links a{
+ color:var(--fg)!important;border-radius:9px!important;
+ border:1px solid var(--faro-line)!important;
+ background:var(--faro-raised)!important;
+ min-height:38px!important;
+}
+html body #forecastPage>.faro-access-notice .faro-access-links a:focus-visible,
+html body #forecastPage>.faro-access-notice .faro-access-summary:focus-visible{
+ outline:2px solid var(--safety-accent)!important;outline-offset:2px!important;
+}
+
+/* SELECTED DAY / SELECTED WINDOW — one composed decision instrument.
+ * Remove the artificial empty area caused by an auto-margin preview.
+ * Preserve ALL score colours from the last stylesheet. */
+html body main #forecastPage:not(.hide)>#dayview:not(.hide){
+ align-items:start!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section,
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
+ min-height:0!important;height:auto!important;
+ align-self:start!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section #dailyOverview{
+ height:auto!important;min-height:0!important;
+ display:flex!important;flex-direction:column!important;
+ gap:9px!important;
+}
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
+ display:flex!important;flex-direction:column!important;
+ justify-content:flex-start!important;
+ gap:13px!important;
+ min-height:0!important;height:auto!important;
+}
+html body main #forecastPage:not(.hide) #dayview>.hourly-section .slots {
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:10px!important;align-items:stretch!important;
+}
+html body #forecastPage #dayview>.hourly-section .slots>button{
+ position:relative!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+ gap:5px!important;
+ min-width:0!important;min-height:122px!important;
+ padding:15px 9px 10px!important;
+ overflow:visible!important;
+ border-radius:13px!important;
+ transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease!important;
+}
+html body #forecastPage #dayview>.hourly-section .slots>button:not(.selected):hover{
+ border-color:color-mix(in srgb,var(--faro-selection) 55%,var(--faro-line))!important;
+ transform:none!important;
+}
+html body #forecastPage #dayview>.hourly-section .slots>button.selected{
+ box-shadow:0 0 0 2px color-mix(in srgb,var(--faro-selection) 49%,transparent),
+  0 8px 23px rgba(10,74,79,.10)!important;
+ background:color-mix(in srgb,var(--faro-selection) 13%,var(--faro-raised))!important;
+ border-color:var(--faro-selection)!important;
+}
+html body #forecastPage #dayview>.hourly-section .slots>button:focus-visible{
+ outline:2px solid var(--faro-selection)!important;outline-offset:3px!important;
+}
+#forecastPage #dayview .slots .faro-slot-selected-label{
+ position:absolute!important;top:-9px!important;right:10px!important;
+ font:850 9px/1.15 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:.06em!important;
+ padding:4px 9px!important;border-radius:999px!important;
+ background:var(--faro-selection)!important;
+ color:#fff!important;
+ border:1px solid color-mix(in srgb,var(--faro-selection) 80%,#fff)!important;
+ pointer-events:none!important;
+}
+/* Tie the reading to the time window visually, immediately below the grid.
+ * Do not push it to the foot of the taller left column. */
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview {
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ grid-template-rows:auto auto auto!important;
+ gap:8px 17px!important;
+ width:100%!important;
+ min-height:0!important;
+ margin:14px 0 0!important;
+ padding:19px clamp(16px,1.8vw,25px)!important;
+ align-items:start!important;
+ align-self:stretch!important;
+ background:linear-gradient(118deg,
+  color-mix(in srgb,var(--faro-selection) 11%,var(--faro-raised)),
+  color-mix(in srgb,var(--faro-selection) 5%,var(--faro-raised)))!important;
+ border:1px solid color-mix(in srgb,var(--faro-selection) 38%,var(--faro-line))!important;
+ border-inline-start:3px solid var(--faro-selection)!important;
+ border-radius:14px!important;
+ box-shadow:none!important;
+}
+html body #forecastPage #dayview #faroHourlyPreview>.faro-hourly-read-meta{
+ grid-column:1!important;grid-row:1!important;
+ display:flex!important;align-items:center!important;flex-wrap:wrap!important;
+ gap:6px 14px!important;
+ min-width:0!important;
+}
+#forecastPage #faroHourlyPreview>.faro-hourly-read-meta small{
+ font:850 9px/1.3 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:.1em!important;
+ color:var(--faro-selection)!important;
+}
+#forecastPage #faroHourlyPreview .faro-hourly-selected-time{
+ font:850 13px/1.35 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--fg)!important;
+ white-space:nowrap!important;
+}
+html body #forecastPage #dayview #faroHourlyPreview>strong{
+ grid-column:1!important;grid-row:2!important;
+ font:850 clamp(18px,1.8vw,23px)/1.17 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:-.022em!important;
+ max-width:48ch!important;
+}
+html body #forecastPage #dayview #faroHourlyPreview>span{
+ grid-column:1!important;grid-row:3!important;
+ color:var(--faro-quiet,var(--muted))!important;
+ font:650 12px/1.6 var(--faro-text,Manrope,system-ui)!important;
+ max-width:63ch!important;
+}
+html body #forecastPage #dayview #faroHourlyPreview>button{
+ grid-column:2!important;grid-row:1/4!important;
+ align-self:center!important;justify-self:end!important;
+ padding:10px 13px!important;
+ min-width:104px!important;min-height:40px!important;
+ border:1px solid var(--faro-line)!important;
+ border-radius:10px!important;
+ color:var(--faro-selection)!important;
+ background:color-mix(in srgb,var(--faro-selection) 6%,var(--faro-raised))!important;
+ font-weight:800!important;text-decoration:none!important;
+}
+html body #forecastPage #dayview #faroHourlyPreview>button:hover{
+ background:color-mix(in srgb,var(--faro-selection) 12%,var(--faro-raised))!important;
+}
+html body #forecastPage #dailyOverview #daySignalMetrics{
+ display:grid!important;
+ grid-template-columns:minmax(0,1.3fr) minmax(0,.8fr) minmax(0,.8fr)!important;
+ gap:9px!important;
+ margin:8px 0!important;
+ align-items:stretch!important;
+}
+html body #forecastPage #dailyOverview #daySignalMetrics>.day-signal-metric {
+ min-width:0!important;
+ padding:12px!important;
+ border-radius:11px!important;
+}
+html body #forecastPage #dailyOverview #daySignalMetrics>.chile-day-wave-feature{
+ padding:12px!important;
+ gap:7px!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics .chile-wave-feature-number {
+ margin:0!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics .chile-wave-bars{
+ padding:9px!important;
+}
+#forecastPage #dailyOverview #daySignalMetrics .faro-wave-meter-axis{
+ display:none!important; /* instrument already prints the same scale */
+}
+#forecastPage #dailyOverview #daySignalMetrics .chile-wave-explain{
+ margin-top:2px!important;
+ font:750 10px/1.4 var(--faro-text,Manrope,system-ui)!important;
+}
+html body #forecastPage #dailyOverview .chile-vibe{
+ margin-top:5px!important;
+ padding-top:11px!important;
+}
+html body #forecastPage #dailyOverview .faro-dna-jump{
+ margin-top:4px!important;
+}
+
+/* SEMANTIC PREPARATION CHIPS — three editorial families, not plain pills.
+ * Independent of quality score bands. UV signals are not surf quality. */
+html body #forecastPage #dailyOverview .faro-prep-hints{
+ display:flex!important;flex-wrap:wrap!important;
+ gap:8px!important;margin:10px 0 9px!important;
+}
+html body #forecastPage #dailyOverview .faro-prep-chip{
+ --chip-accent:#9ebfb8;
+ display:inline-flex!important;align-items:center!important;
+ flex-wrap:nowrap!important;gap:8px!important;
+ min-height:37px!important;
+ padding:7px 11px!important;
+ border:1px solid color-mix(in srgb,var(--chip-accent) 47%,var(--faro-line))!important;
+ border-radius:10px!important;
+ background:color-mix(in srgb,var(--chip-accent) 9%,var(--faro-raised))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+html body #forecastPage #dailyOverview .faro-prep-chip::before{
+ content:"";display:inline-block;flex:0 0 7px;
+ width:7px;height:7px;
+ background:var(--chip-accent)!important;
+ border-radius:50%;
+ box-shadow:0 0 0 3px color-mix(in srgb,var(--chip-accent) 17%,transparent);
+}
+html body #forecastPage #dailyOverview .faro-prep-chip--wetsuit{--chip-accent:#7ba6b2}
+html body #forecastPage #dailyOverview .faro-prep-chip--water{--chip-accent:#71b9c2}
+html body #forecastPage #dailyOverview .faro-prep-chip--uv{--chip-accent:#baad79}
+html body #forecastPage #dailyOverview .faro-prep-chip--uv[data-level="high"],
+html body #forecastPage #dailyOverview .faro-prep-chip--uv[data-level="very-high"],
+html body #forecastPage #dailyOverview .faro-prep-chip--uv[data-level="extreme"]{
+ --chip-accent:#dfa466;
+}
+html body #forecastPage #dailyOverview .faro-prep-chip--neutral{--chip-accent:#9dacae}
+html body #forecastPage #dailyOverview .faro-prep-chip small{
+ font:850 9px/1.25 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:.06em!important;
+ color:var(--faro-quiet,var(--muted))!important;
+}
+html body #forecastPage #dailyOverview .faro-prep-chip strong{
+ font:850 12px/1.3 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--fg)!important;
+}
+html body #forecastPage #dailyOverview .chile-day-uv{
+ border-radius:9px!important;
+ background:color-mix(in srgb,#dfa466 7%,var(--faro-raised))!important;
+ padding:9px 12px!important;
+}
+html body #forecastPage #dailyOverview .chile-day-uv #dayUVLabel{
+ font-size:11px!important;
+}
+
+/* THE ENDING IS THE WEBSITE'S LAST CHAPTER, NOT A FLOATING BANNER.
+ * Forecast-source disclosure gives way to a slim editorial bridge;
+ * the existing footer joins flush to the bridge using identical colour.
+ */
+html body main #forecastPage:not(.hide)>.faro-footer-bridge{
+ position:relative!important;isolation:isolate;overflow:hidden!important;
+ display:flex!important;
+ align-items:center!important;justify-content:space-between!important;
+ flex-wrap:wrap!important;gap:18px 30px!important;
+ margin:clamp(26px,3vw,43px) 0 0!important;
+ padding:clamp(24px,3vw,34px) clamp(22px,4vw,53px)!important;
+ color:#e4f5ee!important;
+ background:
+  radial-gradient(ellipse 65% 115% at 88% 5%,rgba(97,185,176,.145),transparent 74%),
+  linear-gradient(119deg,#10393d,#0d2f35 57%,#09252f)!important;
+ border:1px solid rgba(174,223,213,.24)!important;
+ border-bottom:0!important;border-radius:22px 22px 0 0!important;
+ box-sizing:border-box!important;
+}
+#forecastPage .faro-footer-bridge-copy{
+ display:grid!important;gap:7px!important;
+ max-width:68ch!important;
+}
+#forecastPage .faro-footer-bridge-copy small{
+ color:#a9d7cf!important;
+ font:850 10px/1.4 var(--faro-text,Manrope,system-ui)!important;
+ letter-spacing:.16em!important;
+}
+#forecastPage .faro-footer-bridge-copy strong{
+ font:850 clamp(19px,2.15vw,29px)/1.2 var(--faro-display,"Archivo Black",system-ui)!important;
+ letter-spacing:-.025em!important;
+ color:#f0faf6!important;
+}
+#forecastPage .faro-footer-bridge-copy p{
+ margin:0!important;color:#c7dfd8!important;
+ font:650 12px/1.55 var(--faro-text,Manrope,system-ui)!important;
+}
+#forecastPage .faro-footer-bridge-link{
+ flex:none;display:inline-flex;align-items:center;gap:12px;
+ padding:11px 16px;border-radius:10px;
+ min-height:44px;box-sizing:border-box;
+ color:#10383e!important;background:#d3ece5!important;
+ font:800 12px/1.3 var(--faro-text,Manrope,system-ui)!important;
+ text-decoration:none!important;
+}
+#forecastPage .faro-footer-bridge-link:hover{
+ background:#e9f8f2!important;
+}
+#forecastPage .faro-footer-bridge-link:focus-visible{
+ outline:2px solid #f4dc9c!important;outline-offset:3px!important;
+}
+html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
+ margin:-1px 0 0!important;
+ padding-top:23px!important;
+ border-top:0!important;
+ border-radius:0 0 22px 22px!important;
+ background:
+  radial-gradient(ellipse 57% 85% at 83% 5%,rgba(97,185,176,.14),transparent 76%),
+  linear-gradient(119deg,#10393d,#0d2f35 57%,#09252f)!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto{
+ gap:12px!important;
+ padding-bottom:24px!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto strong{
+ font-size:clamp(27px,3.2vw,43px)!important;
+ max-width:31ch!important;line-height:1.15!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-brand p{
+ max-width:42ch!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
+ line-height:1.55!important;
+}
+
+@media(max-width:1060px){
+ html body #forecastPage #dayview>.hourly-section .slots{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ }
+ html body #forecastPage #dailyOverview #daySignalMetrics{
+  grid-template-columns:minmax(0,1.25fr) minmax(0,.85fr) minmax(0,.85fr)!important;
+ }
+}
+@media(max-width:710px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
+  width:100%!important;
+ }
+ html body #forecastPage #dayview>.hourly-section .slots{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ html body #forecastPage #dayview>.hourly-section .slots>button{
+  min-height:106px!important;padding:12px 9px!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview{
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:8px!important;margin-top:16px!important;
+  padding:17px!important;
+ }
+ html body #forecastPage #dayview #faroHourlyPreview>.faro-hourly-read-meta{
+  grid-column:1!important;grid-row:1!important;
+ }
+ html body #forecastPage #dayview #faroHourlyPreview>strong{
+  grid-column:1!important;grid-row:2!important;
+ }
+ html body #forecastPage #dayview #faroHourlyPreview>span{
+  grid-column:1!important;grid-row:3!important;
+ }
+ html body #forecastPage #dayview #faroHourlyPreview>button{
+  grid-column:1!important;grid-row:4!important;
+  justify-self:start!important;min-height:40px!important;margin-top:6px!important;
+ }
+ html body #forecastPage #dailyOverview #daySignalMetrics{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ html body #forecastPage #dailyOverview #daySignalMetrics>.chile-day-wave-feature{
+  grid-column:1/-1!important;
+ }
+ html body #forecastPage #dailyOverview .faro-prep-chip{
+  flex:1 1 130px!important;
+ }
+ html body #forecastPage>.faro-access-notice>.faro-access-summary.faro-safety-summary{
+  padding:15px 15px!important;
+  min-height:86px!important;
+ }
+ html body #forecastPage>.faro-access-notice .faro-access-watermark{
+  right:25px!important;width:76px!important;height:76px!important;
+  opacity:.1!important;
+ }
+ html body #forecastPage>.faro-access-notice .faro-access-summary #faroAccessHeadline{
+  font-size:13px!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-footer-bridge{
+  padding:22px 19px!important;gap:16px!important;
+  border-radius:17px 17px 0 0!important;
+ }
+ html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
+  border-radius:0 0 17px 17px!important;
+ }
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto strong{
+  font-size:clamp(27px,7.5vw,39px)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html body #forecastPage #dayview>.hourly-section .slots>button,
+ #forecastPage .faro-footer-bridge-link{
+  transition:none!important;
+ }
+}
+
+/* ===== END chile/faro-finish-pass-v1.css ===== */
+
+/* ===== BEGIN chile/faro-mobile-reading-order-v1.css ===== */
+/*
+ * FARO | iPhone hero restoration | 2026-11-02
+ *
+ * Regression causes:
+ * (1) The footer bridge was a child of flex #forecastPage with order:auto
+ *     (effectively 0), while the hero carried order:1. Consequently the
+ *     actual END chapter was visually placed BEFORE the main hero.
+ * (2) The root Deep Ocean theme selector has higher specificity than the
+ *     original mobile :root custom-property override. The phone retained
+ *     --beacon-y:51% and --beacon-size:165px, positioning the blurred
+ *     mark over the buttons instead of at the upper-right.
+ *
+ * Keep this small cascade fix after the editorial styles and before the
+ * canonical five-colour score lock. No model, score or desktop hero edits.
+ */
+
+/* FIX 1: the editorial sign-off always follows the detailed model notes.
+ * All other desktop order values remain as authored. */
+html body main #forecastPage:not(.hide) > .faro-footer-bridge {
+  order: 6!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+}
+
+/* The mobile page starts with the actual offshore read again.
+ * Context (spot selection) remains fully functional but is supporting UI,
+ * not a tall opening card that precedes the main message. */
+@media(max-width:710px) {
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead {
+    order:0!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock {
+    order:1!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-access-notice {
+    order:2!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-journey-nav {
+    order:3!important;
+  }
+  html body main #forecastPage:not(.hide) > #dayview {
+    order:4!important;
+  }
+  html body main #forecastPage:not(.hide) > .chile-method-disclaimer {
+    order:5!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-footer-bridge {
+    order:6!important;
+  }
+
+  /* FIX 2: override the BOTH-theme desktop custom properties with a
+   * selector of genuinely higher specificity. Previous mobile variables
+   * lost to html[data-theme] #forecastPage > .faro-forecast-lead. */
+  html[data-theme="light"] body main #forecastPage:not(.hide) > .faro-forecast-lead,
+  html:not([data-theme="light"]) body main #forecastPage:not(.hide) > .faro-forecast-lead {
+    /* Decorative O stays in the upper-right visual corner, outside the
+       text's first reading line at 320–390px and enlarged text settings. */
+    --beacon-x:87%;
+    --beacon-y:8%;
+    --beacon-size:clamp(64px,18vw,80px);
+    --beacon-halo:clamp(205px,66vw,290px);
+    --beacon-ambient:clamp(250px,82vw,350px);
+    --beacon-beam:clamp(110px,36vw,185px);
+    margin:0!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    isolation:isolate!important;
+    overflow:hidden!important;
+  }
+  /* Underwater O stays behind all data and uses only Gaussian blur,
+   * avoiding the Safari WebKit dark-line artifact of SVG drop-shadows. */
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-lead-signature {
+    opacity:.29!important;
+    pointer-events:none!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+    filter:blur(2px)!important;
+    -webkit-filter:blur(2px)!important;
+    overflow:visible!important;
+  }
+  /* Visible pulse is on an independent radial div rather than the SVG.
+   * Preserve the existing 6.4 s animation in both themes. */
+  /* Pulse timing is now owned by faro-hero-synchronised-pulse-v1.css.
+   * Do not introduce a second iPhone animation clock. */
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-pulse {
+    filter:blur(20px)!important;
+    -webkit-filter:blur(20px)!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon::after {
+    filter:blur(28px)!important;
+    opacity:.77; /* let synchronised keyframes modulate luminance */
+  }
+
+  /* Compact working coast picker. Keeps the live model timestamp, beach
+   * dropdown and Zeeland/Chile control, without stealing hero attention. */
+  html body main #forecastPage:not(.hide) > .faro-context-dock {
+    padding:13px 14px!important;
+    margin:13px 0 5px!important;
+    gap:10px!important;
+    border-radius:14px!important;
+    box-shadow:none!important;
+  }
+  #forecastPage .faro-context-dock .faro-context-heading {
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    flex-wrap:wrap!important;
+    gap:7px 12px!important;
+  }
+  #forecastPage .faro-context-dock .faro-context-heading > div:first-child {
+    display:block!important;
+  }
+  #forecastPage .faro-context-dock .faro-context-heading > div:first-child strong {
+    display:none!important;
+  }
+  #forecastPage .faro-context-dock .faro-context-heading > div:first-child small {
+    font-size:9px!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .faro-context-controls > .picker-grid {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:0!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .picker-grid > .chile-spot-picker:first-child {
+    display:none!important; /* region is shown in the branded header */
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .picker-grid > .faro-spot-choice {
+    width:100%!important;
+    min-height:58px!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .faro-spot-choice-trigger {
+    min-height:35px!important;
+    font-size:14px!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock
+  .forecast-toolbar {
+    min-height:0!important;
+    margin:0!important;
+    padding:7px 2px 0!important;
+    gap:7px!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-context-dock #updated {
+    overflow-wrap:break-word!important;
+    font-size:10px!important;
+  }
+  /* Never hide the prediction, the alert or a score at any viewport. */
+}
+
+@media(max-width:370px) {
+  html[data-theme="light"] body main #forecastPage:not(.hide) > .faro-forecast-lead,
+  html:not([data-theme="light"]) body main #forecastPage:not(.hide) > .faro-forecast-lead {
+    --beacon-x:88%;
+    --beacon-y:7%;
+    --beacon-size:60px;
+    --beacon-halo:228px;
+    --beacon-ambient:290px;
+    --beacon-beam:132px;
+  }
+  #forecastPage .faro-context-dock .faro-country-options > a {
+    padding:5px 7px!important;
+  }
+}
+/* Reduced Motion preference must take priority even over this mobile
+ * high-specificity rule. The static glow remains but does not animate. */
+@media(max-width:710px) and (prefers-reduced-motion:reduce) {
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-pulse {
+    -webkit-animation:none!important;
+    animation:none!important;
+    opacity:.55!important;
+  }
+}
+
+/* ===== END chile/faro-mobile-reading-order-v1.css ===== */
+
+/* ===== BEGIN chile/faro-hero-synchronised-pulse-v1.css ===== */
+/*
+ * FARO / Synchronized underwater illumination — 02 Nov 2026
+ *
+ * A single optical rhythm for dark, light, desktop and iPhone.
+ * Every layer starts, peaks (50%), and settles (100%) together:
+ *   ambient water | warm halo | leftward beam | blurred FARO O.
+ *
+ * The authentic SVG stays Gaussian-blurred, never animated with SVG
+ * drop shadows (the source of the former iOS horizontal-line artifact).
+ * "scale" is animated independently of existing !important transforms.
+ * All layers are decorative and do not modify forecast or score colours.
+ */
+@keyframes faro-hero-water-breathe {
+  0%,100% { opacity:.60; transform:translate3d(-50%,-50%,0) scale(.98); }
+  50%     { opacity:.83; transform:translate3d(-50%,-50%,0) scale(1.03); }
+}
+@-webkit-keyframes faro-hero-water-breathe {
+  0%,100% { opacity:.60; -webkit-transform:translate3d(-50%,-50%,0) scale(.98); }
+  50%     { opacity:.83; -webkit-transform:translate3d(-50%,-50%,0) scale(1.03); }
+}
+@keyframes faro-hero-halo-breathe {
+  0%,100% { opacity:.61; transform:translate3d(-50%,-50%,0) scale(.97); }
+  50%     { opacity:.90; transform:translate3d(-50%,-50%,0) scale(1.055); }
+}
+@-webkit-keyframes faro-hero-halo-breathe {
+  0%,100% { opacity:.61; -webkit-transform:translate3d(-50%,-50%,0) scale(.97); }
+  50%     { opacity:.90; -webkit-transform:translate3d(-50%,-50%,0) scale(1.055); }
+}
+@keyframes faro-hero-core-breathe {
+  0%,100% { opacity:.37; transform:translate3d(-50%,-50%,0) scale(.945); }
+  50%     { opacity:.96; transform:translate3d(-50%,-50%,0) scale(1.08); }
+}
+@-webkit-keyframes faro-hero-core-breathe {
+  0%,100% { opacity:.37; -webkit-transform:translate3d(-50%,-50%,0) scale(.945); }
+  50%     { opacity:.96; -webkit-transform:translate3d(-50%,-50%,0) scale(1.08); }
+}
+@keyframes faro-hero-beam-breathe {
+  0%,100% { scale:.975; }
+  50%     { scale:1.045; }
+}
+@keyframes faro-hero-mark-breathe {
+  0%,100% { scale:1; }
+  50%     { scale:1.028; }
+}
+
+/* Every animation shares the same duration, easing and zero delay.
+ * Include both colour schemes with one selector: theme cannot desynchronise
+ * the light or generate a separate aesthetic for the same hero. */
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon::before {
+  animation:faro-hero-water-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-water-breathe 5.4s ease-in-out 0s infinite both!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon::after {
+  animation:faro-hero-halo-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-halo-breathe 5.4s ease-in-out 0s infinite both!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon > .faro-beacon-pulse {
+  animation:faro-hero-core-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-core-breathe 5.4s ease-in-out 0s infinite both!important;
+  filter:blur(21px)!important;
+  -webkit-filter:blur(21px)!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon > .faro-beacon-light {
+  /* Override the older animation:none!important, without changing the
+   * original position/rotation or fixed beam translucency. */
+  animation:faro-hero-beam-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-beam-breathe 5.4s ease-in-out 0s infinite both!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead
+> .faro-lead-beacon > .faro-lead-signature {
+  /* No animated SVG filter or transform, only the independent scale value. */
+  animation:faro-hero-mark-breathe 5.4s ease-in-out 0s infinite both!important;
+  -webkit-animation:faro-hero-mark-breathe 5.4s ease-in-out 0s infinite both!important;
+}
+
+@media(max-width:710px) {
+  /* A touch more diffusion in the smaller hero, not stronger text overlays. */
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-pulse {
+    filter:blur(23px)!important;
+    -webkit-filter:blur(23px)!important;
+  }
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
+    filter:blur(2px)!important;
+    -webkit-filter:blur(2px)!important;
+  }
+}
+
+/* Motion-sensitive visitors retain the luminous still frame. */
+@media(prefers-reduced-motion:reduce) {
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon::before,
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon::after,
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-pulse,
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-beacon-light,
+  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+  > .faro-lead-beacon > .faro-lead-signature {
+    animation:none!important;
+    -webkit-animation:none!important;
+    scale:1!important;
+  }
+}
+
+/* ===== END chile/faro-hero-synchronised-pulse-v1.css ===== */
+
+/* ===== BEGIN chile/faro-editorial-hero-focus-v1.css ===== */
+/*
+ * FARO | Hero as an editorial opening, not a second forecast dashboard.
+ *
+ * One thought (headline), one short interpretation, one CTA, and a
+ * trustworthy score/window. Detailed swell/wind/period, visual map and
+ * scientific interpretation already follow immediately below the hero.
+ *
+ * Critical warnings remain visible in the hero. The canonical score palette
+ * is owned exclusively by faro-score-colour-lock-v1.css (loaded AFTER us).
+ * The synchronized underwater light and animated brand mark are untouched.
+ */
+
+/* Keep dynamic legacy output targets in the DOM for compatibility, but do
+ * not show a redundant second 3-metric dashboard inside the opening card.
+ * The same values remain available in the daily reading below. */
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-metrics,
+html body main #forecastPage:not(.hide) > .faro-forecast-lead #faroLeadMap {
+  display:none!important;
+}
+
+/* The map already has a dedicated navigational link immediately underneath
+ * the hero. One primary action here establishes a clearer visual hierarchy. */
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-action-secondary {
+  display:none!important;
+}
+
+html body main #forecastPage:not(.hide) > .faro-forecast-lead {
+  display:grid!important;
+  grid-template-columns:minmax(0,1.48fr) minmax(205px,.68fr)!important;
+  gap:clamp(18px,3.5vw,56px)!important;
+  align-items:center!important;
+  min-height:245px!important;
+  padding:clamp(23px,3vw,39px)!important;
+  box-sizing:border-box!important;
+}
+
+html body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-main {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:clamp(8px,.9vw,12px)!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:640px!important;
+  padding:0!important;
+}
+
+/* Location is a quiet caption, not another display heading. */
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-kicker {
+  font-size:9px!important;
+  letter-spacing:.15em!important;
+  line-height:1.35!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-location {
+  font-size:12px!important;
+  line-height:1.4!important;
+  margin:0!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead #faroLeadHeadline {
+  font-size:clamp(31px,3.1vw,47px)!important;
+  line-height:1.105!important;
+  letter-spacing:-.045em!important;
+  max-width:19ch!important;
+  margin:3px 0 0!important;
+  text-wrap:balance;
+  overflow-wrap:normal!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead #faroLeadDeck {
+  font-size:clamp(12px,1.08vw,14px)!important;
+  line-height:1.54!important;
+  max-width:44ch!important;
+  margin:3px 0 0!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-actions {
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:0!important;
+  margin:clamp(7px,1.2vw,14px) 0 0!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-action-main {
+  min-height:41px!important;
+  padding:10px 17px!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  border-radius:10px!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-qualification {
+  margin-top:3px!important;
+  font-size:10px!important;
+  line-height:1.45!important;
+  max-width:50ch!important;
+}
+
+/* An understated data rail. No glass card or heavy outline: the brand light
+ * remains the hero's atmosphere and the reading remains its only instrument. */
+html body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-signal,
+html[data-theme="light"] body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-signal,
+html:not([data-theme="light"]) body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-signal {
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-self:center!important;
+  align-items:flex-start!important;
+  width:100%!important;
+  min-width:0!important;
+  gap:11px!important;
+  padding:6px 0 6px clamp(19px,2vw,28px)!important;
+  border:0!important;
+  border-left:1px solid rgba(206,237,226,.26)!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-signal-top {
+  display:block!important;
+  width:100%!important;
+  font-size:9px!important;
+  letter-spacing:.09em!important;
+  line-height:1.4!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-score-row {
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:baseline!important;
+  justify-content:flex-start!important;
+  gap:6px 9px!important;
+  width:100%!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead #faroLeadScore {
+  font-size:clamp(43px,4.7vw,68px)!important;
+  line-height:1!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-grade {
+  flex:0 1 auto!important;
+  margin:0!important;
+  padding:4px 7px!important;
+  font-size:9px!important;
+  letter-spacing:.01em!important;
+  max-width:100%!important;
+  white-space:normal!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-best {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:5px!important;
+  margin:0!important;
+  padding:11px 0 0!important;
+  width:100%!important;
+  border:0!important;
+  border-top:1px solid rgba(206,237,226,.20)!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-best small {
+  font-size:9px!important;
+  letter-spacing:.07em!important;
+  line-height:1.35!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-best strong {
+  font-size:clamp(15px,1.65vw,19px)!important;
+  line-height:1.24!important;
+  white-space:normal!important;
+}
+
+/* Always reveal the safety/model explanation when material information
+ * requires it. For an ordinary forecast, the concise model qualifier already
+ * shown under the CTA is enough; no second legal paragraph in the score rail. */
+html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-fineprint {
+  display:none!important;
+}
+html body main #forecastPage:not(.hide) > .faro-forecast-lead:is(
+ .has-model-danger,.has-model-caution,.is-restricted,.is-unavailable
+) .faro-lead-fineprint {
+  display:block!important;
+  max-width:45ch!important;
+  padding-top:7px!important;
+  margin:0!important;
+  font-size:10px!important;
+  line-height:1.5!important;
+}
+
+/* The emergency status and score must never visually impersonate an
+ * ordinary recommended session: keep the existing restricted/danger badges
+ * and the warning text in its original position. */
+
+/* Mid-size devices: give the editorial statement space. */
+@media(max-width:1040px) and (min-width:711px) {
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead {
+   grid-template-columns:minmax(0,1.15fr) minmax(205px,.85fr)!important;
+   gap:20px!important;
+   padding:24px!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead #faroLeadHeadline {
+   font-size:clamp(28px,3.7vw,39px)!important;
+ }
+}
+
+/* iPhone: strong opening followed by a single horizontal score/window
+ * strip. No extra metrics, no disconnected white instrument card. */
+@media(max-width:710px) {
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead {
+   display:flex!important;
+   flex-direction:column!important;
+   align-items:stretch!important;
+   justify-content:flex-start!important;
+   gap:15px!important;
+   min-height:0!important;
+   padding:clamp(19px,5vw,23px)!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-main {
+   gap:8px!important;
+   max-width:100%!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-location {
+   font-size:10px!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead #faroLeadHeadline {
+   font-size:clamp(27px,7vw,35px)!important;
+   line-height:1.115!important;
+   max-width:21ch!important;
+   margin:4px 0 0!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead #faroLeadDeck {
+   font-size:12px!important;
+   max-width:38ch!important;
+   margin:2px 0 0!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-actions {
+   margin:9px 0 0!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-action-main {
+   font-size:11px!important;
+   min-height:39px!important;
+   padding:9px 14px!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-qualification {
+   font-size:9px!important;
+   line-height:1.4!important;
+   margin-top:2px!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-signal,
+ html[data-theme="light"] body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-signal,
+ html:not([data-theme="light"]) body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-signal {
+   display:grid!important;
+   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+   grid-template-rows:auto auto auto!important;
+   align-self:stretch!important;
+   align-items:start!important;
+   gap:7px 15px!important;
+   padding:14px 0 0!important;
+   border:0!important;
+   border-top:1px solid rgba(206,237,226,.29)!important;
+   border-radius:0!important;
+   background:transparent!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-signal-top {
+   grid-column:1/-1!important;
+   grid-row:1!important;
+   font-size:9px!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-score-row {
+   display:grid!important;
+   grid-template-columns:auto minmax(0,1fr)!important;
+   grid-column:1!important;grid-row:2!important;
+   gap:0 5px!important;
+   align-items:end!important;
+   min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead #faroLeadScore {
+   font-size:clamp(38px,10vw,49px)!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-score-row > span:nth-child(2) {
+   align-self:end!important;
+   padding-bottom:4px!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-grade {
+   grid-column:1/-1!important;
+   margin-top:4px!important;
+   justify-self:start!important;
+   max-width:100%!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-best {
+   grid-column:2!important;
+   grid-row:2!important;
+   align-items:flex-start!important;
+   justify-content:center!important;
+   padding:0!important;
+   border:0!important;
+   min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-best small {
+   font-size:8px!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-best strong {
+   font-size:clamp(14px,4vw,18px)!important;
+   overflow-wrap:break-word!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-fineprint {
+   grid-column:1/-1!important;grid-row:3!important;
+   max-width:100%!important;
+ }
+}
+@media(max-width:370px){
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-score-row {
+   grid-template-columns:auto minmax(0,1fr)!important;
+ }
+ html body main #forecastPage:not(.hide) > .faro-forecast-lead #faroLeadHeadline {
+   font-size:26px!important;
+ }
+}
+
+/* No animation properties here. The pulse is controlled exclusively by
+ * faro-hero-synchronised-pulse-v1.css; motion preference still applies. */
+
+/* ===== END chile/faro-editorial-hero-focus-v1.css ===== */
+
+/* ===== BEGIN chile/faro-responsive-quality-v1.css ===== */
+/*
+ * FARO Chile — responsive quality & interaction pass (03 Nov 2026).
+ * The mobile-first hero and desktop editorial layout already exist:
+ * do not re-introduce another grid system, content ordering or score palette.
+ *
+ * This layer only improves touch hit-areas, smaller-size legibility, focus,
+ * and narrow viewport overflow protection. All visual and model scores remain
+ * under the final faro-score-colour-lock-v1.css contract.
+ */
+
+/* Modern mobile browsers may expose very narrow viewports with larger text
+ * settings. Keep layout boxes able to shrink without text spilling sideways. */
+html body main #forecastPage:not(.hide) > .faro-context-dock,
+html body main #forecastPage:not(.hide) > .faro-forecast-lead,
+html body main #forecastPage:not(.hide) > #dayview:not(.hide),
+html body main #forecastPage:not(.hide) > .faro-footer-bridge {
+ min-width:0!important;
+ max-width:100%!important;
+ box-sizing:border-box!important;
+}
+
+/* Shared feedback states: tap targets still need a visible keyboard focus
+ * (also helps external keyboard users on iPad and desktop). */
+#forecastPage :is(
+ .faro-country-options>a,.faro-spot-choice-trigger,#refreshForecast,
+ #faroLeadRead,#openOceanCompass,.faro-journey-nav button,
+ .faro-hourly-preview>button,.slots>button,
+ .faro-footer-bridge-link
+):focus-visible {
+ outline:2px solid var(--faro-selection,#75beb9)!important;
+ outline-offset:3px!important;
+}
+#forecastPage :is(
+ .faro-country-options>a,.faro-spot-choice-trigger,#refreshForecast,
+ #faroLeadRead,#openOceanCompass,.faro-journey-nav button,
+ .faro-hourly-preview>button,.slots>button
+) {
+ touch-action:manipulation;
+}
+
+/* The desktop two-column reading must not revive its predecessor's
+ * max-height stretching. The selected time interpretation follows its
+ * time grid, while the model input card may naturally be taller. */
+@media(min-width:1120px) {
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section {
+  justify-content:flex-start!important;
+  height:auto!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview{
+  margin-top:14px!important;
+ }
+}
+
+/* iPhone-sized displays: minimum 44pt (Apple touch-target convention)
+ * on the actual interactive buttons, not just their outer cards. */
+@media(max-width:710px) {
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-action-main,
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-country-options>a,
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice-trigger,
+ html body main #forecastPage:not(.hide)>.faro-context-dock #refreshForecast,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide) #openOceanCompass,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide) #faroHourlyPreview>button,
+ html body main #forecastPage:not(.hide)>.faro-footer-bridge .faro-footer-bridge-link{
+  min-height:44px!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice-trigger {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  overflow-wrap:anywhere!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-country-options {
+  min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock #updated {
+  min-width:0!important;
+  overflow-wrap:anywhere!important;
+  line-height:1.5!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-qualification {
+  font-size:10px!important;
+  line-height:1.5!important;
+  max-width:46ch!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-best small,
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-signal-top {
+  font-size:10px!important;
+  line-height:1.5!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots{
+  min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots>button {
+  min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-footer-bridge{
+  gap:14px!important;
+ }
+}
+
+/* At iPhone SE-like widths, preserve the 2-column score/window band while
+ * allowing its descriptions to wrap instead of forcing horizontal scroll. */
+@media(max-width:375px) {
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-best strong{
+  overflow-wrap:anywhere!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-score-row{
+  min-width:0!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading{
+  gap:6px!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-context-dock .faro-country-options>a{
+  padding-inline:7px!important;
+  font-size:10px!important;
+ }
+}
+
+@media(prefers-reduced-motion:reduce) {
+ #forecastPage :is(.slots>button,.faro-lead-action-main,.faro-footer-bridge-link){
+  transition:none!important;
+ }
+}
+
+/* ===== END chile/faro-responsive-quality-v1.css ===== */
+
+/* ===== BEGIN chile/faro-decision-balance-v1.css ===== */
+/*
+ * FARO • desktop decision and site-ending correction · 03 Nov 2026
+ *
+ * The root issue is NOT a lack of cards: historical CSS gives the wave
+ * feature grid-column:1/-1 while the later layout has 3 columns.
+ * This explicitly restores a one-row, 3-metric instrument on desktop,
+ * keeps the source facts and makes the selected slot interpretation useful.
+ * On narrow screens the same content stacks without cutting data.
+ *
+ * The false secondary "bridge" hero was removed from the HTML.
+ * The native footer is now a real site's closing surface, not a second hero.
+ * This sheet owns no score palette or model calculations.
+ */
+@media(min-width:1120px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide){
+  grid-template-columns:minmax(0,1.01fr) minmax(0,1.09fr)!important;
+  align-items:start!important;
+  gap:clamp(16px,1.6vw,22px)!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
+  min-width:0!important;min-height:0!important;
+  align-self:start!important;height:auto!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview{
+  height:auto!important;min-height:0!important;
+  gap:0!important;
+  padding:clamp(16px,1.5vw,21px)!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview>.day-editorial-overline{
+  margin-bottom:7px!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview>.day-overview-row{
+  margin-bottom:9px!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #chileDecisionBrief{
+  padding:9px 0 0!important;
+  margin:0 0 6px!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #faroPrepHints{
+  margin:8px 0!important;gap:6px!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview .faro-prep-chip{
+  min-height:33px!important;padding:6px 9px!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #dayUVBadge{
+  margin:0 0 8px!important;
+  padding:7px 10px!important;
+  font-size:10px!important;
+ }
+
+ /* The three distinct readings occupy ONE row on desktop; previously the
+  * offshore card spanned both columns and forced wind into an orphan row. */
+ html body main #forecastPage:not(.hide) #dailyOverview #daySignalMetrics.day-signal-metrics{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.28fr) minmax(0,.86fr) minmax(0,.86fr)!important;
+  grid-template-rows:minmax(0,auto)!important;
+  grid-auto-flow:row!important;
+  gap:8px!important;
+  margin:8px 0!important;
+  padding:0!important;
+  border:0!important;
+  align-items:stretch!important;
+  min-height:0!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #daySignalMetrics>.day-signal-metric{
+  grid-row:1!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:11px 12px!important;
+  border:0!important;
+  border-left:1px solid var(--faro-line)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-sizing:border-box!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #daySignalMetrics>.chile-day-wave-feature{
+  grid-column:1!important;
+  border-left:0!important;
+  padding-left:0!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  gap:5px!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #daySignalMetrics>.day-signal-metric:nth-child(2){
+  grid-column:2!important;
+  display:flex!important;align-items:flex-start!important;
+  justify-content:center!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #daySignalMetrics>.day-signal-metric:nth-child(3){
+  grid-column:3!important;
+  display:flex!important;align-items:flex-start!important;
+  justify-content:center!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #daySignalMetrics>.day-signal-metric:last-child{
+  border-left:1px solid var(--faro-line)!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #daySignalMetrics .chile-wave-feature-head{
+  grid-column:auto!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #daySignalMetrics .chile-wave-feature-number{
+  display:flex!important;
+  align-items:baseline!important;
+  gap:6px!important;max-width:100%!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #dayWave{
+  font-size:clamp(27px,2.5vw,36px)!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #dayWaveMeter{
+  display:block!important;
+  grid-column:auto!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0!important;padding:0!important;
+ }
+ html body main #forecastPage:not(.hide) #dayWaveMeter .faro-wave-ruler{
+  display:grid!important;
+  width:100%!important;
+  max-width:100%!important;
+  gap:3px!important;
+  margin:0!important;padding:5px 0 0!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;
+ }
+ html body main #forecastPage:not(.hide) #dayWaveMeter .faro-wave-ruler-scale{
+  width:100%!important;
+  height:8px!important;
+  gap:3px!important;
+ }
+ html body main #forecastPage:not(.hide) #dayWaveMeter .faro-wave-ruler-mark{
+  height:8px!important;
+  min-height:0!important;
+ }
+ html body main #forecastPage:not(.hide) #dayWaveMeter .faro-wave-ruler-labels{
+  width:100%!important;
+  margin:0!important;
+  font-size:9px!important;
+ }
+ html body main #forecastPage:not(.hide) #dayWaveMeter .faro-wave-ruler-caption{
+  font-size:9px!important;
+  line-height:1.3!important;
+  margin:2px 0 0!important;
+  color:var(--faro-quiet)!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #chileWaveExplain{
+  grid-column:auto!important;
+  width:100%!important;
+  margin:0!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview #chileWaveExplain summary{
+  padding:2px 0 0!important;font-size:10px!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview .chile-vibe{
+  margin:6px 0 0!important;
+  padding:9px 0!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview .faro-vibe-top{
+  margin:0 0 4px!important;
+ }
+ html body main #forecastPage:not(.hide) #dailyOverview .faro-dna-jump{
+  margin:0!important;padding:10px 0 0!important;
+ }
+ /* Hour cards and selected reading remain paired at top of their grid row. */
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
+  display:flex!important;flex-direction:column!important;
+  align-content:start!important;justify-content:flex-start!important;
+  gap:12px!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots>button{
+  min-height:110px!important;
+  padding:12px 7px!important;
+ }
+}
+
+/* A selected interval is an interpretation with evidence, rather than
+ * a short callout parked underneath a grid of anonymous numbers. */
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) auto!important;
+ grid-template-rows:auto auto auto auto!important;
+ align-items:start!important;
+ align-self:stretch!important;
+ gap:8px 16px!important;
+ margin:3px 0 0!important;
+ padding:clamp(16px,1.55vw,23px)!important;
+ min-height:0!important;height:auto!important;
+ border-radius:14px!important;
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview>.faro-hourly-read-meta{
+ grid-column:1!important;grid-row:1!important;
+ margin:0!important;gap:10px!important;
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview>strong{
+ grid-column:1!important;grid-row:2!important;
+ max-width:55ch!important;
+ font-size:clamp(18px,1.7vw,23px)!important;
+ line-height:1.22!important;
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyExplanation{
+ grid-column:1!important;grid-row:3!important;
+ max-width:65ch!important;
+ font-size:12px!important;line-height:1.6!important;
+}
+html body main #forecastPage:not(.hide) #faroHourlySignals.faro-hourly-signals{
+ grid-column:1!important;grid-row:4!important;
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ align-items:start!important;
+ gap:8px!important;
+ width:100%!important;
+ min-width:0!important;
+ margin-top:8px!important;
+ padding-top:13px!important;
+ border-top:1px solid var(--faro-line)!important;
+}
+#forecastPage #faroHourlySignals>.faro-hourly-signal{
+ display:flex!important;
+ flex-direction:column!important;
+ gap:4px!important;
+ min-width:0!important;
+ padding:0 10px 0 0!important;
+ background:transparent!important;
+ border:0!important;
+ border-right:1px solid var(--faro-line)!important;
+ border-radius:0!important;
+}
+#forecastPage #faroHourlySignals>.faro-hourly-signal:last-child{
+ border-right:0!important;
+}
+#forecastPage #faroHourlySignals>.faro-hourly-signal small{
+ font:800 11px/1.35 var(--faro-text,system-ui)!important;
+ letter-spacing:.055em!important;
+ color:var(--faro-quiet)!important;
+}
+#forecastPage #faroHourlySignals>.faro-hourly-signal strong{
+ font:850 clamp(13px,1.2vw,16px)/1.3 var(--faro-text,system-ui)!important;
+ color:var(--fg)!important;
+ white-space:nowrap!important;
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyGoLens{
+ grid-column:2!important;grid-row:1/5!important;
+ align-self:center!important;justify-self:end!important;
+ min-height:44px!important;
+ margin:0!important;
+}
+
+/* A true site footer, not a second cinematic hero below the actual hero.
+ * No duplicative bridge or a second oversized manifesto panel. */
+html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2,
+html body main>footer.chile-footer.faro-footer-v2{
+ display:grid!important;
+ grid-template-columns:minmax(0,1.1fr) minmax(270px,.9fr)!important;
+ align-items:start!important;
+ gap:18px 34px!important;
+ margin:clamp(18px,2.2vw,30px) 0 0!important;
+ padding:clamp(22px,2.6vw,34px) clamp(20px,3.6vw,46px) 20px!important;
+ border:0!important;
+ border-top:1px solid rgba(174,223,213,.27)!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ background:
+  radial-gradient(ellipse 58% 84% at 95% 4%,rgba(92,169,163,.09),transparent 77%),
+  linear-gradient(115deg,#0e3034,#0d2c32 70%,#0b2730)!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto{
+ grid-column:1/-1!important;
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ gap:7px 20px!important;
+ align-items:end!important;
+ padding:0 0 16px!important;
+ border-bottom:1px solid rgba(174,223,213,.20)!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>small{
+ grid-column:1/-1!important;
+ font-size:10px!important;letter-spacing:.14em!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>strong{
+ grid-column:1!important;
+ font-size:clamp(22px,2.25vw,30px)!important;
+ line-height:1.18!important;
+ max-width:36ch!important;
+ letter-spacing:-.025em!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>span{
+ grid-column:2!important;
+ justify-self:end!important;
+ max-width:31ch!important;
+ font-size:12px!important;
+ line-height:1.55!important;
+ font-weight:550!important;
+ text-align:right!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-brand p{
+ font-size:13px!important;line-height:1.6!important;
+ margin-top:9px!important;
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
+ padding-top:13px!important;
+ font-size:10px!important;
+}
+
+/* Preserve mobile and tablet's natural one-column reading sequence. */
+@media(max-width:1119px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide){
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-decision-intro,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-week-disclosure,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-ocean-explorer,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.session-section,
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.faro-detail-hub{
+  grid-column:1/-1!important;grid-row:auto!important;
+ }
+ html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2,
+ html body main>footer.chile-footer.faro-footer-v2{
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:17px!important;
+ }
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto{
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:7px!important;
+ }
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>strong,
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>span{
+  grid-column:1!important;
+  justify-self:start!important;
+  text-align:left!important;
+ }
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-brand,
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav{
+  grid-column:1/-1!important;
+ }
+}
+@media(max-width:710px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview{
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto auto auto auto auto!important;
+  gap:8px!important;padding:16px!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlyPreview>.faro-hourly-read-meta{
+  grid-column:1!important;grid-row:1!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlyPreview>strong{
+  grid-column:1!important;grid-row:2!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyExplanation{
+  grid-column:1!important;grid-row:3!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlySignals.faro-hourly-signals{
+  grid-column:1!important;grid-row:4!important;
+  gap:6px!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlySignals>.faro-hourly-signal{
+  padding:0 7px 0 0!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlySignals>.faro-hourly-signal small{
+  font-size:10px!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyGoLens{
+  grid-column:1!important;grid-row:5!important;
+  margin-top:5px!important;
+  justify-self:start!important;
+ }
+ html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2,
+ html body main>footer.chile-footer.faro-footer-v2{
+  grid-template-columns:minmax(0,1fr)!important;
+  padding:24px 17px 20px!important;
+  border-radius:0!important;
+ }
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>strong{
+  font-size:clamp(21px,6.1vw,26px)!important;
+ }
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:16px!important;
+ }
+}
+@media(max-width:375px){
+ html body main #forecastPage:not(.hide) #faroHourlySignals.faro-hourly-signals{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlySignals>.faro-hourly-signal:last-child{
+  grid-column:1/-1!important;
+ }
+}
+
+/* The prior finish pass used :has(...), which outranks a normal footer
+ * selector even when that selector is loaded later. Match its specificity
+ * explicitly or the old rounded promo-card appearance would survive. */
+html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
+ border:0!important;
+ border-top:1px solid rgba(174,223,213,.27)!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ margin-top:clamp(18px,2.2vw,30px)!important;
+}
+
+/* ===== END chile/faro-decision-balance-v1.css ===== */
