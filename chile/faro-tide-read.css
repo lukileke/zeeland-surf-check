@@ -306,10 +306,19 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview.faro-hourly-in-place{
   display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
   gap:4px!important;padding:0!important;margin:0!important;width:100%!important
 }
-#forecastPage #dayview #faroHourlyPreview .faro-hourly-back #faroHourlyGoLens{
-  grid-column:2!important;grid-row:1!important;justify-self:end!important;
-  align-self:center!important;margin:0!important;min-height:32px!important;
-  padding:5px 9px!important;position:relative!important;z-index:2
+/* The map is a permanent action in detail mode, outside the scroll face. */
+html body main #forecastPage:not(.hide) #faroHourlyPreview.faro-hourly-in-place > #faroHourlyGoLens{
+  position:absolute!important;right:14px!important;bottom:11px!important;
+  z-index:20!important;min-height:31px!important;max-height:34px!important;
+  width:auto!important;padding:5px 10px!important;margin:0!important;
+  border-radius:999px!important;white-space:nowrap!important;
+  align-items:center!important;justify-content:center!important
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=read] > #faroHourlyGoLens{
+  display:none!important
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > #faroHourlyGoLens{
+  display:inline-flex!important
 }
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-why{
   grid-column:1/-1!important;grid-row:2!important;min-width:0!important;
