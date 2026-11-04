@@ -2960,4 +2960,34 @@ html body #forecastPage #dailyOverview #dayUVBadge[hidden]{
  }
 }
 
+/* Narrow iPhone spacing correction verified against the Chrome CI geometry.
+ * The previous height was mostly inherited margins between seven children,
+ * not genuinely empty content. Match old high-specificity selectors so this
+ * wins without changing model text, accessibility or other breakpoints. */
+@media(max-width:430px){
+ html body main #forecastPage:not(.hide) #dayview:not(.hide) #dailyOverview.forecast-overview{
+  gap:6px!important;row-gap:6px!important;
+ }
+ html body main #forecastPage:not(.hide) #dayview:not(.hide) #dailyOverview>.day-editorial-overline,
+ html body main #forecastPage:not(.hide) #dayview:not(.hide) #dailyOverview>.day-overview-row{
+  margin:0!important;
+ }
+ html body main #forecastPage:not(.hide) #dayview:not(.hide) #dailyOverview>#chileDecisionBrief{
+  margin:2px 0!important;
+  padding:8px 10px!important;
+ }
+ html body main #forecastPage:not(.hide) #dayview:not(.hide) #dailyOverview>#faroPrepHints{
+  margin:2px 0!important;
+ }
+ html body main #forecastPage:not(.hide) #dayview:not(.hide) #dailyOverview>#dayUVBadge{
+  margin:2px 0!important;
+ }
+ html body main #forecastPage:not(.hide) #dayview:not(.hide) #dailyOverview>#daySignalMetrics{
+  margin:2px 0!important;
+ }
+ html body main #forecastPage:not(.hide) #dayview:not(.hide) #dailyOverview>.chile-vibe{
+  margin:0!important;
+ }
+}
+
 /* ===== END chile/faro-decision-balance-v1.css ===== */
