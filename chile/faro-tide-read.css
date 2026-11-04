@@ -390,3 +390,18 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #far
   grid-column:2!important;grid-row:1/4!important;align-self:center!important
  }
 }
+
+/* Final editorial pass: remove redundant introductions from the four
+   main reading chapters. These are explanatory duplicates, not alerts,
+   source/provenance, hazards, or accessibility labels. */
+#forecastPage #dayview .faro-decision-intro small,
+#forecastPage #dayview .faro-ocean-tools-copy>p,
+#forecastPage #dayview .faro-session-intro>p,
+#forecastPage #dayview .faro-detail-hub-heading>p{
+  display:none!important;
+}
+#forecastPage #dayview .faro-ocean-tools-copy,
+#forecastPage #dayview .faro-session-intro,
+#forecastPage #dayview .faro-detail-hub-heading{
+  gap:7px!important;
+}
