@@ -258,7 +258,15 @@ function fixture(){
    assert.equal(await page.locator('#dayUVBadge').isVisible(),true);
    await page.locator('.faro-surface-flip').click();
    assert.equal(await page.locator('.faro-ocean-surface').getAttribute('data-mode'),'signals');
-   assert.equal(await page.locator('#daySignalMetrics').isVisible(),true);
+   await page.locator('#daySignalMetrics').waitFor({state:'visible',timeout:3000}).catch(async err=>{
+    const diag=await page.locator('#daySignalMetrics').evaluate(el=>{
+     const styles=getComputedStyle(el),parent=getComputedStyle(el.parentElement);
+     return {self:{display:styles.display,visibility:styles.visibility,opacity:styles.opacity,height:el.getBoundingClientRect().height},
+      parent:{display:parent.display,visibility:parent.visibility,opacity:parent.opacity},
+      panel:el.closest('.faro-ocean-surface')?.dataset.mode};
+    });
+    throw new Error('Signals not visible: '+JSON.stringify(diag)+'; '+err.message);
+   });
    assert.equal(await page.locator('#dayUVBadge').isVisible(),true);
    const fixedAfter=await page.locator('.faro-ocean-surface').boundingBox();
    assert.ok(Math.abs(fixedBefore.height-fixedAfter.height)<2,
