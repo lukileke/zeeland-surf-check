@@ -43,7 +43,7 @@ function mockMark(family='medium',theme='DARK'){
  const func=new Function('family','lockFamily','fm','LOGO_MODE',
   'ORIGINAL_FARO_SVG','EFFECTIVE_THEME','WebView','Image','Data','console',
   source+'return loadFaroAmbientMark')(
-   family,false,fm,theme==='LIGHT'?'light':'dark',official,theme,
+   family,family.startsWith('accessory'),fm,theme==='LIGHT'?'light':'dark',official,theme,
    WebView,Image,Data,{warn:x=>log.push(x)});
  return {load:func,info,cache,log};
 }
