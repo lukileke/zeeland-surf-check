@@ -328,3 +328,27 @@ html body main #forecastPage:not(.hide) #dailyOverview>#openSpotDNA{order:4!impo
 @media(prefers-reduced-motion:reduce){
  #forecastPage #dayview #dailyOverview .faro-surface-window::after{animation:none!important}
 }
+
+/* Hourly header strings have different ES/EN lengths. Fix physical height
+   across both labels and both faces; no 23px jump from flex wrap. */
+html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview.faro-hourly-in-place{
+  box-sizing:border-box!important;height:202px!important;max-height:202px!important;overflow:hidden!important;
+}
+#forecastPage #dayview #faroHourlyPreview .faro-hourly-read-meta{
+  flex:0 0 auto;min-height:42px!important;
+}
+#forecastPage #dayview #faroHourlyPreview .faro-hourly-flip{
+  min-width:98px;white-space:nowrap
+}
+@media(max-width:710px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview.faro-hourly-in-place{
+   height:226px!important;max-height:226px!important;
+ }
+ #forecastPage #dayview #faroHourlyPreview .faro-hourly-read-meta{
+   grid-template-columns:minmax(0,1fr) 114px!important;grid-template-rows:19px 21px!important;
+   min-height:49px!important;align-content:center
+ }
+ #forecastPage #dayview #faroHourlyPreview .faro-hourly-flip{
+   width:114px;min-width:114px;white-space:nowrap
+ }
+}
