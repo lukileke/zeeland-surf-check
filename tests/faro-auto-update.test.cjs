@@ -75,5 +75,7 @@ test('automatic code is sourced from trusted main and remains valid for top-leve
  assert.ok(loader.includes('githubusercontent.com/lukileke/zeeland-surf-check/main/zeeland-widget.js'));
  assert.ok(!loader.includes('eval('));
  assert.doesNotThrow(()=>new (async function(){}).constructor(widget));
- assert.ok(widget.includes('Coastal Beacon Editorial v17'));
+ // Accept future Scriptable revisions while still requiring a versioned FARO header.
+ assert.match(widget,/^\/\/ FARO Widget · [^\n]+ Editorial v\d+/m);
+ assert.ok(widget.includes('widget.backgroundGradient=nativeTideGradient()'));
 });
