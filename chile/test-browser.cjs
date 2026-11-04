@@ -570,8 +570,19 @@ function fixture(){
     const hourlySize=await page.locator('#faroHourlyPreview').boundingBox();
     await page.locator('.faro-hourly-flip').click();
     assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'signals');
-    assert.ok(Math.abs((await page.locator('#faroHourlyPreview').boundingBox()).height-hourlySize.height)<2,
-     'Hourly detail must not expand the surface');
+    const hourlyAfter=await page.locator('#faroHourlyPreview').boundingBox();
+    assert.ok(Math.abs(hourlyAfter.height-hourlySize.height)<2,
+     'Hourly detail must not expand the surface: '+JSON.stringify({
+      width,before:hourlySize.height,after:hourlyAfter.height,
+      preview:await page.locator('#faroHourlyPreview').evaluate(el=>{
+       const read=el.querySelector('.faro-hourly-window');
+       const front=el.querySelector('.faro-hourly-front');
+       const back=el.querySelector('.faro-hourly-back');
+       return {windowHeight:read.getBoundingClientRect().height,
+        frontHeight:front.getBoundingClientRect().height,backHeight:back.getBoundingClientRect().height,
+        windowDisplay:getComputedStyle(read).display,backPosition:getComputedStyle(back).position};
+      })
+     }));
     await page.locator('#faroHourlyGoLens').click();
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
    assert.equal(await page.locator('#openOceanMap').isVisible(),true,
