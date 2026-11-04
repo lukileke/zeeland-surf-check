@@ -542,7 +542,7 @@ function fixture(){
     'Combined layer must show two unambiguous travel-direction arrows');
    assert.equal(await page.locator('#chileCoastMap .faro-lens-quick-metrics').count(),1,
     'Coastal read must separate swell and wind measures from the map');
-   assert.match(await page.locator('#faroHourlyPreview').textContent(),/COASTAL READ/);
+   assert.match(await page.locator('#faroHourlyPreview').textContent(),/LECTURA SELECCIONADA|SELECTED READ/);
    await page.locator('#faroLeadRead').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
