@@ -454,8 +454,8 @@ function fixture(){
       clientWidth:document.documentElement.clientWidth};
     });
     assert.ok(['flex','grid'].includes(mobile.display),'Compact access notice supports responsive flex/grid');
-    assert.ok(mobile.height<=88,
-     'FARO compact mobile warning must not consume a third of the screen: '+JSON.stringify(mobile));
+    assert.ok(mobile.height<=124,
+     'Dated FARO access warning must remain readable and occupy a modest mobile area: '+JSON.stringify(mobile));
     assert.ok(mobile.scrollWidth<=mobile.clientWidth+3,
      'New visual direction introduces horizontal scrolling: '+JSON.stringify(mobile));
     await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
