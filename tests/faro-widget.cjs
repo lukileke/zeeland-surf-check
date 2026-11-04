@@ -55,8 +55,10 @@ async function run(family,parameter,mem=new Map(),fail=false,calm=false){
  const Image={fromData(data){return data?.bytes?.subarray(0,8).equals(Buffer.from('89504e470d0a1a0a','hex'))?{png:true,bytes:data.bytes}:null}};
  const Font={};
  for(const method of ['heavySystemFont','boldSystemFont','semiboldSystemFont','systemFont'])Font[method]=size=>({method,size});
+ class Point{constructor(x,y){this.x=x;this.y=y}}
+ class LinearGradient{constructor(){this.colors=[];this.locations=[]}}
  const env={args:{widgetParameter:parameter},config:{widgetFamily:family,runsInApp:false},
-  Color,Size,Font,Data,Image,FileManager:{local:()=>files},ListWidget:Widget,Request,
+  Color,Size,Point,LinearGradient,Font,Data,Image,FileManager:{local:()=>files},ListWidget:Widget,Request,
   Script:{setWidget(x){widget=x},complete(){complete=true}},console:{warn(...x){warnings.push(x.map(String).join(' '))}},globalThis:{}};
  await new AsyncFunction(...Object.keys(env),code)(...Object.values(env));
  assert.ok(complete&&widget,'Scriptable rendered a widget');
@@ -64,7 +66,7 @@ async function run(family,parameter,mem=new Map(),fail=false,calm=false){
 }
 (async()=>{
  const base=await run('medium','BEST');
- assert.ok(base.text.includes('BEST · 7D'),
+ assert.ok(base.text.includes('LO MEJOR · 7D'),
    'The compact medium widget uses the current editorial best-of-week label');
  const brand=nodes(base.widget).filter(x=>x.type==='image'&&x.image?.png);
  // Scriptable can rasterize the official embedded vector via WebView. Node
@@ -75,7 +77,7 @@ async function run(family,parameter,mem=new Map(),fail=false,calm=false){
  if(brand.length)assert.ok(brand[0].imageSize.width>40,'Raster logo keeps useful size');
  assert.ok(code.includes('ORIGINAL_FARO_SVG')&&code.includes('new WebView()'),
   'The widget retains official custom FARO wordmark rendering path');
- assert.ok(base.text.some(t=>t.startsWith('MODEL WIND RISK')),'48-hour model warning is visible');
+ assert.ok(base.text.some(t=>t.startsWith('RIESGO VIENTO · 48 H')),'48-hour model warning is visible');
  assert.equal(base.requests.filter(x=>x.includes('marine-api')).length,1);
  assert.equal(base.requests.filter(x=>new URL(x).hostname==='api.open-meteo.com').length,1);
  const u=new URL(base.requests.find(x=>x.includes('marine-api')));
