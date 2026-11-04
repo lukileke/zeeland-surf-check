@@ -4,6 +4,7 @@ const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const {spawn}=require('node:child_process');
 const path=require('node:path');
+const fs=require('node:fs');
 const zone='America/Santiago',port=18766;
 const parts=(epoch)=>Object.fromEntries(new Intl.DateTimeFormat('en-GB',{
  timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',
@@ -75,6 +76,21 @@ function fixture(){
      body:document.body?.innerText?.slice(0,1000)
     }));
     throw Error('Chile forecast boot failed: '+JSON.stringify({debug,scriptErrors,original:String(err)}));
+   }
+   if([390,1440].includes(width)){
+    const dir=path.resolve(__dirname,'../artifacts/faro-reading');
+    fs.mkdirSync(dir,{recursive:true});
+    const originalTheme=await page.evaluate(()=>document.documentElement.dataset.theme);
+    for(const theme of ['dark','light']){
+     await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+     const tag=width+'-'+theme;
+     await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-front.png')});
+     await page.locator('.faro-surface-flip').click();
+     await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-signals.png')});
+     await page.locator('.faro-surface-flip').click();
+     await page.locator('#dayview>.hourly-section').screenshot({path:path.join(dir,tag+'-hours.png')});
+    }
+    await page.evaluate(theme=>{document.documentElement.dataset.theme=theme;window.scrollTo(0,0)},originalTheme);
    }
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
    const brand=await page.evaluate(()=>{
