@@ -13,11 +13,11 @@ const config=JSON.parse(get('chile/valparaiso-live.config.json'));
 const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
 
 test('priority preserves all 5 canonical score pigments',()=>{
- assert.ok(links.includes('faro-finish-pass-v1.css?v=1'));
+ assert.ok(links.includes('faro-bundle-experience-v1.css?v=1'));
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
  for(const x of ['--faro-score-0:','--brand-score-ink:','#faroLeadScore'])
   assert.ok(!css.includes(x),'visual finish must not change score pigment: '+x);
- assert.ok(html.includes('faro-beacon-atmosphere-v4.css?v=1'));
+ assert.ok(html.includes('faro-bundle-experience-v1.css?v=1'));
 });
 
 test('the report is dated, sourced and never calls an unverified closure live',()=>{

@@ -83,9 +83,24 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       button:rect('#faroLeadRead')
      };
      if(lead){
+      // Offline API mocks can switch the forecast tab into .hide while loading.
+      // Explicitly activate the FORECAST viewport being measured rather than
+      // expecting colour/width contracts on a hidden application screen.
+      const forecast=document.querySelector('#forecastPage');
+      forecast.classList.remove('hide');
       lead.className='faro-forecast-lead brand-band-regular';
-      document.querySelector('#faroLeadScore').textContent='6.1';
-      base.scoreInk=getComputedStyle(document.querySelector('#faroLeadScore')).color;
+      const numeral=document.querySelector('#faroLeadScore');
+      numeral.textContent='6.1';
+      base.scoreInk=getComputedStyle(numeral).color;
+      base.scoreTextFill=getComputedStyle(numeral).webkitTextFillColor;
+      base.scoreToken=getComputedStyle(document.documentElement).getPropertyValue('--faro-score-3').trim();
+      base.forecastVisibility=getComputedStyle(forecast).display;
+      base.matchesBand=lead.matches('section#faroForecastLead.faro-forecast-lead.brand-band-regular');
+      base.bandInk=getComputedStyle(lead).getPropertyValue('--brand-score-ink').trim();
+      base.lockLoaded=[...document.styleSheets].some(sheet=>sheet.href?.includes('faro-score-colour-lock-v1.css'));
+      base.parentId=lead.parentElement?.id;
+      base.strongMatches=numeral.matches('html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-regular strong#faroLeadScore');
+      base.strongFallbackMatches=numeral.matches('html #forecastPage > .faro-forecast-lead[class*="brand-band-"] #faroLeadScore');
      }
      return base;
     });
@@ -125,8 +140,13 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     if(s.width>=711&&s.width<=1030){
       assert.ok(found.hours.top>=found.overview.top,'tablet day/hour order');
     }
-    assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score');
-    rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;
+    assert.equal(found.scoreToken,'#b1d574','canonical FARO token not loaded');
+    // Chromium and WebKit visibly render -webkit-text-fill-color when set.
+    // An inherited CSS 'color' can remain neutral even though the actual
+    // painted numerals are correctly green. Test the painted ink instead.
+    assert.equal(found.scoreTextFill,'rgb(177, 213, 116)',
+      'visible FARO score pigment '+JSON.stringify({ink:found.scoreInk,paint:found.scoreTextFill,token:found.scoreToken,visibility:found.forecastVisibility,matched:found.matchesBand,band:found.bandInk,lockLoaded:found.lockLoaded,parent:found.parentId,strongMatches:found.strongMatches,baseMatches:found.strongFallbackMatches}));
+    rgbByEngine[engine][s.width+'-'+theme]=found.scoreTextFill;
     if([390,1440].includes(s.width)){
       await page.screenshot({path:`${out}/${engine}-${s.name}-${theme}.png`});
       if(s.width===390&&theme==='dark'){
@@ -147,4 +167,4 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
  }
 }
 assert.deepEqual(errors,[],'FARO responsive browser smoke checks failed');
-console.log('Browser responsive QA passed for Chrome + WebKit, 5 widths, both themes.');
+console.log('Browser responsive QA passed for Chrome + WebKit, 9 widths, both themes.');

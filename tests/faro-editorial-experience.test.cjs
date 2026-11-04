@@ -44,12 +44,12 @@ test('preparation uses actual selected session model; failed fetch stays neutral
  assert.ok(model.includes('hasConsecutiveCoreRows'));
 });
 test('dark/light shared hero and scores are retained, logo unchanged',()=>{
- assert.ok(html.includes('faro-beacon-atmosphere-v4.css?v=1'));
+ assert.ok(html.includes('faro-bundle-experience-v1.css?v=1'));
  assert.ok(html.includes('src="../assets/faro-logo.svg"'));
  assert.ok(html.includes('src="../assets/faro-logo-dark.svg"'));
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)];
  assert.equal(links.at(-1)[1],'faro-score-colour-lock-v1.css?v=1');
- assert.ok(links.some(x=>x[1]==='faro-editorial-experience-v2.css?v=2'));
+ assert.ok(links.some(x=>x[1]==='faro-bundle-experience-v1.css?v=1'));
  assert.ok(!css.includes('--brand-score-ink:')&&!css.includes('--faro-score-0:'));
 });
 test('editorial finishing preserves external pages and scientific disclaimers',()=>{

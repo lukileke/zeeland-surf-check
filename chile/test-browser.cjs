@@ -203,12 +203,19 @@ function fixture(){
    assert.equal(await page.locator('#faroLeadRead').count(),1);
    assert.equal(await page.locator('#faroLeadMap').count(),1);
    const rects=await page.evaluate(()=>({
+    hero:document.getElementById('faroForecastLead').getBoundingClientRect().top,
     daily:document.querySelector('.day-outlook-section').getBoundingClientRect().top,
+    hourly:document.querySelector('.hourly-section').getBoundingClientRect().top,
     route:document.querySelector('.faro-journey-nav').getBoundingClientRect().top,
     week:document.getElementById('dayStrip').getBoundingClientRect().top
    }));
-   assert.ok(rects.daily<rects.route&&rects.route<rects.week,
-    'Quick navigation and week comparison must follow the detailed Daily Take');
+   // Intentional editorial journey: hero -> quick jump navigation ->
+   // today's read (summary + time slots) -> collapsed seven-day comparison.
+   // The former assertion demanded that quick navigation follow the
+   // Daily Take, contradicting the final DOM and mobile reading order.
+   assert.ok(rects.hero<=rects.route&&rects.route<rects.daily&&
+      rects.week>=rects.daily&&rects.week>=rects.hourly,
+     'Hero, quick navigation, Daily Take and weekly details must follow the intended editorial order: '+JSON.stringify(rects));
 
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
    // One FARO design system, rather than contradictory inherited layout
@@ -216,9 +223,14 @@ function fixture(){
    // not force the daily card to stretch to the height of hourly content.
    const visual=await page.evaluate(()=>{
     const $=s=>document.querySelector(s),style=s=>getComputedStyle($(s));
+    // Preparation chips are meaningful content between the decision and
+    // the UV notice. Omitting them falsely reports a 150px "empty" gap.
+    // Hidden low-risk UV notices must not enter spacing measurements.
     const selectors=['.day-editorial-overline','.day-overview-row','#chileDecisionBrief',
-      '#dayUVBadge','#daySignalMetrics','.chile-vibe','#openSpotDNA'];
-    const rects=selectors.map(selector=>{
+      '#faroPrepHints','#dayUVBadge','#daySignalMetrics','.chile-vibe','#openSpotDNA'];
+    const rects=selectors.filter(sel=>{
+      const node=$(sel);return node&&getComputedStyle(node).display!=='none'&&node.getBoundingClientRect().height>0;
+    }).map(selector=>{
      const r=$(selector).getBoundingClientRect();
      return {selector,top:r.top,bottom:r.bottom,height:r.height,width:r.width};
     });
@@ -530,7 +542,7 @@ function fixture(){
     'Combined layer must show two unambiguous travel-direction arrows');
    assert.equal(await page.locator('#chileCoastMap .faro-lens-quick-metrics').count(),1,
     'Coastal read must separate swell and wind measures from the map');
-   assert.match(await page.locator('#faroHourlyPreview').textContent(),/COASTAL READ/);
+   assert.match(await page.locator('#faroHourlyPreview').textContent(),/LECTURA SELECCIONADA|SELECTED READ/);
    await page.locator('#faroLeadRead').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
