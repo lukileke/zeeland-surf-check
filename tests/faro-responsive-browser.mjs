@@ -85,7 +85,18 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
      if(lead){
       lead.className='faro-forecast-lead brand-band-regular';
       document.querySelector('#faroLeadScore').textContent='6.1';
-      base.scoreInk=getComputedStyle(document.querySelector('#faroLeadScore')).color;
+      const score=document.querySelector('#faroLeadScore');
+      const style=getComputedStyle(score);
+      base.scoreInk=style.color;
+      base.scoreProbe={
+       matches:score.matches('html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-regular strong#faroLeadScore'),
+       parent:lead.parentElement?.id,grandparent:lead.parentElement?.parentElement?.tagName,
+       className:lead.className,forecastClass:document.querySelector('#forecastPage')?.className,
+       tone:getComputedStyle(lead).getPropertyValue('--brand-score-ink'),
+       canonical:getComputedStyle(document.documentElement).getPropertyValue('--faro-score-3'),
+       fill:style.getPropertyValue('-webkit-text-fill-color'),
+       css:document.querySelector('link[href*="faro-score-colour-lock-v1.css"]')?.sheet?.cssRules?.length||0
+      };
      }
      return base;
     });
@@ -125,7 +136,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     if(s.width>=711&&s.width<=1030){
       assert.ok(found.hours.top>=found.overview.top,'tablet day/hour order');
     }
-    assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score');
+    assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score '+JSON.stringify(found.scoreProbe));
     rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;
     if([390,1440].includes(s.width)){
       await page.screenshot({path:`${out}/${engine}-${s.name}-${theme}.png`});
