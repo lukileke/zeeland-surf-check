@@ -275,7 +275,7 @@ function fixture(){
     const deck=await page.evaluate(()=>{
      const r=s=>document.querySelector(s).getBoundingClientRect();
      const buttons=[...document.querySelectorAll('#slots>button')].map(e=>{
-      const b=e.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,width:b.width};
+      const b=e.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom,width:b.width,height:b.height};
      });
      return {daily:r('.day-outlook-section'),hours:r('.hourly-section'),
       rail:r('#slots'),buttons,columns:getComputedStyle(document.querySelector('#slots')).gridTemplateColumns.split(' ').length};
@@ -287,6 +287,8 @@ function fixture(){
     assert.ok(Math.abs(deck.buttons[0].y-deck.buttons[3].y)<3&&
       deck.buttons[4].y>deck.buttons[0].y+35,
      'Desktop score windows must form two intentional rows');
+    assert.ok(deck.buttons[0].bottom+5<=deck.buttons[4].y,
+     'Desktop score rows must have an actual visible gap: '+JSON.stringify(deck.buttons));
     assert.ok(Math.abs(deck.daily.top-deck.hours.top)<12,
      'The two desktop reading instruments should align at the top');
     assert.ok(Math.abs(deck.daily.height-deck.hours.height)<45,
