@@ -95,13 +95,13 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       lead.after(sample);
       await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
       const style=getComputedStyle(score);
-      base.scoreInk=style.color;
+      base.scoreInk=style.getPropertyValue('-webkit-text-fill-color')||style.color;
       base.scoreProbe={
        matches:score.matches('html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-regular strong#faroLeadScore'),
        className:sample.className,
        tone:getComputedStyle(sample).getPropertyValue('--brand-score-ink'),
        canonical:getComputedStyle(document.documentElement).getPropertyValue('--faro-score-3'),
-       fill:style.getPropertyValue('-webkit-text-fill-color'),
+       fill:style.getPropertyValue('-webkit-text-fill-color'),cssColor:style.color,
        inline:score.getAttribute('style')
       };
       sample.remove();
