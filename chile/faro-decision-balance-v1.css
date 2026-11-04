@@ -229,7 +229,7 @@ html body main #forecastPage:not(.hide) #faroHourlySignals.faro-hourly-signals{
  border-right:0!important;
 }
 #forecastPage #faroHourlySignals>.faro-hourly-signal small{
- font:800 10px/1.35 var(--faro-text,system-ui)!important;
+ font:800 11px/1.35 var(--faro-text,system-ui)!important;
  letter-spacing:.055em!important;
  color:var(--faro-quiet)!important;
 }
@@ -273,7 +273,7 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto{
 }
 html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>small{
  grid-column:1/-1!important;
- font-size:9px!important;letter-spacing:.14em!important;
+ font-size:10px!important;letter-spacing:.14em!important;
 }
 html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>strong{
  grid-column:1!important;
@@ -292,12 +292,12 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>span{
  text-align:right!important;
 }
 html body main>footer.chile-footer.faro-footer-v2 .faro-footer-brand p{
- font-size:12px!important;line-height:1.6!important;
+ font-size:13px!important;line-height:1.6!important;
  margin-top:9px!important;
 }
 html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
  padding-top:13px!important;
- font-size:9px!important;
+ font-size:10px!important;
 }
 
 /* Preserve mobile and tablet's natural one-column reading sequence. */
