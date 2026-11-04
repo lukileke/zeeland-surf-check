@@ -28,3 +28,219 @@
 #faroHourlyPreview.faro-tide-hourly-expanded #faroHourlyGoLens{animation:faro-tidal-reveal .3s both}
 @media(max-width:650px){#dailyOverview .faro-tide-read>summary{min-height:54px}#dailyOverview .faro-tide-right{font-size:11px}#faroHourlyPreview .faro-tide-hourly-toggle{padding:6px 8px}}
 @media(prefers-reduced-motion:reduce){#dailyOverview .faro-tide-read *,#dailyOverview .faro-tide-read>summary::after,#faroHourlyPreview.faro-tide-hourly *{animation:none!important;transition:none!important}}
+
+/* VISUAL DIRECTION v2 — editorial sea instruments rather than nested cards.
+   Intentionally local to #dayview to avoid hero and global component drift. */
+#forecastPage #dayview .faro-decision-intro{
+  padding-bottom:clamp(10px,1.4vw,20px);
+}
+#forecastPage #dayview .faro-decision-intro h2{
+  letter-spacing:-.045em;
+  line-height:1.05;
+  text-wrap:balance;
+}
+#forecastPage #dayview .day-outlook-section #dailyOverview{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse 115% 73% at 91% -19%,rgba(118,207,202,.17),transparent 67%),
+    linear-gradient(156deg,color-mix(in srgb,var(--panel) 91%,#3c9b9f),var(--panel) 72%)!important;
+  box-shadow:inset 0 1px rgba(214,251,242,.11),0 13px 38px rgba(0,16,22,.10);
+}
+#forecastPage #dayview .day-outlook-section #dailyOverview:before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  width:75%;
+  height:130px;
+  top:-80px;
+  right:-7%;
+  pointer-events:none;
+  border:1px solid rgba(152,231,221,.12);
+  border-radius:50%;
+  transform:rotate(-14deg);
+}
+#forecastPage #dayview .day-outlook-section #dailyOverview>*{position:relative;z-index:1}
+#forecastPage #dayview #dailyOverview .day-editorial-overline{
+  letter-spacing:.16em!important;
+  font-size:10px!important;
+}
+#forecastPage #dayview #dailyOverview #datehead{
+  font-size:clamp(27px,2.9vw,43px)!important;
+  letter-spacing:-.05em!important;
+  line-height:1.07!important;
+}
+#forecastPage #dayview #dailyOverview #chileDecisionHeadline{
+  font-size:clamp(23px,2vw,31px)!important;
+  letter-spacing:-.045em!important;
+  line-height:1.13!important;
+  text-wrap:balance;
+}
+#forecastPage #dayview #dailyOverview #chileDecisionDriver{
+  max-width:52ch;
+  font-size:13px!important;
+  line-height:1.55!important;
+}
+#forecastPage #dayview #dailyOverview #faroPrepHints{
+  display:flex!important;
+  flex-wrap:wrap;
+  gap:6px!important;
+}
+#forecastPage #dayview #dailyOverview .faro-prep-chip{
+  border-radius:999px!important;
+  box-shadow:none!important;
+}
+#forecastPage #dayview #dailyOverview #dayUVBadge{
+  border-left:3px solid #e5a35c!important;
+  border-top:0!important;
+  border-right:0!important;
+  border-bottom:0!important;
+  border-radius:6px!important;
+  background:color-mix(in srgb,#c8ac72 9%,var(--panel))!important;
+}
+#forecastPage #dayview #dailyOverview .faro-tide-read{
+  margin-top:12px!important;
+  border-top:1px solid rgba(143,207,205,.25);
+}
+#forecastPage #dayview #dailyOverview .faro-tide-read>summary{
+  min-height:77px;
+  padding:11px 15px!important;
+  margin:9px -4px 0;
+  border-radius:13px;
+  background:linear-gradient(99deg,rgba(70,142,150,.16),rgba(100,177,180,.045));
+  border:1px solid rgba(129,197,204,.24);
+  transition:border-color .25s,background .25s,box-shadow .25s;
+}
+#forecastPage #dayview #dailyOverview .faro-tide-read[open]>summary{
+  border-color:rgba(138,219,213,.55);
+  background:linear-gradient(105deg,rgba(83,172,177,.22),rgba(60,137,151,.09));
+  box-shadow:inset 0 0 0 1px rgba(171,230,215,.04);
+}
+#forecastPage #dayview #dailyOverview .faro-tide-eyebrow{color:#8fd1d2;letter-spacing:.17em}
+#forecastPage #dayview #dailyOverview .faro-tide-title{
+  font-size:clamp(15px,1.4vw,18px);
+  letter-spacing:-.015em;
+}
+#forecastPage #dayview #dailyOverview .faro-tide-chevron{
+  border:1px solid rgba(168,230,224,.5);
+  background:rgba(83,165,175,.13);
+  width:34px;height:34px;font-size:19px;
+}
+#forecastPage #dayview #dailyOverview .faro-tide-body{padding:14px 4px 6px}
+#forecastPage #dayview #dailyOverview .faro-tide-body #daySignalMetrics.day-signal-metrics{
+  margin:7px 0 16px!important;
+  border:0!important;
+  background:transparent!important;
+}
+#forecastPage #dayview #dailyOverview .faro-tide-body #daySignalMetrics>.day-signal-metric{
+  background:transparent!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+#forecastPage #dayview #dailyOverview .faro-tide-body .chile-vibe{
+  border-top:1px solid rgba(144,197,194,.25);
+}
+#forecastPage #dayview #dailyOverview .faro-tide-science{
+  border-left:2px solid #6fb4bd;
+  background:rgba(83,143,148,.08);
+}
+#forecastPage #dayview>.hourly-section{
+  background:
+    radial-gradient(ellipse 90% 70% at 100% 0%,rgba(120,205,189,.065),transparent 72%),
+    var(--panel)!important;
+}
+#forecastPage #dayview .hourly-section .forecast-section-heading h3{
+  letter-spacing:-.043em!important;
+  font-size:clamp(25px,2.6vw,36px)!important;
+  line-height:1.1!important;
+}
+#forecastPage #dayview .hourly-section #slots.slots{
+  gap:7px!important;
+}
+#forecastPage #dayview .hourly-section #slots.slots>button{
+  position:relative;
+  min-height:95px!important;
+  padding:12px 6px 10px!important;
+  border-radius:12px!important;
+  border:1px solid rgba(135,195,194,.25)!important;
+  border-top:2px solid var(--brand-score-color,var(--tone,#659e99))!important;
+  box-shadow:none!important;
+  background:rgba(75,122,129,.06)!important;
+  transition:transform .2s,border-color .2s,background .2s,box-shadow .2s;
+}
+#forecastPage #dayview .hourly-section #slots.slots>button:hover{
+  transform:translateY(-2px);
+  border-color:rgba(170,229,218,.54)!important;
+}
+#forecastPage #dayview .hourly-section #slots.slots>button.active{
+  background:linear-gradient(150deg,rgba(103,185,180,.19),rgba(77,140,154,.12))!important;
+  border:1px solid rgba(170,237,226,.85)!important;
+  border-top:2px solid var(--brand-score-color,var(--tone,#77b7ae))!important;
+  box-shadow:0 0 0 2px rgba(117,201,202,.13),inset 0 1px rgba(200,254,241,.12)!important;
+}
+#forecastPage #dayview .hourly-section #slots.slots>button:focus-visible{
+  outline:2px solid #9ad9d5!important;outline-offset:3px;
+}
+#forecastPage #dayview .hourly-section #slots.slots>button .chile-slot-score{
+  font-size:clamp(23px,2.2vw,33px)!important;
+  line-height:1.02!important;
+  letter-spacing:-.04em;
+}
+#forecastPage #dayview .hourly-section #faroHourlyPreview{
+  border-radius:13px!important;
+  padding:clamp(13px,1.3vw,19px)!important;
+  background:linear-gradient(110deg,rgba(79,146,152,.13),rgba(91,154,145,.045))!important;
+  border:1px solid rgba(129,199,204,.48)!important;
+  box-shadow:inset 3px 0 rgba(123,205,201,.85);
+}
+#forecastPage #dayview #faroHourlyPreview>strong{
+  letter-spacing:-.035em!important;
+  font-size:clamp(19px,1.8vw,26px)!important;
+  line-height:1.17!important;
+}
+#forecastPage #dayview #faroHourlyPreview .faro-tide-hourly-toggle{
+  background:rgba(117,192,191,.10);
+  color:var(--fg);
+  border-color:rgba(140,213,211,.55);
+  min-height:35px;
+  padding:7px 12px;
+}
+#forecastPage #dayview #faroHourlyPreview .faro-tide-hourly-toggle:hover{
+  background:rgba(126,213,203,.19);
+}
+#forecastPage #dayview #faroHourlyPreview.faro-tide-hourly:not(.faro-tide-hourly-expanded) #faroHourlyGoLens,
+#forecastPage #dayview #faroHourlyPreview.faro-tide-hourly:not(.faro-tide-hourly-expanded) #faroHourlySignals.faro-hourly-signals,
+#forecastPage #dayview #faroHourlyPreview.faro-tide-hourly:not(.faro-tide-hourly-expanded) #faroHourlyExplanation{
+  display:none!important;
+}
+@media(min-width:1120px){
+  #forecastPage #dayview .hourly-section #slots.slots>button{min-height:96px!important}
+  #forecastPage #dayview .day-outlook-section #dailyOverview{min-height:0!important}
+}
+@media(max-width:700px){
+  #forecastPage #dayview #dailyOverview #datehead{font-size:clamp(27px,7.2vw,36px)!important}
+  #forecastPage #dayview #dailyOverview #chileDecisionHeadline{font-size:clamp(23px,6.1vw,30px)!important}
+  #forecastPage #dayview #dailyOverview .faro-tide-read>summary{min-height:69px;padding:11px!important;margin:7px 0 0}
+  #forecastPage #dayview .hourly-section #slots.slots{
+    display:flex!important;
+    overflow-x:auto!important;
+    overscroll-behavior-inline:contain;
+    scroll-snap-type:x mandatory;
+    gap:8px!important;
+    padding:3px 2px 12px!important;
+    scrollbar-width:thin;
+  }
+  #forecastPage #dayview .hourly-section #slots.slots>button{
+    flex:0 0 clamp(107px,29vw,137px)!important;
+    min-width:0!important;
+    min-height:98px!important;
+    scroll-snap-align:start;
+  }
+  #forecastPage #dayview .hourly-section #faroHourlyPreview{
+    padding:16px!important;
+    box-shadow:inset 3px 0 rgba(123,205,201,.85);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #forecastPage #dayview .hourly-section #slots.slots>button{transition:none;transform:none!important}
+}
