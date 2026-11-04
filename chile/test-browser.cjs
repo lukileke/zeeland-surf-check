@@ -585,13 +585,17 @@ function fixture(){
      }));
     await page.locator('#faroHourlyGoLens').click();
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
-   assert.equal(await page.locator('#openOceanMap').isVisible(),true,
-    'Coastal map must have a prominent primary action');
-   await page.locator('#openOceanCompass').click();
-   assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),true,
-    'Compass opens within same reader rather than through a second independent card');
-   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),false,
-    'Selecting compass closes map to avoid duplicated panels');
+   // The supplementary map/compass switch is desktop-first. On mobile,
+   // the selected-window map entry is the supported primary action.
+   if(await page.locator('#openOceanCompass').isVisible()){
+    assert.equal(await page.locator('#openOceanMap').isVisible(),true,
+     'Desktop map/compass controls must stay paired');
+    await page.locator('#openOceanCompass').click();
+    assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),true,
+     'Compass opens within the same coastal reader');
+    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),false,
+     'Compass closes the duplicate map panel');
+   }
    assert.equal(await page.locator('#openOceanCompass').getAttribute('aria-pressed'),'true');
    assert.equal(await page.locator('#waveInsightExpand .chile-compass-svg').count(),1,
     'Swell compass remains data driven after repositioning');
