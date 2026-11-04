@@ -291,6 +291,17 @@ function fixture(){
      'The two desktop reading instruments should align at the top');
     assert.ok(Math.abs(deck.daily.height-deck.hours.height)<45,
      'Daily and hourly instruments should form a balanced editorial pair');
+    const selected=await page.locator('#faroHourlyHeadline').evaluate(el=>{
+      const box=el.getBoundingClientRect();
+      const frame=el.closest('#faroHourlyPreview').getBoundingClientRect();
+      const face=getComputedStyle(el.closest('.faro-hourly-front'));
+      return {headline:{x:box.x,y:box.y,width:box.width,height:box.height},
+       frame:{x:frame.x,y:frame.y,width:frame.width,height:frame.height},
+       display:getComputedStyle(el).display,faceDisplay:face.display};
+    });
+    assert.ok(selected.headline.height>14&&selected.headline.y>=selected.frame.y&&
+      selected.headline.y+selected.headline.height<=selected.frame.y+selected.frame.height+2,
+      'Selected-hour verdict must be visible INSIDE the desktop instrument: '+JSON.stringify(selected));
    }
    // Both depths occupy the same fixed footprint without hiding safety.
    const fixedBefore=await page.locator('.faro-ocean-surface').boundingBox();
