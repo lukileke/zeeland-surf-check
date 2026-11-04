@@ -1,4 +1,4 @@
-// FARO Widget · Ambient Mark Editorial v20 · legible model-first widgets · Scriptable iOS
+// FARO Widget · Coastal Signal Editorial v21 · legible model-first widgets · Scriptable iOS
 // Scriptable > Edit Widget > Parameter:
 //   BEST (default) · Domburg · Westkapelle · Oostkapelle · Cadzand · Brouwersdam
 //   Domburg:Noordduine     (optional single spot)
@@ -57,7 +57,7 @@ function palette(light,dark){return EFFECTIVE_THEME==="LIGHT"?new Color(light):n
 const C={
  bg:palette("#F7FAFA","#102427"),ink:palette("#1F3B3D","#F3F8F7"),
  quiet:palette("#526A74","#BBCBCD"),sun:new Color("#FFDA71"),
- wave:palette("#286F86","#9FC9D6"),line:palette("#C9D8DA","#507074"),
+ wave:palette("#286F86","#ACDBD3"),line:palette("#C9D8DA","#507074"),
  panel:palette("#FFFFFF","#234347"),subtle:palette("#EFF5F5","#193337"),
  alert:palette("#D85B48","#FF9A87"),caution:palette("#CE762E","#EFBC62")
 };
@@ -110,75 +110,11 @@ async function officialFaroLogo(){
  }
 }
 let ORIGINAL_FARO_IMAGE=null;
-let FARO_AMBIENT_MARK_IMAGE=null;
-
-/* FARO Ambient Mark v20
- * A deliberately faint reproduction of the REAL FARO O, not a second
- * oversized logo. It decorates ONLY the offshore information stack;
- * the parent ListWidget retains its proven native Scriptable gradient.
- *
- * We reuse the four O paths of the original, embedded SVG. Rasterise
- * transparently once via the same WebView path already used for the
- * official header wordmark, then cache the PNG on device. If unavailable,
- * the wave panel renders normally without the watermark.
+/* FARO Coastal Signal v21: keep the official header logo and proven native
+ * gradient. A second oversized O inside the offshore tile reduces the
+ * information's contrast, so no decorative PNG/WebView is generated.
+ * Distinctive brand comes from colour, typography and disciplined hierarchy.
  */
-async function loadFaroAmbientMark(){
- if(family==="small"||lockFamily)return null;
- const cache=fm.joinPath(fm.cacheDirectory(),
-  "faro-ambient-o-panel-"+LOGO_MODE+"-v20.png");
- try{
-  if(fm.fileExists(cache)){
-   const image=fm.readImage(cache);
-   if(image)return image;
-  }
- }catch(e){/* Broken cache is nonfatal; regenerate. */}
- try{
-  const original=ORIGINAL_FARO_SVG.dark;
-  const matches=[...original.matchAll(/<path d="([^"]+)"\/>/g)];
-  if(matches.length!==7)throw Error("Official FARO O paths changed");
-  const paths=matches.slice(-4).map(m=>'<path d="'+m[1]+'"/>').join("");
-  const light=EFFECTIVE_THEME==="LIGHT";
-  const mark=light?"#28776F":"#C5E9DF";
-  const opacity=light?".17":".15";
-  const gold=light?".10":".12";
-  const halo=light?".075":".10";
-  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="440" height="220" viewBox="0 0 440 220">'+
-   '<defs><radialGradient id="glow"><stop offset="0" stop-color="#91E2D0" stop-opacity="'+halo+'"/>'+
-   '<stop offset=".55" stop-color="#91E2D0" stop-opacity=".024"/>'+
-   '<stop offset="1" stop-color="#91E2D0" stop-opacity="0"/></radialGradient></defs>'+
-   '<ellipse cx="344" cy="118" rx="155" ry="99" fill="url(#glow)"/>'+
-   '<g transform="translate(347 114) scale(2.3) translate(-108.11 -22.27)" fill="'+mark+
-   '" opacity="'+opacity+'">'+paths+'</g>'+
-   '<circle cx="347" cy="114" r="29" fill="#FFDA71" opacity="'+gold+'"/>'+
-   '</svg>';
-  const web=new WebView();
-  await web.loadHTML("<!doctype html><html><body></body></html>");
-  const url="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
-  const js=`(function(){
-   const canvas=document.createElement("canvas");
-   canvas.width=440;canvas.height=220;
-   const ctx=canvas.getContext("2d");
-   const im=new Image();
-   im.onload=()=>{
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(im,0,0);
-    completion(canvas.toDataURL("image/png"));
-   };
-   im.onerror=()=>completion(null);
-   im.src=${JSON.stringify(url)};
-  })();`;
-  const png=await web.evaluateJavaScript(js,true);
-  if(typeof png!=="string"||!png.startsWith("data:image/png;base64,"))
-   throw Error("Ambient mark PNG unavailable");
-  const image=Image.fromData(Data.fromBase64String(png.split(",")[1]));
-  if(!image)throw Error("Ambient mark invalid");
-  try{fm.writeImage(cache,image)}catch(e){}
-  return image;
- }catch(error){
-  console.warn("FARO ambient mark skipped: "+String(error));
-  return null;
- }
-}
 /* Match the five FARO numeric score bands across the site and widget. */
 function scoreInk(v){
  if(v<2)return new Color("#ef9b77");
@@ -597,17 +533,11 @@ function editorialHero(parent,best,large=false){
  if(large)label(quality,T[gradeOf(best.score)].toUpperCase(),10,C.ink,"bold",1);
  row.addSpacer();
  const wave=vstack(row,large?6:3);
- wave.backgroundColor=EFFECTIVE_THEME==="LIGHT"?new Color("#FFFFFF",.82):new Color("#24484B",.66);
+ wave.backgroundColor=EFFECTIVE_THEME==="LIGHT"?new Color("#FFFFFF",.80):new Color("#1C4045",.53);
  wave.cornerRadius=large?15:12;
  wave.borderWidth=.6;
- wave.borderColor=EFFECTIVE_THEME==="LIGHT"?new Color("#8BBEBA",.24):new Color("#A8D9D0",.17);
- // Scoped decorative background: never touch widget.backgroundImage.
- // WidgetStack.backgroundImage is supported by Scriptable; all real text
- // and measurements remain a separate foreground stack layer.
- if(FARO_AMBIENT_MARK_IMAGE){
-  try{wave.backgroundImage=FARO_AMBIENT_MARK_IMAGE}
-  catch(e){console.warn("FARO wave mark fallback: "+String(e))}
- }
+ wave.borderColor=EFFECTIVE_THEME==="LIGHT"?new Color("#76A9A4",.28):new Color("#94CFC5",.20);
+ // A calm information surface, not a second hero or a logo watermark.
  wave.setPadding(large?10:6,large?12:9,large?10:6,large?12:9);
  label(wave,best.x.h<.45?word("OLEAJE BAJO · MODELO","SMALL SWELL · MODEL"):
   word("MAR ABIERTO · MODELO","OFFSHORE · MODEL"),large?9:8,C.quiet,"bold",1);
@@ -764,9 +694,6 @@ try{
  const sessions=candidateSessions(data,E,chosen);
  if(!sessions.length)throw Error(T.noDay);
  const best=sessions[0],hazard=modelHazard(data);
- if(!lockFamily&&family!=="small"){
-  FARO_AMBIENT_MARK_IMAGE=await loadFaroAmbientMark();
- }
  if(lockFamily)renderAccessory(best,hazard);
  else if(family==="small")renderSmall(best,data,hazard,sessions);
  else if(family==="large"||family==="extraLarge")renderLarge(best,data,hazard,sessions);
