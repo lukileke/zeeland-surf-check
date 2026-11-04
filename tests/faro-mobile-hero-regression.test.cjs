@@ -46,9 +46,9 @@ test('high-specificity theme-symmetric variables defeat desktop optical centre',
  assert.match(originalHero,/--beacon-size:clamp\(130px,10\.4vw,165px\)/);
  assert.match(css,/html\[data-theme="light"\] body main #forecastPage:not\(\.hide\)/);
  assert.match(css,/html:not\(\[data-theme="light"\]\) body main #forecastPage:not\(\.hide\)/);
- assert.match(css,/--beacon-y:16%/);
- assert.match(css,/--beacon-x:81%/);
- assert.match(css,/--beacon-size:clamp\(85px,23vw,106px\)/);
+ assert.match(css,/--beacon-y:8%/);
+ assert.match(css,/--beacon-x:87%/);
+ assert.match(css,/--beacon-size:clamp\(64px,18vw,80px\)/);
  assert.match(css,/@media\(max-width:370px\)/);
 });
 
