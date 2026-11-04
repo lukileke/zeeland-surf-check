@@ -352,3 +352,41 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #far
    width:114px;min-width:114px;white-space:nowrap
  }
 }
+
+/* In the safety centre, retain all warning facts but avoid the historic
+   3-row padded banner stretching beyond a phone reading row. */
+@media(max-width:710px){
+ html body main #forecastPage:not(.hide)>.faro-access-notice>.faro-access-summary.faro-safety-summary{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 18px!important;
+  grid-template-rows:auto auto auto!important;
+  gap:2px 8px!important;
+  min-height:0!important;
+  padding:7px 11px!important;
+  align-items:center!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-access-notice>.faro-access-summary .faro-safety-top{
+  grid-column:1!important;grid-row:1!important;min-width:0!important;
+  display:flex!important;flex-wrap:nowrap!important;gap:6px!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-access-notice>.faro-access-summary #faroAccessKicker{
+  font-size:9px!important;white-space:nowrap!important
+ }
+ html body main #forecastPage:not(.hide)>.faro-access-notice>.faro-access-summary #faroAccessSeverity{
+  font-size:9px!important;line-height:1.2!important;white-space:nowrap!important;
+  min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ }
+ html body main #forecastPage:not(.hide)>.faro-access-notice>.faro-access-summary #faroAccessHeadline{
+  grid-column:1!important;grid-row:2!important;
+  font-size:12px!important;line-height:1.25!important;
+  margin:0!important;overflow-wrap:anywhere!important
+ }
+ html body main #forecastPage:not(.hide)>.faro-access-notice>.faro-access-summary #faroAccessSubline{
+  grid-column:1!important;grid-row:3!important;display:block!important;
+  margin:0!important;font-size:10px!important;line-height:1.25!important;
+  overflow-wrap:anywhere!important
+ }
+ html body main #forecastPage:not(.hide)>.faro-access-notice>.faro-access-summary .faro-safety-chevron{
+  grid-column:2!important;grid-row:1/4!important;align-self:center!important
+ }
+}
