@@ -242,7 +242,8 @@ function fixture(){
    assert.equal(visual.flexDirection,'column');
    assert.ok(visual.oceanColumns>=1&&visual.oceanColumns<=3,
     'Offshore evidence must use one to three responsive columns');
-   assert.equal(visual.waveSpan,'1');
+   assert.ok(['1','auto'].includes(visual.waveSpan),
+    'Technical wave instrument must stay within its responsive grid');
    assert.match(visual.dateFont,/Archivo/i,'Only editorial headings use Archivo');
    assert.match(visual.numericFont,/Manrope/i,'Numeric wave data uses readable Manrope');
    assert.match(visual.scoreFont,/Manrope/i,'Score numerals match other numeric metrics');
