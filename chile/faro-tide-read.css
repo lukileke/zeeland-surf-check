@@ -297,19 +297,33 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview.faro-hourly-in-place{
   letter-spacing:-.035em!important;max-width:32ch
 }
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-back{
-  display:flex!important;flex-direction:column!important;align-items:stretch!important;
-  gap:7px!important
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:auto auto!important;align-items:start!important;
+  gap:6px 9px!important
 }
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-back #faroHourlySignals{
+  grid-column:1!important;grid-row:1!important;
   display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:5px!important;padding:0!important;margin:0!important;width:100%!important
-}
-#forecastPage #dayview #faroHourlyPreview .faro-hourly-back #faroHourlyExplanation{
-  display:block!important;font-size:11px!important;line-height:1.45!important;
-  margin:0!important;max-width:none!important
+  gap:4px!important;padding:0!important;margin:0!important;width:100%!important
 }
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-back #faroHourlyGoLens{
-  align-self:flex-start!important;margin:0!important;min-height:30px!important;padding:5px 10px!important
+  grid-column:2!important;grid-row:1!important;justify-self:end!important;
+  align-self:center!important;margin:0!important;min-height:32px!important;
+  padding:5px 9px!important;position:relative!important;z-index:2
+}
+#forecastPage #dayview #faroHourlyPreview .faro-hourly-why{
+  grid-column:1/-1!important;grid-row:2!important;min-width:0!important;
+  border-top:1px solid var(--read-line);padding-top:4px!important
+}
+#forecastPage #dayview #faroHourlyPreview .faro-hourly-why-summary{
+  list-style:none;color:var(--read-ink);font-size:10px;font-weight:800;cursor:pointer
+}
+#forecastPage #dayview #faroHourlyPreview .faro-hourly-why-summary::-webkit-details-marker{display:none}
+#forecastPage #dayview #faroHourlyPreview .faro-hourly-why-summary::after{content:" +"}
+#forecastPage #dayview #faroHourlyPreview .faro-hourly-why[open] .faro-hourly-why-summary::after{content:" −"}
+#forecastPage #dayview #faroHourlyPreview .faro-hourly-back #faroHourlyExplanation{
+  display:block!important;font-size:11px!important;line-height:1.45!important;
+  margin:6px 0 0!important;max-width:none!important
 }
 #forecastPage #dayview #faroHourlyPreview :is(.faro-hourly-flip,.faro-hourly-face):focus-visible{
   outline:2px solid #8ed6d1;outline-offset:2px
