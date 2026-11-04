@@ -131,10 +131,12 @@ function fixture(){
    assert.equal(art.contourCount,0,'Hero must not include decorative fake depth/swell curves');
    assert.equal(art.navButtons,3);
    assert.ok(art.markRect.width>35,'FARO symbol must be recognisable, not reduced to a tiny icon');
-   assert.notEqual(art.light.heroBackground,art.dark.heroBackground,
-    'Light and dark treatments must be intentionally distinct: '+JSON.stringify(art));
-   assert.notEqual(art.light.headlineInk,art.dark.headlineInk,
-    'Hero text must contrast with its respective light/dark surface');
+   // The cinematic FARO hero stays deep-ocean in both page themes.
+   // The surrounding navigation, by contrast, reacts to the site theme.
+   assert.equal(art.light.heroBackground,art.dark.heroBackground,
+    'FARO hero dark-ocean treatment should be invariant across page themes');
+   assert.equal(art.light.headlineInk,art.dark.headlineInk,
+    'FARO hero maintains the same high-contrast white text');
    if(width>710)assert.notEqual(art.light.scorePanelBackground,art.dark.scorePanelBackground,
     'Desktop score panel must be tuned separately for daylight and nighttime themes');
    else{
