@@ -164,7 +164,13 @@ html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySi
 #forecastPage #dayview #dailyOverview .faro-technical-summary:focus-visible{
   outline:2px solid #93d9d7;outline-offset:3px
 }
-#forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe .chile-vibe-help{display:none!important}
+#forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe :is(.faro-vibe-top,.chile-vibe-help){display:none!important}
+#forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe{
+  padding:1px 0!important;border:0!important;margin:0!important
+}
+#forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe-summary{
+  min-height:28px!important;padding:1px 0!important
+}
 /* Waterline control stays anchored, no floating button over readable text. */
 #forecastPage #dayview #dailyOverview .faro-surface-control{
   position:relative;z-index:4;display:flex;align-items:center;justify-content:space-between;
