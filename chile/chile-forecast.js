@@ -617,6 +617,16 @@ function renderHourlyPreview(){
    signals.append(fact);
   }
  }
+ const physical=$("faroPhysicalContext");
+ const weakOffshore=s?.modelComplete&&ok(s.score)&&s.score>=6&&
+  ok(s.totalWaveHeightM)&&s.totalWaveHeightM<0.5;
+ physical.hidden=!weakOffshore;
+ physical.textContent=weakOffshore?tr(
+  "Índice modelado ≠ tamaño de ola: "+num(s.score)+"/10 con "+num(s.totalWaveHeightM)+
+  " m en mar abierto no confirma una rompiente surfeable. Contrasta en la playa.",
+  "Model index ≠ surf size: "+num(s.score)+"/10 with "+num(s.totalWaveHeightM)+
+  " m offshore does not establish rideable breaking surf. Check the beach."
+ ):"";
 }
 function updateCoastMap(){
  const s=selection();
