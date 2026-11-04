@@ -24,7 +24,7 @@ test('the medium and large retain the stable native gradient',()=>{
  assert.ok(script.includes('applyCoastalAtmosphere(family)'));
  assert.ok(script.includes('new Color("#286B69")'));
  assert.ok(script.includes('new Color("#1C4045",.53)'));
- assert.ok(script.includes('new Color("#ACDBD3")'));
+ assert.ok(script.includes('wave:palette("#286F86","#ACDBD3")'));
 });
 
 test('the wave tile is a translucent readable surface without extra artwork',()=>{
