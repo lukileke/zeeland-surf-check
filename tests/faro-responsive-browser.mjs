@@ -56,7 +56,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
    try{
     await page.goto(origin+'/chile/',{waitUntil:'domcontentloaded',timeout:30000});
     await page.waitForTimeout(450);
-    const found=await page.evaluate(()=>{
+    const found=await page.evaluate(async()=>{
      const rect=selector=>{
       const e=document.querySelector(selector);
       if(!e)return null;
@@ -83,9 +83,28 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       button:rect('#faroLeadRead')
      };
      if(lead){
-      lead.className='faro-forecast-lead brand-band-regular';
-      document.querySelector('#faroLeadScore').textContent='6.1';
-      base.scoreInk=getComputedStyle(document.querySelector('#faroLeadScore')).color;
+      // Test CSS on a temporary twin, not the live hero: an asynchronous
+      // model refresh legitimately changes its class to is-unavailable.
+      const sample=lead.cloneNode(false);
+      sample.className='faro-forecast-lead brand-band-regular';
+      const signal=document.createElement('aside');signal.className='faro-lead-signal';
+      const scoreRow=document.createElement('div');scoreRow.className='faro-lead-score-row';
+      const score=document.querySelector('#faroLeadScore').cloneNode(false);
+      score.textContent='6.1';
+      scoreRow.append(score);signal.append(scoreRow);sample.append(signal);
+      lead.after(sample);
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      const style=getComputedStyle(score);
+      base.scoreInk=style.getPropertyValue('-webkit-text-fill-color')||style.color;
+      base.scoreProbe={
+       matches:score.matches('html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-regular strong#faroLeadScore'),
+       className:sample.className,
+       tone:getComputedStyle(sample).getPropertyValue('--brand-score-ink'),
+       canonical:getComputedStyle(document.documentElement).getPropertyValue('--faro-score-3'),
+       fill:style.getPropertyValue('-webkit-text-fill-color'),cssColor:style.color,
+       inline:score.getAttribute('style')
+      };
+      sample.remove();
      }
      return base;
     });
@@ -125,7 +144,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     if(s.width>=711&&s.width<=1030){
       assert.ok(found.hours.top>=found.overview.top,'tablet day/hour order');
     }
-    assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score');
+    assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score '+JSON.stringify(found.scoreProbe));
     rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;
     if([390,1440].includes(s.width)){
       await page.screenshot({path:`${out}/${engine}-${s.name}-${theme}.png`});

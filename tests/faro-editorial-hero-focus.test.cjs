@@ -14,9 +14,10 @@ const js=read('chile/chile-forecast.js');
 test('hero layout loaded immediately before shared score palette',()=>{
  const links=[...h.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(x=>x[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-decision-balance-v1.css?v=1');
- assert.equal(links.at(-3),'faro-responsive-quality-v1.css?v=1');
- assert.equal(links.at(-4),'faro-editorial-hero-focus-v1.css?v=1');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=1');
+ assert.equal(links.at(-3),'faro-decision-balance-v1.css?v=1');
+ assert.equal(links.at(-4),'faro-responsive-quality-v1.css?v=1');
+ assert.equal(links.at(-5),'faro-editorial-hero-focus-v1.css?v=1');
  assert.ok(links.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(c));
 });

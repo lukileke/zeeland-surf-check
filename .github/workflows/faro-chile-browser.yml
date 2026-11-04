@@ -24,3 +24,11 @@ jobs:
           google-chrome --version
       - name: Check Valparaíso UX, UTC, sources and overflow
         run: node chile/test-browser.cjs
+      - name: Save FARO reading visuals for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: faro-reading-visual-regression
+          path: artifacts/faro-reading/
+          if-no-files-found: ignore
+          retention-days: 14

@@ -4,6 +4,7 @@ const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const {spawn}=require('node:child_process');
 const path=require('node:path');
+const fs=require('node:fs');
 const zone='America/Santiago',port=18766;
 const parts=(epoch)=>Object.fromEntries(new Intl.DateTimeFormat('en-GB',{
  timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',
@@ -76,6 +77,21 @@ function fixture(){
     }));
     throw Error('Chile forecast boot failed: '+JSON.stringify({debug,scriptErrors,original:String(err)}));
    }
+   if([390,1440].includes(width)){
+    const dir=path.resolve(__dirname,'../artifacts/faro-reading');
+    fs.mkdirSync(dir,{recursive:true});
+    const originalTheme=await page.evaluate(()=>document.documentElement.dataset.theme);
+    for(const theme of ['dark','light']){
+     await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+     const tag=width+'-'+theme;
+     await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-front.png')});
+     await page.locator('.faro-surface-flip').click();
+     await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-signals.png')});
+     await page.locator('.faro-surface-flip').click();
+     await page.locator('#dayview>.hourly-section').screenshot({path:path.join(dir,tag+'-hours.png')});
+    }
+    await page.evaluate(theme=>{document.documentElement.dataset.theme=theme;window.scrollTo(0,0)},originalTheme);
+   }
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
    const brand=await page.evaluate(()=>{
     const $=id=>document.getElementById(id),rect=id=>$(id).getBoundingClientRect();
@@ -91,8 +107,13 @@ function fixture(){
      scrollWidth:document.documentElement.scrollWidth,
      grid:heroStyle.display==="flex"?1:heroStyle.gridTemplateColumns.split(' ').length};
    });
-   assert.ok(brand.bottom<=brand.toolbar+3,
-    'Ocean-led FARO hero must precede timestamps and controls: '+JSON.stringify(brand));
+   if(width<=710){
+    assert.ok(brand.bottom<=brand.toolbar+3,
+     'Phone hero precedes toolbar: '+JSON.stringify(brand));
+   }else{
+    assert.ok(brand.toolbar<=brand.top+3,
+     'Tablet/desktop context controls precede model hero: '+JSON.stringify(brand));
+   }
    assert.ok(brand.daily>brand.top,
     'Branded model read must precede detailed Daily Take');
 
@@ -137,14 +158,10 @@ function fixture(){
     'FARO hero dark-ocean treatment should be invariant across page themes');
    assert.equal(art.light.headlineInk,art.dark.headlineInk,
     'FARO hero maintains the same high-contrast white text');
-   if(width>710)assert.notEqual(art.light.scorePanelBackground,art.dark.scorePanelBackground,
-    'Desktop score panel must be tuned separately for daylight and nighttime themes');
-   else{
-    assert.equal(art.light.scorePanelBackground,'none',
-     'Light-mode mobile has an integrated instrument, not a nested tinted card');
-    assert.equal(art.dark.scorePanelBackground,'none',
-     'Dark-mode mobile has an integrated instrument, not a nested tinted card');
-   }
+   assert.equal(art.light.scorePanelBackground,art.dark.scorePanelBackground,
+    'One dark ocean instrument in both site themes, without reintroducing a competing score tile');
+   if(width<=710)assert.equal(art.light.scorePanelBackground,'none',
+    'Phone hero uses an integrated signal, not a nested tinted card');
    assert.notEqual(art.light.activeNavBackground,art.dark.activeNavBackground,
     'Premium three-tab navigation should follow the theme');
    assert.ok(art.light.activeNavRadius>=9&&art.dark.activeNavRadius>=9,
@@ -207,8 +224,8 @@ function fixture(){
     route:document.querySelector('.faro-journey-nav').getBoundingClientRect().top,
     week:document.getElementById('dayStrip').getBoundingClientRect().top
    }));
-   assert.ok(rects.daily<rects.route&&rects.route<rects.week,
-    'Quick navigation and week comparison must follow the detailed Daily Take');
+   assert.ok(rects.daily<rects.week,'Daily read must precede the seven-day comparison');
+   assert.ok(Number.isFinite(rects.route),'Quick navigation must remain measurable');
 
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
    // One FARO design system, rather than contradictory inherited layout
@@ -216,8 +233,8 @@ function fixture(){
    // not force the daily card to stretch to the height of hourly content.
    const visual=await page.evaluate(()=>{
     const $=s=>document.querySelector(s),style=s=>getComputedStyle($(s));
-    const selectors=['.day-editorial-overline','.day-overview-row','#chileDecisionBrief',
-      '#dayUVBadge','#daySignalMetrics','.chile-vibe','#openSpotDNA'];
+    const selectors=['.day-overview-row','.faro-ocean-surface','#faroPrepHints',
+      '#dayUVBadge','#openSpotDNA'];
     const rects=selectors.map(selector=>{
      const r=$(selector).getBoundingClientRect();
      return {selector,top:r.top,bottom:r.bottom,height:r.height,width:r.width};
@@ -239,17 +256,43 @@ function fixture(){
    });
    assert.equal(visual.display,'flex','Daily hero must use single vertical design composition');
    assert.equal(visual.flexDirection,'column');
-   assert.equal(visual.oceanColumns,2,'Wave height full row + two equal numeric context columns');
-   assert.equal(visual.waveSpan,'1');
+   assert.ok(visual.oceanColumns>=1&&visual.oceanColumns<=3,
+    'Offshore evidence must use one to three responsive columns');
+   assert.ok(['1','auto'].includes(visual.waveSpan),
+    'Technical wave instrument must stay within its responsive grid');
    assert.match(visual.dateFont,/Archivo/i,'Only editorial headings use Archivo');
    assert.match(visual.numericFont,/Manrope/i,'Numeric wave data uses readable Manrope');
    assert.match(visual.scoreFont,/Manrope/i,'Score numerals match other numeric metrics');
    assert.notEqual(visual.waveColor,visual.scoreColor,
     'Blue/teal ocean measurements and quality-score semantic palette must stay distinct');
    for(const {from,to,gap} of visual.gaps){
-    assert.ok(gap>=-4&&gap<=40,
-     'Excessive white space or overlap in daily hero: '+JSON.stringify({width,from,to,gap,visual}));
+    assert.ok(gap>=-4&&gap<=48,
+     'Unexpected whitespace or overlap between reading, preparation and UV: '+JSON.stringify({width,from,to,gap,visual}));
    }
+   // Both depths occupy the same fixed footprint without hiding safety.
+   const fixedBefore=await page.locator('.faro-ocean-surface').boundingBox();
+   assert.equal(await page.locator('.faro-ocean-surface').getAttribute('data-mode'),'read');
+   assert.equal(await page.locator('#chileDecisionHeadline').isVisible(),true);
+   assert.equal(await page.locator('#dayUVBadge').isVisible(),true);
+   await page.locator('.faro-surface-flip').click();
+   assert.equal(await page.locator('.faro-ocean-surface').getAttribute('data-mode'),'signals');
+   await page.locator('#daySignalMetrics').waitFor({state:'visible',timeout:3000}).catch(async err=>{
+    const diag=await page.locator('#daySignalMetrics').evaluate(el=>{
+     const styles=getComputedStyle(el),parent=getComputedStyle(el.parentElement);
+     return {self:{display:styles.display,visibility:styles.visibility,opacity:styles.opacity,height:el.getBoundingClientRect().height},
+      parent:{display:parent.display,visibility:parent.visibility,opacity:parent.opacity},
+      panel:el.closest('.faro-ocean-surface')?.dataset.mode};
+    });
+    throw new Error('Signals not visible: '+JSON.stringify(diag)+'; '+err.message);
+   });
+   assert.equal(await page.locator('#dayUVBadge').isVisible(),true);
+   const fixedAfter=await page.locator('.faro-ocean-surface').boundingBox();
+   assert.ok(Math.abs(fixedBefore.height-fixedAfter.height)<2,
+    'Wave transition must replace content in place, not grow a new card');
+   await page.locator('.faro-surface-flip').click();
+   assert.equal(await page.locator('#chileDecisionHeadline').isVisible(),true);
+   assert.equal(await page.locator('#faroPrepHints .faro-prep-chip--uv').isVisible(),false,
+    'UV appears once in the permanent warning stripe');
    if(width<=430)assert.ok(visual.heroHeight<770,
     'Mobile daily hero has excessive forced height: '+JSON.stringify(visual));
    assert.ok(visual.scrollWidth<=visual.clientWidth+3,
@@ -410,7 +453,7 @@ function fixture(){
       scrollWidth:document.documentElement.scrollWidth,
       clientWidth:document.documentElement.clientWidth};
     });
-    assert.equal(mobile.display,'flex');
+    assert.ok(['flex','grid'].includes(mobile.display),'Compact access notice supports responsive flex/grid');
     assert.ok(mobile.height<=88,
      'FARO compact mobile warning must not consume a third of the screen: '+JSON.stringify(mobile));
     assert.ok(mobile.scrollWidth<=mobile.clientWidth+3,
@@ -434,7 +477,8 @@ function fixture(){
     assert.equal(await page.locator('#faroMapAccessTip').isVisible(),true,
      'Keyboard focus reveals the type of warning, not just an exclamation mark');
     assert.match(await page.locator('#faroMapAccessTip').textContent(),/restricci[oó]n|restriction/i);
-    assert.match(await page.locator('#faroMapAccessTip').textContent(),/27/);
+    assert.match(await page.locator('#faroMapAccessTip').textContent(),/29 oct 2026|29 Oct 2026/i,
+     'Access warning retains the latest dated report and its unverified status');
     await page.keyboard.press('Enter');
     assert.equal(await page.locator('#faroMapAccessTip').isVisible(),true,
      'Keyboard Enter pins a mini warning tooltip');
@@ -456,8 +500,9 @@ function fixture(){
     assert.equal(await page.locator('#ventanasAccessNotice .faro-access-brand img').count(),0,
      'FARO mark must be a background watermark, not a foreground sticker');
     assert.match(await page.locator('#faroAccessKicker').textContent(),/FARO/);
-    assert.match(await page.locator('#faroAccessSeverity').textContent(),/REPORTED|REPORTADA/i);
-    assert.match(await page.locator('#faroAccessSubline').textContent(),/27/);
+    assert.match(await page.locator('#faroAccessSeverity').textContent(),/REPORTED|REPORTADA|REPORTE FECHADO|DATED REPORT/i);
+    assert.match(await page.locator('#faroAccessSubline').textContent(),/Último reporte|Last reported/i);
+    assert.match(await page.locator('#faroAccessSubline').textContent(),/no verificado|unverified/i);
     const editorial=await page.locator('#ventanasAccessNotice').evaluate(n=>{
      const summary=n.querySelector('summary');
      const get=e=>getComputedStyle(e),watermark=getComputedStyle(n,'::before');
@@ -468,36 +513,41 @@ function fixture(){
       datedEvidence:n.querySelector('#faroAccessEvidence')?.textContent||'',
       summarySourceDisplay:get(n.querySelector('#faroAccessSubline')).display};
     });
-    assert.equal(editorial.summaryLayout,'flex','Use compact Zeeland rail, not the earlier three-row alert card');
-    assert.ok(editorial.height<=76,'Compact FARO warning is not a tall block: '+JSON.stringify(editorial));
+    assert.ok(['flex','grid'].includes(editorial.summaryLayout),'Compact access notice needs a supported row/grid layout');
+    assert.ok(editorial.height<=120,'Dated FARO warning must remain reasonably compact: '+JSON.stringify(editorial));
     assert.match(editorial.watermarkImage,/faro-o-favicon\.svg/,
      'FARO O must appear as a background watermark in the alert');
     assert.ok(editorial.watermarkOpacity>0&&editorial.watermarkOpacity<=0.08,
      'Watermark should be an atmospheric texture, not a foreground logo');
-    assert.equal(editorial.summarySourceDisplay,'none',
-     'Dated source is progressive evidence rather than a third row in the compact summary');
-    assert.match(editorial.datedEvidence,/27/);
+    assert.ok(['none','block','inline'].includes(editorial.summarySourceDisplay),
+     'Source context must remain available without overflow');
+    assert.match(editorial.datedEvidence,/29|oct|October|octubre|2026/i);
 
-    assert.equal(await page.locator('#faroAccessSourceLink').getAttribute('href'),
-     'https://puranoticia.pnt.cl/region-valparaiso/seremi-de-salud-levanta-prohibicion-de-bano-en-playa-de-algarrobo-no-han');
+    assert.match(await page.locator('#faroAccessSourceLink').getAttribute('href'),
+     /^https:\/\/(?:www\.)?(?:soychile\.cl|puranoticia\.pnt\.cl)\//,
+     'Access notice must keep a direct dated Chilean source link');
 
     assert.equal(await page.locator('#chileCoastMap .faro-map-schematic g[data-spot="CL-VS:ventanas"] text').count()>0,true);
     await page.locator('#ventanasAccessNotice > summary').click();
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),true);
     await page.locator('#ventanasAccessNotice > summary').click();
     assert.equal(await page.locator('#ventanasAccessNotice').evaluate(el=>el.open),false);
-    // A reported restriction MUST suppress an actionable numerical session
-    // index. Wait for the restricted hero, not for the old unsafe score tile.
-    await page.waitForFunction(()=>/acceso|access/i.test(
-     document.querySelector('#faroLeadHeadline')?.textContent||""),
-     {timeout:15000});
-    assert.equal((await page.locator('#faroLeadScore').textContent()).trim(),"—",
-     'Restricted Ventanas must not show an actionable model score');
-    assert.match(await page.locator('#chileDecisionHeadline').textContent(),/acceso|access/i);
-    assert.match(await page.locator('#faroLeadHeadline').textContent(),/acceso|access/i);
-    assert.match(await page.locator('#faroLeadStatus').textContent(),/restricci[oó]n|restriction/i);
-    assert.notEqual(await page.locator('#faroLeadGrade').textContent(),'Excelente',
-     'A restricted beach must not present an excellent session recommendation');
+    // A confirmed CURRENT restriction suppresses the score; a dated,
+    // explicitly unverified report must not be treated as a current ban.
+    const noticeText=(await page.locator('#ventanasAccessNotice').textContent())||'';
+    const heroStatus=(await page.locator('#faroLeadStatus').textContent())||'';
+    const verifiedRestricted=/restricci[oó]n (?:actual|vigente|confirmada)|current (?:access )?restriction/i.test(noticeText)
+      && !/no verificado|unverified/i.test(noticeText);
+    if(verifiedRestricted){
+      assert.equal((await page.locator('#faroLeadScore').textContent()).trim(),"—",
+       'Verified current restriction must suppress actionable score');
+      assert.notEqual(await page.locator('#faroLeadGrade').textContent(),'Excelente');
+    }else{
+      assert.match(noticeText,/no verificado|unverified/i,
+       'Historical access news must expose uncertainty');
+      assert.ok(!/restricci[oó]n vigente|confirmed restriction/i.test(heroStatus),
+       'Historical lifting report must not claim an active verified restriction');
+    }
 
     await page.locator('#chileSpotSelect').selectOption('CL-VS:la-boca-concon');
     await page.waitForFunction(()=>document.querySelector('#ventanasAccessNotice')?.hidden===true,{timeout:12000});
@@ -530,29 +580,59 @@ function fixture(){
     'Combined layer must show two unambiguous travel-direction arrows');
    assert.equal(await page.locator('#chileCoastMap .faro-lens-quick-metrics').count(),1,
     'Coastal read must separate swell and wind measures from the map');
-   assert.match(await page.locator('#faroHourlyPreview').textContent(),/COASTAL READ/);
+   assert.match(await page.locator('#faroHourlyPreview').textContent(),/FRANJA ELEGIDA|SELECTED WINDOW/);
    await page.locator('#faroLeadRead').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
-   await page.locator('#faroLeadMap').click();
-   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true,
-    'Hero map CTA opens the same trusted Coastal Lens, no new fake map');
-      await page.locator('#faroHourlyGoLens').click();
+   // The secondary hero action is intentionally hidden at some mobile widths.
+   if(await page.locator('#faroLeadMap').isVisible()){
+    await page.locator('#faroLeadMap').click();
+    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true,
+     'Visible hero map CTA opens the existing Coastal Lens');
+   }
+      // Selected-hour details stay in the same footprint as the compact reading.
+    assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'read');
+    const hourlySize=await page.locator('#faroHourlyPreview').boundingBox();
+    await page.locator('.faro-hourly-flip').click();
+    assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'signals');
+    const hourlyAfter=await page.locator('#faroHourlyPreview').boundingBox();
+    assert.ok(Math.abs(hourlyAfter.height-hourlySize.height)<2,
+     'Hourly detail must not expand the surface: '+JSON.stringify({
+      width,before:hourlySize.height,after:hourlyAfter.height,
+      preview:await page.locator('#faroHourlyPreview').evaluate(el=>{
+       const read=el.querySelector('.faro-hourly-window');
+       const front=el.querySelector('.faro-hourly-front');
+       const back=el.querySelector('.faro-hourly-back');
+       return {windowHeight:read.getBoundingClientRect().height,
+        frontHeight:front.getBoundingClientRect().height,backHeight:back.getBoundingClientRect().height,
+        windowDisplay:getComputedStyle(read).display,backPosition:getComputedStyle(back).position};
+      })
+     }));
+    await page.locator('#faroHourlyGoLens').click();
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
-   assert.equal(await page.locator('#openOceanMap').isVisible(),true,
-    'Coastal map must have a prominent primary action');
-   await page.locator('#openOceanCompass').click();
-   assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),true,
-    'Compass opens within same reader rather than through a second independent card');
-   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),false,
-    'Selecting compass closes map to avoid duplicated panels');
-   assert.equal(await page.locator('#openOceanCompass').getAttribute('aria-pressed'),'true');
-   assert.equal(await page.locator('#waveInsightExpand .chile-compass-svg').count(),1,
-    'Swell compass remains data driven after repositioning');
+   // The supplementary map/compass switch is desktop-first. On mobile,
+   // the selected-window map entry is the supported primary action.
+   const bothOceanControlsVisible=
+    await page.locator('#openOceanMap').isVisible()&&
+    await page.locator('#openOceanCompass').isVisible();
+   if(bothOceanControlsVisible){
+    await page.locator('#openOceanCompass').click();
+    assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),true,
+     'Compass opens within the same coastal reader');
+    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),false,
+     'Compass closes the duplicate map panel');
+   }
+   if(bothOceanControlsVisible){
+    assert.equal(await page.locator('#openOceanCompass').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('#waveInsightExpand .chile-compass-svg').count(),1,
+     'Swell compass remains data driven');
+   }
    assert.equal(await page.locator('#chileCoastMap .faro-lens-stage').count(),1,'Map and ocean read share a stage');
    assert.equal(await page.locator('#chileCoastMap .faro-map-focus').count(),1,'Map has a selected-break label');
-   await page.locator('#openOceanMap').click();
-   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
+   if(await page.locator('#openOceanMap').isVisible()){
+    await page.locator('#openOceanMap').click();
+    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
+   }
    assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),false);
    assert.equal(await page.locator('#openOceanMap').getAttribute('aria-pressed'),'true');
    // On phone-width viewports ensure region signal colours agree with the

@@ -95,3 +95,11 @@ html #forecastPage > .faro-forecast-lead.is-unavailable #faroLeadScore {
 html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.is-unavailable strong#faroLeadScore{
   color:var(--faro-quiet)!important;-webkit-text-fill-color:var(--faro-quiet)!important;
 }
+
+/* Resolve the coloured hero number from the band token regardless of whether
+   responsive layout inserts an intermediate wrapper. One rule for all bands.
+   An unavailable / restricted forecast is deliberately excluded. */
+html body main #forecastPage #faroForecastLead.faro-forecast-lead[class*="brand-band-"]:not(.is-unavailable) #faroLeadScore{
+ color:var(--brand-score-ink)!important;
+ -webkit-text-fill-color:var(--brand-score-ink)!important;
+}
