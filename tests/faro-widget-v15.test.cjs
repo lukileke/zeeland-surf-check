@@ -6,7 +6,7 @@ const w=fs.readFileSync(path.join(__dirname,'..','zeeland-widget.js'),'utf8');
 // Legacy protection: the v14/v15 failures were caused by treating raster
 // and gradient layers as interchangeable. Never layer them again.
 test('FARO has one native medium/large background with no raster overlay',()=>{
- assert.match(w,/Native Tide Editorial v19/);
+ assert.match(w,/Ambient Mark Editorial v20/);
  assert.match(w,/function nativeTideGradient\(\)/);
  assert.match(w,/function applyCoastalAtmosphere\(kind\)/);
  assert.match(w,/applyCoastalAtmosphere\("medium"\)/);
