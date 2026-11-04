@@ -269,6 +269,29 @@ function fixture(){
     assert.ok(gap>=-4&&gap<=48,
      'Unexpected whitespace or overlap between reading, preparation and UV: '+JSON.stringify({width,from,to,gap,visual}));
    }
+   // The previous desktop defect hid the eighth slot and left the two
+   // instruments visually unrelated. Assert actual boxes, not only CSS rules.
+   if(width>=1120){
+    const deck=await page.evaluate(()=>{
+     const r=s=>document.querySelector(s).getBoundingClientRect();
+     const buttons=[...document.querySelectorAll('#slots>button')].map(e=>{
+      const b=e.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,width:b.width};
+     });
+     return {daily:r('.day-outlook-section'),hours:r('.hourly-section'),
+      rail:r('#slots'),buttons,columns:getComputedStyle(document.querySelector('#slots')).gridTemplateColumns.split(' ').length};
+    });
+    assert.equal(deck.columns,4,'Four readable score windows per desktop row');
+    assert.equal(deck.buttons.length,8,'All eight two-hour windows should remain accessible');
+    assert.ok(deck.buttons.every(x=>x.width>=70&&x.right<=deck.rail.right+2),
+     'Every hourly score, including 20–22, must fit completely inside its panel');
+    assert.ok(Math.abs(deck.buttons[0].y-deck.buttons[3].y)<3&&
+      deck.buttons[4].y>deck.buttons[0].y+35,
+     'Desktop score windows must form two intentional rows');
+    assert.ok(Math.abs(deck.daily.top-deck.hours.top)<12,
+     'The two desktop reading instruments should align at the top');
+    assert.ok(Math.abs(deck.daily.height-deck.hours.height)<45,
+     'Daily and hourly instruments should form a balanced editorial pair');
+   }
    // Both depths occupy the same fixed footprint without hiding safety.
    const fixedBefore=await page.locator('.faro-ocean-surface').boundingBox();
    assert.equal(await page.locator('.faro-ocean-surface').getAttribute('data-mode'),'read');
