@@ -56,7 +56,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
    try{
     await page.goto(origin+'/chile/',{waitUntil:'domcontentloaded',timeout:30000});
     await page.waitForTimeout(450);
-    const found=await page.evaluate(()=>{
+    const found=await page.evaluate(async()=>{
      const rect=selector=>{
       const e=document.querySelector(selector);
       if(!e)return null;
@@ -85,6 +85,9 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
      if(lead){
       lead.className='faro-forecast-lead brand-band-regular';
       document.querySelector('#faroLeadScore').textContent='6.1';
+      // Allow WebKit/Chromium to complete CSS variable and transition updates
+      // after the synthetic brand-band class change.
+      await new Promise(resolve=>setTimeout(resolve,450));
       const score=document.querySelector('#faroLeadScore');
       const style=getComputedStyle(score);
       base.scoreInk=style.color;
@@ -95,6 +98,8 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
        tone:getComputedStyle(lead).getPropertyValue('--brand-score-ink'),
        canonical:getComputedStyle(document.documentElement).getPropertyValue('--faro-score-3'),
        fill:style.getPropertyValue('-webkit-text-fill-color'),
+       inline:score.getAttribute('style'),
+       transition:style.transitionProperty+' / '+style.transitionDuration,
        css:document.querySelector('link[href*="faro-score-colour-lock-v1.css"]')?.sheet?.cssRules?.length||0
       };
      }
