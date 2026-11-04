@@ -66,8 +66,32 @@ html #forecastPage #dayview .hourly-section .slots > button[class*="brand-band-"
 html #bestPage .highlight.chile-ranking[class*="brand-band-"] .chile-rank-rating {
   --tone:var(--brand-score-ink)!important;
 }
+/* The cinematic hero has historic light-theme rules with an unusually
+ * specific #faroLeadScore override. Anchor its five scores explicitly to
+ * the canonical palette; do not change the actual score calculation.
+ * Keep unavailable states neutral with the final override below. */
+html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-verylow strong#faroLeadScore{
+  color:var(--faro-score-0)!important;-webkit-text-fill-color:var(--faro-score-0)!important;
+}
+html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-low strong#faroLeadScore{
+  color:var(--faro-score-1)!important;-webkit-text-fill-color:var(--faro-score-1)!important;
+}
+html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-mid strong#faroLeadScore{
+  color:var(--faro-score-2)!important;-webkit-text-fill-color:var(--faro-score-2)!important;
+}
+html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-regular strong#faroLeadScore{
+  color:var(--faro-score-3)!important;-webkit-text-fill-color:var(--faro-score-3)!important;
+}
+html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.brand-band-high strong#faroLeadScore{
+  color:var(--faro-score-4)!important;-webkit-text-fill-color:var(--faro-score-4)!important;
+}
+
 /* Never paint offline/blocked/unevaluated scores with quality pigments. */
 html #forecastPage > .faro-forecast-lead.is-unavailable #faroLeadScore {
   color:var(--faro-quiet)!important;
   -webkit-text-fill-color:var(--faro-quiet)!important;
+}
+
+html body main #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead.is-unavailable strong#faroLeadScore{
+  color:var(--faro-quiet)!important;-webkit-text-fill-color:var(--faro-quiet)!important;
 }
