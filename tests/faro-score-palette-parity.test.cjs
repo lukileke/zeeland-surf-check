@@ -55,5 +55,5 @@ test('palette lock is the final stylesheet, after every competing visual layer',
  const matches=[...head.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)];
  assert.ok(matches.length>0);
  assert.equal(matches.at(-1)[1],'faro-score-colour-lock-v1.css?v=1');
- assert.ok(head.indexOf('faro-score-colour-lock-v1.css')>head.indexOf('faro-beacon-atmosphere-v4.css'));
+ assert.ok(head.indexOf('faro-score-colour-lock-v1.css')>head.indexOf('faro-bundle-experience-v1.css'));
 });
