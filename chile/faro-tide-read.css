@@ -583,3 +583,15 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-front{
   grid-template-rows:18px!important;height:22px!important;min-height:22px!important
  }
 }
+
+/* Keep the floating detail control above the selected-hour content, including
+   on narrow screens where the two boxes visually touch. */
+html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-read-meta{
+ position:relative!important;z-index:5!important;
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-flip{
+ z-index:8!important;
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-window{
+ z-index:1!important;
+}
