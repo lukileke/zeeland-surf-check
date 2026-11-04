@@ -461,7 +461,8 @@ function fixture(){
     assert.equal(await page.locator('#faroMapAccessTip').isVisible(),true,
      'Keyboard focus reveals the type of warning, not just an exclamation mark');
     assert.match(await page.locator('#faroMapAccessTip').textContent(),/restricci[oó]n|restriction/i);
-    assert.match(await page.locator('#faroMapAccessTip').textContent(),/27/);
+    assert.match(await page.locator('#faroMapAccessTip').textContent(),/29 oct 2026|29 Oct 2026/i,
+     'Access warning retains the latest dated report and its unverified status');
     await page.keyboard.press('Enter');
     assert.equal(await page.locator('#faroMapAccessTip').isVisible(),true,
      'Keyboard Enter pins a mini warning tooltip');
