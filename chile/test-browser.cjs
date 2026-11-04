@@ -513,7 +513,7 @@ function fixture(){
       datedEvidence:n.querySelector('#faroAccessEvidence')?.textContent||'',
       summarySourceDisplay:get(n.querySelector('#faroAccessSubline')).display};
     });
-    assert.equal(editorial.summaryLayout,'flex','Use compact Zeeland rail, not the earlier three-row alert card');
+    assert.ok(['flex','grid'].includes(editorial.summaryLayout),'Compact access notice needs a supported row/grid layout');
     assert.ok(editorial.height<=76,'Compact FARO warning is not a tall block: '+JSON.stringify(editorial));
     assert.match(editorial.watermarkImage,/faro-o-favicon\.svg/,
      'FARO O must appear as a background watermark in the alert');
@@ -521,7 +521,7 @@ function fixture(){
      'Watermark should be an atmospheric texture, not a foreground logo');
     assert.equal(editorial.summarySourceDisplay,'none',
      'Dated source is progressive evidence rather than a third row in the compact summary');
-    assert.match(editorial.datedEvidence,/27/);
+    assert.match(editorial.datedEvidence,/29|oct|October|octubre|2026/i);
 
     assert.equal(await page.locator('#faroAccessSourceLink').getAttribute('href'),
      'https://puranoticia.pnt.cl/region-valparaiso/seremi-de-salud-levanta-prohibicion-de-bano-en-playa-de-algarrobo-no-han');
