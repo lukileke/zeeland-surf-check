@@ -141,8 +141,30 @@ html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySi
   margin:0!important;padding:7px 0 0!important;border-top:1px solid var(--read-line)
 }
 #forecastPage #dayview #dailyOverview .faro-surface-science{
-  margin:0;font-size:10px;line-height:1.4;color:var(--muted)
+  margin:6px 0 0;font-size:10px;line-height:1.4;color:var(--muted)
 }
+/* Third, strictly optional depth: scientific provenance. Never overload
+   the two initial decision faces with the historic wave-gauge grid. */
+#forecastPage #dayview #dailyOverview .faro-technical-fold{
+  margin:2px 0 0!important;border-top:1px solid var(--read-line);
+  padding:6px 0!important;min-width:0
+}
+#forecastPage #dayview #dailyOverview .faro-technical-summary{
+  cursor:pointer;list-style:none;font-size:10px;font-weight:800;
+  letter-spacing:.025em;line-height:1.45;color:var(--read-ink);
+  padding:3px 0
+}
+#forecastPage #dayview #dailyOverview .faro-technical-summary::-webkit-details-marker{display:none}
+#forecastPage #dayview #dailyOverview .faro-technical-summary::after{
+  content:" +";font-size:13px;color:var(--read-ink)
+}
+#forecastPage #dayview #dailyOverview .faro-technical-fold[open]>.faro-technical-summary::after{
+  content:" −"
+}
+#forecastPage #dayview #dailyOverview .faro-technical-summary:focus-visible{
+  outline:2px solid #93d9d7;outline-offset:3px
+}
+#forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe .chile-vibe-help{display:none!important}
 /* Waterline control stays anchored, no floating button over readable text. */
 #forecastPage #dayview #dailyOverview .faro-surface-control{
   position:relative;z-index:4;display:flex;align-items:center;justify-content:space-between;
