@@ -85,9 +85,9 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
      if(lead){
       lead.className='faro-forecast-lead brand-band-regular';
       document.querySelector('#faroLeadScore').textContent='6.1';
-      // Allow WebKit/Chromium to complete CSS variable and transition updates
-      // after the synthetic brand-band class change.
-      await new Promise(resolve=>setTimeout(resolve,450));
+      // Flush two browser frames after the synthetic class change without
+      // waiting long enough for a late provider refresh to replace it.
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
       const score=document.querySelector('#faroLeadScore');
       const style=getComputedStyle(score);
       base.scoreInk=style.color;
