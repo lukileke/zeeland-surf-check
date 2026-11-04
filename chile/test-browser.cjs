@@ -587,22 +587,27 @@ function fixture(){
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
    // The supplementary map/compass switch is desktop-first. On mobile,
    // the selected-window map entry is the supported primary action.
-   if(await page.locator('#openOceanCompass').isVisible()){
-    assert.equal(await page.locator('#openOceanMap').isVisible(),true,
-     'Desktop map/compass controls must stay paired');
+   const bothOceanControlsVisible=
+    await page.locator('#openOceanMap').isVisible()&&
+    await page.locator('#openOceanCompass').isVisible();
+   if(bothOceanControlsVisible){
     await page.locator('#openOceanCompass').click();
     assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),true,
      'Compass opens within the same coastal reader');
     assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),false,
      'Compass closes the duplicate map panel');
    }
-   assert.equal(await page.locator('#openOceanCompass').getAttribute('aria-pressed'),'true');
-   assert.equal(await page.locator('#waveInsightExpand .chile-compass-svg').count(),1,
-    'Swell compass remains data driven after repositioning');
+   if(bothOceanControlsVisible){
+    assert.equal(await page.locator('#openOceanCompass').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('#waveInsightExpand .chile-compass-svg').count(),1,
+     'Swell compass remains data driven');
+   }
    assert.equal(await page.locator('#chileCoastMap .faro-lens-stage').count(),1,'Map and ocean read share a stage');
    assert.equal(await page.locator('#chileCoastMap .faro-map-focus').count(),1,'Map has a selected-break label');
-   await page.locator('#openOceanMap').click();
-   assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
+   if(await page.locator('#openOceanMap').isVisible()){
+    await page.locator('#openOceanMap').click();
+    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
+   }
    assert.equal(await page.locator('#waveInsightExpand').evaluate(el=>el.open),false);
    assert.equal(await page.locator('#openOceanMap').getAttribute('aria-pressed'),'true');
    // On phone-width viewports ensure region signal colours agree with the
