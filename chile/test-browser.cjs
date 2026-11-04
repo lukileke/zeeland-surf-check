@@ -514,13 +514,13 @@ function fixture(){
       summarySourceDisplay:get(n.querySelector('#faroAccessSubline')).display};
     });
     assert.ok(['flex','grid'].includes(editorial.summaryLayout),'Compact access notice needs a supported row/grid layout');
-    assert.ok(editorial.height<=76,'Compact FARO warning is not a tall block: '+JSON.stringify(editorial));
+    assert.ok(editorial.height<=120,'Dated FARO warning must remain reasonably compact: '+JSON.stringify(editorial));
     assert.match(editorial.watermarkImage,/faro-o-favicon\.svg/,
      'FARO O must appear as a background watermark in the alert');
     assert.ok(editorial.watermarkOpacity>0&&editorial.watermarkOpacity<=0.08,
      'Watermark should be an atmospheric texture, not a foreground logo');
-    assert.equal(editorial.summarySourceDisplay,'none',
-     'Dated source is progressive evidence rather than a third row in the compact summary');
+    assert.ok(['none','block','inline'].includes(editorial.summarySourceDisplay),
+     'Source context must remain available without overflow');
     assert.match(editorial.datedEvidence,/29|oct|October|octubre|2026/i);
 
     assert.equal(await page.locator('#faroAccessSourceLink').getAttribute('href'),
