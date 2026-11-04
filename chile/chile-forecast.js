@@ -780,9 +780,9 @@ function renderPrepHints(s){
  const day=state.forecast?.days?.[state.day];
  const uv=ok(day?.uvMax)?Live.statusUV(day.uvMax,state.lang):null;
  if(s&&sessionDecision(s).canRecommend)
-  add(tr("TRAJE ORIENTATIVO","SUGGESTED SUIT"),wetsuit(s),"wetsuit");
+  add(tr("TRAJE","SUIT"),wetsuit(s),"wetsuit");
  if(ok(s?.waterTemperatureC))
-  add(tr("AGUA MODELO","MODEL WATER"),num(s.waterTemperatureC)+" °C","water");
+  add(tr("AGUA · MOD.","MODEL WATER"),num(s.waterTemperatureC)+" °C","water");
  if(uv)add(tr("UV MÁX. DÍA","DAY MAX UV"),num(day.uvMax,0)+" · "+uv.name,"uv",uv.category);
  if(!s||!sessionDecision(s).canRecommend){
   add(tr("SESIÓN","SESSION"),tr("Sin franja confirmada","No confirmed window"),"neutral");
