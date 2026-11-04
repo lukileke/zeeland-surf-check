@@ -37,6 +37,7 @@ jobs:
             tests/faro-widget-v18.test.cjs \
             tests/faro-widget-v20-ambient-mark.test.cjs \
             tests/faro-desktop-footer-v18.test.cjs \
+            tests/faro-css-bundle-integrity.test.cjs \
             tests/faro-auto-update.test.cjs
 
   browser:
