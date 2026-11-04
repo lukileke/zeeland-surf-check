@@ -215,7 +215,7 @@ html body main #forecastPage:not(.hide) .hourly-section #slots.slots{
   overflow:visible!important;gap:8px!important;padding:0!important;margin:0!important
 }
 html body main #forecastPage:not(.hide) .hourly-section #slots.slots>button{
-  position:relative;min-width:0!important;max-width:none!important;width:100%!important;
+  position:relative;box-sizing:border-box!important;min-width:0!important;max-width:none!important;width:100%!important;
   height:84px!important;min-height:84px!important;
   padding:10px 7px!important;
   border-radius:12px!important;scroll-snap-align:none;
@@ -249,7 +249,7 @@ html body main #forecastPage:not(.hide) .hourly-section #slots.slots>button.sele
 }
 /* One stable two-face slot explanation, without overlaying the button. */
 html body main #forecastPage:not(.hide) #faroHourlyPreview.faro-hourly-in-place{
-  position:relative!important;min-width:0!important;flex:0 0 auto;
+  position:relative!important;box-sizing:border-box!important;min-width:0!important;flex:0 0 auto;
   display:flex!important;flex-direction:column!important;gap:7px!important;
   height:147px!important;min-height:147px!important;max-height:147px!important;
   overflow:hidden!important;margin:0!important;padding:13px 16px!important;
@@ -353,8 +353,24 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
   html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
     padding:clamp(17px,1.65vw,24px)!important;gap:12px!important
   }
-  html body main #forecastPage:not(.hide) .hourly-section #faroHourlyPreview{
-    margin-top:auto!important
+  html body main #forecastPage:not(.hide) .hourly-section #slots.slots{
+    grid-auto-rows:84px!important;gap:9px!important
+  }
+  html body main #forecastPage:not(.hide) .hourly-section #faroHourlyPreview.faro-hourly-in-place{
+    flex:1 1 auto!important;height:auto!important;min-height:170px!important;
+    max-height:none!important;margin-top:0!important;overflow:hidden!important
+  }
+  html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-window{
+    flex:1 1 auto!important;height:auto!important;min-height:80px!important;
+    width:100%!important
+  }
+  html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-front{
+    display:flex!important;align-items:center!important;justify-content:flex-start!important;
+    position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+  }
+  html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-front #faroHourlyHeadline{
+    display:block!important;position:static!important;visibility:visible!important;opacity:1!important;
+    width:100%!important;color:var(--fg)!important;line-height:1.18!important
   }
 }
 /* Mobile: readable peek into the next hour; no horizontal page overflow. */
