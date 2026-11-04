@@ -405,3 +405,15 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #far
 #forecastPage #dayview .faro-detail-hub-heading{
   gap:7px!important;
 }
+
+/* Detailed face is a fixed viewport. Its contents must scroll, not shrink
+   the physical ocean instrument to zero when explanations grow longer. */
+#forecastPage #dayview #dailyOverview .faro-surface-back #daySignalMetrics.day-signal-metrics{
+ flex:0 0 auto!important;align-self:stretch!important;
+ min-height:100px!important;height:auto!important;max-height:none!important;
+}
+#forecastPage #dayview #dailyOverview .faro-surface-back #chileDecisionDriver,
+#forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe,
+#forecastPage #dayview #dailyOverview .faro-surface-back .faro-surface-science{
+ flex:0 0 auto!important;
+}
