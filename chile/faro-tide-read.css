@@ -595,3 +595,22 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-flip{
 html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-window{
  z-index:1!important;
 }
+
+/* Last visual pass: anchor the short driver above the bottom action rail.
+   Keeping it in the DOM preserves screen-reader access to full copy. */
+html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back{
+ justify-content:flex-start!important;align-content:flex-start!important;
+}
+html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #chileDecisionDriver{
+ position:absolute!important;top:103px!important;left:14px!important;right:14px!important;
+ max-height:2.85em!important;padding:0!important;
+ background:var(--panel)!important;
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-front{
+ align-items:center!important;padding:0 2px!important;
+}
+@media(max-width:710px){
+ html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #chileDecisionDriver{
+  top:103px!important;
+ }
+}
