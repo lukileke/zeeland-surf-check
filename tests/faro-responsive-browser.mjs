@@ -83,9 +83,14 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       button:rect('#faroLeadRead')
      };
      if(lead){
-      lead.className='faro-forecast-lead brand-band-regular';
-      document.querySelector('#faroLeadScore').textContent='6.1';
-      base.scoreInk=getComputedStyle(document.querySelector('#faroLeadScore')).color;
+      const score=document.querySelector('#faroLeadScore');
+      // API requests are deliberately offline here. A placeholder is not a
+      // scored forecast and should keep neutral ink, not a fabricated green.
+      const raw=score?.textContent?.trim()||'';
+      base.liveScore=raw!==''&&raw!=='—'&&Number.isFinite(Number(raw));
+      base.scoreToken=getComputedStyle(document.documentElement)
+       .getPropertyValue('--faro-score-3').trim().toLowerCase();
+      base.scoreInk=score?getComputedStyle(score).color:null;
      }
      return base;
     });
@@ -125,8 +130,11 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     if(s.width>=711&&s.width<=1030){
       assert.ok(found.hours.top>=found.overview.top,'tablet day/hour order');
     }
-    assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score');
-    rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;
+    // This layout test blocks model network, so never force a "6.1" onto
+    // unavailable data. Validate the real palette token; a separate
+    // model-mocked browser test validates the visible scored components.
+    assert.equal(found.scoreToken,'#b1d574','canonical 6–7.9 score pigment');
+    rgbByEngine[engine][s.width+'-'+theme]=found.scoreToken;
     if([390,1440].includes(s.width)){
       await page.screenshot({path:`${out}/${engine}-${s.name}-${theme}.png`});
       if(s.width===390&&theme==='dark'){
@@ -147,4 +155,4 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
  }
 }
 assert.deepEqual(errors,[],'FARO responsive browser smoke checks failed');
-console.log('Browser responsive QA passed for Chrome + WebKit, 5 widths, both themes.');
+console.log('Browser responsive QA passed for Chrome + WebKit, 9 widths, both themes.');
