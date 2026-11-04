@@ -50,5 +50,5 @@ test('narrow viewport keeps reading sequence and all facts',()=>{
  assert.ok(css.includes('@media(max-width:710px)'));
  assert.ok(css.includes('@media(max-width:375px)'));
  assert.ok(css.includes('grid-column:1/-1!important;grid-row:auto!important'));
- assert.ok(html.includes('chile-forecast.js?v=45'));
+ assert.ok(html.includes('chile-forecast.js?v=46'));
 });
