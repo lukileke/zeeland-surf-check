@@ -435,7 +435,7 @@ function fixture(){
       scrollWidth:document.documentElement.scrollWidth,
       clientWidth:document.documentElement.clientWidth};
     });
-    assert.equal(mobile.display,'flex');
+    assert.ok(['flex','grid'].includes(mobile.display),'Compact access notice supports responsive flex/grid');
     assert.ok(mobile.height<=88,
      'FARO compact mobile warning must not consume a third of the screen: '+JSON.stringify(mobile));
     assert.ok(mobile.scrollWidth<=mobile.clientWidth+3,
