@@ -1,4 +1,4 @@
-/* FARO Native Tide v19: bilingual, physical meaning, visual restraint.
+/* FARO Ambient Mark v20: bilingual, physical meaning, visual restraint.
  * Run node --test tests/faro-widget-v17.test.cjs
  */
 const test=require('node:test');
@@ -12,7 +12,7 @@ const loader=fs.readFileSync(path.join(root,'FARO_AUTO_WIDGET.js'),'utf8');
 
 test('Scriptable async syntax and GitHub hot-loader eligibility',()=>{
  assert.doesNotThrow(()=>new (async function(){}).constructor(widget));
- assert.match(widget,/Native Tide Editorial v19/);
+ assert.match(widget,/Ambient Mark Editorial v20/);
  for(const item of ['// FARO Widget','Script.setWidget(widget)','Script.complete()',
   'const SITE="https://lukileke.github.io/zeeland-surf-check/"'])
   assert.ok(widget.includes(item),item);
