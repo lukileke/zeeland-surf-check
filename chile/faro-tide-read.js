@@ -36,7 +36,13 @@
   backTitle.setAttribute("aria-hidden","true");
   const science=node("p","faro-surface-science");
   front.append(brief,facts);
-  back.append(backTitle,metrics,reason,vibe,science);
+  // Preserve the original model-bound DOM, but keep the technical instrument
+  // out of the editorial face until a reader explicitly asks for it.
+  const technical=node("details","faro-technical-fold");
+  technical.id="faroTechnicalEvidence";
+  const technicalSummary=node("summary","faro-technical-summary");
+  technical.append(technicalSummary,metrics,science);
+  back.append(backTitle,reason,vibe,technical);
   windowBox.append(front,back);
 
   const control=node("div","faro-surface-control");
@@ -81,6 +87,7 @@
   };
   const localise=()=>{
     backTitle.textContent=tr("¿Qué está leyendo FARO?","What is FARO reading?");
+    technicalSummary.textContent=tr("Datos oceánicos y límites del modelo","Ocean data and model limits");
     science.textContent=tr(
       "Modelo experimental: altura oceánica, no de rompiente. Calibración local pendiente.",
       "Experimental model: offshore height, not breaking-wave height. Local calibration pending."
