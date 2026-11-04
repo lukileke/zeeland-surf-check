@@ -117,7 +117,7 @@
   const hourlyReason=node("details","faro-hourly-why");
   const hourlyReasonSummary=node("summary","faro-hourly-why-summary");
   hourlyReason.append(hourlyReasonSummary,explain);
-  hourlyBack.append(signals,map,hourlyReason);
+  hourlyBack.append(signals,hourlyReason);
   hourlyWindow.append(hourlyFront,hourlyBack);
   const hourlyToggle=node("button","faro-hourly-flip");
   hourlyToggle.type="button";
@@ -125,6 +125,9 @@
   hourlyToggle.innerHTML='<span class="faro-hourly-flip-label"></span><span aria-hidden="true">↗</span>';
   meta.append(hourlyToggle);
   meta.after(hourlyWindow);
+  // Keep the canonical map action outside the scrolling evidence viewport.
+  // This eliminates occluded clicks without duplicating a button or its ID.
+  hourly.append(map);
   hourly.classList.add("faro-hourly-in-place");
   let hourlyMode="read";
   const updateHourly=()=>{
