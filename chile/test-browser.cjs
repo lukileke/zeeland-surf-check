@@ -291,8 +291,11 @@ function fixture(){
      'Desktop score rows must have an actual visible gap: '+JSON.stringify(deck.buttons));
     assert.ok(Math.abs(deck.daily.top-deck.hours.top)<12,
      'The two desktop reading instruments should align at the top');
-    assert.ok(Math.abs(deck.daily.height-deck.hours.height)<45,
-     'Daily and hourly instruments should form a balanced editorial pair');
+    assert.ok(Math.abs(deck.daily.height-deck.hours.height)<120,
+     'Desktop panels should be proportionate without forcing empty space');
+    const selectedHeight=await page.locator('#faroHourlyPreview').evaluate(el=>el.getBoundingClientRect().height);
+    assert.ok(selectedHeight<=168,
+     'Selected-hour card should not stretch into a large blank panel: '+selectedHeight);
     const selected=await page.locator('#faroHourlyHeadline').evaluate(el=>{
       const box=el.getBoundingClientRect();
       const frame=el.closest('#faroHourlyPreview').getBoundingClientRect();
