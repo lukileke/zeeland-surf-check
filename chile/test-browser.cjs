@@ -299,6 +299,7 @@ function fixture(){
    assert.equal(await page.locator('#dayUVBadge').isVisible(),true);
    await page.locator('.faro-surface-flip').click();
    assert.equal(await page.locator('.faro-ocean-surface').getAttribute('data-mode'),'signals');
+   await page.locator('#faroTechnicalEvidence > summary').click();
    await page.locator('#daySignalMetrics').waitFor({state:'visible',timeout:3000}).catch(async err=>{
     const diag=await page.locator('#daySignalMetrics').evaluate(el=>{
      const styles=getComputedStyle(el),parent=getComputedStyle(el.parentElement);
