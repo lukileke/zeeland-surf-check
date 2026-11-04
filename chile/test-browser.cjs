@@ -142,14 +142,10 @@ function fixture(){
     'FARO hero dark-ocean treatment should be invariant across page themes');
    assert.equal(art.light.headlineInk,art.dark.headlineInk,
     'FARO hero maintains the same high-contrast white text');
-   if(width>710)assert.notEqual(art.light.scorePanelBackground,art.dark.scorePanelBackground,
-    'Desktop score panel must be tuned separately for daylight and nighttime themes');
-   else{
-    assert.equal(art.light.scorePanelBackground,'none',
-     'Light-mode mobile has an integrated instrument, not a nested tinted card');
-    assert.equal(art.dark.scorePanelBackground,'none',
-     'Dark-mode mobile has an integrated instrument, not a nested tinted card');
-   }
+   assert.equal(art.light.scorePanelBackground,art.dark.scorePanelBackground,
+    'One dark ocean instrument in both site themes, without reintroducing a competing score tile');
+   if(width<=710)assert.equal(art.light.scorePanelBackground,'none',
+    'Phone hero uses an integrated signal, not a nested tinted card');
    assert.notEqual(art.light.activeNavBackground,art.dark.activeNavBackground,
     'Premium three-tab navigation should follow the theme');
    assert.ok(art.light.activeNavRadius>=9&&art.dark.activeNavRadius>=9,
