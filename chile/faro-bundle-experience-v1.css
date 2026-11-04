@@ -2875,4 +2875,85 @@ html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
  margin-top:clamp(18px,2.2vw,30px)!important;
 }
 
+/* FARO editorial QA 2026-11-04:
+ * A model score can be relatively high despite only a few decimetres
+ * of offshore swell. Never let users read this as confirmed breaking surf.
+ * The note is conditional; it does not change the score model. */
+html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroPhysicalContext.faro-physical-context{
+ grid-column:1!important;
+ grid-row:5!important;
+ display:block!important;
+ max-width:68ch!important;
+ margin:3px 0 0!important;
+ padding:9px 0 0!important;
+ border-top:1px solid var(--faro-line)!important;
+ font:650 11px/1.55 var(--faro-text,Manrope,system-ui)!important;
+ color:var(--faro-quiet,var(--muted))!important;
+}
+html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroPhysicalContext[hidden]{
+ display:none!important;
+}
+@media(min-width:711px){
+ html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyGoLens{
+  grid-row:1/6!important;
+ }
+}
+@media(max-width:710px){
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview{
+  grid-template-rows:auto auto auto auto auto auto!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroPhysicalContext{
+  grid-column:1!important;grid-row:5!important;
+ }
+ html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyGoLens{
+  grid-column:1!important;grid-row:6!important;
+ }
+}
+/* The high-UV advisory is an informative, coloured risk strip. It is not
+ * repeated as a preparation chip; moderate UV remains a chip instead. */
+html body #forecastPage #dailyOverview #dayUVBadge[hidden]{
+ display:none!important;
+}
+@media(max-width:430px){
+ html body #forecastPage #dailyOverview{
+  padding:16px!important;
+ }
+ html body #forecastPage #dailyOverview #faroPrepHints.faro-prep-hints{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+  margin:7px 0 9px!important;
+  align-items:stretch!important;
+ }
+ html body #forecastPage #dailyOverview #faroPrepHints>.faro-prep-chip{
+  display:flex!important;
+  flex:initial!important;
+  min-width:0!important;
+  min-height:38px!important;
+  max-width:100%!important;
+  padding:5px 7px!important;
+  gap:3px 6px!important;
+  flex-wrap:wrap!important;
+  align-content:center!important;
+  border-radius:9px!important;
+ }
+ html body #forecastPage #dailyOverview #faroPrepHints>.faro-prep-chip::before{
+  width:5px!important;height:5px!important;flex:0 0 5px!important;
+ }
+ html body #forecastPage #dailyOverview #faroPrepHints>.faro-prep-chip small{
+  font-size:8px!important;letter-spacing:.035em!important;
+ }
+ html body #forecastPage #dailyOverview #faroPrepHints>.faro-prep-chip strong{
+  font-size:11px!important;line-height:1.2!important;
+ }
+ html body #forecastPage #dailyOverview .chile-day-uv{
+  padding:7px 9px!important;
+  margin:0 0 8px!important;
+  line-height:1.4!important;
+ }
+ html body #forecastPage #dailyOverview .chile-vibe{
+  padding:7px 0!important;
+ }
+}
+
 /* ===== END chile/faro-decision-balance-v1.css ===== */
