@@ -54,12 +54,14 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
    * lost to html[data-theme] #forecastPage > .faro-forecast-lead. */
   html[data-theme="light"] body main #forecastPage:not(.hide) > .faro-forecast-lead,
   html:not([data-theme="light"]) body main #forecastPage:not(.hide) > .faro-forecast-lead {
-    --beacon-x:81%;
-    --beacon-y:16%;
-    --beacon-size:clamp(85px,23vw,106px);
-    --beacon-halo:clamp(230px,74vw,320px);
-    --beacon-ambient:clamp(285px,92vw,415px);
-    --beacon-beam:clamp(135px,44vw,220px);
+    /* Decorative O stays in the upper-right visual corner, outside the
+       text's first reading line at 320–390px and enlarged text settings. */
+    --beacon-x:87%;
+    --beacon-y:8%;
+    --beacon-size:clamp(64px,18vw,80px);
+    --beacon-halo:clamp(205px,66vw,290px);
+    --beacon-ambient:clamp(250px,82vw,350px);
+    --beacon-beam:clamp(110px,36vw,185px);
     margin:0!important;
     width:100%!important;
     min-width:0!important;
@@ -157,9 +159,9 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
 @media(max-width:370px) {
   html[data-theme="light"] body main #forecastPage:not(.hide) > .faro-forecast-lead,
   html:not([data-theme="light"]) body main #forecastPage:not(.hide) > .faro-forecast-lead {
-    --beacon-x:83%;
-    --beacon-y:15%;
-    --beacon-size:80px;
+    --beacon-x:88%;
+    --beacon-y:7%;
+    --beacon-size:60px;
     --beacon-halo:228px;
     --beacon-ambient:290px;
     --beacon-beam:132px;
