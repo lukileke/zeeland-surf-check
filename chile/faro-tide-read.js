@@ -93,11 +93,14 @@
       "Experimental model: offshore height, not breaking-wave height. Local calibration pending."
     );
     hourlyTitle.textContent=tr("FARO · TU FRANJA","FARO · YOUR WINDOW");
+    scoreKicker.textContent=tr("ÍNDICE DE CONDICIONES","CONDITIONS INDEX");
     hourlyReasonSummary.textContent=tr("¿Por qué?","Why this reading?");
     hourlyToggle.querySelector(".faro-hourly-flip-label").textContent=
       hourlyMode==="read"?tr("Ver datos","See data"):tr("Volver","Back");
     hourlyToggle.setAttribute("aria-expanded",String(hourlyMode!=="read"));
     refreshFacts();
+    // Locale changes must refresh labels even if the selected hour is stable.
+    if(typeof refreshSelectedRead==="function")refreshSelectedRead();
     switchMode(mode);
     slots.setAttribute("aria-label",tr("Comparar ventanas de dos horas","Compare two-hour forecast windows"));
   };
@@ -113,10 +116,20 @@
   const hourlyBack=node("div","faro-hourly-face faro-hourly-back");
   hourlyBack.id="faroHourlyBack";
   const hourlyTitle=meta.querySelector("small");
-  hourlyFront.append(headline);
+  // The hourly face must not repeat the daily verdict. Give the selected
+  // session its own compact model index and short, model-derived cue.
+  const scoreFace=node("div","faro-hourly-score-read");
+  const scoreKicker=node("small","faro-hourly-score-label");
+  const scoreNumber=node("strong","faro-hourly-score-value");
+  const scoreUnit=node("span","faro-hourly-score-unit");
+  const scoreNote=node("span","faro-hourly-score-note");
+  scoreFace.append(scoreKicker,scoreNumber,scoreUnit,scoreNote);
+  hourlyFront.append(scoreFace);
   const hourlyReason=node("details","faro-hourly-why");
   const hourlyReasonSummary=node("summary","faro-hourly-why-summary");
-  hourlyReason.append(hourlyReasonSummary,explain);
+  // Preserve FARO's real forecast interpretation as evidence, not a second
+  // competing headline in the initial reading.
+  hourlyReason.append(hourlyReasonSummary,headline,explain);
   hourlyBack.append(signals,hourlyReason);
   hourlyWindow.append(hourlyFront,hourlyBack);
   const hourlyToggle=node("button","faro-hourly-flip");
@@ -147,6 +160,17 @@
   // Existing controller regenerates button nodes on every hour selection.
   // Keep every safety/unavailable message in the accessibility label;
   // show visible small print only for warnings and missing daylight/data.
+  const refreshSelectedRead=()=>{
+    const selected=slots.querySelector(":scope > button.selected");
+    const score=selected?.querySelector(".chile-slot-score")?.textContent?.trim()||"—";
+    const cue=selected?.querySelector(".chile-slot-vibe")?.textContent?.trim()||"";
+    const quality=selected?.querySelector(".chile-slot-quality")?.textContent?.trim()||"";
+    const band=selected?[...selected.classList].find(c=>c.startsWith("brand-band-")):"";
+    scoreFace.className="faro-hourly-score-read"+(band?" "+band:"");
+    scoreNumber.textContent=score;
+    scoreUnit.textContent=score==="—"?"":"/10";
+    scoreNote.textContent=(cue||quality||tr("Modelo experimental","Experimental model"));
+  };
   const decorateSlots=()=>{
     for(const button of slots.querySelectorAll(":scope > button")){
       const time=button.querySelector(".chile-slot-hour")?.textContent?.trim()||"";
@@ -158,6 +182,7 @@
       button.classList.add("faro-slot-compact");
       button.setAttribute("aria-label",[time,score==="—"?tr("Sin índice","No index"):score+"/10",quality,note].filter(Boolean).join(" · "));
     }
+    refreshSelectedRead();
   };
   const slotWatcher=new MutationObserver(decorateSlots);
   slotWatcher.observe(slots,{childList:true});
