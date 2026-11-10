@@ -473,6 +473,13 @@ html[data-theme="light"] #forecastPage #dayview #faroHourlyPreview .faro-hourly-
   color:var(--brand-score-ink,var(--fg))!important;
   -webkit-text-fill-color:var(--brand-score-ink,var(--fg))!important
 }
+html[data-theme="light"] #forecastPage #dayview #faroHourlyPreview .faro-hourly-read-meta>small{
+  color:#b4e5e2!important
+}
+html[data-theme="light"] #forecastPage #dayview .hourly-section #slots>button:disabled .chile-slot-hour,
+html[data-theme="light"] #forecastPage #dayview .hourly-section #slots>button:disabled .chile-slot-vibe{
+  color:#c6d9d8!important;opacity:.92!important
+}
 html[data-theme="light"] #forecastPage #dayview #faroHourlyPreview .faro-hourly-flip,
 html[data-theme="light"] #forecastPage #dayview #faroHourlyPreview > #faroHourlyGoLens{
   color:#f0f6f3!important;border-color:rgba(155,227,220,.58)!important;
