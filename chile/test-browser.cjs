@@ -637,6 +637,17 @@ function fixture(){
     assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'read');
     assert.equal(await page.locator('.faro-hourly-score-value').isVisible(),true,
       'Model index is the visible, non-duplicated hourly headline');
+    const chosenGeometry=await page.locator('.faro-hourly-score-value').evaluate(el=>{
+      const r=el.getBoundingClientRect(),card=el.closest('#faroHourlyPreview').getBoundingClientRect();
+      return {width:r.width,height:r.height,x:r.x,right:r.right,y:r.y,
+        cardX:card.x,cardRight:card.right,cardTop:card.top,cardBottom:card.bottom,
+        windowWidth:el.closest('.faro-hourly-window').getBoundingClientRect().width,
+        frontWidth:el.closest('.faro-hourly-front').getBoundingClientRect().width};
+    });
+    assert.ok(chosenGeometry.width>20&&chosenGeometry.height>20&&
+      chosenGeometry.x>=chosenGeometry.cardX&&chosenGeometry.right<=chosenGeometry.cardRight+2&&
+      chosenGeometry.y>=chosenGeometry.cardTop&&chosenGeometry.y+chosenGeometry.height<=chosenGeometry.cardBottom+2,
+      'Selected index must be physically visible and inside the card at '+width+'px: '+JSON.stringify(chosenGeometry));
     assert.equal((await page.locator('.faro-hourly-score-value').textContent()).trim(),
       (await page.locator('#slots > button.selected .chile-slot-score').textContent()).trim());
     const hourlySize=await page.locator('#faroHourlyPreview').boundingBox();
