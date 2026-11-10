@@ -65,7 +65,7 @@ test('underwater pulse is kept and WebKit shadow seam is not reintroduced',()=>{
 test('new CSS is before the invariant score palette, with no model changes',()=>{
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=3');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=4');
  assert.equal(links.at(-3),'faro-decision-balance-v1.css?v=1');
  assert.equal(links.at(-4),'faro-responsive-quality-v1.css?v=1');
  assert.equal(links.at(-5),'faro-editorial-hero-focus-v1.css?v=1');
