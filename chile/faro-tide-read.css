@@ -288,12 +288,16 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #far
   font-size:11px;font-weight:750;white-space:nowrap;cursor:pointer;z-index:4
 }
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-window{
-  position:relative;z-index:1;min-width:0;height:77px!important;flex:0 0 77px!important;
-  overflow:hidden!important;display:block!important
+  position:relative!important;z-index:1;box-sizing:border-box!important;
+  display:block!important;width:100%!important;min-width:100%!important;max-width:100%!important;
+  grid-column:auto!important;grid-row:auto!important;
+  height:77px!important;min-height:77px!important;flex:0 0 77px!important;
+  overflow:hidden!important
 }
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-face{
-  position:absolute;inset:0;min-width:0;overflow-y:auto;
-  scrollbar-width:thin;padding:5px 0!important
+  position:absolute!important;inset:0!important;box-sizing:border-box!important;
+  width:100%!important;height:100%!important;min-width:0!important;max-width:100%!important;
+  overflow-y:auto!important;scrollbar-width:thin;padding:5px 0!important
 }
 #forecastPage #dayview #faroHourlyPreview[data-mode=read] .faro-hourly-back,
 #forecastPage #dayview #faroHourlyPreview[data-mode=signals] .faro-hourly-front{display:none!important}
@@ -303,7 +307,8 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #far
 /* FARO / chosen interval: a model-quality index, not a repeated verdict.
    Colours inherit the same semantic score-band tokens as the hourly rail. */
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-score-read{
-  min-width:0;width:100%;display:flex;flex-wrap:wrap;align-items:baseline;
+  min-width:0!important;width:100%!important;max-width:100%!important;
+  display:flex!important;flex-wrap:wrap;align-items:baseline;
   column-gap:6px;row-gap:4px
 }
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-score-label{
