@@ -1,7 +1,7 @@
 /* Live API never called by these tests. Validate archive shapes and provenance. */
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
-import {collect,urls,outputPath,encodeSnapshot,decodeSnapshot} from "./archive-forecast.mjs";
+import {collect,urls,outputPath,encodeSnapshot,decodeSnapshot,request} from "./archive-forecast.mjs";
 const cfg=JSON.parse(await readFile(new URL("./valparaiso-live.config.json",import.meta.url),"utf8"));
 const refTime=new Date("2026-10-26T18:00:00Z");
 const times=Array.from({length:96},(_,i)=>Math.floor(refTime.getTime()/1000)+i*3600);
@@ -75,4 +75,25 @@ async function noAligned(url){
  return {ok:true,json:async()=>json};
 }
 await assert.rejects(collect(cfg,noAligned,refTime),/Insufficient aligned UTC forecast hours/);
+// Recover only from transient provider outages; no incomplete or invented vintages.
+const endpoint="https://marine-api.open-meteo.com/v1/marine";
+let retries=0;const waited=[];
+const recovered=await request(endpoint,async()=>{
+ retries++;
+ return retries<3?{ok:false,status:503}:{ok:true,json:async()=>response("marine",one.latitude,one.longitude)};
+},{wait:async ms=>waited.push(ms)});
+assert.equal(retries,3);
+assert.deepEqual(waited,[750,1500]);
+assert.equal(recovered.hourly.time.length,96);
+let clientErrors=0;
+await assert.rejects(request(endpoint,async()=>{
+ clientErrors++;return {ok:false,status:400};
+},{wait:async()=>{throw Error("400 must never retry")}}),/HTTP 400/);
+assert.equal(clientErrors,1);
+let networkCalls=0;
+await request(endpoint,async()=>{
+ networkCalls++;if(networkCalls===1)throw Error("temporary connection issue");
+ return {ok:true,json:async()=>response("marine",one.latitude,one.longitude)};
+},{wait:async()=>{}});
+assert.equal(networkCalls,2);
 console.log("FARO snapshots: 3 distinct spots, UTC, legal provenance, optional fallback, missing-data safety and no camera fabrication passed.");

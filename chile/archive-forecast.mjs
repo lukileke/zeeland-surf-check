@@ -46,13 +46,37 @@ function urls(spot,cfg,forecastDays=4){
   wind_speed_unit:"kmh",precipitation_unit:"mm",temperature_unit:"celsius"}).toString();
  return {marine,weather,marineFallback:new URL(marine),optional};
 }
-async function request(url,fetcher){
- const r=await fetcher(String(url));
- if(!r?.ok)throw Object.assign(new Error("Provider returned HTTP "+r?.status),{status:r?.status});
- const v=await r.json();
- if(!Array.isArray(v?.hourly?.time)||!v.hourly.time.length||!v.hourly.time.every(finite))
-  throw Error("Provider did not return Unix hourly timestamps");
- return v;
+// A failed vintage must never be fabricated. Only retry transient HTTP/network
+// failures; malformed or incomplete model data remains a hard, visible error.
+const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function request(url,fetcher,{retries=2,wait=pause}={}){
+ const endpoint=new URL(String(url)).hostname;
+ for(let attempt=0;attempt<=retries;attempt++){
+  let r;
+  try{
+   r=await fetcher(String(url),{signal:AbortSignal.timeout(18000)});
+  }catch(e){
+   if(attempt===retries)throw new Error(
+    "Network error from "+endpoint+" after "+(attempt+1)+" attempts: "+e.message);
+   console.warn("Transient network error from "+endpoint+"; retry "+(attempt+2)+"/"+(retries+1));
+   await wait(750*2**attempt);continue;
+  }
+  if(r?.ok){
+   const v=await r.json();
+   if(!Array.isArray(v?.hourly?.time)||!v.hourly.time.length||!v.hourly.time.every(finite))
+    throw Error("Provider "+endpoint+" did not return Unix hourly timestamps");
+   return v;
+  }
+  const status=r?.status??"unknown";
+  const transient=status===429||(typeof status==="number"&&status>=500&&status<600);
+  if(transient&&attempt<retries){
+   console.warn("Transient HTTP "+status+" from "+endpoint+"; retry "+(attempt+2)+"/"+(retries+1));
+   await wait(750*2**attempt);continue;
+  }
+  throw Object.assign(new Error("Provider "+endpoint+" returned HTTP "+status+
+   " after "+(attempt+1)+" attempts"),{status});
+ }
+ throw Error("Unexpected retry state from "+endpoint);
 }
 function toHourly(data,map){
  const t=data.hourly.time;
@@ -140,4 +164,4 @@ async function main(){
 }
 if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1]))
  main().catch(e=>{console.error(e.message);process.exitCode=1});
-export {collect,outputPath,urls,combine,encodeSnapshot,decodeSnapshot};
+export {collect,outputPath,urls,combine,encodeSnapshot,decodeSnapshot,request};

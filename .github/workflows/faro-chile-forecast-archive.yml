@@ -18,7 +18,7 @@ concurrency:
 jobs:
   archive-forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 8
     env:
       FARO_RESEARCH_NONCOMMERCIAL_ACK: 'true'
     steps:
@@ -46,3 +46,22 @@ jobs:
           git commit -m "research(chile): freeze 3 pilot forecast vintages [skip ci]"
           git pull --rebase origin faro-research-data
           git push origin HEAD:faro-research-data
+      - name: Preserve uncommitted snapshot if publishing fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: faro-archive-failure-${{ github.run_id }}
+          path: research-data/chile/forecast-snapshots/**/*.json.gz
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Summarise research archive outcome
+        if: always()
+        run: |
+          {
+            echo "### FARO · Chile forecast research archive"
+            echo "- Outcome: **${{ job.status }}**"
+            echo "- Purpose: freeze model predictions on the separate \`faro-research-data\` branch."
+            echo "- This job **does not build or publish FARO's live forecast website**."
+            echo "- Transient provider errors are retried; missing historical vintages are never invented or backfilled."
+            echo "- On failure, inspect the provider-request and git-push steps above."
+          } >> "$GITHUB_STEP_SUMMARY"
