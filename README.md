@@ -11,9 +11,11 @@ FARO helps decide **where and when to surf**, and what kind of session the model
 
 The website presents **ZEELAND · LIVE / CHILE · MODELO**. Zeeland retains its established forecast, KNMI warning links, widget and scoring. Chile now uses the **same core CSS and component hierarchy** and has a **model-fed Valparaíso view** with four source-located pilot beaches (La Boca, Reñaca, Ritoque, Maitencillo): seven days, 2-hour daylight windows, offshore wave/swell/wind data, UV, model-derived FARO VIBE with expanded FARO READ, Spot DNA (previously Spot Insight), experimental Best of Week and FARO Match.
 
-**Important:** Chile's weather/marine inputs are updated numerical model data, but spot-specific **/10 scores are guide-derived compatibility estimates capped at 7.9**, not calibrated breaking-wave quality, and do not certify safety. The current nearshore sampling locations are coastal references (not exact validated surf-bank coordinates). No Chilean official warning status is automatically checked; the small safety disclosure links the Armada, DMC and SENAPRED while independently screening modelled strong wind, rain and thunderstorms. Chile widgets remain deferred. The [regional research atlas](chile/atlas.html) continues to cover 16 regions and 73 candidate places without inventing forecast scores for unconfigured spots.
+**Important:** Chile's weather/marine inputs are updated numerical model data, but spot-specific **/10 scores are guide-derived experimental compatibility estimates on the full 0–10 scale (without the former artificial 7.9 cap)**, not calibrated breaking-wave quality, and do not certify safety. The current nearshore sampling locations are coastal references (not exact validated surf-bank coordinates). No Chilean official warning status is automatically checked; the small safety disclosure links the Armada, DMC and SENAPRED while independently screening modelled strong wind, rain and thunderstorms. Chile widgets remain deferred. The [regional research atlas](chile/atlas.html) continues to cover 16 regions and 73 candidate places without inventing forecast scores for unconfigured spots.
 
 **Favicon:** both countries use the actual salvavidas/O shape extracted from the official FARO SVG, without a background plate.
+
+**[FARO brand and reading system](docs/FARO_BRAND_AND_READING_SYSTEM.md)** — brand promise, colour semantics, scientific wording, two-depth UX and visual-regression criteria. The Chile reading page currently loads 29 CSS sheets; component-by-component consolidation remains an explicit architectural task rather than a completed refactor.
 
 ## Key features
 
@@ -27,7 +29,7 @@ The website presents **ZEELAND · LIVE / CHILE · MODELO**. Zeeland retains its 
 
 ## iPhone and iPad widgets
 
-**Coastal Editorial v13:** the visual hierarchy is now genuinely different, with a large isolated quality score, a separate blue offshore-model height tile, a segmented five-tone meter, clearer location/time and a dedicated FARO VIBE ribbon. The large WEEK option emphasises alternative daylight sessions.
+**Coastal Signal Editorial v21:** the visual hierarchy is now genuinely different, with a large isolated quality score, a separate blue offshore-model height tile, a segmented five-tone meter, clearer location/time and a dedicated FARO VIBE ribbon. The large WEEK option emphasises alternative daylight sessions.
 
 The `zeeland-widget.js` Scriptable source supports **small square, medium rectangle, large square, iPad extra large, and Lock Screen accessory** layouts with four styles: FLOW, MINIMAL, DATA, and WEEK.
 
@@ -37,7 +39,7 @@ The `zeeland-widget.js` Scriptable source supports **small square, medium rectan
 
 **[FARO Swell Compass spec](FARO_SWELL_COMPASS_SPEC.md)** — Chile includes the model-vector compass and a lazy-loaded coastal map with a real marine-grid swell sample point. Accurate bank coastline geometry, bathymetric refraction and breaking-wave-height calibration remain future milestones.
 
-**Desktop layout:** at 1120 px and wider, all seven days show together; the daily take and two-hour windows share a decision-first row. Tablet/mobile remain stacked. The final shared presentation contract is [`assets/faro-visual-system-v2.css`](assets/faro-visual-system-v2.css), layered after [`faro-desktop.css`](faro-desktop.css). Screenshot QA is still pending.
+**Desktop layout:** at 1120 px and wider, all seven days show together; the daily take and two-hour windows share a decision-first row. Tablet/mobile remain stacked. The final shared presentation contract is [`assets/faro-visual-system-v2.css`](assets/faro-visual-system-v2.css), layered after [`faro-desktop.css`](faro-desktop.css). The reading layout has automated Chromium/WebKit screenshot checks, which remain necessary after each visual change.
 
 You must replace the code of an existing Scriptable widget script with the current version for the changes to appear on your iPhone; updating this GitHub repository alone does not overwrite a script stored in Scriptable.
 
