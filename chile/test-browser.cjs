@@ -296,17 +296,20 @@ function fixture(){
     const selectedHeight=await page.locator('#faroHourlyPreview').evaluate(el=>el.getBoundingClientRect().height);
     assert.ok(selectedHeight<=168,
      'Selected-hour card should not stretch into a large blank panel: '+selectedHeight);
-    const selected=await page.locator('#faroHourlyHeadline').evaluate(el=>{
+    const selected=await page.locator('.faro-hourly-score-value').evaluate(el=>{
       const box=el.getBoundingClientRect();
       const frame=el.closest('#faroHourlyPreview').getBoundingClientRect();
-      const face=getComputedStyle(el.closest('.faro-hourly-front'));
-      return {headline:{x:box.x,y:box.y,width:box.width,height:box.height},
+      return {score:{x:box.x,y:box.y,width:box.width,height:box.height},
        frame:{x:frame.x,y:frame.y,width:frame.width,height:frame.height},
-       display:getComputedStyle(el).display,faceDisplay:face.display};
+       text:el.textContent};
     });
-    assert.ok(selected.headline.height>14&&selected.headline.y>=selected.frame.y&&
-      selected.headline.y+selected.headline.height<=selected.frame.y+selected.frame.height+2,
-      'Selected-hour verdict must be visible INSIDE the desktop instrument: '+JSON.stringify(selected));
+    assert.ok(selected.score.width>22&&selected.score.height>20&&
+      selected.score.y>=selected.frame.y&&
+      selected.score.y+selected.score.height<=selected.frame.y+selected.frame.height+2,
+      'Chosen FARO index must be visible inside the desktop instrument: '+JSON.stringify(selected));
+    assert.equal(selected.text.trim(),
+      (await page.locator('#slots > button.selected .chile-slot-score').textContent()).trim(),
+      'Chosen index and hourly rail must display the same model score');
    }
    // Both depths occupy the same fixed footprint without hiding safety.
    const fixedBefore=await page.locator('.faro-ocean-surface').boundingBox();
@@ -632,6 +635,10 @@ function fixture(){
    }
       // Selected-hour details stay in the same footprint as the compact reading.
     assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'read');
+    assert.equal(await page.locator('.faro-hourly-score-value').isVisible(),true,
+      'Model index is the visible, non-duplicated hourly headline');
+    assert.equal((await page.locator('.faro-hourly-score-value').textContent()).trim(),
+      (await page.locator('#slots > button.selected .chile-slot-score').textContent()).trim());
     const hourlySize=await page.locator('#faroHourlyPreview').boundingBox();
     await page.locator('.faro-hourly-flip').click();
     assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'signals');
