@@ -436,6 +436,48 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
   }
   #forecastPage #dayview #faroHourlyPreview .faro-hourly-window{height:77px!important;flex-basis:77px!important}
 }
+/* FARO's numerical score pigments must remain IDENTICAL in both themes.
+   The light-theme hour instrument therefore uses a deep-ocean background
+   instead of darkening canonical yellow/olive quality colours on white. */
+html[data-theme="light"] body main #forecastPage:not(.hide) .hourly-section #slots.slots{
+  background:radial-gradient(ellipse at 10% -30%,rgba(123,207,205,.15),transparent 66%),#19363a!important;
+  border-color:rgba(129,192,189,.55)!important;
+}
+html[data-theme="light"] body main #forecastPage:not(.hide) .hourly-section #slots.slots>button{
+  color:#eef6f2!important;border-right-color:rgba(139,194,193,.24)!important;
+  border-bottom-color:rgba(139,194,193,.24)!important;
+}
+html[data-theme="light"] body main #forecastPage:not(.hide) .hourly-section #slots.slots>button.selected{
+  background:rgba(113,192,187,.19)!important
+}
+html[data-theme="light"] #forecastPage #dayview .hourly-section #slots .chile-slot-hour{
+  color:#eef6f2!important
+}
+html[data-theme="light"] #forecastPage #dayview .hourly-section #slots .chile-slot-score{
+  color:var(--brand-score-ink,var(--fg))!important;
+  -webkit-text-fill-color:var(--brand-score-ink,var(--fg))!important
+}
+html[data-theme="light"] #forecastPage #dayview .hourly-section #slots .chile-slot-vibe{
+  color:#c3d8d5!important
+}
+html[data-theme="light"] body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview.faro-hourly-in-place{
+  background:linear-gradient(108deg,#244a4d,#1c383d)!important;
+  border-color:rgba(132,212,207,.68)!important;color:#f1f8f4!important
+}
+html[data-theme="light"] #forecastPage #dayview #faroHourlyPreview :is(
+  .faro-hourly-selected-time,.faro-hourly-score-note,.faro-hourly-score-unit,
+  .faro-hourly-why #faroHourlyHeadline,.faro-hourly-why #faroHourlyExplanation){
+  color:#f0f6f3!important
+}
+html[data-theme="light"] #forecastPage #dayview #faroHourlyPreview .faro-hourly-score-value{
+  color:var(--brand-score-ink,var(--fg))!important;
+  -webkit-text-fill-color:var(--brand-score-ink,var(--fg))!important
+}
+html[data-theme="light"] #forecastPage #dayview #faroHourlyPreview .faro-hourly-flip,
+html[data-theme="light"] #forecastPage #dayview #faroHourlyPreview > #faroHourlyGoLens{
+  color:#f0f6f3!important;border-color:rgba(155,227,220,.58)!important;
+  background:rgba(97,172,177,.16)!important
+}
 /* No constant animation, and gesture still works with reduced motion. */
 @media(prefers-reduced-motion:reduce){
   #forecastPage #dayview .faro-surface-window::after{animation:none!important}
