@@ -75,6 +75,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       dayview:rect('#dayview'),
       footer:rect('footer.chile-footer'),
       footerColumns:getComputedStyle(document.querySelector('footer.chile-footer')).gridTemplateColumns.split(' ').filter(Boolean).length,
+      hourlyRailBackground:getComputedStyle(document.querySelector('#slots')).backgroundColor,
       wave:rect('#daySignalMetrics>.chile-day-wave-feature'),
       period:rect('#daySignalMetrics>.day-signal-metric:nth-child(2)'),
       wind:rect('#daySignalMetrics>.day-signal-metric:nth-child(3)'),
@@ -113,6 +114,8 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     assert.ok(found.scrollWidth<=s.width+2,
       'horizontal page overflow '+JSON.stringify(found));
     assert.equal(found.redundantBridge,false,'duplicated promotional outro returned');
+    if(theme==='light')assert.equal(found.hourlyRailBackground,'rgb(25, 54, 58)',
+      'Light theme must keep canonical score colours readable on FARO deep-ocean hour rail');
     for(const k of ['hero','dock','dayview','footer']){
       assert.ok(found[k].width>s.width*.55,'collapsed '+k);
       assert.ok(found[k].left>=-3&&found[k].right<=s.width+3,'offscreen '+k);
