@@ -889,9 +889,11 @@ function session(){
  const s=selection(),d=state.forecast?.days?.[state.day],main=$("sessionAtGlance"),ess=$("sessionEssentials");
  main.replaceChildren();ess.replaceChildren();
  if(!s){
+  txt("sessionDetailSummary",tr("Sin franja","No window"));
   main.append(el("p",tr("No hay una franja evaluable. Selecciona otro horario antes de preparar el equipo.","No assessable window. Choose another time before preparing your gear."),"muted"));
   return;
  }
+ txt("sessionDetailSummary",sessionTime(s));
  // FARO Session Kit: one dominant recommendation and a conscious warmer
  // alternative, never a physiological wind-chill temperature prediction.
  const g=thermal(s);
@@ -1005,7 +1007,7 @@ function render(){
  paintAccessNotice();
  const session=selection();
  txt("sessionDetailSummary",session?
-  sessionTime(session)+" · "+wetsuit(session):
+  sessionTime(session):
   tr("Sin ventana disponible","No available window"));
  txt("updated",tr("Modelo consultado ","Model fetched ")+new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(state.forecast.model.fetchedAt))+" · CL");
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
