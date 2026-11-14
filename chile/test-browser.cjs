@@ -474,8 +474,10 @@ function fixture(){
     'Hourly score must show the same Zeeland quality caption');
    assert.equal(await page.locator('#sessionAtGlance .chile-session-rating').count(),0,
     'Gear checklist must not repeat the daily score and offshore wave instrument');
-   assert.match(await page.locator('#sessionDetailSummary').textContent(),/mm|Shorty|accesorios/i,
-    'Collapsed gear checklist names actual wetsuit guidance, rather than a duplicated score');
+   assert.match(await page.locator('#sessionDetailSummary').textContent(),/\\d{2}:\\d{2}/,
+    'Collapsed kit names its chosen time; suit guidance is shown once in the expanded reading');
+   assert.match(await page.locator('#sessionAtGlance .faro-kit-primary strong').textContent(),/mm/,
+    'Suit thickness must remain visible in the dominant kit instrument');
    await page.waitForFunction(()=>document.getElementById('detail')?.textContent?.includes('UTC'),{timeout:6000});
    // The technical drawer is intentionally collapsed; innerText is empty
    // for hidden elements, while textContent still exposes populated content.
