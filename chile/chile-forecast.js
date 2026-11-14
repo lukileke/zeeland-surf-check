@@ -946,7 +946,7 @@ function session(){
  const grid=state.forecast?.model?.marineGrid,metGrid=state.forecast?.model?.weatherGrid;
  const coverage=state.forecast?.model?.coverage;
  const coordinateStatus=state.forecast?.model?.referencePointStatus||"unverified";
- content.append(basicTable([
+ const scientificRows=[
   [tr("Oleaje total del modelo","Model total waves"),num(s.totalWaveHeightM)+" m"],
   [tr("Altura del swell primario","Primary swell height"),num(s.swellHeightM)+" m"],
   [tr("Período swell","Swell period"),num(s.swellPeriodS)+" s"],
@@ -974,7 +974,18 @@ function session(){
   [tr("Ventanas completas · 7 días","Complete windows · 7 days"),coverage?(coverage.completeSlots+"/"+coverage.totalSlots):"—"],
   [tr("Celda oceánica a referencia costera","Marine grid to coastal reference"),ok(grid?.distanceKm)?num(grid.distanceKm)+" km":tr("No disponible","Unavailable")],
   [tr("Celda meteorológica a referencia costera","Weather grid to coastal reference"),ok(metGrid?.distanceKm)?num(metGrid.distanceKm)+" km":tr("No disponible","Unavailable")]
- ]));
+ ];
+ const groups=[
+  [0,6,tr("01 · Oleaje y swell","01 · Waves & swell")],
+  [6,8,tr("02 · Viento","02 · Wind")],
+  [8,13,tr("03 · Ambiente","03 · Environment")],
+  [13,scientificRows.length,tr("04 · Trazabilidad del modelo","04 · Model provenance")]
+ ];
+ for(const [from,to,title] of groups){
+  const section=el("section",null,"faro-lab-readout-group");
+  section.append(el("h5",title),basicTable(scientificRows.slice(from,to)));
+  content.append(section);
+ }
  content.append(el("p",tr("Distancias desde una referencia costera, NO desde una rompiente georreferenciada. Estado de referencia: ","Distances from a coastal reference, NOT a surveyed breaking wave. Reference status: ")+coordinateStatus+". "+tr("La hora de consulta no es la hora de emisión del modelo.","Fetch time is not model issue time."),"muted"));
  content.append(el("p",tr("Open-Meteo: la celda marina NO representa la ola rompiente ni marea óptima. Nivel MSL: modelo grueso (~8 km) que incluye mareas y otros procesos; no es un mareógrafo local ni dato de navegación. La vigilancia oficial automatizada es parcial y no acredita condiciones seguras.","Open-Meteo grids do NOT resolve breaking surf or optimal tide. MSL sea level is a coarse (~8 km) tide-plus-other-process model, not a local gauge or navigation datum. Automated official-source monitoring is partial and does not establish safe conditions."),"muted"));
  const UV=el("div","UV "+num(s.uvIndex)+": "+(s.uv.protection||tr("Sin dato","Unavailable")),"chile-uv-note chile-uv-"+s.uv.category);content.append(UV);
