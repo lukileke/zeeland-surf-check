@@ -853,7 +853,7 @@ function fixture(){
    assert.equal(await page.locator('#chileOfficialSources').count(),1,
     'Official sources must remain accessible without modelled risk');
    await page.locator('#chileOfficialSources summary').click();
-   assert.ok(await page.locator('#chileOfficialSources .chile-source-links a[href="https://meteoarmada.directemar.cl/"]').isVisible(),
+   assert.ok(await page.locator('#faroOfficialSourceHealth a[href="https://meteoarmada.directemar.cl/"]').isVisible(),
     'The Armada source should remain discoverable in Before You Go');
    const chipText=await page.locator('#dayStripItems .day-chip').first().innerText();
    assert.ok(!chipText.includes('β')&&!chipText.includes('Promising'),
