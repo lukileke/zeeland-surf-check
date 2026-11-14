@@ -33,8 +33,15 @@ jobs:
           set -euo pipefail
           git config user.name 'faro-official-watch[bot]'
           git config user.email 'faro-official-watch[bot]@users.noreply.github.com'
+          # A fixed-name heartbeat already exists on the research branch after
+          # its first run. Save the newly checked file OUTSIDE the worktree
+          # before switching branches to avoid untracked-file checkout errors.
+          cp research-data/chile/official-watch.json "$RUNNER_TEMP/faro-official-watch.json"
+          rm research-data/chile/official-watch.json
           git fetch origin faro-research-data
           git switch -C faro-research-data origin/faro-research-data
+          mkdir -p research-data/chile
+          cp "$RUNNER_TEMP/faro-official-watch.json" research-data/chile/official-watch.json
           git add research-data/chile/official-watch.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "research(chile): official portal heartbeat (not clearance) [skip ci]"
