@@ -32,6 +32,8 @@ jobs:
         run: |
           node --test \
             tests/faro-css-budget.test.cjs \
+            tests/faro-thermal-guide.test.cjs \
+            tests/faro-official-monitor.test.mjs \
             tests/faro-editorial-hero-focus.test.cjs \
             tests/faro-editorial-experience.test.cjs \
             tests/faro-finish-pass.test.cjs \
