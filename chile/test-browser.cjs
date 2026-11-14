@@ -62,6 +62,16 @@ function fixture(){
    await context.route('**/fonts.gstatic.com/**',route=>route.abort());
    // Exercise the first-party geographic map independently of external CDN uptime.
    await context.route('**/unpkg.com/**',route=>route.abort());
+   await context.route('**/raw.githubusercontent.com/lukileke/zeeland-surf-check/faro-research-data/research-data/chile/official-watch.json**',
+    route=>route.fulfill({json:{
+     schema:1,region:"CL-VS",coverage:"partial",clearanceVerified:false,
+     checkedAt:new Date().toISOString(),
+     sources:[
+      {id:"armada",name:"SERVIMET",url:"https://meteoarmada.directemar.cl/",reachable:true},
+      {id:"senapred",name:"SENAPRED",url:"https://www.senapred.cl/alertas/",reachable:false},
+      {id:"dmc",name:"DMC",url:"https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml",reachable:true}
+     ]
+    }}));
    const page=await context.newPage();
    const scriptErrors=[];
    page.on('pageerror',err=>scriptErrors.push(err.message));
@@ -403,6 +413,31 @@ function fixture(){
     'Weekly comparison must start collapsed so the daily decision comes first');
    assert.equal(await page.locator('#sessionDetailExpand').evaluate(el=>el.open),false,
     'Session instrument must not duplicate daily statistics before expansion');
+   // The November 15 iPhone screenshot exposed a narrow vertical text column,
+   // a huge blank card and overlapping daylight data. Test actual geometry.
+   await page.locator('#sessionDetailExpand > summary').click();
+   const kit=await page.evaluate(()=>{
+    const rect=selector=>{
+     const e=document.querySelector(selector),r=e.getBoundingClientRect();
+     return {x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom};
+    };
+    return {body:rect('.chile-session-body'),glance:rect('#sessionAtGlance'),
+     signals:rect('#sessionEssentials'),daylight:rect('.daylight-disclosure'),
+     mode:getComputedStyle(document.querySelector('#sessionAtGlance')).writingMode};
+   });
+   assert.ok(kit.glance.width>=kit.body.width*.78&&kit.glance.right<=kit.body.right+2,
+    'Session briefing must not collapse into a narrow side column: '+JSON.stringify(kit));
+   assert.ok(kit.signals.y>=kit.glance.bottom-4&&kit.daylight.y>=kit.signals.bottom-4,
+    'Session kit, physical signals and daylight must stack without overlap: '+JSON.stringify(kit));
+   assert.equal(kit.mode,'horizontal-tb','Session guidance must read horizontally');
+   assert.equal(await page.locator('.faro-kit-primary strong').isVisible(),true);
+   assert.equal(await page.locator('#sessionEssentials .faro-kit-signal').count(),4);
+   await page.locator('#sessionDetailExpand > summary').click();
+   assert.equal(await page.locator('#faroScienceSnapshot .faro-lab-metric').count(),4,
+    'Ocean Lab must surface four scientific signals without expanding the entire data table');
+   await page.waitForFunction(()=>document.querySelector('#faroOfficialHeading')?.textContent.includes('consultadas'));
+   assert.match(await page.locator('#faroOfficialChecked').textContent(),/2 de 3/);
+   assert.match(await page.locator('#chileOfficialSources .chile-official-state').textContent(),/parcial/i);
    assert.match(await page.locator('#dayStripSelected').textContent(),/\/10/,
     'Collapsed weekly summary still identifies the current selection');
    await page.locator('#dayStrip > summary').click();
