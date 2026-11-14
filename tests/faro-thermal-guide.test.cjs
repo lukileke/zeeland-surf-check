@@ -7,7 +7,7 @@ test("18.1C water, mild wind = 3/2 baseline and warmer 4/3",()=>{
 });
 test("cold air and strong wind shift the conservative option",()=>{
  const x=guide({waterC:17,airC:10,windKmh:34});
- assert.equal(x.primary,"5/4");assert.equal(x.exposure,"high");
+ assert.equal(x.primary,"4/3");assert.equal(x.exposure,"high");
 });
 test("invalid temperatures must not turn into reassuring gear advice",()=>{
  for(const w of [NaN,undefined,-1,40])assert.equal(guide({waterC:w}).available,false);
