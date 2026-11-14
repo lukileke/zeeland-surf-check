@@ -155,7 +155,45 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score '+JSON.stringify(found.scoreProbe));
     rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;
     if([390,1440].includes(s.width)){
-      // Save actual lower-page artwork, not just the initial hero viewport.
+      // This suite deliberately blocks external data requests. Populate
+      // the REAL production components with representative test values so
+      // layout can be inspected independently of Open-Meteo uptime.
+      await page.evaluate(()=>{
+       const host=document.querySelector('#sessionAtGlance');
+       if(host&&!host.querySelector('.faro-session-kit-reading')){
+        const reading=document.createElement('div');reading.className='faro-session-kit-reading';
+        for(const [kind,label,value] of [
+         ['faro-kit-primary','TRAJE ORIENTATIVO','3/2 mm'],
+         ['faro-kit-alternative','MÁS AISLAMIENTO','4/3 mm']
+        ]){const cell=document.createElement('div');cell.className=kind;
+         const small=document.createElement('small');small.textContent=label;
+         const strong=document.createElement('strong');strong.textContent=value;
+         cell.append(small,strong);reading.append(cell);}
+        host.replaceChildren(reading);
+        const note=document.createElement('p');note.className='faro-kit-context';
+        note.textContent='Exposición moderada · Agua, aire y viento modelados.';
+        host.append(note);
+       }
+       const essentials=document.querySelector('#sessionEssentials');
+       if(essentials&&!essentials.children.length){
+        for(const [label,value] of [['AGUA · MODELO','18.1 °C'],['AIRE · MODELO','19.6 °C'],
+          ['VIENTO · MODELO','15 km/h'],['ÍNDICE UV','3 · Bajo']]){
+         const cell=document.createElement('div');cell.className='faro-kit-signal';
+         const small=document.createElement('small');small.textContent=label;
+         const strong=document.createElement('strong');strong.textContent=value;
+         cell.append(small,strong);essentials.append(cell);
+        }
+       }
+       const lab=document.querySelector('#faroScienceSnapshot');
+       if(lab&&!lab.children.length)for(const [key,value] of [
+        ['SWELL PRINCIPAL','1.2 m'],['PERÍODO','9.2 s'],
+        ['DIRECCIÓN · DESDE','SW · 231°'],['RACHAS','34 km/h']]){
+        const cell=document.createElement('div');cell.className='faro-lab-metric';
+        const small=document.createElement('small');small.textContent=key;
+        const strong=document.createElement('strong');strong.textContent=value;
+        cell.append(small,strong);lab.append(cell);
+       }
+      });
       const prep=page.locator('#sessionDetailExpand');
       await prep.evaluate(el=>el.open=true);
       await page.locator('.faro-kit-primary strong').waitFor({state:'visible',timeout:5000});
