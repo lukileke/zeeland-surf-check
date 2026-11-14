@@ -871,10 +871,19 @@ function compass(s){
   "Bearings indicate WHERE swell and wind come FROM. Arrows on the map show their direction of travel. Local refraction and breaking angle are not modelled."
  ),"chile-compass-note"));
 }
+function thermal(s){
+ return window.FaroThermalGuide?.guide({
+  waterC:s?.waterTemperatureC,airC:s?.temperatureC,windKmh:s?.windKmh
+ })||{available:false};
+}
 function wetsuit(s){
- if(!ok(s?.waterTemperatureC))return tr("Consultar temperatura real","Check observed water temperature");
- const t=s.waterTemperatureC;
- return t<12?tr("5/4 mm + accesorios","5/4 mm + accessories"):t<15?"4/3–5/4 mm":t<18?"3/2–4/3 mm":t<21?"3/2 mm":tr("Shorty o 3/2 mm","Shorty or 3/2 mm");
+ const g=thermal(s);
+ return g.available?g.primary+" mm":tr("Verificar temperatura del agua","Check water temperature");
+}
+function thermalExposure(g){
+ return g.exposure==="high"?tr("Mayor exposición","Higher exposure"):
+  g.exposure==="moderate"?tr("Exposición moderada","Moderate exposure"):
+  tr("Exposición suave","Mild exposure");
 }
 function session(){
  const s=selection(),d=state.forecast?.days?.[state.day],main=$("sessionAtGlance"),ess=$("sessionEssentials");
@@ -883,25 +892,33 @@ function session(){
   main.append(el("p",tr("No hay una franja evaluable. Selecciona otro horario antes de preparar el equipo.","No assessable window. Choose another time before preparing your gear."),"muted"));
   return;
  }
- // Day and hourly cards already contain the index, height and wind. This
- // drawer is a practical checklist, not a second forecast scoreboard.
- const intro=el("p",tr(
-  "Orientación de equipo para "+sessionTime(s)+". Confirma las condiciones en la playa y revisa los avisos oficiales.",
-  "Gear guidance for "+sessionTime(s)+". Check conditions at the beach and official notices."
- ),"chile-session-checklist-intro");
- main.append(intro);
+ // FARO Session Kit: one dominant recommendation and a conscious warmer
+ // alternative, never a physiological wind-chill temperature prediction.
+ const g=thermal(s);
+ const heading=el("div",null,"faro-session-kit-reading");
+ const primary=el("div",null,"faro-kit-primary");
+ primary.append(el("small",tr("TRAJE ORIENTATIVO","SUGGESTED SUIT")));
+ primary.append(el("strong",g.available?g.primary+" mm":"—"));
+ const alternative=el("div",null,"faro-kit-alternative");
+ alternative.append(el("small",tr("MÁS AISLAMIENTO","MORE INSULATION")));
+ alternative.append(el("strong",g.available&&g.warmerDistinct?g.warmer+" mm":"—"));
+ heading.append(primary,alternative);
+ main.append(heading);
+ const brief=el("p",g.available?
+  thermalExposure(g)+" · "+tr("Agua, aire y viento modelados. Ajusta según duración y tolerancia al frío.",
+    "Modelled water, air and wind. Adjust for session length and cold tolerance."):
+  tr("Sin datos suficientes para orientar el traje.","Insufficient data for suit guidance."),"faro-kit-context");
+ main.append(brief);
  const essentials=[
-  ["wetsuit",wetsuit(s)],
-  ["water-temperature",num(s.waterTemperatureC)+" °C"],
-  ["air-temperature",num(s.temperatureC)+" °C"],
-  ["wind-speed",num(s.windKmh,0)+" km/h"],
-  ["uv-index","UV "+num(s.uvIndex)+" · "+s.uv.name]
+  ["water-temperature",tr("AGUA · MODELO","WATER · MODEL"),num(s.waterTemperatureC)+" °C"],
+  ["air-temperature",tr("AIRE · MODELO","AIR · MODEL"),num(s.temperatureC)+" °C"],
+  ["wind-speed",tr("VIENTO · MODELO","WIND · MODEL"),num(s.windKmh,0)+" km/h"],
+  ["uv-index",tr("ÍNDICE UV","UV INDEX"),num(s.uvIndex)+" · "+s.uv.name]
  ];
- for(const [kind,label]of essentials){
-  const cls="essential-tag"+(kind==="uv-index"?" chile-uv-tag chile-uv-"+s.uv.category:"");
-  const tag=el("span",null,cls);
+ for(const [kind,label,value] of essentials){
+  const tag=el("div",null,"faro-kit-signal"+(kind==="uv-index"?" chile-uv-tag chile-uv-"+s.uv.category:""));
   const icon=el("span",null,"faro-icon-slot");icon.setAttribute("data-faro-icon",kind);
-  tag.append(icon,document.createTextNode(label));ess.append(tag);
+  tag.append(icon,el("small",label),el("strong",value));ess.append(tag);
  }
  txt("rise",d.sunrise?.slice(11,16)||"—");txt("set",d.sunset?.slice(11,16)||"—");
  const sunset=d.sunset?.slice(11,16).split(":").map(Number);
@@ -942,10 +959,17 @@ function session(){
   [tr("Celda meteorológica a referencia costera","Weather grid to coastal reference"),ok(metGrid?.distanceKm)?num(metGrid.distanceKm)+" km":tr("No disponible","Unavailable")]
  ]));
  content.append(el("p",tr("Distancias desde una referencia costera, NO desde una rompiente georreferenciada. Estado de referencia: ","Distances from a coastal reference, NOT a surveyed breaking wave. Reference status: ")+coordinateStatus+". "+tr("La hora de consulta no es la hora de emisión del modelo.","Fetch time is not model issue time."),"muted"));
- content.append(el("p",tr("Open-Meteo: la celda marina NO representa la ola rompiente ni marea óptima. Nivel MSL: modelo grueso (~8 km) que incluye mareas y otros procesos; no es un mareógrafo local ni dato de navegación. Avisos oficiales sin verificación automática.","Open-Meteo grids do NOT resolve breaking surf or optimal tide. MSL sea level is a coarse (~8 km) tide-plus-other-process model, not a local gauge or navigation datum. Official alerts are not automatically checked."),"muted"));
+ content.append(el("p",tr("Open-Meteo: la celda marina NO representa la ola rompiente ni marea óptima. Nivel MSL: modelo grueso (~8 km) que incluye mareas y otros procesos; no es un mareógrafo local ni dato de navegación. La vigilancia oficial automatizada es parcial y no acredita condiciones seguras.","Open-Meteo grids do NOT resolve breaking surf or optimal tide. MSL sea level is a coarse (~8 km) tide-plus-other-process model, not a local gauge or navigation datum. Automated official-source monitoring is partial and does not establish safe conditions."),"muted"));
  const UV=el("div","UV "+num(s.uvIndex)+": "+(s.uv.protection||tr("Sin dato","Unavailable")),"chile-uv-note chile-uv-"+s.uv.category);content.append(UV);
  link(content,tr("DMC · Radiación UV oficial","DMC · Official UV forecast"),"https://www.meteochile.gob.cl/PortalDMC-web/otros_pronosticos/radiacion_uv.xhtml");
- const wear=$("wetsuit");wear.replaceChildren(el("h3",tr("Equipo recomendado con cautela","Tentative gear advice")),el("p",wetsuit(s)+" · "+tr("Agua modelada ","Modelled water ")+num(s.waterTemperatureC)+" °C"),el("p",tr("Depende de viento, duración, temperatura real y tolerancia personal al frío.","Depends on wind, duration, real water temperature and personal cold tolerance."),"muted"));
+ const wear=$("wetsuit");
+ wear.replaceChildren(el("p",tr("El traje se calcula para la sesión elegida en el panel de preparación. Esta guía utiliza agua, aire y viento modelados, no una temperatura corporal calculada.",
+  "The selected session kit is shown in the preparation panel. The guide uses modelled water, air and wind, not calculated body temperature."),"muted"));
+ const goto=el("button",tr("Ver equipo de la sesión","See session kit"),"faro-kit-goto");
+ goto.type="button";goto.addEventListener("click",()=>{
+  const panel=$("sessionDetailExpand");panel.open=true;panel.scrollIntoView({block:"center",behavior:"smooth"});
+ });
+ wear.append(goto);
  compass(s);
 }
 function render(){
