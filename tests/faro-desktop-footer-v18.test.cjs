@@ -11,7 +11,7 @@ const css=read('chile/faro-decision-balance-v1.css');
 test('fix loaded as the final layout sheet, then immutable score-colour lock',()=>{
  const links=[...html.split('</head>')[0].matchAll(/href="([^"]+\.css\?v=\d+)"/g)].map(x=>x[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=5');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=6');
  assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=4');
  assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/faro-decision-balance-v1.css'));
  assert.doesNotMatch(css,/--faro-score-[0-4]\s*:|--brand-score-ink\s*:/);
@@ -51,5 +51,5 @@ test('narrow viewport keeps reading sequence and all facts',()=>{
  assert.ok(css.includes('@media(max-width:710px)'));
  assert.ok(css.includes('@media(max-width:375px)'));
  assert.ok(css.includes('grid-column:1/-1!important;grid-row:auto!important'));
- assert.ok(html.includes('chile-forecast.js?v=46'));
+ assert.ok(html.includes('chile-forecast.js?v=47'));
 });
