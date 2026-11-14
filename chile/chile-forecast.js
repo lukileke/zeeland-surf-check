@@ -507,7 +507,7 @@ function risk(hazard){
  if(level==="caution")container.classList.add("caution","chile-model-caution");
  txt("chileRiskGrade",level==="danger"?tr("RIESGO MODELO","MODEL RISK"):level==="caution"?tr("PRECAUCIÓN","CAUTION"):tr("FUENTES OFICIALES","OFFICIAL SOURCES"));
  txt("chileRiskTitle",["danger","caution"].includes(level)?hazard.label:tr("Consulta marejadas y avisos oficiales","Check official coastal notices"));
- txt("chileRiskMeta",tr("Avisos oficiales no consultados automáticamente · 48 h","Official notices not automatically checked · 48h"));
+ txt("chileRiskMeta",tr("Portales oficiales consultados periódicamente · vigencia no certificada","Official portals periodically checked · bulletin validity unverified"));
  txt("chileRiskExplanation",tr("FARO puede detectar viento, tormentas y lluvia en el modelo. Un aviso oficial de marejadas es diferente y todavía requiere consultar a la Armada. La ausencia de riesgo modelado NO significa ausencia de alerta oficial.","FARO can screen wind, thunderstorms and rainfall in the model. Official swell warnings require checking the Navy. No model threshold crossed does NOT mean no official warning."));
  const host=$("chileRiskSignals");
  if(host){
@@ -520,7 +520,7 @@ function risk(hazard){
    host.append(line);
   }
   const official=el("div",null,"chile-risk-item chile-risk-official");
-  official.append(el("strong",tr("Marejadas · Armada","Ocean swell · Navy")),el("span",tr("Estado no comprobado · abrir fuente oficial","Status not checked · see official source")));
+  official.append(el("strong",tr("Marejadas · Armada","Ocean swell · Navy")),el("span",tr("Revisión automática parcial · confirmar boletín","Partial automatic check · confirm bulletin")));
   host.append(official);
   const uv=el("div",null,"chile-risk-item chile-risk-official");
   uv.append(el("strong",tr("Radiación UV","UV radiation")),el("span",tr("Pronóstico UV en horario; no es alerta oficial","UV forecast shown by hour; not an official warning")));
