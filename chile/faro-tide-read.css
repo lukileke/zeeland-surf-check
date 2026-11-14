@@ -363,7 +363,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
  * time grid, while the model input card may naturally be taller. */
 @media(min-width:1120px) {
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section {
-  justify-content:flex-start!important;
+  
   height:auto!important;
  }
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview{
@@ -460,7 +460,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
 @media(min-width:1120px){
  html body main #forecastPage:not(.hide)>#dayview:not(.hide){
   grid-template-columns:minmax(0,1.01fr) minmax(0,1.09fr)!important;
-  align-items:start!important;
+  
   gap:clamp(16px,1.6vw,22px)!important;
  }
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section,
@@ -469,7 +469,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
   align-self:start!important;height:auto!important;
  }
  html body main #forecastPage:not(.hide) #dailyOverview{
-  height:auto!important;min-height:0!important;
+  min-height:0!important;
   gap:0!important;
   padding:clamp(16px,1.5vw,21px)!important;
  }
