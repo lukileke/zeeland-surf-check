@@ -28,7 +28,7 @@ async function inspect(now=new Date(),fetcher=fetch){
 }
 if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1])){
  const out=await inspect();
- await fs.writeFile("research-data/chile/official-watch.json",JSON.stringify(out,null,2)+"\n");
+ await fs.mkdir("research-data/chile",{recursive:true});\n await fs.writeFile("research-data/chile/official-watch.json",JSON.stringify(out,null,2)+"\n");
  console.log("FARO official watch: checked "+out.sources.filter(s=>s.reachable).length+
   "/"+out.sources.length+" portals. State remains partial/unverified.");
 }
