@@ -22,7 +22,7 @@ test('only 19 CSS files in Chile; invariant score palette is the last sheet',()=
 });
 test('explicit important budget cannot silently grow',()=>{
  const total=sheets.reduce((sum,x)=>sum+x.important,0);
- assert.ok(total<=7634,'CSS important debt increased: '+total+' > 7634. Refactor before adding priority overrides.');
+ assert.ok(total<=7540,'CSS important debt increased: '+total+' > 7540. Refactor before adding priority overrides.');
  const bytes=sheets.reduce((sum,x)=>sum+x.bytes,0);
  assert.ok(bytes<=700000,'CSS payload grew past 700 kB: '+bytes);
 });
