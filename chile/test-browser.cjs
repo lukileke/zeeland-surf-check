@@ -43,7 +43,7 @@ function fixture(){
  },daily:{time:dates.map(d=>fromLocal(d)),sunrise:dates.map(d=>fromLocal(d,7,15)),
   sunset:dates.map(d=>fromLocal(d,20,15)),uv_index_max:dates.map(()=>7),
   precipitation_sum:dates.map(()=>0)}};
- return {marine,weather};
+ return {marine,weather,testNowMs:fromLocal(dates[0],9,0)*1000};
 }
 (async()=>{
  const server=spawn('python3',['-m','http.server',String(port),'--bind','127.0.0.1'],{
@@ -52,10 +52,19 @@ function fixture(){
  let browser;
  try{
   await new Promise(ok=>setTimeout(ok,800));
-  const {marine,weather}=fixture();
+  const {marine,weather,testNowMs}=fixture();
   browser=await chromium.launch({headless:true,channel:'chrome'});
   for(const width of [375,390,430,768,1180,1440]){
    const context=await browser.newContext({viewport:{width,height:840},deviceScaleFactor:1});
+   // Freeze at a deterministic 09:00 Chile-local model reading. Without this,
+   // sunset causes the entire 'best remaining' session to vanish after 20:00.
+   await context.addInitScript(ms=>{
+    const NativeDate=Date;
+    window.Date=class FaroTestDate extends NativeDate{
+     constructor(...args){if(args.length)super(...args);else super(ms)}
+     static now(){return ms}
+    };
+   },testNowMs);
    await context.route('**/marine-api.open-meteo.com/**',route=>route.fulfill({json:marine}));
    await context.route('**/api.open-meteo.com/**',route=>route.fulfill({json:weather}));
    await context.route('**/fonts.googleapis.com/**',route=>route.abort());
