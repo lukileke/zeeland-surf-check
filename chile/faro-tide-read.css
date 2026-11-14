@@ -1553,3 +1553,35 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a:hover{text-
  }
  #forecastPage #dayview>.session-section .faro-official-health{grid-template-columns:minmax(0,1fr)}
 }
+
+/* FARO Ocean Lab chapters: four navigable groups instead of one data wall. */
+#forecastPage .faro-technical-inner .faro-lab-readout-group{
+  border:1px solid rgba(145,210,204,.24);border-radius:12px;
+  overflow:hidden;margin:9px 0 13px;min-width:0
+}
+#forecastPage .faro-technical-inner .faro-lab-readout-group>h5{
+  margin:0;padding:12px 13px;font-size:10px;font-weight:850;
+  letter-spacing:.115em;line-height:1.4;color:var(--faro-accent,#9acdcc);
+  border-bottom:1px solid rgba(149,205,199,.25);
+  background:linear-gradient(100deg,rgba(86,171,169,.15),transparent)
+}
+#forecastPage .faro-technical-inner .faro-lab-readout-group>.chile-model-table{
+  margin:0;width:100%;min-width:0;border:0
+}
+#forecastPage .faro-technical-inner .faro-lab-readout-group .chile-model-table tr:last-child :is(td,th){
+  border-bottom:0
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav{
+  align-items:start
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav>div{
+  min-width:0
+}
+html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a[href="#faroForecastLead"]{
+  color:var(--faro-accent,#a5d4cf);font-weight:750
+}
+@media(min-width:960px){
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav{
+  grid-template-columns:repeat(3,minmax(0,1fr))
+ }
+}
