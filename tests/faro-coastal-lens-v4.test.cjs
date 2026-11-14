@@ -123,7 +123,8 @@ test('FARO refresh replaces empty utility-first top with real-data branded lead'
  assert.match(html,/id="faroLeadTime"/);
  assert.match(html,/id="faroLeadRead"/);
  assert.match(html,/id="faroLeadMap"/);
- assert.match(html,/faro-brand-refresh-v1\.css\?v=2/);
+ assert.match(html,/faro-editorial-experience-v2\\.css\\?v=4/);
+ assert.ok(read('chile/faro-editorial-experience-v2.css').includes('FARO source: chile/faro-brand-refresh-v1.css'));
  const lead=html.indexOf('id="faroForecastLead"');
  const tools=html.indexOf('class="forecast-toolbar"');
  const detailed=html.indexOf('id="dailyOverview"');
