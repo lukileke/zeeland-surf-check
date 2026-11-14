@@ -21,7 +21,7 @@ html,body{overflow-x:clip}
 #forecastPage>.forecast-toolbar{margin-bottom:14px!important}
 #forecastPage .picker-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
 #forecastPage .chile-spot-picker{min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
- border:1px solid var(--faro-line)!important;border-radius:15px;background:var(--tile);padding:13px 15px;min-height:79px}
+ border-radius:15px;background:var(--tile);padding:13px 15px;min-height:79px}
 .chile-spot-picker>small{font-size:10px!important;letter-spacing:.12em;font-weight:850;color:var(--faro-quiet)!important}
 .chile-spot-picker>strong{font-size:clamp(13px,2.4vw,20px);font-weight:850;color:var(--fg)}
 .chile-field-hint{font-size:9px!important;color:var(--faro-quiet)!important;line-height:1.3}
@@ -383,29 +383,29 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
  #forecastPage > .day-outlook-section{grid-column:1/span 5!important}
  #forecastPage #dayview>.hourly-section{grid-column:6/-1!important}
  #forecastPage #dayview>.session-section{
-   grid-column:1/span 7!important;grid-row:auto!important;
-   min-width:0;align-self:stretch!important;margin:0!important
+   
+   min-width:0;margin:0!important
  }
  #forecastPage #dayview>.session-section .session-glance{padding:20px 22px!important}
  #forecastPage #dayview>.session-section .chile-session-meta{margin-top:6px!important}
  #forecastPage #dayview>#coastMapExpand{
-   grid-column:8/-1!important;grid-row:auto!important;
-   align-self:stretch!important;min-width:0!important;
+   
+   min-width:0!important;
    margin:0!important;display:block;
    background:var(--tile);border:1px solid var(--faro-line);
    border-radius:16px;overflow:hidden;
  }
  #forecastPage #dayview>#coastMapExpand[open]{display:block}
  #forecastPage #dayview>#coastMapExpand>summary{
-   font-size:12px!important;padding:15px!important;min-height:55px!important;
+   font-size:12px!important;padding:15px!important;
    border-bottom:1px solid var(--faro-line);display:flex;gap:9px;align-items:center
  }
  #forecastPage #dayview>#coastMapExpand .forecast-accordion-meta{font-size:10px!important}
  #forecastPage #dayview>#coastMapExpand .faro-map-wrap{
-   grid-template-columns:1fr!important;gap:8px!important;padding:11px!important
+   grid-template-columns:1fr!important;padding:11px!important
  }
  #forecastPage #dayview>#coastMapExpand .faro-map-viewport{
-   height:235px!important;min-height:235px!important;
+   
  }
  #forecastPage #dayview>#coastMapExpand .faro-map-brief{
    display:grid;grid-template-columns:1fr;gap:5px;padding:4px 0

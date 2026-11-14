@@ -16,13 +16,13 @@ const get=p=>fs.readFileSync(path.join(root,'chile',p),'utf8');
 test('only 19 CSS files in Chile; invariant score palette is the last sheet',()=>{
  assert.equal(sheets.length,19,'The 2026-11-15 CSS request budget regressed');
  assert.equal(sheets.at(-1).href,'faro-score-colour-lock-v1.css?v=1');
- assert.equal(sheets.at(-2).href,'faro-tide-read.css?v=5');
+ assert.equal(sheets.at(-2).href,'faro-tide-read.css?v=6');
  assert.equal(sheets.at(-3).href,'faro-editorial-experience-v2.css?v=4');
  assert.ok(!sheets.some(x=>/@import\s/.test(x.css)),'Avoid hidden extra CSS requests');
 });
 test('explicit important budget cannot silently grow',()=>{
  const total=sheets.reduce((sum,x)=>sum+x.important,0);
- assert.ok(total<=7634,'CSS important debt increased: '+total+' > 7634. Refactor before adding priority overrides.');
+ assert.ok(total<=7540,'CSS important debt increased: '+total+' > 7540. Refactor before adding priority overrides.');
  const bytes=sheets.reduce((sum,x)=>sum+x.bytes,0);
  assert.ok(bytes<=700000,'CSS payload grew past 700 kB: '+bytes);
 });

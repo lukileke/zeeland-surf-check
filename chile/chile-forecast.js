@@ -507,7 +507,7 @@ function risk(hazard){
  if(level==="caution")container.classList.add("caution","chile-model-caution");
  txt("chileRiskGrade",level==="danger"?tr("RIESGO MODELO","MODEL RISK"):level==="caution"?tr("PRECAUCIÓN","CAUTION"):tr("FUENTES OFICIALES","OFFICIAL SOURCES"));
  txt("chileRiskTitle",["danger","caution"].includes(level)?hazard.label:tr("Consulta marejadas y avisos oficiales","Check official coastal notices"));
- txt("chileRiskMeta",tr("Avisos oficiales no consultados automáticamente · 48 h","Official notices not automatically checked · 48h"));
+ txt("chileRiskMeta",tr("Portales oficiales consultados periódicamente · vigencia no certificada","Official portals periodically checked · bulletin validity unverified"));
  txt("chileRiskExplanation",tr("FARO puede detectar viento, tormentas y lluvia en el modelo. Un aviso oficial de marejadas es diferente y todavía requiere consultar a la Armada. La ausencia de riesgo modelado NO significa ausencia de alerta oficial.","FARO can screen wind, thunderstorms and rainfall in the model. Official swell warnings require checking the Navy. No model threshold crossed does NOT mean no official warning."));
  const host=$("chileRiskSignals");
  if(host){
@@ -520,7 +520,7 @@ function risk(hazard){
    host.append(line);
   }
   const official=el("div",null,"chile-risk-item chile-risk-official");
-  official.append(el("strong",tr("Marejadas · Armada","Ocean swell · Navy")),el("span",tr("Estado no comprobado · abrir fuente oficial","Status not checked · see official source")));
+  official.append(el("strong",tr("Marejadas · Armada","Ocean swell · Navy")),el("span",tr("Revisión automática parcial · confirmar boletín","Partial automatic check · confirm bulletin")));
   host.append(official);
   const uv=el("div",null,"chile-risk-item chile-risk-official");
   uv.append(el("strong",tr("Radiación UV","UV radiation")),el("span",tr("Pronóstico UV en horario; no es alerta oficial","UV forecast shown by hour; not an official warning")));
@@ -871,48 +871,84 @@ function compass(s){
   "Bearings indicate WHERE swell and wind come FROM. Arrows on the map show their direction of travel. Local refraction and breaking angle are not modelled."
  ),"chile-compass-note"));
 }
+function thermal(s){
+ return window.FaroThermalGuide?.guide({
+  waterC:s?.waterTemperatureC,airC:s?.temperatureC,windKmh:s?.windKmh
+ })||{available:false};
+}
 function wetsuit(s){
- if(!ok(s?.waterTemperatureC))return tr("Consultar temperatura real","Check observed water temperature");
- const t=s.waterTemperatureC;
- return t<12?tr("5/4 mm + accesorios","5/4 mm + accessories"):t<15?"4/3–5/4 mm":t<18?"3/2–4/3 mm":t<21?"3/2 mm":tr("Shorty o 3/2 mm","Shorty or 3/2 mm");
+ const g=thermal(s);
+ return g.available?g.primary+" mm":tr("Verificar temperatura del agua","Check water temperature");
+}
+function thermalExposure(g){
+ return g.exposure==="high"?tr("Mayor exposición","Higher exposure"):
+  g.exposure==="moderate"?tr("Exposición moderada","Moderate exposure"):
+  tr("Exposición suave","Mild exposure");
 }
 function session(){
  const s=selection(),d=state.forecast?.days?.[state.day],main=$("sessionAtGlance"),ess=$("sessionEssentials");
  main.replaceChildren();ess.replaceChildren();
  if(!s){
+  txt("sessionDetailSummary",tr("Sin franja","No window"));
   main.append(el("p",tr("No hay una franja evaluable. Selecciona otro horario antes de preparar el equipo.","No assessable window. Choose another time before preparing your gear."),"muted"));
   return;
  }
- // Day and hourly cards already contain the index, height and wind. This
- // drawer is a practical checklist, not a second forecast scoreboard.
- const intro=el("p",tr(
-  "Orientación de equipo para "+sessionTime(s)+". Confirma las condiciones en la playa y revisa los avisos oficiales.",
-  "Gear guidance for "+sessionTime(s)+". Check conditions at the beach and official notices."
- ),"chile-session-checklist-intro");
- main.append(intro);
+ txt("sessionDetailSummary",sessionTime(s));
+ // FARO Session Kit: one dominant recommendation and a conscious warmer
+ // alternative, never a physiological wind-chill temperature prediction.
+ const g=thermal(s);
+ const heading=el("div",null,"faro-session-kit-reading");
+ const primary=el("div",null,"faro-kit-primary");
+ primary.append(el("small",tr("TRAJE ORIENTATIVO","SUGGESTED SUIT")));
+ primary.append(el("strong",g.available?g.primary+" mm":"—"));
+ const alternative=el("div",null,"faro-kit-alternative");
+ alternative.append(el("small",tr("MÁS AISLAMIENTO","MORE INSULATION")));
+ alternative.append(el("strong",g.available&&g.warmerDistinct?g.warmer+" mm":"—"));
+ heading.append(primary,alternative);
+ main.append(heading);
+ const brief=el("p",g.available?
+  thermalExposure(g)+" · "+tr("Agua, aire y viento modelados. Ajusta según duración y tolerancia al frío.",
+    "Modelled water, air and wind. Adjust for session length and cold tolerance."):
+  tr("Sin datos suficientes para orientar el traje.","Insufficient data for suit guidance."),"faro-kit-context");
+ main.append(brief);
  const essentials=[
-  ["wetsuit",wetsuit(s)],
-  ["water-temperature",num(s.waterTemperatureC)+" °C"],
-  ["air-temperature",num(s.temperatureC)+" °C"],
-  ["wind-speed",num(s.windKmh,0)+" km/h"],
-  ["uv-index","UV "+num(s.uvIndex)+" · "+s.uv.name]
+  ["water-temperature",tr("AGUA · MODELO","WATER · MODEL"),num(s.waterTemperatureC)+" °C"],
+  ["air-temperature",tr("AIRE · MODELO","AIR · MODEL"),num(s.temperatureC)+" °C"],
+  ["wind-speed",tr("VIENTO · MODELO","WIND · MODEL"),num(s.windKmh,0)+" km/h"],
+  ["uv-index",tr("ÍNDICE UV","UV INDEX"),num(s.uvIndex)+" · "+s.uv.name]
  ];
- for(const [kind,label]of essentials){
-  const cls="essential-tag"+(kind==="uv-index"?" chile-uv-tag chile-uv-"+s.uv.category:"");
-  const tag=el("span",null,cls);
+ for(const [kind,label,value] of essentials){
+  const tag=el("div",null,"faro-kit-signal"+(kind==="uv-index"?" chile-uv-tag chile-uv-"+s.uv.category:""));
   const icon=el("span",null,"faro-icon-slot");icon.setAttribute("data-faro-icon",kind);
-  tag.append(icon,document.createTextNode(label));ess.append(tag);
+  tag.append(icon,el("small",label),el("strong",value));ess.append(tag);
  }
  txt("rise",d.sunrise?.slice(11,16)||"—");txt("set",d.sunset?.slice(11,16)||"—");
  const sunset=d.sunset?.slice(11,16).split(":").map(Number);
  const cut=sunset?.length===2?Math.max(0,sunset[0]*60+sunset[1]-35):null;
  const out=cut===null?"—":h(Math.floor(cut/60))+":"+h(cut%60);
  txt("cutoff",out);txt("daylightBrief",tr("Salida sugerida ","Suggested exit ")+out);
+ const science=$("faroScienceSnapshot");
+ if(science){
+  science.replaceChildren();
+  const metrics=[
+   [tr("SWELL PRINCIPAL","PRIMARY SWELL"),num(s.swellHeightM)+" m"],
+   [tr("PERÍODO","PERIOD"),num(s.swellPeriodS)+" s"],
+   [tr("DIRECCIÓN · DESDE","DIRECTION · FROM"),Live.cardinal(s.swellDirection)+" · "+num(s.swellDirection,0)+"°"],
+   [tr("RACHA MÁX.","GUSTS"),num(s.gustKmh,0)+" km/h"]
+  ];
+  for(const [name,value]of metrics){
+   const cell=el("div",null,"faro-lab-metric");
+   cell.append(el("small",name),el("strong",value));
+   science.append(cell);
+  }
+  const caveat=el("p",tr("Modelo oceánico, no medida de la rompiente.","Offshore model, not a measured breaking wave."),"faro-lab-caveat");
+  science.append(caveat);
+ }
  const content=$("detail");content.replaceChildren();
  const grid=state.forecast?.model?.marineGrid,metGrid=state.forecast?.model?.weatherGrid;
  const coverage=state.forecast?.model?.coverage;
  const coordinateStatus=state.forecast?.model?.referencePointStatus||"unverified";
- content.append(basicTable([
+ const scientificRows=[
   [tr("Oleaje total del modelo","Model total waves"),num(s.totalWaveHeightM)+" m"],
   [tr("Altura del swell primario","Primary swell height"),num(s.swellHeightM)+" m"],
   [tr("Período swell","Swell period"),num(s.swellPeriodS)+" s"],
@@ -940,20 +976,39 @@ function session(){
   [tr("Ventanas completas · 7 días","Complete windows · 7 days"),coverage?(coverage.completeSlots+"/"+coverage.totalSlots):"—"],
   [tr("Celda oceánica a referencia costera","Marine grid to coastal reference"),ok(grid?.distanceKm)?num(grid.distanceKm)+" km":tr("No disponible","Unavailable")],
   [tr("Celda meteorológica a referencia costera","Weather grid to coastal reference"),ok(metGrid?.distanceKm)?num(metGrid.distanceKm)+" km":tr("No disponible","Unavailable")]
- ]));
+ ];
+ const groups=[
+  [0,6,tr("01 · Oleaje y swell","01 · Waves & swell")],
+  [6,8,tr("02 · Viento","02 · Wind")],
+  [8,13,tr("03 · Ambiente","03 · Environment")],
+  [13,scientificRows.length,tr("04 · Trazabilidad del modelo","04 · Model provenance")]
+ ];
+ for(const [from,to,title] of groups){
+  const section=el("section",null,"faro-lab-readout-group");
+  section.append(el("h5",title),basicTable(scientificRows.slice(from,to)));
+  content.append(section);
+ }
  content.append(el("p",tr("Distancias desde una referencia costera, NO desde una rompiente georreferenciada. Estado de referencia: ","Distances from a coastal reference, NOT a surveyed breaking wave. Reference status: ")+coordinateStatus+". "+tr("La hora de consulta no es la hora de emisión del modelo.","Fetch time is not model issue time."),"muted"));
- content.append(el("p",tr("Open-Meteo: la celda marina NO representa la ola rompiente ni marea óptima. Nivel MSL: modelo grueso (~8 km) que incluye mareas y otros procesos; no es un mareógrafo local ni dato de navegación. Avisos oficiales sin verificación automática.","Open-Meteo grids do NOT resolve breaking surf or optimal tide. MSL sea level is a coarse (~8 km) tide-plus-other-process model, not a local gauge or navigation datum. Official alerts are not automatically checked."),"muted"));
+ content.append(el("p",tr("Open-Meteo: la celda marina NO representa la ola rompiente ni marea óptima. Nivel MSL: modelo grueso (~8 km) que incluye mareas y otros procesos; no es un mareógrafo local ni dato de navegación. La vigilancia oficial automatizada es parcial y no acredita condiciones seguras.","Open-Meteo grids do NOT resolve breaking surf or optimal tide. MSL sea level is a coarse (~8 km) tide-plus-other-process model, not a local gauge or navigation datum. Automated official-source monitoring is partial and does not establish safe conditions."),"muted"));
  const UV=el("div","UV "+num(s.uvIndex)+": "+(s.uv.protection||tr("Sin dato","Unavailable")),"chile-uv-note chile-uv-"+s.uv.category);content.append(UV);
  link(content,tr("DMC · Radiación UV oficial","DMC · Official UV forecast"),"https://www.meteochile.gob.cl/PortalDMC-web/otros_pronosticos/radiacion_uv.xhtml");
- const wear=$("wetsuit");wear.replaceChildren(el("h3",tr("Equipo recomendado con cautela","Tentative gear advice")),el("p",wetsuit(s)+" · "+tr("Agua modelada ","Modelled water ")+num(s.waterTemperatureC)+" °C"),el("p",tr("Depende de viento, duración, temperatura real y tolerancia personal al frío.","Depends on wind, duration, real water temperature and personal cold tolerance."),"muted"));
+ const wear=$("wetsuit");
+ wear.replaceChildren(el("p",tr("El traje se calcula para la sesión elegida en el panel de preparación. Esta guía utiliza agua, aire y viento modelados, no una temperatura corporal calculada.",
+  "The selected session kit is shown in the preparation panel. The guide uses modelled water, air and wind, not calculated body temperature."),"muted"));
+ const goto=el("button",tr("Ver equipo de la sesión","See session kit"),"faro-kit-goto");
+ goto.type="button";goto.addEventListener("click",()=>{
+  const panel=$("sessionDetailExpand");panel.open=true;panel.scrollIntoView({block:"center",behavior:"smooth"});
+ });
+ wear.append(goto);
  compass(s);
 }
 function render(){
  if(!state.forecast)return;
+ txt("chileLiveState",state.dataStale?tr("GUARDADO","CACHED"):tr("LIVE · MODELO","LIVE · MODEL"));
  paintAccessNotice();
  const session=selection();
  txt("sessionDetailSummary",session?
-  sessionTime(session)+" · "+wetsuit(session):
+  sessionTime(session):
   tr("Sin ventana disponible","No available window"));
  txt("updated",tr("Modelo consultado ","Model fetched ")+new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(state.forecast.model.fetchedAt))+" · CL");
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
@@ -976,7 +1031,7 @@ async function refresh(force=false,onSettled=null){
   state.cache.set(id,{forecast:data,at:Date.now()});
   saveLastValid(id,data);
   state.forecast=data;state.loadFailed=false;state.dataStale=false;
-  txt("status",tr("MODELO · EXPERIMENTAL","EXPERIMENTAL MODEL"));render();onSettled?.();
+  txt("status",tr("LIVE · MODELO","LIVE · MODEL"));render();onSettled?.();
  }catch(err){
   if(serial!==state.serial)return;
   const previous=readLastValid(id);
@@ -989,6 +1044,7 @@ async function refresh(force=false,onSettled=null){
   state.forecast=null;state.loadFailed=true;state.dataStale=false;
   renderPrepHints(null);renderLead(null,null);
   txt("status",tr("SIN CONEXIÓN","OFFLINE"));
+  txt("chileLiveState",tr("SIN DATOS","NO DATA"));
   txt("updated",tr("No se puede cargar el pronóstico: ","Cannot load forecast: ")+String(err.message||err));
   $("dayStripItems").replaceChildren(el("p",tr("No hay datos nuevos; no se muestran scores ficticios.","Fresh data unavailable; no fictional scores shown."),"muted"));
   $("slots").replaceChildren();$("sessionAtGlance").replaceChildren();

@@ -43,7 +43,7 @@ function fixture(){
  },daily:{time:dates.map(d=>fromLocal(d)),sunrise:dates.map(d=>fromLocal(d,7,15)),
   sunset:dates.map(d=>fromLocal(d,20,15)),uv_index_max:dates.map(()=>7),
   precipitation_sum:dates.map(()=>0)}};
- return {marine,weather};
+ return {marine,weather,testNowMs:fromLocal(dates[0],9,0)*1000};
 }
 (async()=>{
  const server=spawn('python3',['-m','http.server',String(port),'--bind','127.0.0.1'],{
@@ -52,16 +52,35 @@ function fixture(){
  let browser;
  try{
   await new Promise(ok=>setTimeout(ok,800));
-  const {marine,weather}=fixture();
+  const {marine,weather,testNowMs}=fixture();
   browser=await chromium.launch({headless:true,channel:'chrome'});
   for(const width of [375,390,430,768,1180,1440]){
    const context=await browser.newContext({viewport:{width,height:840},deviceScaleFactor:1});
+   // Freeze at a deterministic 09:00 Chile-local model reading. Without this,
+   // sunset causes the entire 'best remaining' session to vanish after 20:00.
+   await context.addInitScript(ms=>{
+    const NativeDate=Date;
+    window.Date=class FaroTestDate extends NativeDate{
+     constructor(...args){if(args.length)super(...args);else super(ms)}
+     static now(){return ms}
+    };
+   },testNowMs);
    await context.route('**/marine-api.open-meteo.com/**',route=>route.fulfill({json:marine}));
    await context.route('**/api.open-meteo.com/**',route=>route.fulfill({json:weather}));
    await context.route('**/fonts.googleapis.com/**',route=>route.abort());
    await context.route('**/fonts.gstatic.com/**',route=>route.abort());
    // Exercise the first-party geographic map independently of external CDN uptime.
    await context.route('**/unpkg.com/**',route=>route.abort());
+   await context.route('**/raw.githubusercontent.com/lukileke/zeeland-surf-check/faro-research-data/research-data/chile/official-watch.json**',
+    route=>route.fulfill({json:{
+     schema:1,region:"CL-VS",coverage:"partial",clearanceVerified:false,
+     checkedAt:new Date(testNowMs).toISOString(),
+     sources:[
+      {id:"armada",name:"SERVIMET",url:"https://meteoarmada.directemar.cl/",reachable:true},
+      {id:"senapred",name:"SENAPRED",url:"https://www.senapred.cl/alertas/",reachable:false},
+      {id:"dmc",name:"DMC",url:"https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml",reachable:true}
+     ]
+    }}));
    const page=await context.newPage();
    const scriptErrors=[];
    page.on('pageerror',err=>scriptErrors.push(err.message));
@@ -353,9 +372,11 @@ function fixture(){
     'A gear checklist must not repeat the selected session headline');
    assert.equal(await page.locator('#sessionAtGlance .chile-session-head').count(),0,
     'The second score/wave instrument has been removed');
-   assert.equal(await page.locator('#sessionAtGlance .chile-session-checklist-intro').count(),1);
-   assert.equal(await page.locator('#sessionEssentials .essential-tag').count(),5,
-    'The practical checklist retains five relevant equipment and weather signals');
+   assert.equal(await page.locator('#sessionAtGlance .faro-session-kit-reading').count(),1);
+   assert.match((await page.locator('#sessionDetailSummary').textContent()).trim(),/\d{2}:\d{2}/,
+    'Session Kit heading must show its real time window, not a loading dash');
+   assert.equal(await page.locator('#sessionEssentials .faro-kit-signal').count(),4,
+    'The redesigned kit includes four labelled weather cues without repeating the suit');
    const qualityOf=v=>v>=8.5?'Excelente':v>=7?'Bueno':v>=5?'Regular':v>=3?'Malo':'Muy malo';
    const toneOf=v=>v>=8.5?'tone-great':v>=7?'tone-good':v>=5?'tone-fair':v>=3?'tone-poor':'tone-low';
    const firstChip=page.locator('#dayStripItems .day-chip').first();
@@ -403,6 +424,31 @@ function fixture(){
     'Weekly comparison must start collapsed so the daily decision comes first');
    assert.equal(await page.locator('#sessionDetailExpand').evaluate(el=>el.open),false,
     'Session instrument must not duplicate daily statistics before expansion');
+   // The November 15 iPhone screenshot exposed a narrow vertical text column,
+   // a huge blank card and overlapping daylight data. Test actual geometry.
+   await page.locator('#sessionDetailExpand > summary').click();
+   const kit=await page.evaluate(()=>{
+    const rect=selector=>{
+     const e=document.querySelector(selector),r=e.getBoundingClientRect();
+     return {x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom};
+    };
+    return {body:rect('.chile-session-body'),glance:rect('#sessionAtGlance'),
+     signals:rect('#sessionEssentials'),daylight:rect('.daylight-disclosure'),
+     mode:getComputedStyle(document.querySelector('#sessionAtGlance')).writingMode};
+   });
+   assert.ok(kit.glance.width>=kit.body.width*.78&&kit.glance.right<=kit.body.right+2,
+    'Session briefing must not collapse into a narrow side column: '+JSON.stringify(kit));
+   assert.ok(kit.signals.y>=kit.glance.bottom-4&&kit.daylight.y>=kit.signals.bottom-4,
+    'Session kit, physical signals and daylight must stack without overlap: '+JSON.stringify(kit));
+   assert.equal(kit.mode,'horizontal-tb','Session guidance must read horizontally');
+   assert.equal(await page.locator('.faro-kit-primary strong').isVisible(),true);
+   assert.equal(await page.locator('#sessionEssentials .faro-kit-signal').count(),4);
+   await page.locator('#sessionDetailExpand > summary').click();
+   assert.equal(await page.locator('#faroScienceSnapshot .faro-lab-metric').count(),4,
+    'Ocean Lab must surface four scientific signals without expanding the entire data table');
+   await page.waitForFunction(()=>document.querySelector('#faroOfficialHeading')?.textContent.includes('consultadas'));
+   assert.match(await page.locator('#faroOfficialChecked').textContent(),/2 de 3/);
+   assert.match(await page.locator('#chileOfficialSources .chile-official-state').textContent(),/parcial/i);
    assert.match(await page.locator('#dayStripSelected').textContent(),/\/10/,
     'Collapsed weekly summary still identifies the current selection');
    await page.locator('#dayStrip > summary').click();
@@ -428,8 +474,10 @@ function fixture(){
     'Hourly score must show the same Zeeland quality caption');
    assert.equal(await page.locator('#sessionAtGlance .chile-session-rating').count(),0,
     'Gear checklist must not repeat the daily score and offshore wave instrument');
-   assert.match(await page.locator('#sessionDetailSummary').textContent(),/mm|Shorty|accesorios/i,
-    'Collapsed gear checklist names actual wetsuit guidance, rather than a duplicated score');
+   assert.match(await page.locator('#sessionDetailSummary').textContent(),/\d{2}:\d{2}/,
+    'Collapsed kit names its chosen time; suit guidance is shown once in the expanded reading');
+   assert.match(await page.locator('#sessionAtGlance .faro-kit-primary strong').textContent(),/mm/,
+    'Suit thickness must remain visible in the dominant kit instrument');
    await page.waitForFunction(()=>document.getElementById('detail')?.textContent?.includes('UTC'),{timeout:6000});
    // The technical drawer is intentionally collapsed; innerText is empty
    // for hidden elements, while textContent still exposes populated content.
@@ -818,7 +866,7 @@ function fixture(){
    assert.equal(await page.locator('#chileOfficialSources').count(),1,
     'Official sources must remain accessible without modelled risk');
    await page.locator('#chileOfficialSources summary').click();
-   assert.ok(await page.locator('#chileOfficialSources a[href="https://meteoarmada.directemar.cl/"]').isVisible(),
+   assert.ok(await page.locator('#faroOfficialSourceHealth a[href="https://meteoarmada.directemar.cl/"]').isVisible(),
     'The Armada source should remain discoverable in Before You Go');
    const chipText=await page.locator('#dayStripItems .day-chip').first().innerText();
    assert.ok(!chipText.includes('β')&&!chipText.includes('Promising'),
