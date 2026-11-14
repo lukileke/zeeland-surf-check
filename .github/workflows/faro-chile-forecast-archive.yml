@@ -18,22 +18,81 @@ concurrency:
 jobs:
   archive-forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     env:
       FARO_RESEARCH_NONCOMMERCIAL_ACK: 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: true
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
       - name: Validate archive logic without network
         run: node chile/test-archive-forecast.mjs
       - name: Request fresh forecasts for La Boca, Reñaca and Ritoque
-        run: node chile/archive-forecast.mjs
+        id: capture
+        shell: bash
+        run: |
+          set +e
+          node chile/archive-forecast.mjs
+          code=$?
+          set -e
+          case "$code" in
+            0) echo "result=saved" >> "$GITHUB_OUTPUT" ;;
+            75)
+              echo "result=skipped_upstream" >> "$GITHUB_OUTPUT"
+              echo "::warning title=FARO archive::Open-Meteo temporarily unavailable: this forecast vintage was NOT captured."
+              ;;
+            *) echo "Unexpected archiver failure ($code). Model/schema errors must remain failing." >&2; exit "$code" ;;
+          esac
+      - name: Confirm the last real snapshot is recent after an upstream outage
+        if: steps.capture.outputs.result == 'skipped_upstream'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin faro-research-data
+          last=$(git ls-tree -r --name-only origin/faro-research-data research-data/chile/forecast-snapshots |
+            grep -E '[0-9]{8}T[0-9]{6}\\.[0-9]{3}Z\\.json\\.gz
+          git config user.name 'faro-research-archive[bot]'
+          git config user.email 'faro-research-archive[bot]@users.noreply.github.com'
+          # Keep the website/main branch and Pages deployment clean.
+          # Untracked snapshot survives the branch switch.
+          git fetch origin faro-research-data
+          git switch -C faro-research-data origin/faro-research-data
+          git add research-data/chile/forecast-snapshots
+          git diff --cached --quiet && exit 0
+          git commit -m "research(chile): freeze 3 pilot forecast vintages [skip ci]"
+          git pull --rebase origin faro-research-data
+          git push origin HEAD:faro-research-data
+      - name: Preserve uncommitted snapshot if publishing fails
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: faro-archive-failure-${{ github.run_id }}
+          path: research-data/chile/forecast-snapshots/**/*.json.gz
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Summarise research archive outcome
+        if: always()
+        env:
+          CAPTURE_RESULT: ${{ steps.capture.outputs.result }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          {
+            echo "### FARO · Chile forecast research archive"
+            echo "- Job: **$JOB_STATUS** · capture: **${CAPTURE_RESULT:-not completed}**"
+            echo "- Successful captures go to the separate \`faro-research-data\` branch."
+            echo "- An isolated Open-Meteo outage is reported as a **warning** only if a real snapshot younger than 20 hours exists."
+            echo "- No observations or historical forecasts are invented or backfilled."
+            echo "- Repeated outages, missing archives, Git errors and schema failures still produce a **failed** job."
+            echo "- The GitHub Pages forecast website is built and deployed by an independent workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
+ | sort | tail -n 1 || true)
+          FARO_LAST_SNAPSHOT="$last" node chile/check-archive-freshness.mjs
       - name: Commit immutable model snapshots only
+        if: steps.capture.outputs.result == 'saved'
         run: |
           git config user.name 'faro-research-archive[bot]'
           git config user.email 'faro-research-archive[bot]@users.noreply.github.com'
