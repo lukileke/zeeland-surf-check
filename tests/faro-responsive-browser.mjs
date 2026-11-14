@@ -155,6 +155,23 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score '+JSON.stringify(found.scoreProbe));
     rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;
     if([390,1440].includes(s.width)){
+      // Save actual lower-page artwork, not just the initial hero viewport.
+      const prep=page.locator('#sessionDetailExpand');
+      await prep.evaluate(el=>el.open=true);
+      await page.locator('.faro-kit-primary strong').waitFor({state:'visible',timeout:5000});
+      const geometry=await page.evaluate(()=>{
+       const r=selector=>document.querySelector(selector).getBoundingClientRect();
+       return {body:r('.chile-session-body'),intro:r('#sessionAtGlance'),
+        tags:r('#sessionEssentials'),daylight:r('.daylight-disclosure')};
+      });
+      assert.ok(geometry.intro.width>=geometry.body.width*.76,
+       'Session prep has collapsed into a vertical paragraph: '+JSON.stringify(geometry));
+      assert.ok(geometry.tags.y>=geometry.intro.bottom-4&&
+       geometry.daylight.y>=geometry.tags.bottom-4,
+       'Session signals and daylight overlap: '+JSON.stringify(geometry));
+      await page.locator('#dayview>.session-section').screenshot({path:`${out}/${engine}-${s.name}-${theme}-session-kit.png`});
+      await prep.evaluate(el=>el.open=false);
+      await page.locator('.faro-hub-group.is-read').screenshot({path:`${out}/${engine}-${s.name}-${theme}-ocean-lab.png`});
       await page.screenshot({path:`${out}/${engine}-${s.name}-${theme}.png`});
       if(s.width===390&&theme==='dark'){
        await page.locator('footer.chile-footer').scrollIntoViewIfNeeded();
