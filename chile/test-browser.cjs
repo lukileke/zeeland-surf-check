@@ -373,6 +373,8 @@ function fixture(){
    assert.equal(await page.locator('#sessionAtGlance .chile-session-head').count(),0,
     'The second score/wave instrument has been removed');
    assert.equal(await page.locator('#sessionAtGlance .faro-session-kit-reading').count(),1);
+   assert.match((await page.locator('#sessionDetailSummary').textContent()).trim(),/\d{2}:\d{2}/,
+    'Session Kit heading must show its real time window, not a loading dash');
    assert.equal(await page.locator('#sessionEssentials .faro-kit-signal').count(),4,
     'The redesigned kit includes four labelled weather cues without repeating the suit');
    const qualityOf=v=>v>=8.5?'Excelente':v>=7?'Bueno':v>=5?'Regular':v>=3?'Malo':'Muy malo';
