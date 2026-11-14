@@ -32,6 +32,8 @@ jobs:
         run: |
           node --test \
             tests/faro-editorial-hero-focus.test.cjs \
+            tests/faro-editorial-experience.test.cjs \
+            tests/faro-finish-pass.test.cjs \
             tests/faro-mobile-hero-regression.test.cjs \
             tests/faro-widget-v17.test.cjs \
             tests/faro-widget-v18.test.cjs \

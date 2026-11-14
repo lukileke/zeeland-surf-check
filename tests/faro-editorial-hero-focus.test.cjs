@@ -18,7 +18,9 @@ test('hero layout loaded immediately before shared score palette',()=>{
  assert.equal(links.at(-3),'faro-decision-balance-v1.css?v=1');
  assert.equal(links.at(-4),'faro-responsive-quality-v1.css?v=1');
  assert.equal(links.at(-5),'faro-editorial-hero-focus-v1.css?v=1');
- assert.ok(links.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=3'));
+ assert.ok(!links.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
+ assert.ok(read('chile/faro-editorial-experience-v2.css').includes('@keyframes faro-hero-core-breathe'));
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(c));
 });
 
@@ -72,6 +74,7 @@ test('mobile stack has no competing beacon clocks or theme-specific score inks',
  assert.ok(c.includes('grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important'));
  assert.ok(!c.includes('animation:'));
  assert.ok(!c.includes('--faro-score-'));
- assert.ok(h.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
+ assert.ok(!h.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
+ assert.ok(read('chile/faro-editorial-experience-v2.css').includes('faro-hero-core-breathe'));
  assert.ok(h.includes('chile-forecast.js?v=46'));
 });
