@@ -14,7 +14,7 @@ const js=read('chile/chile-forecast.js');
 test('hero layout loaded immediately before shared score palette',()=>{
  const links=[...h.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(x=>x[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=5');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=6');
  assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=4');
  for(const source of ['faro-editorial-hero-focus-v1.css','faro-responsive-quality-v1.css','faro-decision-balance-v1.css'])
   assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/'+source));
@@ -76,5 +76,5 @@ test('mobile stack has no competing beacon clocks or theme-specific score inks',
  assert.ok(!c.includes('--faro-score-'));
  assert.ok(!h.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
  assert.ok(read('chile/faro-editorial-experience-v2.css').includes('faro-hero-core-breathe'));
- assert.ok(h.includes('chile-forecast.js?v=46'));
+ assert.ok(h.includes('chile-forecast.js?v=47'));
 });
