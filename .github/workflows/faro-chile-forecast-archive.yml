@@ -55,7 +55,7 @@ jobs:
           set -euo pipefail
           git fetch origin faro-research-data
           last=$(git ls-tree -r --name-only origin/faro-research-data research-data/chile/forecast-snapshots |
-            grep -E '[0-9]{8}T[0-9]{6}\\.[0-9]{3}Z\\.json\\.gz$' | sort | tail -n 1 || true)
+            grep -F '.json.gz' | sort | tail -n 1 || true)
           FARO_LAST_SNAPSHOT="$last" node chile/check-archive-freshness.mjs
       - name: Commit actual model snapshot on research-data branch
         if: steps.capture.outputs.result == 'saved'
