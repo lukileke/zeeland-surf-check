@@ -72,7 +72,7 @@ async function request(url,fetcher,{retries=3,wait=pause}={}){
   const transient=status===429||(typeof status==="number"&&status>=500&&status<600);
   if(transient&&attempt<retries){
    console.warn("Transient HTTP "+status+" from "+endpoint+"; retry "+(attempt+2)+"/"+(retries+1));
-   await wait(750*2**attempt);continue;
+   await wait(1200*2**attempt);continue;
   }
   throw Object.assign(new Error("Provider "+endpoint+" returned HTTP "+status+
    " after "+(attempt+1)+" attempts"),{status,transient,code:transient?"UPSTREAM_TEMPORARY":"UPSTREAM_INVALID"});
