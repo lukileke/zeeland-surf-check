@@ -69,8 +69,12 @@ test('new CSS is before the invariant score palette, with no model changes',()=>
  assert.equal(links.at(-3),'faro-decision-balance-v1.css?v=1');
  assert.equal(links.at(-4),'faro-responsive-quality-v1.css?v=1');
  assert.equal(links.at(-5),'faro-editorial-hero-focus-v1.css?v=1');
- assert.equal(links.at(-6),'faro-hero-synchronised-pulse-v1.css?v=1');
- assert.equal(links.at(-7),'faro-mobile-reading-order-v1.css?v=2');
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=3'));
+ assert.ok(!links.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
+ assert.ok(!links.includes('faro-mobile-reading-order-v1.css?v=2'));
+ assert.ok(!links.includes('faro-finish-pass-v1.css?v=1'));
+ assert.ok(editor.includes('@keyframes faro-hero-core-breathe'));
+ assert.ok(editor.includes('--beacon-y:8%'));
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(css));
  assert.ok(html.includes('faro-beacon-atmosphere-v4.css?v=1'));
  assert.ok(html.includes('faro-chile-live.js?v=11'));
