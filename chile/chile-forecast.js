@@ -925,6 +925,23 @@ function session(){
  const cut=sunset?.length===2?Math.max(0,sunset[0]*60+sunset[1]-35):null;
  const out=cut===null?"—":h(Math.floor(cut/60))+":"+h(cut%60);
  txt("cutoff",out);txt("daylightBrief",tr("Salida sugerida ","Suggested exit ")+out);
+ const science=$("faroScienceSnapshot");
+ if(science){
+  science.replaceChildren();
+  const metrics=[
+   [tr("SWELL PRINCIPAL","PRIMARY SWELL"),num(s.swellHeightM)+" m"],
+   [tr("PERÍODO","PERIOD"),num(s.swellPeriodS)+" s"],
+   [tr("DIRECCIÓN · DESDE","DIRECTION · FROM"),Live.cardinal(s.swellDirection)+" · "+num(s.swellDirection,0)+"°"],
+   [tr("RACHA MÁX.","GUSTS"),num(s.gustKmh,0)+" km/h"]
+  ];
+  for(const [name,value]of metrics){
+   const cell=el("div",null,"faro-lab-metric");
+   cell.append(el("small",name),el("strong",value));
+   science.append(cell);
+  }
+  const caveat=el("p",tr("Modelo oceánico, no medida de la rompiente.","Offshore model, not a measured breaking wave."),"faro-lab-caveat");
+  science.append(caveat);
+ }
  const content=$("detail");content.replaceChildren();
  const grid=state.forecast?.model?.marineGrid,metGrid=state.forecast?.model?.weatherGrid;
  const coverage=state.forecast?.model?.coverage;
@@ -1000,7 +1017,7 @@ async function refresh(force=false,onSettled=null){
   state.cache.set(id,{forecast:data,at:Date.now()});
   saveLastValid(id,data);
   state.forecast=data;state.loadFailed=false;state.dataStale=false;
-  txt("status",tr("MODELO · EXPERIMENTAL","EXPERIMENTAL MODEL"));render();onSettled?.();
+  txt("status",tr("LIVE · MODELO","LIVE · MODEL"));render();onSettled?.();
  }catch(err){
   if(serial!==state.serial)return;
   const previous=readLastValid(id);
