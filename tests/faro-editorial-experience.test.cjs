@@ -18,8 +18,8 @@ const ids=[
 ];
 test('Chile CSS consolidation preserves source order and reduces requests',()=>{
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(x=>x[1]);
- assert.equal(links.filter(x=>/\.css(?:\?|$)/.test(x)).length,26,'FARO Chile should load 26 instead of 29 CSS files');
- assert.ok(links.includes('faro-editorial-experience-v2.css?v=3'));
+ assert.equal(links.filter(x=>/\.css(?:\?|$)/.test(x)).length,19,'FARO Chile should load 19 stylesheets after ownership consolidation');
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=4'));
  for(const old of ['faro-finish-pass-v1.css?v=1','faro-mobile-reading-order-v1.css?v=2',
                    'faro-hero-synchronised-pulse-v1.css?v=1'])
   assert.ok(!links.includes(old),'old redundant external stylesheet: '+old);
@@ -56,12 +56,13 @@ test('preparation uses actual selected session model; failed fetch stays neutral
  assert.ok(model.includes('hasConsecutiveCoreRows'));
 });
 test('dark/light shared hero and scores are retained, logo unchanged',()=>{
- assert.ok(html.includes('faro-beacon-atmosphere-v4.css?v=1'));
+ assert.ok(css.includes('FARO source: chile/faro-beacon-atmosphere-v4.css'));
+ assert.ok(css.includes('FARO source: chile/faro-responsive-safety-v3.css'));
  assert.ok(html.includes('src="../assets/faro-logo.svg"'));
  assert.ok(html.includes('src="../assets/faro-logo-dark.svg"'));
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)];
  assert.equal(links.at(-1)[1],'faro-score-colour-lock-v1.css?v=1');
- assert.ok(links.some(x=>x[1]==='faro-editorial-experience-v2.css?v=3'));
+ assert.ok(links.some(x=>x[1]==='faro-editorial-experience-v2.css?v=4'));
  assert.ok(!css.includes('--brand-score-ink:')&&!css.includes('--faro-score-0:'));
 });
 test('editorial finishing preserves external pages and scientific disclaimers',()=>{
