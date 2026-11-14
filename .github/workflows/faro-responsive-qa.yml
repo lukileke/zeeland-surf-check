@@ -31,6 +31,7 @@ jobs:
       - name: Verify FARO layouts, automatic updates and widget model semantics
         run: |
           node --test \
+            tests/faro-css-budget.test.cjs \
             tests/faro-editorial-hero-focus.test.cjs \
             tests/faro-editorial-experience.test.cjs \
             tests/faro-finish-pass.test.cjs \
