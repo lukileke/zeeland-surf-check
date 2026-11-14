@@ -1,0 +1,52 @@
+name: FARO Chile · Official source heartbeat
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'chile/faro-official-monitor.mjs'
+      - '.github/workflows/faro-official-watch.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '23 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: faro-official-source-heartbeat
+  cancel-in-progress: false
+jobs:
+  official-heartbeat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Verify source monitor semantics
+        run: node --test tests/faro-official-monitor.test.mjs
+      - name: Check reachable official portals
+        run: node chile/faro-official-monitor.mjs
+      - name: Publish timestamped partial check to research branch
+        run: |
+          set -euo pipefail
+          git config user.name 'faro-official-watch[bot]'
+          git config user.email 'faro-official-watch[bot]@users.noreply.github.com'
+          git fetch origin faro-research-data
+          git switch -C faro-research-data origin/faro-research-data
+          git add research-data/chile/official-watch.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "research(chile): official portal heartbeat (not clearance) [skip ci]"
+          git pull --rebase origin faro-research-data
+          git push origin HEAD:faro-research-data
+      - name: Clarify scope
+        if: always()
+        run: |
+          {
+            echo '### FARO Official Watch'
+            echo '- Hourly portal reachability checks: SERVIMET, SENAPRED, DMC'
+            echo '- **Partial monitoring only**: does not certify notice validity or safe surf'
+            echo '- A portal responding does not imply there are no current warnings'
+            echo '- Consumer labels include the check time; stale or unavailable status stays unverified'
+          } >> "$GITHUB_STEP_SUMMARY"
