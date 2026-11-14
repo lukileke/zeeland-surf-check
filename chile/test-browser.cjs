@@ -363,9 +363,9 @@ function fixture(){
     'A gear checklist must not repeat the selected session headline');
    assert.equal(await page.locator('#sessionAtGlance .chile-session-head').count(),0,
     'The second score/wave instrument has been removed');
-   assert.equal(await page.locator('#sessionAtGlance .chile-session-checklist-intro').count(),1);
-   assert.equal(await page.locator('#sessionEssentials .essential-tag').count(),5,
-    'The practical checklist retains five relevant equipment and weather signals');
+   assert.equal(await page.locator('#sessionAtGlance .faro-session-kit-reading').count(),1);
+   assert.equal(await page.locator('#sessionEssentials .faro-kit-signal').count(),4,
+    'The redesigned kit includes four labelled weather cues without repeating the suit');
    const qualityOf=v=>v>=8.5?'Excelente':v>=7?'Bueno':v>=5?'Regular':v>=3?'Malo':'Muy malo';
    const toneOf=v=>v>=8.5?'tone-great':v>=7?'tone-good':v>=5?'tone-fair':v>=3?'tone-poor':'tone-low';
    const firstChip=page.locator('#dayStripItems .day-chip').first();
