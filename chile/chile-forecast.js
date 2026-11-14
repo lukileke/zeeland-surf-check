@@ -1004,6 +1004,7 @@ function session(){
 }
 function render(){
  if(!state.forecast)return;
+ txt("chileLiveState",state.dataStale?tr("GUARDADO","CACHED"):tr("LIVE · MODELO","LIVE · MODEL"));
  paintAccessNotice();
  const session=selection();
  txt("sessionDetailSummary",session?
@@ -1043,6 +1044,7 @@ async function refresh(force=false,onSettled=null){
   state.forecast=null;state.loadFailed=true;state.dataStale=false;
   renderPrepHints(null);renderLead(null,null);
   txt("status",tr("SIN CONEXIÓN","OFFLINE"));
+  txt("chileLiveState",tr("SIN DATOS","NO DATA"));
   txt("updated",tr("No se puede cargar el pronóstico: ","Cannot load forecast: ")+String(err.message||err));
   $("dayStripItems").replaceChildren(el("p",tr("No hay datos nuevos; no se muestran scores ficticios.","Fresh data unavailable; no fictional scores shown."),"muted"));
   $("slots").replaceChildren();$("sessionAtGlance").replaceChildren();
