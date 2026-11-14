@@ -49,17 +49,18 @@ function urls(spot,cfg,forecastDays=4){
 // A failed vintage must never be fabricated. Only retry transient HTTP/network
 // failures; malformed or incomplete model data remains a hard, visible error.
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-async function request(url,fetcher,{retries=2,wait=pause}={}){
+async function request(url,fetcher,{retries=3,wait=pause}={}){
  const endpoint=new URL(String(url)).hostname;
  for(let attempt=0;attempt<=retries;attempt++){
   let r;
   try{
    r=await fetcher(String(url),{signal:AbortSignal.timeout(18000)});
   }catch(e){
-   if(attempt===retries)throw new Error(
-    "Network error from "+endpoint+" after "+(attempt+1)+" attempts: "+e.message);
+   if(attempt===retries)throw Object.assign(new Error(
+    "Network error from "+endpoint+" after "+(attempt+1)+" attempts: "+e.message
+   ),{transient:true,code:"UPSTREAM_TEMPORARY"});
    console.warn("Transient network error from "+endpoint+"; retry "+(attempt+2)+"/"+(retries+1));
-   await wait(750*2**attempt);continue;
+   await wait(1200*2**attempt);continue;
   }
   if(r?.ok){
    const v=await r.json();
@@ -71,10 +72,10 @@ async function request(url,fetcher,{retries=2,wait=pause}={}){
   const transient=status===429||(typeof status==="number"&&status>=500&&status<600);
   if(transient&&attempt<retries){
    console.warn("Transient HTTP "+status+" from "+endpoint+"; retry "+(attempt+2)+"/"+(retries+1));
-   await wait(750*2**attempt);continue;
+   await wait(1200*2**attempt);continue;
   }
   throw Object.assign(new Error("Provider "+endpoint+" returned HTTP "+status+
-   " after "+(attempt+1)+" attempts"),{status});
+   " after "+(attempt+1)+" attempts"),{status,transient,code:transient?"UPSTREAM_TEMPORARY":"UPSTREAM_INVALID"});
  }
  throw Error("Unexpected retry state from "+endpoint);
 }
@@ -163,5 +164,11 @@ async function main(){
   "; issue date NOT known; no camera data.");
 }
 if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1]))
- main().catch(e=>{console.error(e.message);process.exitCode=1});
+ main().catch(e=>{
+  console.error(e.message);
+  // Exit 75 means a temporary upstream outage, not a successful capture.
+  // The scheduled workflow checks archive freshness before deciding
+  // whether to report this as an operational failure.
+  process.exitCode=e.transient?75:1;
+ });
 export {collect,outputPath,urls,combine,encodeSnapshot,decodeSnapshot,request};

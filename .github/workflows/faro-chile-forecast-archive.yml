@@ -1,11 +1,12 @@
 name: FARO Chile forecast research archive
-# Store only forecast predictions. NO camera access, video, people, or personal data.
-# Open-Meteo free API permitted only for non-commercial research.
+# Research-only forecast vintages. No cameras, personal data or invented issue times.
+# Open-Meteo free API: non-commercial research only.
 on:
   push:
     branches: [main]
     paths:
       - 'chile/archive-forecast.mjs'
+      - 'chile/check-archive-freshness.mjs'
       - '.github/workflows/faro-chile-forecast-archive.yml'
   workflow_dispatch:
   schedule:
@@ -18,37 +19,61 @@ concurrency:
 jobs:
   archive-forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     env:
       FARO_RESEARCH_NONCOMMERCIAL_ACK: 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: true
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
       - name: Validate archive logic without network
         run: node chile/test-archive-forecast.mjs
-      - name: Request fresh forecasts for La Boca, Reñaca and Ritoque
-        run: node chile/archive-forecast.mjs
-      - name: Commit immutable model snapshots only
+      - name: Capture model predictions for three Chile pilots
+        id: capture
+        shell: bash
         run: |
+          set +e
+          node chile/archive-forecast.mjs
+          code=$?
+          set -e
+          case "$code" in
+            0) echo "result=saved" >> "$GITHUB_OUTPUT" ;;
+            75)
+              echo "result=skipped_upstream" >> "$GITHUB_OUTPUT"
+              echo "::warning title=FARO archive::Open-Meteo temporarily unavailable. No forecast snapshot created."
+              ;;
+            *) echo "Unexpected archiver failure ($code): model/schema errors still fail." >&2; exit "$code" ;;
+          esac
+      - name: Check archive freshness if the upstream provider was down
+        if: steps.capture.outputs.result == 'skipped_upstream'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin faro-research-data
+          last=$(git ls-tree -r --name-only origin/faro-research-data research-data/chile/forecast-snapshots |
+            grep -F '.json.gz' | sort | tail -n 1 || true)
+          FARO_LAST_SNAPSHOT="$last" node chile/check-archive-freshness.mjs
+      - name: Commit actual model snapshot on research-data branch
+        if: steps.capture.outputs.result == 'saved'
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name 'faro-research-archive[bot]'
           git config user.email 'faro-research-archive[bot]@users.noreply.github.com'
-          # Keep the website/main branch and Pages deployment clean.
-          # Untracked snapshot survives the branch switch.
           git fetch origin faro-research-data
           git switch -C faro-research-data origin/faro-research-data
           git add research-data/chile/forecast-snapshots
-          git diff --cached --quiet && exit 0
+          if git diff --cached --quiet; then exit 0; fi
           git commit -m "research(chile): freeze 3 pilot forecast vintages [skip ci]"
           git pull --rebase origin faro-research-data
           git push origin HEAD:faro-research-data
-      - name: Preserve uncommitted snapshot if publishing fails
+      - name: Preserve uncommitted data when publishing fails
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: faro-archive-failure-${{ github.run_id }}
           path: research-data/chile/forecast-snapshots/**/*.json.gz
@@ -56,12 +81,15 @@ jobs:
           retention-days: 14
       - name: Summarise research archive outcome
         if: always()
+        env:
+          CAPTURE_RESULT: ${{ steps.capture.outputs.result }}
+          JOB_STATUS: ${{ job.status }}
         run: |
           {
             echo "### FARO · Chile forecast research archive"
-            echo "- Outcome: **${{ job.status }}**"
-            echo "- Purpose: freeze model predictions on the separate \`faro-research-data\` branch."
-            echo "- This job **does not build or publish FARO's live forecast website**."
-            echo "- Transient provider errors are retried; missing historical vintages are never invented or backfilled."
-            echo "- On failure, inspect the provider-request and git-push steps above."
+            echo "- Job: **$JOB_STATUS**, capture: **${CAPTURE_RESULT:-not completed}**"
+            echo "- Successful snapshots live on the separate faro-research-data branch."
+            echo "- A temporary outage causes a warning only when a real snapshot younger than 20 hours exists."
+            echo "- Repeated outages, schema errors and Git errors remain fatal. No backfills are invented."
+            echo "- GitHub Pages is deployed by a separate workflow."
           } >> "$GITHUB_STEP_SUMMARY"

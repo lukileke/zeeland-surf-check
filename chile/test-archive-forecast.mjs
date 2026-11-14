@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 import {collect,urls,outputPath,encodeSnapshot,decodeSnapshot,request} from "./archive-forecast.mjs";
+import {inspectArchiveFreshness} from "./check-archive-freshness.mjs";
 const cfg=JSON.parse(await readFile(new URL("./valparaiso-live.config.json",import.meta.url),"utf8"));
 const refTime=new Date("2026-10-26T18:00:00Z");
 const times=Array.from({length:96},(_,i)=>Math.floor(refTime.getTime()/1000)+i*3600);
@@ -83,7 +84,7 @@ const recovered=await request(endpoint,async()=>{
  return retries<3?{ok:false,status:503}:{ok:true,json:async()=>response("marine",one.latitude,one.longitude)};
 },{wait:async ms=>waited.push(ms)});
 assert.equal(retries,3);
-assert.deepEqual(waited,[750,1500]);
+assert.deepEqual(waited,[1200,2400]);
 assert.equal(recovered.hourly.time.length,96);
 let clientErrors=0;
 await assert.rejects(request(endpoint,async()=>{
@@ -96,4 +97,19 @@ await request(endpoint,async()=>{
  return {ok:true,json:async()=>response("marine",one.latitude,one.longitude)};
 },{wait:async()=>{}});
 assert.equal(networkCalls,2);
+let exhausted=0;
+await assert.rejects(request(endpoint,async()=>{
+ exhausted++;return {ok:false,status:503};
+},{retries:2,wait:async()=>{}}),err=>err.transient===true&&err.code==="UPSTREAM_TEMPORARY");
+assert.equal(exhausted,3,"Upstream outage must retain a distinct, detectable failure outcome");
+await assert.rejects(request(endpoint,async()=>({ok:false,status:400}),{retries:0}),
+ err=>err.transient===false&&err.status===400);
+const archiveName="research-data/chile/forecast-snapshots/2026/11/20261114T010000.000Z.json.gz";
+const time=new Date("2026-11-14T13:00:00Z");
+assert.equal(inspectArchiveFreshness(archiveName,time).ok,true,"Missed one vintage is a warning");
+assert.equal(inspectArchiveFreshness(archiveName,new Date("2026-11-15T00:00:00Z")).ok,false,
+ "Stale archive must still fail visibly");
+assert.equal(inspectArchiveFreshness("",time).ok,false,"No data must not pass");
+assert.equal(inspectArchiveFreshness(archiveName,new Date("2026-11-13T23:00:00Z")).ok,false,
+ "Future dated snapshot must not pass");
 console.log("FARO snapshots: 3 distinct spots, UTC, legal provenance, optional fallback, missing-data safety and no camera fabrication passed.");
