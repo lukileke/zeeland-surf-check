@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
       - name: Use hosted Chrome with Playwright
@@ -26,7 +26,7 @@ jobs:
         run: node chile/test-browser.cjs
       - name: Save FARO reading visuals for review
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: faro-reading-visual-regression
           path: artifacts/faro-reading/
