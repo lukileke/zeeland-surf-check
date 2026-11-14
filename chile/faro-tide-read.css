@@ -1585,3 +1585,18 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a[href="#faro
   grid-template-columns:repeat(3,minmax(0,1fr))
  }
 }
+
+/* Only one set of official source links at a time. Keep static fallback when
+   no recent automated heartbeat is available. */
+#forecastPage #dayview .faro-official-health[data-loaded="true"] + .chile-source-links{
+ display:none
+}
+#forecastPage .faro-technical-inner #detail .chile-model-table{
+ table-layout:fixed;width:100%
+}
+#forecastPage .faro-technical-inner #detail .chile-model-table td:first-child{
+ width:46%;text-align:left
+}
+#forecastPage .faro-technical-inner #detail .chile-model-table td:last-child{
+ width:54%;overflow-wrap:anywhere;word-break:break-word;text-align:right
+}
