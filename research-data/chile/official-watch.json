@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "checkedAt": "2026-11-14T23:42:30.936Z",
+  "region": "CL-VS",
+  "coverage": "partial",
+  "clearanceVerified": false,
+  "bulletinsVerified": false,
+  "sources": [
+    {
+      "id": "armada",
+      "name": "SERVIMET · Armada",
+      "url": "https://meteoarmada.directemar.cl/",
+      "reachable": true,
+      "http": 200,
+      "note": "Portal accesible; vigencia de boletines no certificada"
+    },
+    {
+      "id": "senapred",
+      "name": "SENAPRED",
+      "url": "https://www.senapred.cl/alertas/",
+      "reachable": true,
+      "http": 200,
+      "note": "Portal accesible; vigencia de boletines no certificada"
+    },
+    {
+      "id": "dmc",
+      "name": "DMC",
+      "url": "https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml",
+      "reachable": true,
+      "http": 200,
+      "note": "Portal accesible; vigencia de boletines no certificada"
+    }
+  ],
+  "detail": "El acceso a portales oficiales no confirma que todos los avisos estén disponibles, vigentes o descartados."
+}
