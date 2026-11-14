@@ -18,7 +18,9 @@ test('hero layout loaded immediately before shared score palette',()=>{
  assert.equal(links.at(-3),'faro-decision-balance-v1.css?v=1');
  assert.equal(links.at(-4),'faro-responsive-quality-v1.css?v=1');
  assert.equal(links.at(-5),'faro-editorial-hero-focus-v1.css?v=1');
- assert.ok(links.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=3'));
+ assert.ok(!links.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
+ assert.ok(read('chile/faro-editorial-experience-v2.css').includes('@keyframes faro-hero-core-breathe'));
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(c));
 });
 
