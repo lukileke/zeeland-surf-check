@@ -74,7 +74,7 @@ function fixture(){
    await context.route('**/raw.githubusercontent.com/lukileke/zeeland-surf-check/faro-research-data/research-data/chile/official-watch.json**',
     route=>route.fulfill({json:{
      schema:1,region:"CL-VS",coverage:"partial",clearanceVerified:false,
-     checkedAt:new Date().toISOString(),
+     checkedAt:new Date(testNowMs).toISOString(),
      sources:[
       {id:"armada",name:"SERVIMET",url:"https://meteoarmada.directemar.cl/",reachable:true},
       {id:"senapred",name:"SENAPRED",url:"https://www.senapred.cl/alertas/",reachable:false},
