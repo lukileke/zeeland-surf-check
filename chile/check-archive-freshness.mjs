@@ -2,6 +2,8 @@
  * there has been no complete, real model snapshot for longer than 20 hours.
  * Never backfill or invent a model issue time.
  */
+import {fileURLToPath} from "node:url";
+import {resolve} from "node:path";
 const HOUR_MS=60*60*1000;
 export function inspectArchiveFreshness(file,now=new Date(),maxAgeHours=20){
  const match=String(file||"").match(/\/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})\.(\d{3})Z\.json\.gz$/);
@@ -15,7 +17,7 @@ export function inspectArchiveFreshness(file,now=new Date(),maxAgeHours=20){
   return {ok:false,reason:"Latest real archive is stale",stamp,ageHours};
  return {ok:true,reason:"Recent real archive is available",stamp,ageHours};
 }
-if(import.meta.url===`file://${process.argv[1]||""}`){
+if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1])){
  const result=inspectArchiveFreshness(process.env.FARO_LAST_SNAPSHOT);
  console.log(result.reason+"; last="+(result.stamp||"none")+
    "; age="+(result.ageHours?.toFixed(1)??"unknown")+"h");
