@@ -27,10 +27,9 @@
    (es?"Vigencia no confirmada":"Status unverified");
   const list=$("faroOfficialSourceHealth");if(!list)return;
   list.replaceChildren();
-  const entries=valid?data.sources:[
-   {name:"SERVIMET",url:"https://meteoarmada.directemar.cl/",reachable:false},
-   {name:"SENAPRED",url:"https://www.senapred.cl/alertas/",reachable:false},
-   {name:"DMC",url:"https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml",reachable:false}];
+  list.dataset.loaded=String(valid);
+  if(!valid)return; // Static authority links remain available as fallback.
+  const entries=data.sources;
   for(const src of entries){
    const a=document.createElement("a");
    if(!/^https:\/\//.test(src.url))continue;
