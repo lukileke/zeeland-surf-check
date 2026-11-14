@@ -26,6 +26,27 @@ test('explicit important budget cannot silently grow',()=>{
  const bytes=sheets.reduce((sum,x)=>sum+x.bytes,0);
  assert.ok(bytes<=700000,'CSS payload grew past 700 kB: '+bytes);
 });
+// File-level ownership budgets expose migrations that hide new priority rules
+// behind an unrelated decrease elsewhere. Decrease each cap with each PR.
+const priorityCaps=Object.freeze({
+ 'assets/faro-icons.css':1,'assets/faro-editorial-polish.css':9,
+ 'faro-core.css':526,'faro-ui.css':1212,'faro-brand.css':667,
+ 'faro-daily.css':228,'faro-rhythm.css':388,'faro-colours.css':55,
+ 'faro-spot-signals.css':55,'faro-desktop.css':123,'faro-country.css':1,
+ 'chile/chile-forecast.css':183,'faro-spot-dna-editorial.css':120,
+ 'assets/faro-visual-system-v2.css':186,'assets/faro-coastal-lens-v4.css':415,
+ 'chile/chile-visual-contract.css':764,'chile/faro-editorial-experience-v2.css':1742,
+ 'chile/faro-tide-read.css':829,'chile/faro-score-colour-lock-v1.css':36
+});
+test('every CSS owner has a hard priority ceiling; do not shift debt between files',()=>{
+ assert.equal(sheets.length,Object.keys(priorityCaps).length);
+ for(const sheet of sheets){
+  const p=path.relative(root,path.resolve(root,'chile',sheet.href.split('?')[0])).replaceAll('\\','/');
+  assert.ok(Object.hasOwn(priorityCaps,p),'Unexpected CSS owner: '+p);
+  assert.ok(sheet.important<=priorityCaps[p],
+   p+' grew from '+priorityCaps[p]+' to '+sheet.important+' !important rules; refactor this owner');
+ }
+});
 test('component ownership and model colour isolation survive consolidation',()=>{
  const skin=get('faro-editorial-experience-v2.css'),read=get('faro-tide-read.css');
  const skinSources=['faro-coastal-editorial-v3.css','faro-brand-refresh-v1.css',
