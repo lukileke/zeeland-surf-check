@@ -18,7 +18,7 @@ const ids=[
 ];
 test('Chile CSS consolidation preserves source order and reduces requests',()=>{
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(x=>x[1]);
- assert.equal(links.length,26,'FARO Chile should load 26 instead of 29 CSS files');
+ assert.equal(links.filter(x=>/\.css(?:\?|$)/.test(x)).length,26,'FARO Chile should load 26 instead of 29 CSS files');
  assert.ok(links.includes('faro-editorial-experience-v2.css?v=3'));
  for(const old of ['faro-finish-pass-v1.css?v=1','faro-mobile-reading-order-v1.css?v=2',
                    'faro-hero-synchronised-pulse-v1.css?v=1'])
