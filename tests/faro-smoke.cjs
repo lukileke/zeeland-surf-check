@@ -84,8 +84,10 @@ assert.ok(html.includes('el.scrollLeft=previousScroll;'),'Forecast selection pre
 assert.ok(css.includes('overscroll-behavior-x:contain'),'Horizontal strip keeps its overscroll local');
 assert.match(html,/<style>html\{width:100%;max-width:100%;overflow-x:hidden;background:#101517\}/,
  'Root canvas painted before asynchronous CSS loads');
-assert.match(css,/html,body\{[^}]*overflow-x:hidden!important;[^}]*background:var\(--bg\)!important;/s,
+assert.match(css,/html,body\{[^}]*overflow-x:hidden!important;/s,
  'Body and root canvas prohibit horizontal document overflow in Safari');
+assert.match(css,/html,body\{[^}]*background:var\(--bg\)!important;/s,
+ 'Body and root canvas retain the canonical theme background');
 assert.match(css,/#forecastPage #dayStripItems\{[^}]*overflow-x:auto!important;[^}]*overflow-y:hidden!important;/s,
  'Seven-day strip independently retains horizontal scrolling');
 assert.match(css,/@media\(min-width:900px\)\{\s*#forecastPage #dayStripItems\{[^}]*overflow-x:visible!important;/s,
