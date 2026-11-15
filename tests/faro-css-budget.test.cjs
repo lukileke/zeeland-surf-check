@@ -48,11 +48,29 @@ test('every CSS owner has a hard priority ceiling; do not shift debt between fil
  }
 });
 
+// Track real selector blocks, not regex fragments that mistake an @media block
+// for a selector. Ignore comments while retaining original source offsets.
+function findEmptyCssRules(raw){
+ const css=raw.replace(/\/\*[\s\S]*?\*\//g,m=>' '.repeat(m.length));
+ const stack=[],empty=[];let begin=0;
+ for(let i=0;i<css.length;i++){
+  if(css[i]==='{'){
+   const head=css.slice(begin,i).trim();
+   stack.push({head,contentStart:i+1});begin=i+1;
+  }else if(css[i]==='}'){
+   const b=stack.pop();
+   if(b&&!b.head.startsWith('@')&&!css.slice(b.contentStart,i).includes('{')
+      &&!css.slice(b.contentStart,i).replace(/[;\s]/g,'')){
+    empty.push(b.head);
+   }
+   begin=i+1;
+  }else if(css[i]===';'&&!stack.length)begin=i+1;
+ }
+ return empty;
+}
 test('loaded CSS has no empty selector blocks',()=>{
  for(const sheet of sheets){
-  const css=sheet.css.replace(/\/\*[\s\S]*?\*\//g,m=>' '.repeat(m.length));
-  const empty=[...css.matchAll(/(?:^|\})\s*([^{}]+?)\{[;\s]*\}/g)]
-   .map(m=>m[1].trim()).filter(Boolean);
+  const empty=findEmptyCssRules(sheet.css);
   assert.equal(empty.length,0,'Empty CSS blocks in '+sheet.href+': '+empty.slice(0,4).join(' | '));
  }
 });
