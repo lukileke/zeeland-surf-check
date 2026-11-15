@@ -382,18 +382,24 @@ function providerError(status,source,reason){
 }
 async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
  const urls=buildUrls(spot,config);
+ // A slow/offline provider must not leave the interface in an endless
+ // loading state. Apply one deadline to the entire marine + weather cycle,
+ // including fallbacks and retries. Injected test fetchers may ignore options.
+ const deadline=(typeof AbortSignal!=="undefined"&&typeof AbortSignal.timeout==="function")
+  ?AbortSignal.timeout(16000):null;
+ const timedFetch=(url)=>deadline?fetcher(url,{signal:deadline}):fetcher(url);
  const marineFields=["wave_height","wave_direction","wave_period",
   "swell_wave_height","swell_wave_direction","swell_wave_period"];
  const weatherFields=["wind_speed_10m","wind_direction_10m",
   "wind_gusts_10m","precipitation","weather_code"];
  const readMarine=async(url)=>{
-  const d=await fetchJSON(url,fetcher);
+  const d=await fetchJSON(url,timedFetch);
   if(!hasConsecutiveCoreRows(d,marineFields))
    throw providerError(424,"marine","HTTP 200 sin dos horas de oleaje completas");
   return d;
  };
  const readWeather=async(url)=>{
-  const d=await fetchJSON(url,fetcher);
+  const d=await fetchJSON(url,timedFetch);
   if(!hasConsecutiveCoreRows(d,weatherFields))
    throw providerError(424,"weather","HTTP 200 sin dos horas meteorológicas completas");
   return d;

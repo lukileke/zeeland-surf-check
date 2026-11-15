@@ -51,5 +51,5 @@ test('narrow viewport keeps reading sequence and all facts',()=>{
  assert.ok(css.includes('@media(max-width:710px)'));
  assert.ok(css.includes('@media(max-width:375px)'));
  assert.ok(css.includes('grid-column:1/-1!important;grid-row:auto!important'));
- assert.ok(html.includes('chile-forecast.js?v=47'));
+ assert.match(html,/chile-forecast\.js\?v=\d+/, 'Controller must have a versioned cache-busting URL');
 });
