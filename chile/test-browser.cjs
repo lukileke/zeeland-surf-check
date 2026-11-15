@@ -1015,7 +1015,7 @@ const priorityAuditResults=[];
       await page.locator('#themeToggle').click();
      const report=await page.evaluate(items=>{
       const normalize=x=>String(x||'').replace(/\s*([>+~,])\s*/g,'$1').replace(/\s+/g,' ').trim();
-      const byRule=new Map(),counts=new Map();
+      const bySelector=new Map();
       for(const sheet of document.styleSheets){
        if(!sheet.href)continue;
        const path=new URL(sheet.href).pathname.replace(/^\/+/,'');
@@ -1023,12 +1023,9 @@ const priorityAuditResults=[];
        function visit(list){
         for(const rule of list){
          if(rule.type===1&&rule.selectorText&&rule.style){
-          const selector=normalize(rule.selectorText);
-          for(let i=0;i<rule.style.length;i++){
-           const prop=rule.style.item(i),key=path+'|'+selector+'|'+prop;
-           const occurrence=counts.get(key)||0;counts.set(key,occurrence+1);
-           byRule.set(key+'|'+occurrence,rule);
-          }
+          const key=path+'|'+normalize(rule.selectorText);
+          const variants=bySelector.get(key)||[];
+          variants.push(rule);bySelector.set(key,variants);
          }else if(rule.cssRules){visit(rule.cssRules)}
         }
        }
@@ -1037,8 +1034,12 @@ const priorityAuditResults=[];
       const tested=[],impacted=[],missing=[],unmatched=[],missingNoRule=[],missingStillImportant=[];
       for(let i=0;i<items.length;i++){
        const item=items[i];
-       const key=item.path+'|'+normalize(item.selector)+'|'+item.prop+'|'+item.occurrence;
-       const rule=byRule.get(key);
+       const key=item.path+'|'+normalize(item.selector);
+       // CSSOM commonly expands margin/gap/font shorthands into longhands.
+       // Match source declarations by shorthand-aware getPropertyValue().
+       const rules=(bySelector.get(key)||[]).filter(r=>
+        r.style.getPropertyValue(item.prop)!=='');
+       const rule=rules[item.occurrence];
        if(!rule){missing.push(i);missingNoRule.push(i);continue;}
        if(rule.style.getPropertyPriority(item.prop)==='important'){
         missing.push(i);missingStillImportant.push(i);continue;
