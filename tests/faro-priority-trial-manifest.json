@@ -2575,13 +2575,6 @@
   {
    "path": "chile/faro-tide-read.css",
    "selector": "html body main #forecastPage #dayview>.session-section #sessionAtGlance.session-glance",
-   "prop": "height",
-   "occurrence": 0,
-   "val": "auto"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage #dayview>.session-section #sessionAtGlance.session-glance",
    "prop": "min-height",
    "occurrence": 0,
    "val": "0"

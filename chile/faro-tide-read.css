@@ -1408,7 +1408,7 @@ html body main #forecastPage #dayview>.session-section .chile-session-body{
 html body main #forecastPage #dayview>.session-section #sessionAtGlance.session-glance{
   display:block!important;width:100%!important;max-width:none;
   min-width:0;grid-column:1/-1!important;grid-row:auto;
-  height:auto;min-height:0;margin:0;
+  height:auto!important;min-height:0;margin:0;
   padding:0!important;background:transparent!important;border:0!important;
   box-shadow:none!important;white-space:normal;writing-mode:horizontal-tb!important
 }
