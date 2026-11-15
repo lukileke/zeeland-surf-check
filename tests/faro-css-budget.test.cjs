@@ -16,13 +16,13 @@ const get=p=>fs.readFileSync(path.join(root,'chile',p),'utf8');
 test('only 19 CSS files in Chile; invariant score palette is the last sheet',()=>{
  assert.equal(sheets.length,19,'The 2026-11-15 CSS request budget regressed');
  assert.equal(sheets.at(-1).href,'faro-score-colour-lock-v1.css?v=1');
- assert.equal(sheets.at(-2).href,'faro-tide-read.css?v=6');
- assert.equal(sheets.at(-3).href,'faro-editorial-experience-v2.css?v=4');
+ assert.equal(sheets.at(-2).href,'faro-tide-read.css?v=7');
+ assert.equal(sheets.at(-3).href,'faro-editorial-experience-v2.css?v=5');
  assert.ok(!sheets.some(x=>/@import\s/.test(x.css)),'Avoid hidden extra CSS requests');
 });
 test('explicit important budget cannot silently grow',()=>{
  const total=sheets.reduce((sum,x)=>sum+x.important,0);
- assert.ok(total<=7034,'CSS important debt increased: '+total+' > 7034. Refactor before adding priority overrides.');
+ assert.ok(total<=6433,'CSS important debt increased: '+total+' > 6433. Refactor before adding priority overrides.');
  const bytes=sheets.reduce((sum,x)=>sum+x.bytes,0);
  assert.ok(bytes<=650000,'CSS payload exceeds the tightened 650 kB budget: '+bytes);
 });
@@ -33,10 +33,10 @@ const priorityCaps=Object.freeze({
  'faro-core.css':442,'faro-ui.css':1100,'faro-brand.css':645,
  'faro-daily.css':113,'faro-rhythm.css':378,'faro-colours.css':55,
  'faro-spot-signals.css':55,'faro-desktop.css':123,'faro-country.css':1,
- 'chile/chile-forecast.css':173,'faro-spot-dna-editorial.css':116,
+ 'chile/chile-forecast.css':160,'faro-spot-dna-editorial.css':116,
  'assets/faro-visual-system-v2.css':186,'assets/faro-coastal-lens-v4.css':379,
- 'chile/chile-visual-contract.css':710,'chile/faro-editorial-experience-v2.css':1689,
- 'chile/faro-tide-read.css':823,'chile/faro-score-colour-lock-v1.css':36
+ 'chile/chile-visual-contract.css':537,'chile/faro-editorial-experience-v2.css':1440,
+ 'chile/faro-tide-read.css':657,'chile/faro-score-colour-lock-v1.css':36
 });
 test('every CSS owner has a hard priority ceiling; do not shift debt between files',()=>{
  assert.equal(sheets.length,Object.keys(priorityCaps).length);
