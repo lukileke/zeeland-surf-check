@@ -45,10 +45,6 @@ function fixture(){
   precipitation_sum:dates.map(()=>0)}};
  return {marine,weather,testNowMs:fromLocal(dates[0],9,0)*1000};
 }
-const priorityAuditEnabled=process.env.FARO_CSS_AUDIT==='1';
-const priorityTrial=priorityAuditEnabled?
- JSON.parse(fs.readFileSync(path.resolve(__dirname,'../tests/faro-priority-trial-manifest.json'),'utf8')).items:[];
-const priorityAuditResults=[];
 (async()=>{
  const server=spawn('python3',['-m','http.server',String(port),'--bind','127.0.0.1'],{
   cwd:path.resolve(__dirname,'..'),stdio:'ignore'
@@ -1005,74 +1001,7 @@ const priorityAuditResults=[];
     /RIESGO MODELO|MODEL RISK/,'Detected model risk must still display a meaningful warning');
    assert.equal(await page.locator('#chileOfficialSources').count(),1,
     'Warnings may not erase access to real official bulletins');
-   if(priorityAuditEnabled){
-    // Audit the actual computed CSS in the fully populated, mock-modelled
-    // Chile UI. A flag counts as necessary only if restoring it changes
-    // computed style of an element matching that original selector.
-    for(const theme of ['light','dark']){
-     documentTheme:
-     if((await page.locator('html').getAttribute('data-theme'))!==theme)
-      await page.locator('#themeToggle').click();
-     const report=await page.evaluate(items=>{
-      const normalize=x=>String(x||'').replace(/\s*([>+~,])\s*/g,'$1').replace(/\s+/g,' ').trim();
-      const bySelector=new Map();
-      for(const sheet of document.styleSheets){
-       if(!sheet.href)continue;
-       const path=new URL(sheet.href).pathname.replace(/^\/+/,'');
-       if(!items.some(x=>x.path===path))continue;
-       function visit(list){
-        for(const rule of list){
-         if(rule.type===1&&rule.selectorText&&rule.style){
-          const key=path+'|'+normalize(rule.selectorText);
-          const variants=bySelector.get(key)||[];
-          variants.push(rule);bySelector.set(key,variants);
-         }else if(rule.cssRules){visit(rule.cssRules)}
-        }
-       }
-       try{visit(sheet.cssRules)}catch(_){}
-      }
-      const tested=[],impacted=[],missing=[],unmatched=[],missingNoRule=[],missingStillImportant=[];
-      for(let i=0;i<items.length;i++){
-       const item=items[i];
-       const key=item.path+'|'+normalize(item.selector);
-       // CSSOM commonly expands margin/gap/font shorthands into longhands.
-       // Match source declarations by shorthand-aware getPropertyValue().
-       const rules=(bySelector.get(key)||[]).filter(r=>
-        r.style.getPropertyValue(item.prop)!=='');
-       const rule=rules[item.occurrence];
-       if(!rule){missing.push(i);missingNoRule.push(i);continue;}
-       if(rule.style.getPropertyPriority(item.prop)==='important'){
-        missing.push(i);missingStillImportant.push(i);continue;
-       }
-       let nodes;
-       try{nodes=[...document.querySelectorAll(rule.selectorText)]}catch(_){missing.push(i);continue}
-       if(!nodes.length){unmatched.push(i);continue}
-       if(nodes.length>100){unmatched.push(i);continue}
-       const value=rule.style.getPropertyValue(item.prop),before=nodes.map(node=>
-        getComputedStyle(node).getPropertyValue(item.prop));
-       rule.style.setProperty(item.prop,value,'important');
-       const after=nodes.map(node=>getComputedStyle(node).getPropertyValue(item.prop));
-       rule.style.setProperty(item.prop,value,'');
-       tested.push(i);
-       if(before.some((v,j)=>v!==after[j]))impacted.push(i);
-      }
-      return {tested,impacted,missing,unmatched,missingNoRule,missingStillImportant};
-     },priorityTrial);
-     priorityAuditResults.push({width,theme,...report});
-     console.log('CSS priority audit '+width+' '+theme+': '+report.tested.length+
-      ' tested; '+report.impacted.length+' computed-style impacts.');
-    }
-   }
    await context.close();
-  }
-  if(priorityAuditEnabled){
-   fs.mkdirSync('artifacts/faro-css-audit',{recursive:true});
-   fs.writeFileSync('artifacts/faro-css-audit/priority-impact.json',
-    JSON.stringify({schema:1,baseline:'main',items:priorityTrial,
-     variants:priorityAuditResults},null,2));
-   const union=new Set(priorityAuditResults.flatMap(x=>x.impacted));
-   console.log('CSS trial: '+priorityTrial.length+' changes, '+union.size+
-    ' individually impactful declarations across tested viewports/themes.');
   }
   console.log('PASS FARO Chile responsive QA: forecast, UTC, optional swell, sources, translation and mobile overflow.');
  }finally{if(browser)await browser.close();server.kill('SIGTERM')}
