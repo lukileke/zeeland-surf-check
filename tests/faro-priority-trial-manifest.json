@@ -223,13 +223,6 @@
   {
    "path": "chile/chile-visual-contract.css",
    "selector": "#forecastPage #dailyOverview #dayWave",
-   "prop": "letter-spacing",
-   "occurrence": 0,
-   "val": "-.055em"
-  },
-  {
-   "path": "chile/chile-visual-contract.css",
-   "selector": "#forecastPage #dailyOverview #dayWave",
    "prop": "margin",
    "occurrence": 0,
    "val": "0"
@@ -384,13 +377,6 @@
   {
    "path": "chile/chile-visual-contract.css",
    "selector": "#forecastPage #dailyOverview #openSpotDNA.faro-dna-jump",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0"
-  },
-  {
-   "path": "chile/chile-visual-contract.css",
-   "selector": "#forecastPage #dailyOverview #openSpotDNA.faro-dna-jump",
    "prop": "min-height",
    "occurrence": 0,
    "val": "47px"
@@ -450,13 +436,6 @@
    "prop": "font-weight",
    "occurrence": 0,
    "val": "800"
-  },
-  {
-   "path": "chile/chile-visual-contract.css",
-   "selector": "#forecastPage #dayview .hourly-section .slots .chile-slot-vibe",
-   "prop": "font-weight",
-   "occurrence": 0,
-   "val": "650"
   },
   {
    "path": "chile/chile-visual-contract.css",
@@ -740,20 +719,6 @@
   },
   {
    "path": "chile/chile-visual-contract.css",
-   "selector": "#forecastPage #dayview .faro-detail-hub-heading",
-   "prop": "margin-bottom",
-   "occurrence": 0,
-   "val": "clamp(18px,2.3vw,30px)"
-  },
-  {
-   "path": "chile/chile-visual-contract.css",
-   "selector": "#forecastPage #dayview .faro-detail-hub-heading",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "15px 25px"
-  },
-  {
-   "path": "chile/chile-visual-contract.css",
    "selector": ".chile-footer.faro-footer-v2",
    "prop": "margin-top",
    "occurrence": 0,
@@ -772,13 +737,6 @@
    "prop": "row-gap",
    "occurrence": 0,
    "val": "clamp(22px,3vw,38px)"
-  },
-  {
-   "path": "chile/chile-visual-contract.css",
-   "selector": "#bestPage .highlight.chile-ranking",
-   "prop": "gap",
-   "occurrence": 1,
-   "val": "10px"
   },
   {
    "path": "chile/chile-visual-contract.css",
@@ -965,27 +923,6 @@
   {
    "path": "chile/faro-editorial-experience-v2.css",
    "selector": "#forecastPage .faro-spot-choice select.faro-spot-native",
-   "prop": "min-height",
-   "occurrence": 0,
-   "val": "1px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-spot-choice select.faro-spot-native",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-spot-choice select.faro-spot-native",
-   "prop": "padding",
-   "occurrence": 0,
-   "val": "0"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-spot-choice select.faro-spot-native",
    "prop": "opacity",
    "occurrence": 0,
    "val": "0"
@@ -1045,20 +982,6 @@
    "prop": "border-radius",
    "occurrence": 0,
    "val": "19px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage>#faroForecastLead",
-   "prop": "grid-row",
-   "occurrence": 0,
-   "val": "1"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage>#faroForecastLead",
-   "prop": "grid-column",
-   "occurrence": 0,
-   "val": "1/-1"
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
@@ -1129,20 +1052,6 @@
    "prop": "grid-row",
    "occurrence": 0,
    "val": "3"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-spot-choice-text",
-   "prop": "font-size",
-   "occurrence": 1,
-   "val": "clamp(12px,3.5vw,16px)"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-lead-metrics",
-   "prop": "gap",
-   "occurrence": 2,
-   "val": "5px"
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
@@ -1258,27 +1167,6 @@
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-context-dock",
-   "prop": "grid-column",
-   "occurrence": 0,
-   "val": "1/-1"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group>.faro-hub-group-head",
-   "prop": "padding",
-   "occurrence": 0,
-   "val": "0 0 16px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body main #forecastPage:not(.hide) .faro-detail-hub-grid>.faro-hub-group>.faro-hub-group-head",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0 0 7px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
    "selector": "html body main #forecastPage:not(.hide) #dayview #waveInsightExpand .insight-panel",
    "prop": "gap",
    "occurrence": 0,
@@ -1363,13 +1251,6 @@
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-context-dock .faro-country-options",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "5px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
    "selector": "#forecastPage .faro-context-dock .faro-country-options>a",
    "prop": "align-items",
    "occurrence": 0,
@@ -1419,13 +1300,6 @@
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-context-dock .chile-field-hint",
-   "prop": "line-height",
-   "occurrence": 0,
-   "val": "1.3"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
    "selector": "#forecastPage .faro-context-dock .faro-spot-choice-trigger",
    "prop": "min-width",
    "occurrence": 0,
@@ -1462,27 +1336,6 @@
   {
    "path": "chile/faro-editorial-experience-v2.css",
    "selector": "html body #forecastPage>.faro-journey-nav",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "8px 12px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body #forecastPage>.faro-journey-nav",
-   "prop": "padding",
-   "occurrence": 0,
-   "val": "14px 0 7px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body #forecastPage>.faro-journey-nav",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body #forecastPage>.faro-journey-nav",
    "prop": "min-height",
    "occurrence": 0,
    "val": "0"
@@ -1493,13 +1346,6 @@
    "prop": "font-size",
    "occurrence": 0,
    "val": "9px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-journey-nav .faro-journey-kicker",
-   "prop": "letter-spacing",
-   "occurrence": 0,
-   "val": ".1em"
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
@@ -1521,13 +1367,6 @@
    "prop": "padding",
    "occurrence": 0,
    "val": "0 2px 3px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body #forecastPage #dayview>.faro-decision-intro",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0"
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
@@ -1563,13 +1402,6 @@
    "prop": "box-sizing",
    "occurrence": 0,
    "val": "border-box"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage #dayview>.hourly-section>.forecast-section-heading",
-   "prop": "padding",
-   "occurrence": 0,
-   "val": "0 0 6px"
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
@@ -1640,13 +1472,6 @@
    "prop": "padding",
    "occurrence": 0,
    "val": "16px 4px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body #forecastPage #dayview>.faro-ocean-explorer",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "clamp(7px,1.4vw,19px) 0 0"
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
@@ -1731,13 +1556,6 @@
    "prop": "justify-content",
    "occurrence": 0,
    "val": "space-between"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body #forecastPage .faro-hub-group",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "10px"
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
@@ -1836,20 +1654,6 @@
    "prop": "flex-direction",
    "occurrence": 0,
    "val": "column"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-ocean-explorer-content",
-   "prop": "padding",
-   "occurrence": 1,
-   "val": "0 11px 13px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-ocean-tool-actions #openOceanCompass",
-   "prop": "width",
-   "occurrence": 0,
-   "val": "auto"
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
@@ -1993,13 +1797,6 @@
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice-trigger",
-   "prop": "font-size",
-   "occurrence": 0,
-   "val": "14px"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
    "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead>.faro-lead-beacon>.faro-beacon-pulse",
    "prop": "opacity",
    "occurrence": 0,
@@ -2063,20 +1860,6 @@
   },
   {
    "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead #faroLeadHeadline",
-   "prop": "letter-spacing",
-   "occurrence": 0,
-   "val": "-.045em"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead #faroLeadDeck",
-   "prop": "line-height",
-   "occurrence": 0,
-   "val": "1.54"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
    "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-actions",
    "prop": "align-items",
    "occurrence": 0,
@@ -2088,13 +1871,6 @@
    "prop": "flex-wrap",
    "occurrence": 0,
    "val": "wrap"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-actions",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "0"
   },
   {
    "path": "chile/faro-tide-read.css",
@@ -2127,13 +1903,6 @@
   {
    "path": "chile/faro-tide-read.css",
    "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-best",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "5px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-best",
    "prop": "margin",
    "occurrence": 0,
    "val": "0"
@@ -2151,27 +1920,6 @@
    "prop": "justify-content",
    "occurrence": 0,
    "val": "flex-start"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead #faroLeadHeadline",
-   "prop": "margin",
-   "occurrence": 1,
-   "val": "4px 0 0"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead #faroLeadDeck",
-   "prop": "margin",
-   "occurrence": 1,
-   "val": "2px 0 0"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-actions",
-   "prop": "margin",
-   "occurrence": 1,
-   "val": "9px 0 0"
   },
   {
    "path": "chile/faro-tide-read.css",
@@ -2259,13 +2007,6 @@
   },
   {
    "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide) #dailyOverview .faro-dna-jump",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
    "selector": "html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview",
    "prop": "align-self",
    "occurrence": 0,
@@ -2350,20 +2091,6 @@
   },
   {
    "path": "chile/faro-tide-read.css",
-   "selector": "html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal",
-   "prop": "padding-top",
-   "occurrence": 0,
-   "val": "13px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyGoLens",
-   "prop": "margin-top",
-   "occurrence": 0,
-   "val": "5px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
    "selector": "html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2",
    "prop": "margin-top",
    "occurrence": 0,
@@ -2403,13 +2130,6 @@
    "prop": "font-size",
    "occurrence": 0,
    "val": "12px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #dailyOverview .faro-surface-back #chileDecisionDriver",
-   "prop": "line-height",
-   "occurrence": 0,
-   "val": "1.5"
   },
   {
    "path": "chile/faro-tide-read.css",
@@ -2473,20 +2193,6 @@
    "prop": "order",
    "occurrence": 0,
    "val": "4"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #dailyOverview #openSpotDNA",
-   "prop": "margin-top",
-   "occurrence": 0,
-   "val": "auto"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #dailyOverview #openSpotDNA",
-   "prop": "padding",
-   "occurrence": 0,
-   "val": "9px 0 0"
   },
   {
    "path": "chile/faro-tide-read.css",
@@ -2592,13 +2298,6 @@
    "prop": "margin",
    "occurrence": 0,
    "val": "0"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #faroHourlyPreview .faro-hourly-selected-time",
-   "prop": "font-size",
-   "occurrence": 0,
-   "val": "12px"
   },
   {
    "path": "chile/faro-tide-read.css",
@@ -2711,27 +2410,6 @@
    "prop": "grid-column",
    "occurrence": 0,
    "val": "1"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #faroHourlyPreview .faro-hourly-back #faroHourlySignals",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "4px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #faroHourlyPreview .faro-hourly-back #faroHourlySignals",
-   "prop": "padding",
-   "occurrence": 0,
-   "val": "0"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #faroHourlyPreview .faro-hourly-back #faroHourlySignals",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0"
   },
   {
    "path": "chile/faro-tide-read.css",
@@ -2876,13 +2554,6 @@
   {
    "path": "chile/faro-tide-read.css",
    "selector": "html body main #forecastPage #dayview>.session-section #sessionAtGlance.session-glance",
-   "prop": "width",
-   "occurrence": 0,
-   "val": "100%"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage #dayview>.session-section #sessionAtGlance.session-glance",
    "prop": "max-width",
    "occurrence": 0,
    "val": "none"
@@ -2893,13 +2564,6 @@
    "prop": "min-width",
    "occurrence": 0,
    "val": "0"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage #dayview>.session-section #sessionAtGlance.session-glance",
-   "prop": "grid-column",
-   "occurrence": 0,
-   "val": "1/-1"
   },
   {
    "path": "chile/faro-tide-read.css",
@@ -3435,13 +3099,6 @@
   },
   {
    "path": "chile/chile-visual-contract.css",
-   "selector": "#chileCoastMap .faro-lens-stage .faro-lens-quick-metrics",
-   "prop": "grid-template-columns",
-   "occurrence": 1,
-   "val": "repeat(2,minmax(0,1fr))"
-  },
-  {
-   "path": "chile/chile-visual-contract.css",
    "selector": "#forecastPage #dayview #faroHourlyPreview",
    "prop": "align-items",
    "occurrence": 0,
@@ -3460,20 +3117,6 @@
    "prop": "grid-column",
    "occurrence": 0,
    "val": "1/-1"
-  },
-  {
-   "path": "chile/chile-visual-contract.css",
-   "selector": "#bestPage .faro-week-picks .highlights",
-   "prop": "grid-template-columns",
-   "occurrence": 1,
-   "val": "minmax(0,1fr)"
-  },
-  {
-   "path": "chile/chile-visual-contract.css",
-   "selector": "#bestPage .highlight.chile-ranking",
-   "prop": "min-height",
-   "occurrence": 1,
-   "val": "115px"
   },
   {
    "path": "chile/chile-visual-contract.css",
@@ -3799,13 +3442,6 @@
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage>.faro-forecast-lead>.faro-lead-beacon>.faro-beacon-light",
-   "prop": "width",
-   "occurrence": 0,
-   "val": "var(--beacon-beam)"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
    "selector": "#forecastPage>.faro-forecast-lead>.faro-lead-beacon>.faro-lead-signature .faro-beacon-symbol",
    "prop": "opacity",
    "occurrence": 0,
@@ -4009,24 +3645,10 @@
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "#forecastPage .faro-direction-facts",
-   "prop": "grid-template-columns",
-   "occurrence": 1,
-   "val": "minmax(0,1fr)"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
    "selector": "html body #forecastPage .faro-context-dock .picker-grid",
    "prop": "min-width",
    "occurrence": 0,
    "val": "0"
-  },
-  {
-   "path": "chile/faro-editorial-experience-v2.css",
-   "selector": "html body #forecastPage .faro-context-dock .chile-spot-picker",
-   "prop": "border-radius",
-   "occurrence": 0,
-   "val": "12px"
   },
   {
    "path": "chile/faro-editorial-experience-v2.css",
@@ -4072,34 +3694,6 @@
   },
   {
    "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-qualification",
-   "prop": "margin-top",
-   "occurrence": 1,
-   "val": "2px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "6px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide) #dailyOverview #chileWaveExplain",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #dailyOverview .faro-surface-front #chileDecisionHeadline",
-   "prop": "letter-spacing",
-   "occurrence": 0,
-   "val": "-.045em"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
    "selector": "#forecastPage #dayview #dailyOverview .faro-surface-front #chileDecisionHeadline",
    "prop": "margin",
    "occurrence": 0,
@@ -4114,71 +3708,8 @@
   },
   {
    "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #dailyOverview .faro-prep-chip",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "5px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage #dayview>.session-section .chile-session-body",
-   "prop": "padding",
-   "occurrence": 0,
-   "val": "clamp(15px,2vw,23px)"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-best small,html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-signal-top",
-   "prop": "line-height",
-   "occurrence": 0,
-   "val": "1.5"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide) #dailyOverview #faroPrepHints",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "6px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyGoLens",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #dailyOverview #datehead",
-   "prop": "letter-spacing",
-   "occurrence": 0,
-   "val": "-.045em"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #dailyOverview #faroPrepHints",
-   "prop": "gap",
-   "occurrence": 0,
-   "val": "6px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #dailyOverview #faroPrepHints",
-   "prop": "margin",
-   "occurrence": 0,
-   "val": "0 0 9px"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
    "selector": "html body main #forecastPage:not(.hide) .hourly-section #slots.slots",
    "prop": "padding",
-   "occurrence": 0,
-   "val": "0"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "html body main #forecastPage:not(.hide) #faroHourlyPreview.faro-hourly-in-place>#faroHourlyGoLens",
-   "prop": "margin",
    "occurrence": 0,
    "val": "0"
   },
@@ -4195,13 +3726,6 @@
    "prop": "line-height",
    "occurrence": 0,
    "val": "1.45"
-  },
-  {
-   "path": "chile/faro-tide-read.css",
-   "selector": "#forecastPage #dayview #dailyOverview .faro-surface-face",
-   "prop": "padding",
-   "occurrence": 1,
-   "val": "15px"
   },
   {
    "path": "chile/faro-tide-read.css",
