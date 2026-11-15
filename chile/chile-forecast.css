@@ -127,9 +127,9 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
  .chile-model-provenance span:not(.chile-model-dot){font-size:10px}
 }
 @media(min-width:1120px){
- #forecastPage>.forecast-toolbar{grid-column:1/-1!important}
- #forecastPage>.picker-grid{grid-column:1/-1!important}
- #dayStrip #dayStripItems>.day-chip{min-height:154px!important}
+ #forecastPage>.forecast-toolbar{}
+ #forecastPage>.picker-grid{}
+ #dayStrip #dayStripItems>.day-chip{}
  #dayview .slots>button{min-height:110px!important}
  #forecastPage #dayview>details.forecast-expand{margin:0!important}
 }
@@ -194,7 +194,7 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 #dayview .chile-session-rating.tone-fair{--tone:var(--surf-fair)}
 #dayview .chile-session-rating.tone-poor{--tone:var(--surf-poor)}
 #dayview .chile-session-rating.tone-low{--tone:var(--surf-low)}
-#dayview .chile-session-rating .chile-session-score{color:var(--tone,var(--brand-score-ink))!important}
+#dayview .chile-session-rating .chile-session-score{}
 #dayview .chile-session-rating .chile-session-origin{color:var(--faro-quiet);font-size:10px;line-height:1.25;letter-spacing:0;font-weight:550;display:block}
 #bestPage .chile-ranking strong{color:var(--tone,var(--brand-score-ink))!important}
 #bestPage .chile-ranking.tone-great{--tone:var(--surf-great)}
@@ -381,29 +381,27 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 @media(min-width:1120px){
  #forecastPage{row-gap:clamp(14px,1.5vw,22px)!important}
  #forecastPage > .day-outlook-section{grid-column:1/span 5!important}
- #forecastPage #dayview>.hourly-section{grid-column:6/-1!important}
+ #forecastPage #dayview>.hourly-section{}
  #forecastPage #dayview>.session-section{
    
-   min-width:0;margin:0!important
- }
+   min-width:0;}
  #forecastPage #dayview>.session-section .session-glance{padding:20px 22px!important}
  #forecastPage #dayview>.session-section .chile-session-meta{margin-top:6px!important}
  #forecastPage #dayview>#coastMapExpand{
    
    min-width:0!important;
-   margin:0!important;display:block;
+   ;display:block;
    background:var(--tile);border:1px solid var(--faro-line);
    border-radius:16px;overflow:hidden;
  }
  #forecastPage #dayview>#coastMapExpand[open]{display:block}
  #forecastPage #dayview>#coastMapExpand>summary{
-   font-size:12px!important;padding:15px!important;
+   font-size:12px!important;;
    border-bottom:1px solid var(--faro-line);display:flex;gap:9px;align-items:center
  }
  #forecastPage #dayview>#coastMapExpand .forecast-accordion-meta{font-size:10px!important}
  #forecastPage #dayview>#coastMapExpand .faro-map-wrap{
-   grid-template-columns:1fr!important;padding:11px!important
- }
+   grid-template-columns:1fr!important;}
  #forecastPage #dayview>#coastMapExpand .faro-map-viewport{
    
  }
@@ -422,7 +420,7 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
    grid-column:1/-1;line-height:1.45;font-size:9px
  }
  #forecastPage #dayview>#spotInsightExpand{grid-column:1/span 7!important}
- #forecastPage #dayview>#waveInsightExpand{grid-column:8/-1!important}
+ #forecastPage #dayview>#waveInsightExpand{}
  #forecastPage #dayview>#cameraExpand{grid-column:1/span 7!important}
  #forecastPage #dayview>#faroTechnicalExpand{grid-column:8/-1!important}
  #forecastPage #dayview>#wearExpand{grid-column:1/span 7!important}

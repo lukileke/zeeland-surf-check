@@ -170,9 +170,9 @@
 #forecastPage #dailyOverview #openSpotDNA.faro-dna-jump{
   display:flex!important;
   align-items:center!important;justify-content:space-between!important;
-  gap:12px!important;width:100%!important;
-  margin:15px 0 0!important;padding:13px 2px 3px!important;
-  border:0!important;border-top:1px solid var(--faro-line)!important;
+  gap:12px!important;;
+  ;;
+  border:0!important;;
   border-radius:0!important;background:transparent!important;
   color:var(--faro-quiet)!important;
   font:750 12px/1.4 var(--faro-text,system-ui)!important;

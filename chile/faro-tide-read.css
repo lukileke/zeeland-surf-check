@@ -465,11 +465,11 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
  }
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section,
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
-  min-width:0!important;min-height:0!important;
-  align-self:start!important;height:auto!important;
+  min-width:0!important;;
+  ;;
  }
  html body main #forecastPage:not(.hide) #dailyOverview{
-  min-height:0!important;
+  ;
   gap:0!important;
   padding:clamp(16px,1.5vw,21px)!important;
  }
@@ -611,7 +611,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
   display:flex!important;flex-direction:column!important;
   align-content:start!important;justify-content:flex-start!important;
-  gap:12px!important;
+  ;
  }
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots>button{
   min-height:110px!important;
@@ -986,7 +986,7 @@ html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySi
   max-height:none!important;overflow:visible!important
 }
 #forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe{
-  margin:0!important;border-top:1px solid var(--read-line)
+  ;border-top:1px solid var(--read-line)
 }
 #forecastPage #dayview #dailyOverview .faro-surface-science{
   margin:6px 0 0;font-size:10px;line-height:1.4;color:var(--muted)

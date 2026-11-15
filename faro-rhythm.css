@@ -27,16 +27,16 @@ main>.app-nav{margin-bottom:20px!important}
 #faroSafetyCenter.faro-safety-center.advisory{--safety-accent:var(--faro-ocean)!important}
 #faroSafetyCenter .faro-safety-disclosure{margin:0!important;padding:0!important;border:0!important}
 #faroSafetyCenter .faro-safety-summary{
- display:flex!important;
- align-items:center!important;
+ ;
+ ;
  justify-content:flex-start!important;
- gap:10px!important;
+ ;
  grid-template-columns:none!important;
- min-height:52px!important;
+ ;
  width:100%!important;
  box-sizing:border-box!important;
  margin:0!important;
- padding:10px 13px!important;
+ ;
  background:transparent!important;
  border:0!important;border-radius:0!important;
  text-align:left!important;cursor:pointer!important;
@@ -92,7 +92,7 @@ main>.app-nav{margin-bottom:20px!important}
 }
 #faroSafetyCenter .faro-safety-expanded{
  display:block!important;
- padding:12px 14px 15px!important;
+ ;
  background:color-mix(in srgb,var(--panel) 50%,var(--tile))!important;
  border-top:1px solid var(--faro-line)!important;
 }
@@ -109,8 +109,8 @@ main>.app-nav{margin-bottom:20px!important}
  overflow-wrap:break-word!important;
 }
 #faroSafetyCenter .faro-safety-reasons{
- margin:7px 0 12px!important;
- padding-left:19px!important;
+ ;
+ ;
 }
 #faroSafetyCenter .faro-safety-more{
  display:inline-flex!important;
@@ -351,7 +351,7 @@ main>.app-nav{margin-bottom:20px!important}
  white-space:nowrap!important;
 }
 #forecastPage #dailyOverview .day-signal-metric:first-child strong{
- color:var(--faro-wave)!important;
+ ;
 }
 /* A shared icon slot makes future inline SVGs a drop-in replacement. */
 #forecastPage #dailyOverview .day-signal-icon[data-icon]{
