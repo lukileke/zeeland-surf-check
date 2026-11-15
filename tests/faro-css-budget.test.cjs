@@ -22,7 +22,7 @@ test('only 19 CSS files in Chile; invariant score palette is the last sheet',()=
 });
 test('explicit important budget cannot silently grow',()=>{
  const total=sheets.reduce((sum,x)=>sum+x.important,0);
- assert.ok(total<=7092,'CSS important debt increased: '+total+' > 7092. Refactor before adding priority overrides.');
+ assert.ok(total<=7034,'CSS important debt increased: '+total+' > 7034. Refactor before adding priority overrides.');
  const bytes=sheets.reduce((sum,x)=>sum+x.bytes,0);
  assert.ok(bytes<=700000,'CSS payload grew past 700 kB: '+bytes);
 });
@@ -30,12 +30,12 @@ test('explicit important budget cannot silently grow',()=>{
 // behind an unrelated decrease elsewhere. Decrease each cap with each PR.
 const priorityCaps=Object.freeze({
  'assets/faro-icons.css':1,'assets/faro-editorial-polish.css':9,
- 'faro-core.css':442,'faro-ui.css':1105,'faro-brand.css':645,
- 'faro-daily.css':113,'faro-rhythm.css':379,'faro-colours.css':55,
+ 'faro-core.css':442,'faro-ui.css':1100,'faro-brand.css':645,
+ 'faro-daily.css':113,'faro-rhythm.css':378,'faro-colours.css':55,
  'faro-spot-signals.css':55,'faro-desktop.css':123,'faro-country.css':1,
  'chile/chile-forecast.css':173,'faro-spot-dna-editorial.css':116,
- 'assets/faro-visual-system-v2.css':186,'assets/faro-coastal-lens-v4.css':384,
- 'chile/chile-visual-contract.css':726,'chile/faro-editorial-experience-v2.css':1720,
+ 'assets/faro-visual-system-v2.css':186,'assets/faro-coastal-lens-v4.css':379,
+ 'chile/chile-visual-contract.css':710,'chile/faro-editorial-experience-v2.css':1689,
  'chile/faro-tide-read.css':823,'chile/faro-score-colour-lock-v1.css':36
 });
 test('every CSS owner has a hard priority ceiling; do not shift debt between files',()=>{
@@ -47,6 +47,16 @@ test('every CSS owner has a hard priority ceiling; do not shift debt between fil
    p+' grew from '+priorityCaps[p]+' to '+sheet.important+' !important rules; refactor this owner');
  }
 });
+
+test('loaded CSS has no empty selector blocks',()=>{
+ for(const sheet of sheets){
+  const css=sheet.css.replace(/\/\*[\s\S]*?\*\//g,m=>' '.repeat(m.length));
+  const empty=[...css.matchAll(/(?:^|\})\s*([^{}]+?)\{[;\s]*\}/g)]
+   .map(m=>m[1].trim()).filter(Boolean);
+  assert.equal(empty.length,0,'Empty CSS blocks in '+sheet.href+': '+empty.slice(0,4).join(' | '));
+ }
+});
+
 test('component ownership and model colour isolation survive consolidation',()=>{
  const skin=get('faro-editorial-experience-v2.css'),read=get('faro-tide-read.css');
  const skinSources=['faro-coastal-editorial-v3.css','faro-brand-refresh-v1.css',

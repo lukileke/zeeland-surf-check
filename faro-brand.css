@@ -72,9 +72,7 @@ main>.app-nav button.active,main>.app-nav button[aria-pressed="true"]{
  color:var(--brand-blue)!important;border:1.5px solid var(--brand-blue)!important;
  background:#fff!important;box-shadow:0 2px 10px rgba(31,59,61,.045)!important
 }
-html:not([data-theme="light"]) main>.app-nav button.active,
-html:not([data-theme="light"]) main>.app-nav button[aria-pressed="true"]{
- ;}
+
 #forecastPage .picker summary{
  border:1px solid var(--brand-mist)!important;border-radius:12px!important;
  background:var(--panel)!important;box-shadow:none!important
@@ -377,7 +375,7 @@ html[data-theme="light"] #forecastPage .day-chip:not(.selected){
  ;;
  background:transparent!important;;
  border-top:1px solid var(--faro-line)!important;
- ;
+
  box-shadow:none!important;min-width:0!important
 }
 #forecastPage .faro-read-main{min-width:0;display:grid;gap:5px}
@@ -564,17 +562,17 @@ html:not([data-theme="light"]) .brand-band-high{--tone:var(--brand-score-ink);--
 #forecastPage #waveWizardStrip[hidden]{display:none!important}
 #forecastPage .wave-wizard-strip{
  display:flex!important;align-items:center!important;flex-wrap:wrap!important;
- ;
+
  ;;
- ;
+
  background:transparent!important;
  min-width:0!important;
 }
 #forecastPage .wave-wizard-kicker{
- ;
+
  color:var(--faro-quiet)!important;
  font:850 10px/1.3 var(--faro-text)!important;
- ;
+
  white-space:nowrap!important;
 }
 #forecastPage .wave-wizard-tag{
@@ -586,7 +584,7 @@ html:not([data-theme="light"]) .brand-band-high{--tone:var(--brand-score-ink);--
  background:var(--wave-bg,var(--tile))!important;
  color:var(--wave-text,var(--fg))!important;
  border:1px solid var(--wave-border,var(--faro-line))!important;
- ;
+
  box-shadow:none!important;
  font:800 12.5px/1.3 var(--faro-text)!important;
  text-align:left!important;white-space:normal!important;
@@ -671,10 +669,10 @@ html:not([data-theme="light"]) .brand-band-high{--tone:var(--brand-score-ink);--
 @media(min-width:1101px){
  #dayview>.hourly-section{grid-column:1/-1!important;grid-row:1!important}
  #dayview>.session-section{grid-column:1!important;grid-row:2!important}
- #dayview>#waveInsightExpand{;}
+ 
  #dayview>.detail-section{grid-column:1/-1!important;grid-row:3!important}
- #dayview>#spotInsightExpand{;}
- #dayview>#wearExpand{;}
+ 
+ 
 }
 @media(max-width:899px){
  #dayview>.session-section{margin-top:6px!important}
