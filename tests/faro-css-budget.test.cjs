@@ -22,7 +22,7 @@ test('only 19 CSS files in Chile; invariant score palette is the last sheet',()=
 });
 test('explicit important budget cannot silently grow',()=>{
  const total=sheets.reduce((sum,x)=>sum+x.important,0);
- assert.ok(total<=6384,'CSS important debt increased: '+total+' > 6384. Refactor before adding priority overrides.');
+ assert.ok(total<=6064,'CSS important debt increased: '+total+' > 6064. Refactor before adding priority overrides.');
  const bytes=sheets.reduce((sum,x)=>sum+x.bytes,0);
  assert.ok(bytes<=650000,'CSS payload exceeds the tightened 650 kB budget: '+bytes);
 });
@@ -33,10 +33,10 @@ const priorityCaps=Object.freeze({
  'faro-core.css':442,'faro-ui.css':1100,'faro-brand.css':645,
  'faro-daily.css':113,'faro-rhythm.css':378,'faro-colours.css':55,
  'faro-spot-signals.css':55,'faro-desktop.css':123,'faro-country.css':1,
- 'chile/chile-forecast.css':151,'faro-spot-dna-editorial.css':116,
+ 'chile/chile-forecast.css':125,'faro-spot-dna-editorial.css':116,
  'assets/faro-visual-system-v2.css':186,'assets/faro-coastal-lens-v4.css':379,
- 'chile/chile-visual-contract.css':532,'chile/faro-editorial-experience-v2.css':1436,
- 'chile/faro-tide-read.css':626,'chile/faro-score-colour-lock-v1.css':36
+ 'chile/chile-visual-contract.css':418,'chile/faro-editorial-experience-v2.css':1314,
+ 'chile/faro-tide-read.css':568,'chile/faro-score-colour-lock-v1.css':36
 });
 test('every CSS owner has a hard priority ceiling; do not shift debt between files',()=>{
  assert.equal(sheets.length,Object.keys(priorityCaps).length);

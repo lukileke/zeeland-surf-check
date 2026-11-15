@@ -158,7 +158,7 @@ html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-best {
 html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-best small {
   font-size:9px!important;
   letter-spacing:.07em!important;
-  line-height:1.35!important;
+  line-height:1.35;
 }
 html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-best strong {
   font-size:clamp(15px,1.65vw,19px)!important;
@@ -235,12 +235,12 @@ html body main #forecastPage:not(.hide) > .faro-forecast-lead:is(
  html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-action-main {
    font-size:11px;
    min-height:39px!important;
-   padding:9px 14px!important;
+   padding:9px 14px;
  }
  html body main #forecastPage:not(.hide) > .faro-forecast-lead .faro-lead-qualification {
    font-size:9px!important;
    line-height:1.4!important;
-   margin-top:2px!important;
+   margin-top:2px;
  }
  html body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-signal,
  html[data-theme="light"] body main #forecastPage:not(.hide) > .faro-forecast-lead > .faro-lead-signal,
@@ -405,7 +405,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
  html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-best small,
  html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-signal-top {
   font-size:10px!important;
-  line-height:1.5!important;
+  line-height:1.5;
  }
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots{
   min-width:0!important;
@@ -414,7 +414,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
   min-width:0!important;
  }
  html body main #forecastPage:not(.hide)>.faro-footer-bridge{
-  gap:14px!important;
+  gap:14px;
  }
 }
 
@@ -428,7 +428,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
   min-width:0!important;
  }
  html body main #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading{
-  gap:6px!important;
+  gap:6px;
  }
  html body main #forecastPage:not(.hide)>.faro-context-dock .faro-country-options>a{
   padding-inline:7px!important;
@@ -484,7 +484,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
   margin:0 0 6px!important;
  }
  html body main #forecastPage:not(.hide) #dailyOverview #faroPrepHints{
-  margin:8px 0!important;gap:6px!important;
+  margin:8px 0;gap:6px;
  }
  html body main #forecastPage:not(.hide) #dailyOverview .faro-prep-chip{
   min-height:33px!important;padding:6px 9px!important;
@@ -558,24 +558,24 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
   grid-column:auto;
   width:100%;
   max-width:100%!important;
-  margin:0!important;padding:0!important;
+  margin:0;padding:0;
  }
  html body main #forecastPage:not(.hide) #dayWaveMeter .faro-wave-ruler{
   display:grid!important;
-  width:100%!important;
+  width:100%;
   max-width:100%;
-  gap:3px!important;
-  margin:0!important;padding:5px 0 0!important;
+  gap:3px;
+  margin:0;padding:5px 0 0;
   border:0!important;border-radius:0;
   background:transparent!important;
  }
  html body main #forecastPage:not(.hide) #dayWaveMeter .faro-wave-ruler-scale{
   width:100%;
   height:8px;
-  gap:3px!important;
+  gap:3px;
  }
  html body main #forecastPage:not(.hide) #dayWaveMeter .faro-wave-ruler-mark{
-  height:8px!important;
+  height:8px;
   min-height:0;
  }
  html body main #forecastPage:not(.hide) #dayWaveMeter .faro-wave-ruler-labels{
@@ -592,17 +592,17 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
  html body main #forecastPage:not(.hide) #dailyOverview #chileWaveExplain{
   grid-column:auto!important;
   width:100%!important;
-  margin:0!important;
+  margin:0;
  }
  html body main #forecastPage:not(.hide) #dailyOverview #chileWaveExplain summary{
-  padding:2px 0 0!important;font-size:10px!important;
+  padding:2px 0 0!important;font-size:10px;
  }
  html body main #forecastPage:not(.hide) #dailyOverview .chile-vibe{
   margin:6px 0 0!important;
-  padding:9px 0!important;
+  padding:9px 0;
  }
  html body main #forecastPage:not(.hide) #dailyOverview .faro-vibe-top{
-  margin:0 0 4px!important;
+  margin:0 0 4px;
  }
  html body main #forecastPage:not(.hide) #dailyOverview .faro-dna-jump{
   margin:0;padding:10px 0 0;
@@ -646,14 +646,14 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview>strong{
 html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyExplanation{
  grid-column:1!important;grid-row:3!important;
  max-width:65ch!important;
- font-size:12px!important;line-height:1.6!important;
+ font-size:12px;line-height:1.6;
 }
 html body main #forecastPage:not(.hide) #faroHourlySignals.faro-hourly-signals{
  grid-column:1!important;grid-row:4!important;
  display:grid!important;
  grid-template-columns:repeat(3,minmax(0,1fr))!important;
  align-items:start;
- gap:8px!important;
+ gap:8px;
  width:100%;
  min-width:0;
  margin-top:8px;
@@ -665,7 +665,7 @@ html body main #forecastPage:not(.hide) #faroHourlySignals.faro-hourly-signals{
  flex-direction:column;
  gap:4px;
  min-width:0;
- padding:0 10px 0 0!important;
+ padding:0 10px 0 0;
  background:transparent!important;
  border:0!important;
  border-right:1px solid var(--faro-line)!important;
@@ -688,7 +688,7 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview>#faroHourlyGoLens{
  grid-column:2!important;grid-row:1/5!important;
  align-self:center;justify-self:end!important;
  min-height:44px!important;
- margin:0!important;
+ margin:0;
 }
 
 /* A true site footer, not a second cinematic hero below the actual hero.
@@ -734,7 +734,7 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>span{
  max-width:31ch!important;
  font-size:12px!important;
  line-height:1.55!important;
- font-weight:550!important;
+ font-weight:550;
  text-align:right!important;
 }
 html body main>footer.chile-footer.faro-footer-v2 .faro-footer-brand p{
@@ -797,10 +797,10 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
  }
  html body main #forecastPage:not(.hide) #faroHourlySignals.faro-hourly-signals{
   grid-column:1!important;grid-row:4!important;
-  gap:6px!important;
+  gap:6px;
  }
  html body main #forecastPage:not(.hide) #faroHourlySignals>.faro-hourly-signal{
-  padding:0 7px 0 0!important;
+  padding:0 7px 0 0;
  }
  html body main #forecastPage:not(.hide) #faroHourlySignals>.faro-hourly-signal small{
   font-size:10px!important;
@@ -864,7 +864,7 @@ html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
 #forecastPage #dayview .faro-decision-intro h2,
 #forecastPage #dayview .hourly-section .forecast-section-heading h3{
   font-size:clamp(25px,2.5vw,35px)!important;letter-spacing:-.045em!important;
-  line-height:1.08!important;text-wrap:balance
+  line-height:1.08;text-wrap:balance
 }
 /* Harmonise the main decision surface without touching the cinematic hero. */
 html body main #forecastPage:not(.hide) #dailyOverview{
@@ -874,11 +874,11 @@ html body main #forecastPage:not(.hide) #dailyOverview{
   background:radial-gradient(ellipse at 110% -10%,rgba(120,214,209,.13),transparent 60%),var(--panel)!important
 }
 #forecastPage #dayview #dailyOverview>.day-overview-row{
-  order:0;flex:0 0 auto;margin:0 0 12px!important;
+  order:0;flex:0 0 auto;margin:0 0 12px;
 }
 #forecastPage #dayview #dailyOverview #datehead{
   font-size:clamp(26px,2.55vw,37px)!important;
-  letter-spacing:-.045em!important;line-height:1.08!important
+  letter-spacing:-.045em;line-height:1.08
 }
 #forecastPage #dayview #dailyOverview .best-session-brief{
   border-color:var(--read-line)!important
@@ -915,7 +915,7 @@ html body main #forecastPage:not(.hide) #dailyOverview{
 #forecastPage #dayview #dailyOverview .faro-surface-face{
   position:absolute;inset:0;z-index:1;min-width:0;min-height:0;
   overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;
-  padding:19px 20px!important
+  padding:19px 20px
 }
 #forecastPage #dayview #dailyOverview .faro-ocean-surface[data-mode=read] .faro-surface-back,
 #forecastPage #dayview #dailyOverview .faro-ocean-surface[data-mode=signals] .faro-surface-front{
@@ -928,9 +928,9 @@ html body main #forecastPage:not(.hide) #dailyOverview{
   display:block!important;margin:0!important;padding:0!important
 }
 #forecastPage #dayview #dailyOverview .faro-surface-front #chileDecisionHeadline{
-  font-size:clamp(24px,2.45vw,35px)!important;line-height:1.14;
-  letter-spacing:-.045em!important;max-width:19ch;text-wrap:balance;
-  margin:0!important
+  font-size:clamp(24px,2.45vw,35px);line-height:1.14;
+  letter-spacing:-.045em;max-width:19ch;text-wrap:balance;
+  margin:0
 }
 #forecastPage #dayview #dailyOverview .faro-brief-facts{
   width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
@@ -966,19 +966,19 @@ html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySi
   grid-row:1!important;grid-column:auto!important;
   min-height:0!important;max-height:none!important;
   display:flex!important;flex-direction:column!important;justify-content:flex-start!important;
-  padding:0 9px!important;margin:0!important;overflow:hidden;
+  padding:0 9px!important;margin:0;overflow:hidden;
   border:0!important;border-right:1px solid var(--read-line)!important;
   background:transparent!important;box-shadow:none!important
 }
-html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySignalMetrics>.day-signal-metric:first-child{grid-column:1!important;padding-left:0!important}
+html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySignalMetrics>.day-signal-metric:first-child{grid-column:1!important;padding-left:0}
 html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySignalMetrics>.day-signal-metric:nth-child(2){grid-column:2!important}
 html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySignalMetrics>.day-signal-metric:nth-child(3){grid-column:3!important;border-right:0!important}
 #forecastPage #dayview #dailyOverview .faro-surface-back #daySignalMetrics :is(#dayWaveMeter,.faro-wave-meter-axis,.chile-wave-explain,.chile-wave-size-tag,.day-signal-icon,[data-faro-icon]){display:none!important}
 #forecastPage #dayview #dailyOverview .faro-surface-back #daySignalMetrics :is(small,.chile-wave-feature-head){
-  font-size:9px!important;letter-spacing:.04em!important;line-height:1.35!important
+  font-size:9px;letter-spacing:.04em;line-height:1.35!important
 }
 #forecastPage #dayview #dailyOverview .faro-surface-back #daySignalMetrics :is(#dayWave,#dayPeriod,#dayWind){
-  font-size:clamp(17px,1.45vw,21px)!important;line-height:1.12!important
+  font-size:clamp(17px,1.45vw,21px);line-height:1.12!important
 }
 #forecastPage #dayview #dailyOverview .faro-surface-back #chileDecisionDriver{
   display:block!important;position:static!important;background:transparent!important;
@@ -1014,7 +1014,7 @@ html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySi
 }
 #forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe :is(.faro-vibe-top,.chile-vibe-help){display:none!important}
 #forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe{
-  padding:1px 0!important;border:0!important;margin:0!important
+  padding:1px 0;border:0!important;margin:0!important
 }
 #forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe-summary{
   min-height:28px!important;padding:1px 0!important
@@ -1038,11 +1038,11 @@ html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySi
 #forecastPage #dayview #dailyOverview .faro-flip-ripple{display:none}
 #forecastPage #dayview #dailyOverview .faro-surface-flip:focus-visible{outline:2px solid #93d9d7;outline-offset:3px}
 #forecastPage #dayview #dailyOverview #faroPrepHints{
-  order:2!important;display:flex!important;flex-wrap:wrap;gap:6px!important;
-  margin:0 0 9px!important;min-height:0
+  order:2!important;display:flex!important;flex-wrap:wrap;gap:6px;
+  margin:0 0 9px;min-height:0
 }
 #forecastPage #dayview #dailyOverview .faro-prep-chip{
-  display:inline-flex!important;align-items:center!important;flex-direction:row;gap:5px!important;
+  display:inline-flex!important;align-items:center!important;flex-direction:row;gap:5px;
   width:auto;min-height:29px!important;border-radius:999px!important;
   padding:5px 9px!important;box-shadow:none!important
 }
@@ -1062,11 +1062,11 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
   min-width:0!important;display:flex!important;flex-direction:column!important;
   gap:12px!important;justify-content:flex-start!important
 }
-#forecastPage #dayview .hourly-section .forecast-section-heading{margin:0!important}
+#forecastPage #dayview .hourly-section .forecast-section-heading{margin:0}
 html body main #forecastPage:not(.hide) .hourly-section #slots.slots{
   min-width:0;width:100%;display:grid!important;
   grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:84px;
-  overflow:hidden!important;gap:0!important;padding:0!important;margin:0;
+  overflow:hidden!important;gap:0!important;padding:0;margin:0;
   border:1px solid var(--read-line)!important;border-radius:15px;
   background:linear-gradient(135deg,rgba(121,209,202,.065),transparent 68%),var(--panel)!important
 }
@@ -1194,7 +1194,7 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #far
 html body main #forecastPage:not(.hide) #faroHourlyPreview.faro-hourly-in-place > #faroHourlyGoLens{
   position:absolute!important;right:14px!important;bottom:11px!important;
   z-index:20!important;min-height:31px!important;max-height:34px;
-  width:auto;padding:5px 10px;margin:0!important;
+  width:auto;padding:5px 10px;margin:0;
   border-radius:999px;white-space:nowrap;
   align-items:center;justify-content:center
 }
@@ -1215,7 +1215,7 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-why-summary::after{content:" +"}
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-why[open] .faro-hourly-why-summary::after{content:" −"}
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-back #faroHourlyExplanation{
-  display:block!important;font-size:11px!important;line-height:1.45!important;
+  display:block!important;font-size:11px;line-height:1.45;
   margin:6px 0 0;max-width:none!important
 }
 #forecastPage #dayview #faroHourlyPreview :is(.faro-hourly-flip,.faro-hourly-face):focus-visible{
@@ -1264,16 +1264,16 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
 @media(max-width:710px){
   #forecastPage #dayview #dailyOverview #datehead{font-size:clamp(25px,7vw,34px)!important}
   #forecastPage #dayview #dailyOverview .faro-surface-window{height:164px!important}
-  #forecastPage #dayview #dailyOverview .faro-surface-face{padding:15px!important}
+  #forecastPage #dayview #dailyOverview .faro-surface-face{padding:15px}
   #forecastPage #dayview #dailyOverview .faro-surface-front #chileDecisionHeadline{
-    font-size:clamp(22px,6vw,28px)!important
+    font-size:clamp(22px,6vw,28px)
   }
   #forecastPage #dayview #dailyOverview .faro-brief-fact{padding:0 6px}
   #forecastPage #dayview #dailyOverview .faro-brief-fact strong{font-size:clamp(14px,4vw,18px)}
   html body main #forecastPage:not(.hide) .hourly-section #slots.slots{
     display:flex!important;flex-wrap:nowrap;
     gap:0!important;overflow-x:auto!important;overflow-y:hidden!important;
-    scroll-snap-type:x proximity;padding:0!important;scrollbar-width:thin
+    scroll-snap-type:x proximity;padding:0;scrollbar-width:thin
   }
   html body main #forecastPage:not(.hide) .hourly-section #slots.slots>button{
     flex:0 0 88px;width:88px!important;min-width:88px!important;
@@ -1403,7 +1403,7 @@ html body main #forecastPage #dayview>.session-section .chile-session-body{
   display:grid!important;grid-template-columns:minmax(0,1fr)!important;
   grid-template-rows:auto auto auto;gap:13px;
   align-items:stretch;min-width:0;
-  padding:clamp(15px,2vw,23px)!important
+  padding:clamp(15px,2vw,23px)
 }
 html body main #forecastPage #dayview>.session-section #sessionAtGlance.session-glance{
   display:block!important;width:100%;max-width:none;
@@ -1440,7 +1440,7 @@ html body main #forecastPage #dayview>.session-section #sessionAtGlance.session-
 html body main #forecastPage #dayview>.session-section .session-essentials{
   display:block!important;width:100%;max-width:none;
   min-width:0;grid-column:1/-1;grid-row:auto;
-  margin:0!important;padding:12px 0 0!important;
+  margin:0;padding:12px 0 0;
   border:0!important;border-top:1px solid rgba(147,211,205,.28)!important;
   background:none!important
 }
@@ -1467,7 +1467,7 @@ html body main #forecastPage #dayview>.session-section #sessionEssentials.essent
 html body main #forecastPage #dayview>.session-section .daylight-disclosure{
   width:100%;min-width:0;max-width:none;
   grid-column:1/-1;grid-row:auto;
-  margin:0!important;padding:0!important;align-self:stretch
+  margin:0;padding:0;align-self:stretch
 }
 #forecastPage #dayview>.session-section .daylight-disclosure>summary{
   display:flex;justify-content:space-between;align-items:center;
