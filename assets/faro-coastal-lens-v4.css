@@ -66,7 +66,7 @@ html:not([data-theme="light"]) #chileCoastMap .faro-direction-hud{
  border-top:1px solid rgba(125,171,172,.23);
 }
 #chileCoastMap .faro-hud-arrow{
- display:block!important;width:25px!important;height:25px!important;
+ display:block!important;;;
  overflow:visible;color:var(--faro-signal,#9ab5bc);
 }
 #chileCoastMap .faro-hud-copy{display:grid;gap:1px;min-width:0}
@@ -136,9 +136,8 @@ html:not([data-theme="light"]) #chileCoastMap .faro-direction-hud{
 }
 #chileCoastMap .faro-map-pin.is-current{
  opacity:1;transform:none!important;border-color:rgba(250,255,251,.90)!important;
- background:#174f59!important;color:#f5fbfa!important;
- box-shadow:0 0 0 2px rgba(31,113,122,.48),0 3px 13px rgba(13,42,47,.30)!important
-}
+ ;;
+ }
 #chileCoastMap .faro-map-pin.is-current .faro-map-guide-dot{background:#94c5b1}
 /* Two miniature fit strokes. Solid = swell; interrupted = wind.
    Their colour encodes only reference-bearing alignment, not a surf rating. */
@@ -269,27 +268,27 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
  color:var(--faro-selection);letter-spacing:.12em}
 #forecastPage .faro-detail-hub-heading h3{font:850 clamp(17px,1.9vw,23px)/1.25 var(--faro-text,Manrope,system-ui);
  color:var(--fg);letter-spacing:-.035em;margin:0}
-#forecastPage .faro-detail-hub-heading p{max-width:25ch;margin:0!important;
+#forecastPage .faro-detail-hub-heading p{max-width:25ch;;
  font:600 12px/1.55 var(--faro-text,Manrope,system-ui);color:var(--muted)}
 #forecastPage .faro-detail-hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
-#forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand{margin:0!important;
- border:1px solid var(--faro-editorial-hairline,var(--border))!important;
- border-radius:13px!important;background:var(--panel)!important;overflow:hidden}
-#forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary{min-height:74px!important;
- box-sizing:border-box;padding:13px 16px!important;display:flex;align-items:center;
+#forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand{;
+ ;
+ ;background:var(--panel)!important;overflow:hidden}
+#forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary{;
+ box-sizing:border-box;;display:flex;align-items:center;
  flex-wrap:wrap;gap:5px 10px}
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary .forecast-accordion-title{
  font-size:12px!important;font-weight:850!important}
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary .forecast-accordion-meta{
  font-size:10px!important;color:var(--muted)!important}
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details[open]{border-color:var(--faro-selection)!important}
-#forecastPage .chile-method-disclaimer{margin:23px 0 0!important;padding:0!important;
+#forecastPage .chile-method-disclaimer{;;
  border:1px solid var(--faro-editorial-hairline,var(--border));border-radius:12px;background:var(--panel)}
-#forecastPage .chile-method-disclaimer>summary{padding:15px!important;
- font-size:11px!important;font-weight:800!important}
+#forecastPage .chile-method-disclaimer>summary{;
+ font-size:11px!important;}
 #forecastPage .chile-method-disclaimer>p{padding:0 15px 14px;margin:0!important;font-size:11px;line-height:1.7}
 .faro-footer-v2{display:grid!important;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);
- gap:24px 32px!important;align-items:start;border-top:1px solid var(--faro-editorial-hairline,var(--border))!important;
+ ;align-items:start;border-top:1px solid var(--faro-editorial-hairline,var(--border))!important;
  margin-top:30px!important;padding:26px 0 15px!important}
 .faro-footer-brand strong{display:block;font:900 19px/1.3 var(--faro-display,Archivo Black,system-ui);
  color:var(--fg);letter-spacing:-.02em}
@@ -366,7 +365,7 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
 /* Map: one obvious view reset; exploration controls are secondary */
 #chileCoastMap .faro-lens-controls{
  justify-content:flex-start!important;
- gap:9px 10px!important;
+ ;
 }
 #chileCoastMap .faro-lens-controls .faro-lens-recenter{
  appearance:none;cursor:pointer;display:inline-flex;align-items:center;
@@ -428,7 +427,7 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
  outline:2px solid var(--faro-selection);outline-offset:3px;
 }
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary{
- cursor:pointer;min-height:65px!important;
+ cursor:pointer;;
 }
 #forecastPage .faro-detail-hub-heading h3{max-width:30ch}
 #chileCoastMap .faro-lens-footer-legend>small{
@@ -444,7 +443,7 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
  #chileCoastMap .faro-lens-controls .faro-lens-options{margin-left:0}
 }
 @media(max-width:440px){
- #chileCoastMap .faro-lens-controls{display:grid!important;
+ #chileCoastMap .faro-lens-controls{;
   grid-template-columns:1fr 1fr;align-items:stretch;gap:8px!important}
  #chileCoastMap .faro-lens-controls .faro-lens-segments{grid-column:1/-1}
  #chileCoastMap .faro-lens-controls .faro-lens-recenter{
@@ -463,8 +462,8 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
 
 /* The selected beach marker sits in front of the vector tips. */
 #chileCoastMap .faro-map-pin.is-current{
- background:#134c5e!important;border:2px solid #fff!important;
- box-shadow:0 0 0 2px #167b8aaa,0 5px 17px #183d4147!important;
+ ;;
+ ;
 }
 #chileCoastMap .faro-lens-quick-metric{
  --fit-tone:#5b7882;
@@ -546,14 +545,14 @@ html:not([data-theme="light"]) #chileCoastMap .faro-lens-quick-metric[data-fit="
 }
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand{
  display:block!important;position:relative;min-width:0!important;margin:0!important;
- border:1px solid var(--faro-editorial-hairline,var(--border))!important;
- border-radius:12px!important;background:var(--faro-ed-shell,var(--panel))!important;
- overflow:hidden!important;box-shadow:none!important;align-self:start;
+ ;
+ ;;
+ overflow:hidden!important;;align-self:start;
 }
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary{
  display:grid!important;grid-template-columns:24px minmax(0,1fr) 18px;
  align-content:center;align-items:center;column-gap:10px;row-gap:4px;
- min-height:76px!important;box-sizing:border-box;padding:12px 15px!important;
+ ;box-sizing:border-box;;
  cursor:pointer;list-style:none;position:relative;
 }
 #forecastPage .faro-hub-group>details.forecast-expand>summary::-webkit-details-marker{display:none}
@@ -614,7 +613,7 @@ html:not([data-theme="light"]) #chileCoastMap .faro-lens-quick-metric[data-fit="
 #forecastPage .chile-method-disclaimer[open]>summary:after{content:"−"}
 #forecastPage .faro-detail-hub-grid>details{display:none!important}
 @media(max-width:760px){
- #forecastPage .faro-detail-hub-grid{grid-template-columns:minmax(0,1fr)!important}
+ #forecastPage .faro-detail-hub-grid{}
  #forecastPage .faro-hub-group.is-ready{grid-column:1;grid-template-columns:minmax(0,1fr)}
  #forecastPage .faro-hub-group.is-ready>.faro-hub-group-head{grid-column:1}
  #forecastPage .faro-hub-group{padding:12px}
@@ -764,7 +763,7 @@ html:not([data-theme="light"]) #chileCoastMap .faro-hud-row[data-level="mixed"]{
 html:not([data-theme="light"]) #chileCoastMap .faro-hud-row[data-level="weak"]{--faro-signal:#dfb08b}
 html:not([data-theme="light"]) #chileCoastMap .faro-hud-row[data-level="unfavourable"]{--faro-signal:#e2aba0}
 html:not([data-theme="light"]) #chileCoastMap .faro-hud-row[data-level="unknown"]{--faro-signal:#c0d1d4}
-#chileCoastMap .faro-hud-arrow{width:23px!important;height:23px!important;opacity:.88}
+#chileCoastMap .faro-hud-arrow{;;opacity:.88}
 #chileCoastMap .faro-hud-row.is-wind .faro-hud-arrow{opacity:.72}
 #chileCoastMap .faro-hud-heading{letter-spacing:.07em}
 #chileCoastMap .faro-hud-foot{opacity:.67}

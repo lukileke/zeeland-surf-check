@@ -31,8 +31,7 @@ html:not([data-theme="light"]) #bestPage{
 .top .faro-logo{margin-top:5px!important}
 #forecastPage>.forecast-toolbar{margin-bottom:clamp(13px,2vw,23px)!important}
 #forecastPage>.forecast-toolbar .forecast-updated-label{
- font:650 11px/1.4 var(--faro-text)!important;color:var(--faro-quiet)!important
-}
+ font:650 11px/1.4 var(--faro-text)!important;}
 /* Region controls read like a joined editorial selector, not two boxed forms. */
 #forecastPage>.picker-grid{gap:clamp(12px,2.6vw,26px)!important}
 #forecastPage .chile-spot-picker{
@@ -69,7 +68,7 @@ html:not([data-theme="light"]) #bestPage{
 #forecastPage>.faro-journey-nav button{
  min-height:38px!important;
  border:0!important;
- padding:8px 11px!important;background:transparent!important;
+ padding:8px 11px!important;;
  color:var(--fg)!important;
  font:750 11px/1.4 var(--faro-text)!important;
  box-shadow:none!important
@@ -174,8 +173,7 @@ html:not([data-theme="light"]) #forecastPage>.faro-access-notice.faro-safety-cen
  background:linear-gradient(165deg,
   color-mix(in srgb,var(--faro-selection) 5%,var(--faro-raised)) 0%,
   var(--faro-raised) 56%)!important;
- box-shadow:0 5px 23px rgba(19,46,48,.025)!important
-}
+ }
 #forecastPage #dailyOverview .day-editorial-overline{
  display:flex;gap:6px!important;align-items:center!important;
  font:850 9px/1.4 var(--faro-text)!important;
@@ -237,7 +235,7 @@ html:not([data-theme="light"]) #forecastPage>.faro-access-notice.faro-safety-cen
 #forecastPage #dayview>.faro-ocean-explorer{
  border:1px solid var(--faro-editorial-stroke)!important;
  border-top:2px solid var(--faro-selection)!important;
- border-radius:18px!important;
+ ;
  background:var(--faro-raised)!important;box-shadow:none!important
 }
 #forecastPage .faro-ocean-explorer-header{
@@ -438,16 +436,14 @@ html main>.app-nav{
  
  border-bottom:1px solid color-mix(in srgb,var(--faro-line) 78%,transparent)!important;
  
- box-shadow:none!important
-}
+ }
 html main>.app-nav button{
  position:relative;
  
  border-bottom:2px solid transparent!important;
  
  
- transition:color .18s ease,background-color .18s ease,border-color .18s ease!important
-}
+ }
 html:not([data-theme="light"]) main>.app-nav button.active,
 html[data-theme="light"] main>.app-nav button.active{
  color:var(--fg)!important;
@@ -459,8 +455,7 @@ html main>.app-nav button:hover{
  color:var(--fg)!important;background:color-mix(in srgb,var(--faro-selection) 7%,transparent)!important
 }
 html main>.app-nav button:focus-visible{
- outline-offset:-3px!important
-}
+ }
 html .faro-country-options{
  background:transparent!important;border:0!important;
  border-radius:0!important;border-bottom:1px solid var(--faro-line)!important;
@@ -485,8 +480,8 @@ html:not([data-theme="light"]) .faro-country-options a[aria-current="page"]{
  transition:background-color .18s ease!important
 }
 @media(max-width:650px){
- html main>.app-nav{gap:3px!important}
- html main>.app-nav button{min-height:48px!important}
+ html main>.app-nav{}
+ html main>.app-nav button{}
 }
 
 
@@ -810,52 +805,46 @@ body main>.faro-country-switch{margin:0 0 13px!important}
  }
  #forecastPage #faroLeadHeadline{
   
-  max-width:19ch!important
- }
- #forecastPage .faro-lead-main{gap:10px!important}
+  }
+ #forecastPage .faro-lead-main{}
  #forecastPage .faro-lead-location{font-size:10px!important}
- #forecastPage #faroLeadDeck{line-height:1.55!important}
+ #forecastPage #faroLeadDeck{}
  #forecastPage .faro-lead-actions{
-  gap:8px!important;margin-top:1px!important
- }
+  gap:8px!important;}
  #forecastPage .faro-lead-actions button{
-  padding:8px 12px!important;
+  ;
   font-size:11px!important
  }
- #forecastPage .faro-lead-qualification{font-size:9px!important}
+ #forecastPage .faro-lead-qualification{}
  #forecastPage .faro-lead-signal{
   
   
   
   
   
-  backdrop-filter:none!important
- }
+  }
  #forecastPage .faro-lead-signal-top{
   justify-content:space-between
  }
  #forecastPage .faro-lead-score-row{
   
-  align-content:start;gap:3px 6px!important
- }
+  align-content:start;}
  #forecastPage #faroLeadScore{
   font-size:clamp(39px,10vw,53px)!important
  }
  #forecastPage .faro-lead-grade{
-  display:block;padding:3px 6px!important;
-  font-size:9px!important
- }
+  display:block;;
+  }
  #forecastPage .faro-lead-best{
   
   padding:0!important;border:0!important;
   align-content:center;flex-direction:column!important;
   
-  gap:5px!important
- }
+  }
  #forecastPage .faro-lead-best strong{font-size:clamp(16px,4.5vw,21px)!important}
  #forecastPage .faro-lead-best small{font-size:8px!important}
  #forecastPage .faro-lead-metrics{
-  grid-row:3!important;
+  ;
   gap:7px!important;padding-top:11px!important
  }
  #forecastPage .faro-lead-metrics strong{font-size:12px!important}
@@ -2590,7 +2579,7 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.day-outlook-section
 }
 html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
  
- justify-content:flex-start!important;
+ ;
  
  min-height:0!important;height:auto!important;
 }
