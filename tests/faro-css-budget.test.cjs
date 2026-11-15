@@ -24,7 +24,7 @@ test('explicit important budget cannot silently grow',()=>{
  const total=sheets.reduce((sum,x)=>sum+x.important,0);
  assert.ok(total<=7034,'CSS important debt increased: '+total+' > 7034. Refactor before adding priority overrides.');
  const bytes=sheets.reduce((sum,x)=>sum+x.bytes,0);
- assert.ok(bytes<=700000,'CSS payload grew past 700 kB: '+bytes);
+ assert.ok(bytes<=650000,'CSS payload exceeds the tightened 650 kB budget: '+bytes);
 });
 // File-level ownership budgets expose migrations that hide new priority rules
 // behind an unrelated decrease elsewhere. Decrease each cap with each PR.
@@ -72,6 +72,73 @@ test('loaded CSS has no empty selector blocks',()=>{
  for(const sheet of sheets){
   const empty=findEmptyCssRules(sheet.css);
   assert.equal(empty.length,0,'Empty CSS blocks in '+sheet.href+': '+empty.slice(0,4).join(' | '));
+ }
+});
+
+
+// A deliberately conservative proxy for selector debt, not the full CSS
+// specificity algorithm (:is/:where have special weights). These ceilings
+// prevent new deep ancestor chains while older components are refactored.
+const selectorComplexityCaps=Object.freeze({
+ 'assets/faro-editorial-polish.css':[0,2,0,0],
+ 'faro-ui.css':[2,0,0,2],'faro-brand.css':[2,5,0,2],
+ 'faro-daily.css':[0,3,0,0],'faro-rhythm.css':[0,3,0,0],
+ 'faro-colours.css':[1,4,0,1],'faro-desktop.css':[0,6,0,0],
+ 'chile/chile-forecast.css':[0,34,0,0],
+ 'faro-spot-dna-editorial.css':[0,42,0,0],
+ 'assets/faro-visual-system-v2.css':[3,6,0,3],
+ 'assets/faro-coastal-lens-v4.css':[3,1,0,3],
+ 'chile/chile-visual-contract.css':[1,55,0,1],
+ 'chile/faro-editorial-experience-v2.css':[101,55,108,100],
+ 'chile/faro-tide-read.css':[175,142,188,170],
+ 'chile/faro-score-colour-lock-v1.css':[10,13,7,10]
+});
+function splitCssSelectors(source){
+ let depth=0,start=0;const result=[];
+ for(let i=0;i<source.length;i++){
+  if(source[i]==='('||source[i]==='[')depth++;
+  else if(source[i]===')'||source[i]===']')depth--;
+  else if(source[i]===','&&!depth){
+   result.push(source.slice(start,i).trim());start=i+1;
+  }
+ }
+ result.push(source.slice(start).trim());
+ return result.filter(Boolean);
+}
+function countComplexSelectors(raw){
+ const css=raw.replace(/\/\*[\s\S]*?\*\//g,m=>' '.repeat(m.length));
+ let start=0;const stack=[];const counts=[0,0,0,0];
+ for(let i=0;i<css.length;i++){
+  if(css[i]==='{'){
+   const head=css.slice(start,i).trim();
+   stack.push({head,contentStart:i+1,at:head.startsWith('@')});start=i+1;
+  }else if(css[i]==='}'){
+   const block=stack.pop();
+   if(block&&!block.at&&!css.slice(block.contentStart,i).includes('{')){
+    const important=css.slice(block.contentStart,i).includes('!important');
+    for(const sel of splitCssSelectors(block.head)){
+     const ids=(sel.match(/#[a-zA-Z_-][\w-]*/g)||[]).length;
+     const parts=sel.replace(/\([^)]*\)/g,' ').split(/[\s>+~]+/).filter(Boolean).length;
+     if(parts>=6){counts[0]++;if(important)counts[3]++;}
+     if(ids>=3)counts[1]++;
+     if(/\bhtml\s+body\s+main\b/.test(sel))counts[2]++;
+    }
+   }
+   start=i+1;
+  }else if(css[i]===';'&&!stack.length)start=i+1;
+ }
+ return counts;
+}
+test('selector complexity cannot grow silently across CSS component owners',()=>{
+ for(const sheet of sheets){
+  const p=path.relative(root,path.resolve(root,'chile',sheet.href.split('?')[0])).replaceAll('\\','/');
+  const actual=countComplexSelectors(sheet.css);
+  const caps=selectorComplexityCaps[p]||[0,0,0,0];
+  for(let i=0;i<caps.length;i++){
+   assert.ok(actual[i]<=caps[i],
+    p+' complexity '+['deep selector','3+ IDs','html/body/main chain','deep important selector'][i]+
+    ' increased: '+actual[i]+' > '+caps[i]+'. Consolidate owner rules instead of new overrides.');
+  }
  }
 });
 
