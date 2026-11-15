@@ -1034,13 +1034,14 @@ const priorityAuditResults=[];
        }
        try{visit(sheet.cssRules)}catch(_){}
       }
-      const tested=[],impacted=[],missing=[],unmatched=[];
+      const tested=[],impacted=[],missing=[],unmatched=[],missingNoRule=[],missingStillImportant=[];
       for(let i=0;i<items.length;i++){
        const item=items[i];
        const key=item.path+'|'+normalize(item.selector)+'|'+item.prop+'|'+item.occurrence;
        const rule=byRule.get(key);
-       if(!rule||rule.style.getPropertyPriority(item.prop)==='important'){
-        missing.push(i);continue;
+       if(!rule){missing.push(i);missingNoRule.push(i);continue;}
+       if(rule.style.getPropertyPriority(item.prop)==='important'){
+        missing.push(i);missingStillImportant.push(i);continue;
        }
        let nodes;
        try{nodes=[...document.querySelectorAll(rule.selectorText)]}catch(_){missing.push(i);continue}
@@ -1054,7 +1055,7 @@ const priorityAuditResults=[];
        tested.push(i);
        if(before.some((v,j)=>v!==after[j]))impacted.push(i);
       }
-      return {tested,impacted,missing,unmatched};
+      return {tested,impacted,missing,unmatched,missingNoRule,missingStillImportant};
      },priorityTrial);
      priorityAuditResults.push({width,theme,...report});
      console.log('CSS priority audit '+width+' '+theme+': '+report.tested.length+
