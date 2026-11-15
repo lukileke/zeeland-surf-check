@@ -260,7 +260,7 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
  100%{opacity:0;transform:rotate(var(--lens-bearing)) translateY(-17px)}
 }
 /* The page ends in intentional groups, not eight identical disconnected rules. */
-#forecastPage #dayview>.faro-detail-hub{grid-column:1/-1!important;display:grid!important;gap:16px;
+#forecastPage #dayview>.faro-detail-hub{;;gap:16px;
  margin:28px 0 0;min-width:0}
 #forecastPage .faro-detail-hub-heading{display:flex;align-items:end;justify-content:space-between;
  gap:12px 22px;flex-wrap:wrap;padding:0 2px 11px;border-bottom:1px solid var(--faro-editorial-hairline,var(--border))}
@@ -272,7 +272,7 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
  font:600 12px/1.55 var(--faro-text,Manrope,system-ui);color:var(--muted)}
 #forecastPage .faro-detail-hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand{;
- ;
+
  ;background:var(--panel)!important;overflow:hidden}
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary{;
  box-sizing:border-box;;display:flex;align-items:center;
@@ -365,7 +365,7 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
 /* Map: one obvious view reset; exploration controls are secondary */
 #chileCoastMap .faro-lens-controls{
  justify-content:flex-start!important;
- ;
+
 }
 #chileCoastMap .faro-lens-controls .faro-lens-recenter{
  appearance:none;cursor:pointer;display:inline-flex;align-items:center;
@@ -461,10 +461,7 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
 }
 
 /* The selected beach marker sits in front of the vector tips. */
-#chileCoastMap .faro-map-pin.is-current{
- ;;
- ;
-}
+
 #chileCoastMap .faro-lens-quick-metric{
  --fit-tone:#5b7882;
  --fit-tint:color-mix(in srgb,var(--fit-tone) 7%,var(--panel));
@@ -523,8 +520,8 @@ html:not([data-theme="light"]) #chileCoastMap .faro-lens-quick-metric[data-fit="
    forecast panel. Headlines aren't naked rules or decorative toggles. */
 #forecastPage #dayview .faro-detail-hub{width:100%;max-width:100%;min-width:0}
 #forecastPage .faro-detail-hub-grid{
- display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
- align-items:start!important;gap:15px!important;min-width:0!important;
+ ;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ ;gap:15px!important;min-width:0!important;
 }
 #forecastPage .faro-hub-group{
  display:grid;gap:9px;align-content:start;min-width:0;
@@ -545,12 +542,12 @@ html:not([data-theme="light"]) #chileCoastMap .faro-lens-quick-metric[data-fit="
 }
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand{
  display:block!important;position:relative;min-width:0!important;margin:0!important;
- ;
+
  ;;
  overflow:hidden!important;;align-self:start;
 }
 #forecastPage .faro-detail-hub-grid .faro-hub-group>details.forecast-expand>summary{
- display:grid!important;grid-template-columns:24px minmax(0,1fr) 18px;
+ ;grid-template-columns:24px minmax(0,1fr) 18px;
  align-content:center;align-items:center;column-gap:10px;row-gap:4px;
  ;box-sizing:border-box;;
  cursor:pointer;list-style:none;position:relative;
@@ -613,7 +610,7 @@ html:not([data-theme="light"]) #chileCoastMap .faro-lens-quick-metric[data-fit="
 #forecastPage .chile-method-disclaimer[open]>summary:after{content:"−"}
 #forecastPage .faro-detail-hub-grid>details{display:none!important}
 @media(max-width:760px){
- #forecastPage .faro-detail-hub-grid{}
+ 
  #forecastPage .faro-hub-group.is-ready{grid-column:1;grid-template-columns:minmax(0,1fr)}
  #forecastPage .faro-hub-group.is-ready>.faro-hub-group-head{grid-column:1}
  #forecastPage .faro-hub-group{padding:12px}

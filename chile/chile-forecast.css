@@ -127,9 +127,9 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
  .chile-model-provenance span:not(.chile-model-dot){font-size:10px}
 }
 @media(min-width:1120px){
- #forecastPage>.forecast-toolbar{}
- #forecastPage>.picker-grid{}
- #dayStrip #dayStripItems>.day-chip{}
+ 
+ 
+ 
  #dayview .slots>button{min-height:110px!important}
  #forecastPage #dayview>details.forecast-expand{margin:0!important}
 }
@@ -194,7 +194,7 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 #dayview .chile-session-rating.tone-fair{--tone:var(--surf-fair)}
 #dayview .chile-session-rating.tone-poor{--tone:var(--surf-poor)}
 #dayview .chile-session-rating.tone-low{--tone:var(--surf-low)}
-#dayview .chile-session-rating .chile-session-score{}
+
 #dayview .chile-session-rating .chile-session-origin{color:var(--faro-quiet);font-size:10px;line-height:1.25;letter-spacing:0;font-weight:550;display:block}
 #bestPage .chile-ranking strong{color:var(--tone,var(--brand-score-ink))!important}
 #bestPage .chile-ranking.tone-great{--tone:var(--surf-great)}
@@ -381,7 +381,7 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
 @media(min-width:1120px){
  #forecastPage{row-gap:clamp(14px,1.5vw,22px)!important}
  #forecastPage > .day-outlook-section{grid-column:1/span 5!important}
- #forecastPage #dayview>.hourly-section{}
+ 
  #forecastPage #dayview>.session-section{
    
    min-width:0;}
@@ -402,9 +402,7 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
  #forecastPage #dayview>#coastMapExpand .forecast-accordion-meta{font-size:10px!important}
  #forecastPage #dayview>#coastMapExpand .faro-map-wrap{
    grid-template-columns:1fr!important;}
- #forecastPage #dayview>#coastMapExpand .faro-map-viewport{
-   
- }
+ 
  #forecastPage #dayview>#coastMapExpand .faro-map-brief{
    display:grid;grid-template-columns:1fr;gap:5px;padding:4px 0
  }
@@ -420,7 +418,7 @@ details[open]>.chile-vibe-summary .chile-chevron{transform:rotate(180deg)}
    grid-column:1/-1;line-height:1.45;font-size:9px
  }
  #forecastPage #dayview>#spotInsightExpand{grid-column:1/span 7!important}
- #forecastPage #dayview>#waveInsightExpand{}
+ 
  #forecastPage #dayview>#cameraExpand{grid-column:1/span 7!important}
  #forecastPage #dayview>#faroTechnicalExpand{grid-column:8/-1!important}
  #forecastPage #dayview>#wearExpand{grid-column:1/span 7!important}
