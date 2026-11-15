@@ -77,8 +77,8 @@ test('new CSS is before the invariant score palette, with no model changes',()=>
  assert.ok(editor.includes('--beacon-y:8%'));
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(css));
  assert.ok(editor.includes('FARO source: chile/faro-beacon-atmosphere-v4.css'));
- assert.ok(html.includes('faro-chile-live.js?v=11'));
- assert.ok(html.includes('chile-forecast.js?v=47'));
+ assert.ok(html.includes('faro-chile-live.js?v=12'));
+ assert.ok(html.includes('chile-forecast.js?v=48'));
 });
 
 test('five decorative layers share one 5.4-second peak at half-cycle',()=>{
