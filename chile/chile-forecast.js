@@ -13,6 +13,8 @@ const h=n=>String(n).padStart(2,"0");
 // clearly labelled OLD, and expires after four hours.
 const modelCachePrefix="faro-cl-last-valid-v1:";
 const maxModelAgeMs=4*60*60*1000;
+const activeModelCacheMs=5*60*1000; // avoid presenting 15-minute-old data as current
+let lastModelFetchStartedAt=0;
 function saveLastValid(id,forecast){
  if(!forecast?.model?.fetchedAt||!forecast?.days?.some(d=>
   d.slots?.some(s=>s.modelComplete&&ok(s.score))))return;
@@ -1018,11 +1020,18 @@ function render(){
 async function refresh(force=false,onSettled=null){
  if(!state.config)return;
  const id=spot().id,serial=++state.serial,stored=state.cache.get(id);
- if(!force&&stored&&Date.now()-stored.at<15*60*1000){
+ if(!force&&stored&&Date.now()-stored.at<activeModelCacheMs){
   state.forecast=stored.forecast;state.loadFailed=false;state.dataStale=false;
   render();onSettled?.();return
  }
- state.loadFailed=false;state.dataStale=false;
+ // Paint a labelled, last-valid local snapshot immediately after reload, while
+ // two real provider requests run. Never mark this fallback as LIVE.
+ if(!force&&!stored&&!state.forecast){
+  const saved=readLastValid(id);
+  if(saved){state.forecast=saved;state.loadFailed=false;state.dataStale=true;render();}
+ }
+ state.loadFailed=false;
+ lastModelFetchStartedAt=Date.now();
  txt("updated",tr("Consultando modelos para ","Loading model for ")+spot().name+"…");
  txt("status",tr("ACTUALIZANDO…","UPDATING…"));
  try{
@@ -1051,6 +1060,23 @@ async function refresh(force=false,onSettled=null){
   risk(null);onSettled?.();
  }
 }
+// Safari can freeze background tabs for hours. Resume with an automatic,
+ // bounded-age refresh instead of requiring the surfer to find a reload icon.
+function refreshWhenVisible(){
+ if(document.hidden||!state.config)return;
+ const cached=state.cache.get(spot().id);
+ const nowMs=Date.now();
+ if(cached&&nowMs-cached.at<activeModelCacheMs)return;
+ if(nowMs-lastModelFetchStartedAt<activeModelCacheMs)return;
+ void refresh(true);
+}
+document.addEventListener("visibilitychange",()=>{
+ if(!document.hidden)refreshWhenVisible();
+});
+window.addEventListener("pageshow",refreshWhenVisible);
+window.addEventListener("focus",refreshWhenVisible);
+window.setInterval(refreshWhenVisible,120000);
+
 function picker(){
  paintAccessNotice();
  const list=$("chileSpotSelect");list.replaceChildren();
@@ -1067,7 +1093,7 @@ async function rankings(){
    sp.accessNotice?.publicRecommendationAllowed!==false);
  const results=await Promise.allSettled(candidateSpots.map(async sp=>{
   const cached=state.cache.get(sp.id);
-  if(cached&&Date.now()-cached.at<15*60*1000)return cached.forecast;
+  if(cached&&Date.now()-cached.at<activeModelCacheMs)return cached.forecast;
   const data=await Live.fetchSpot(state.config,sp,state.profiles,fetch,state.lang);
   state.cache.set(sp.id,{forecast:data,at:Date.now()});return data;
  }));
