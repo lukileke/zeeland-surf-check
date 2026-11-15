@@ -2993,12 +2993,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
    * Preserve the existing 6.4 s animation in both themes. */
   /* Pulse timing is now owned by faro-hero-synchronised-pulse-v1.css.
    * Do not introduce a second iPhone animation clock. */
-  html body main #forecastPage:not(.hide) > .faro-forecast-lead
-  > .faro-lead-beacon > .faro-beacon-pulse {
-    
-    
-  }
-  html body main #forecastPage:not(.hide) > .faro-forecast-lead
+    html body main #forecastPage:not(.hide) > .faro-forecast-lead
   > .faro-lead-beacon::after {
     filter:blur(28px)!important;
     opacity:.77; /* let synchronised keyframes modulate luminance */
