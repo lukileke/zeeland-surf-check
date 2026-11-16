@@ -823,12 +823,12 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   gap:13px 16px!important;
  }
- html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav>div:last-child{
+ #faroSiteFooter .faro-footer-nav>div:last-child{
   grid-column:1/-1;display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;
   padding-top:13px;border-top:1px solid rgba(174,223,213,.2)
  }
- html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav>div:last-child small{
+ #faroSiteFooter .faro-footer-nav>div:last-child small{
   grid-column:1/-1
  }
 }
