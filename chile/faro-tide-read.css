@@ -813,15 +813,23 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
  html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2,
  html body main>footer.chile-footer.faro-footer-v2{
   grid-template-columns:minmax(0,1fr)!important;
-  padding:24px 17px 20px!important;
-  border-radius:0!important;
+  padding:23px 20px 21px!important;
+  border-radius:22px!important;
  }
  html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto>strong{
   font-size:clamp(21px,6.1vw,26px)!important;
  }
  html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav{
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:16px!important;
+  gap:13px 16px!important;
+ }
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav>div:last-child{
+  grid-column:1/-1;display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;
+  padding-top:13px;border-top:1px solid rgba(174,223,213,.2)
+ }
+ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav>div:last-child small{
+  grid-column:1/-1
  }
 }
 @media(max-width:375px){
@@ -833,15 +841,13 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
  }
 }
 
-/* The prior finish pass used :has(...), which outranks a normal footer
- * selector even when that selector is loaded later. Match its specificity
- * explicitly or the old rounded promo-card appearance would survive. */
+/* This high-specificity :has(...) selector owns the coastal footer silhouette.
+ * It must not silently reset the rounded finish at mobile widths. */
 html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
- border:0!important;
- border-top:1px solid rgba(174,223,213,.27)!important;
- border-radius:0!important;
+ border:1px solid rgba(174,223,213,.25)!important;
+ border-radius:clamp(20px,3vw,26px)!important;
  box-shadow:none!important;
- margin-top:clamp(18px,2.2vw,30px);
+ margin-top:clamp(26px,3vw,44px);
 }
 
 
