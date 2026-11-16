@@ -456,7 +456,10 @@ function fixture(){
    await page.locator('#dayStripItems .day-chip').nth(1).click();
    // The 06:00 window has stronger wind than 08:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
+   const previousWeekChip=await page.locator('#dayStripItems .day-chip').first().elementHandle();
    await page.locator('#slots button').first().click();
+   assert.equal(await previousWeekChip.evaluate(node=>node.isConnected),true,
+    'Selecting an hourly window must not reconstruct the entire seven-day picker');
    assert.match(await page.locator('#chileDecisionHeadline').textContent(),/viento|wind/i,
     'A windy slot must lead with a wind-based verdict');
    assert.match(await page.locator('#chileVibeAction').textContent(),/Mejor candidata|Better option/i,
