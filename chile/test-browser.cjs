@@ -456,7 +456,10 @@ function fixture(){
    await page.locator('#dayStripItems .day-chip').nth(1).click();
    // The 06:00 window has stronger wind than 08:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
+   const previousWeekChip=await page.locator('#dayStripItems .day-chip').first().elementHandle();
    await page.locator('#slots button').first().click();
+   assert.equal(await previousWeekChip.evaluate(node=>node.isConnected),true,
+    'Selecting an hourly window must not reconstruct the entire seven-day picker');
    assert.match(await page.locator('#chileDecisionHeadline').textContent(),/viento|wind/i,
     'A windy slot must lead with a wind-based verdict');
    assert.match(await page.locator('#chileVibeAction').textContent(),/Mejor candidata|Better option/i,
@@ -965,6 +968,14 @@ function fixture(){
    assert.equal(await page.locator('#set').count(),1,'Translation must preserve sunset value element');
    assert.equal(await page.locator('#cutoff').count(),1,'Translation must preserve daylight cut-off element');
    await page.locator('#themeToggle').click();
+   const brandAccess=await page.evaluate(()=>({
+    scheme:document.documentElement.dataset.theme,
+    bar:document.querySelector('meta[name="theme-color"]')?.content,
+    skip:document.querySelector('.faro-skip-link')?.getAttribute('href')
+   }));
+   assert.equal(brandAccess.skip,'#faroForecastLead','Skip link must reach the modelled forecast');
+   assert.equal(brandAccess.bar,brandAccess.scheme==='light'?'#f5f9f8':'#102427',
+    'Mobile browser chrome must follow the FARO theme');
    assert.equal(scriptErrors.length,0,'No runtime errors during locale/theme/tab changes');
    if(width===390||width===1180){
     await page.locator('#navBest').click();

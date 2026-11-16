@@ -190,6 +190,8 @@ function setTheme(toggle){
   state.theme=["light","dark"].includes(val)?val:(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark");
  }
  document.documentElement.dataset.theme=state.theme;
+ const colour=document.querySelector('meta[name="theme-color"]');
+ if(colour)colour.content=state.theme==="light"?"#f5f9f8":"#102427";
  txt("themeToggle",state.theme==="dark"?tr(" Claro"," Light"):tr(" Oscuro"," Dark"));
  if(toggle)try{localStorage.setItem("zeeland-theme",state.theme)}catch(e){}
 }
@@ -835,7 +837,7 @@ function slots(){
    const choice=el("span",tr("ELEGIDA","SELECTED"),"faro-slot-selected-label");
    button.append(choice);
   }
-  button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
+  button.addEventListener("click",()=>{state.hour=s.hour;renderSelectedWindow()});container.append(button);
  }
  // Keep the chosen two-hour window visible in the swipeable mobile rail.
  // Scroll the rail, not the document, so page position never jumps.
@@ -1027,6 +1029,18 @@ function render(){
  risk(state.forecast.hazard);strip();outlook();slots();renderDNA();renderCameras();
  state.videoLab?.refreshCameras();updateCoastMap();renderHourlyPreview();if(state.tab==="board")match();
  if(state.dataStale)showStaleModel();
+}
+// A time-slot click changes only the selected window. Keep week choices,
+// camera feeds, source checks and the rest of the model DOM intact instead of
+// rebuilding the entire forecast (and reinitialising expensive widgets).
+function renderSelectedWindow(){
+ if(!state.forecast)return;
+ outlook();
+ slots(); // includes Session Kit and its model/UV provenance
+ renderDNA();
+ updateCoastMap();
+ renderHourlyPreview();
+ if(state.tab==="board")match();
 }
 async function refresh(force=false,onSettled=null){
  if(!state.config)return;

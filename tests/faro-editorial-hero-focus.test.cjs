@@ -14,11 +14,11 @@ const js=read('chile/chile-forecast.js');
 test('hero layout loaded immediately before shared score palette',()=>{
  const links=[...h.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(x=>x[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=9');
- assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=7');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=10');
+ assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=8');
  for(const source of ['faro-editorial-hero-focus-v1.css','faro-responsive-quality-v1.css','faro-decision-balance-v1.css'])
   assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/'+source));
- assert.ok(links.includes('faro-editorial-experience-v2.css?v=7'));
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=8'));
  assert.ok(!links.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
  assert.ok(read('chile/faro-editorial-experience-v2.css').includes('@keyframes faro-hero-core-breathe'));
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(c));

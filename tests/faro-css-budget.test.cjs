@@ -16,27 +16,27 @@ const get=p=>fs.readFileSync(path.join(root,'chile',p),'utf8');
 test('only 19 CSS files in Chile; invariant score palette is the last sheet',()=>{
  assert.equal(sheets.length,19,'The 2026-11-15 CSS request budget regressed');
  assert.equal(sheets.at(-1).href,'faro-score-colour-lock-v1.css?v=1');
- assert.equal(sheets.at(-2).href,'faro-tide-read.css?v=9');
- assert.equal(sheets.at(-3).href,'faro-editorial-experience-v2.css?v=7');
+ assert.equal(sheets.at(-2).href,'faro-tide-read.css?v=10');
+ assert.equal(sheets.at(-3).href,'faro-editorial-experience-v2.css?v=8');
  assert.ok(!sheets.some(x=>/@import\s/.test(x.css)),'Avoid hidden extra CSS requests');
 });
 test('explicit important budget cannot silently grow',()=>{
  const total=sheets.reduce((sum,x)=>sum+x.important,0);
- assert.ok(total<=6196,'CSS important debt increased: '+total+' > 6196. Refactor before adding priority overrides.');
+ assert.ok(total<=5513,'CSS important debt increased: '+total+' > 5513. Refactor before adding priority overrides.');
  const bytes=sheets.reduce((sum,x)=>sum+x.bytes,0);
  assert.ok(bytes<=650000,'CSS payload exceeds the tightened 650 kB budget: '+bytes);
 });
 // File-level ownership budgets expose migrations that hide new priority rules
 // behind an unrelated decrease elsewhere. Decrease each cap with each PR.
 const priorityCaps=Object.freeze({
- 'assets/faro-icons.css':1,'assets/faro-editorial-polish.css':9,
- 'faro-core.css':442,'faro-ui.css':1100,'faro-brand.css':645,
- 'faro-daily.css':113,'faro-rhythm.css':378,'faro-colours.css':55,
- 'faro-spot-signals.css':55,'faro-desktop.css':123,'faro-country.css':1,
- 'chile/chile-forecast.css':131,'faro-spot-dna-editorial.css':116,
- 'assets/faro-visual-system-v2.css':186,'assets/faro-coastal-lens-v4.css':379,
- 'chile/chile-visual-contract.css':494,'chile/faro-editorial-experience-v2.css':1293,
- 'chile/faro-tide-read.css':639,'chile/faro-score-colour-lock-v1.css':36
+ 'assets/faro-icons.css':1,'assets/faro-editorial-polish.css':8,
+ 'faro-core.css':402,'faro-ui.css':944,'faro-brand.css':602,
+ 'faro-daily.css':89,'faro-rhythm.css':321,'faro-colours.css':55,
+ 'faro-spot-signals.css':45,'faro-desktop.css':113,'faro-country.css':1,
+ 'chile/chile-forecast.css':114,'faro-spot-dna-editorial.css':72,
+ 'assets/faro-visual-system-v2.css':164,'assets/faro-coastal-lens-v4.css':319,
+ 'chile/chile-visual-contract.css':423,'chile/faro-editorial-experience-v2.css':1172,
+ 'chile/faro-tide-read.css':612,'chile/faro-score-colour-lock-v1.css':36
 });
 test('every CSS owner has a hard priority ceiling; do not shift debt between files',()=>{
  assert.equal(sheets.length,Object.keys(priorityCaps).length);

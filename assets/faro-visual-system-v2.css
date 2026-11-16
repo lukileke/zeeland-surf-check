@@ -244,14 +244,14 @@ html:not([data-theme="light"]){
  --faro-grade-tone:var(--muted);
  display:inline-flex!important;align-items:center;justify-content:center;
  width:max-content;max-width:100%;min-height:22px;
- padding:3px 9px!important;
+ padding:3px 9px;
  border:1px solid color-mix(in srgb,var(--faro-grade-tone) 40%,transparent)!important;
- border-radius:999px!important;
+ border-radius:999px;
  background:color-mix(in srgb,var(--faro-grade-tone) 12%,var(--panel))!important;
  color:var(--faro-grade-tone)!important;
- font-family:var(--faro-text,Manrope,system-ui)!important;
- font-size:clamp(10px,1vw,12px)!important;font-weight:800!important;
- line-height:1.25!important;letter-spacing:.015em!important;
+ font-family:var(--faro-text,Manrope,system-ui);
+ font-size:clamp(10px,1vw,12px);font-weight:800;
+ line-height:1.25;letter-spacing:.015em;
  box-shadow:none!important;text-transform:none;
  white-space:normal;text-align:center;
 }
@@ -337,14 +337,14 @@ html #dayWaveMeter .chile-wave-bars>span.on{
 html #forecastPage #dailyOverview .chile-day-wave-feature{
  position:relative;
  border:1px solid var(--faro-editorial-hairline)!important;
- border-radius:15px!important;
+ border-radius:15px;
  background:var(--faro-ed-shell)!important;
- padding:clamp(12px,1.7vw,18px)!important;
+ padding:clamp(12px,1.7vw,18px);
  box-shadow:none!important;
 }
 html #forecastPage #dailyOverview #dayWaveMeter{
- min-height:43px!important;padding:10px 10px 7px!important;
- margin:10px 0 3px!important;width:100%;box-sizing:border-box;
+ min-height:43px;padding:10px 10px 7px;
+ margin:10px 0 3px;width:100%;box-sizing:border-box;
  border:1px solid color-mix(in srgb,var(--faro-wave) 29%,var(--faro-editorial-hairline))!important;
  border-radius:10px;background:color-mix(in srgb,var(--faro-wave) 6%,var(--panel))!important;
 }
@@ -400,20 +400,20 @@ html #dayview .faro-session-editorial{
  padding-left:14px;border-left:2px solid var(--faro-selection);
 }
 html #forecastPage #dailyOverview .day-editorial-overline{
- letter-spacing:.13em!important;color:var(--faro-selection)!important;
+ letter-spacing:.13em;color:var(--faro-selection)!important;
 }
 html #forecastPage #dailyOverview .chile-decision-brief strong{
- font-family:var(--faro-text,Manrope,system-ui)!important;
- font-size:clamp(17px,1.85vw,23px)!important;line-height:1.33!important;
- font-weight:850!important;letter-spacing:-.025em;
+ font-family:var(--faro-text,Manrope,system-ui);
+ font-size:clamp(17px,1.85vw,23px);line-height:1.33;
+ font-weight:850;letter-spacing:-.025em;
 }
 html #forecastPage #dailyOverview .chile-decision-brief span{
  max-width:62ch;line-height:1.58;
 }
 /* COASTAL LENS · vector-led instrument over a readable, subdued basemap. */
-html .faro-map-wrap{gap:clamp(16px,2vw,24px)!important}
+html .faro-map-wrap{gap:clamp(16px,2vw,24px)}
 html #chileCoastMap .faro-map-viewport{
- border-radius:18px!important;min-width:0!important;height:clamp(300px,34vw,420px)!important;
+ border-radius:18px;min-width:0;height:clamp(300px,34vw,420px);
  border:1px solid var(--faro-editorial-hairline)!important;
  background:#dce9e8!important;
  box-shadow:0 8px 28px color-mix(in srgb,#102f34 10%,transparent);
@@ -447,7 +447,7 @@ html .faro-map-wind-marker{background:transparent!important;border:0!important}
 .faro-map-wind-chip strong,.faro-map-wind-chip small{display:block}
 .faro-map-wind-chip small{font-size:10px;font-weight:650;color:#73562e}
 html #chileCoastMap .faro-map-brief{
- display:grid;align-content:start;gap:12px!important;min-width:0;
+ display:grid;align-content:start;gap:12px;min-width:0;
 }
 html #chileCoastMap .faro-lens-module{
  border-radius:16px!important;border:1px solid var(--faro-editorial-hairline)!important;

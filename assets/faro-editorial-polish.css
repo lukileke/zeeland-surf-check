@@ -28,7 +28,7 @@ input:focus-visible,textarea:focus-visible,[role="button"]:focus-visible{
 }
 #forecastPage #chileVibeDetails .wave-wizard-tag,
 .wave-wizard-tag{letter-spacing:0!important;font-family:var(--faro-text,Manrope,system-ui);font-weight:800}
-#forecastPage .chile-vibe-summary{gap:12px!important}
+#forecastPage .chile-vibe-summary{gap:12px}
 #forecastPage .day-signal-metrics strong{
  font-family:var(--faro-text,Manrope,system-ui);
  letter-spacing:-.04em
