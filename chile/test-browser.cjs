@@ -991,6 +991,39 @@ function fixture(){
      'Each ranking score is one continuous number');
     await page.locator('#navForecast').click();
    }
+   // Decision-first mobile regression: a late selected session must be visible
+   // in the swipe rail, not hidden behind the first morning windows.
+   if(width<=430){
+    const selectionBefore=await page.evaluate(()=>{
+     const rail=document.querySelector('#slots');
+     const tiles=[...rail.querySelectorAll(':scope > button')];
+     const previous=tiles.findIndex(tile=>tile.classList.contains('selected'));
+     const latest=tiles.filter(tile=>!tile.disabled).at(-1);
+     latest?.click();
+     return previous;
+    });
+    await page.waitForFunction(()=>{
+     const rail=document.querySelector('#slots');
+     const chosen=rail?.querySelector(':scope > button.selected');
+     if(!chosen)return false;
+     const a=rail.getBoundingClientRect(),b=chosen.getBoundingClientRect();
+     return b.left>=a.left-2 && b.right<=a.right+2;
+    },null,{timeout:6000});
+    const decisionLayout=await page.evaluate(()=>({
+     radius:parseFloat(getComputedStyle(document.querySelector('#faroSiteFooter')).borderRadius),
+     docWidth:document.documentElement.scrollWidth,
+     viewport:document.documentElement.clientWidth,
+     uvMax:document.getElementById('dayUVLabel')?.textContent,
+     selectedUv:document.querySelector('#sessionEssentials .chile-uv-tag')?.textContent
+    }));
+    assert.ok(decisionLayout.radius>=18,'FARO footer must retain a rounded mobile brand finish');
+    assert.ok(decisionLayout.docWidth<=decisionLayout.viewport+3,'Hour rail should not expand page width');
+    assert.match(decisionLayout.uvMax,/DAY MAX UV|UV MÁX. DEL DÍA/);
+    assert.match(decisionLayout.selectedUv,/UV · THIS WINDOW|UV · ESTA FRANJA/);
+    if(selectionBefore>=0)await page.evaluate(index=>{
+     document.querySelectorAll('#slots > button')[index]?.click();
+    },selectionBefore);
+   }
    // Simulate an actual model threshold crossing to confirm hazards remain prominent.
    const severe=JSON.parse(JSON.stringify(weather));
    severe.hourly.wind_gusts_10m=severe.hourly.wind_gusts_10m.map(()=>80);

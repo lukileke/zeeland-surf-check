@@ -809,7 +809,7 @@ function outlook(){
  txt("dayWind",s?num(s.windKmh,0)+" km/h":"—");
  const uvMax=ok(d.uvMax)?d.uvMax:null;
  const uv=Live.statusUV(uvMax,state.lang);
- txt("dayUVLabel"," UV "+num(uvMax,0)+" · "+uv.name);
+ txt("dayUVLabel",tr("UV MÁX. DEL DÍA · ","DAY MAX UV · ")+num(uvMax,0)+" · "+uv.name);
  txt("dayUVAdvice",uvMax===null?tr("Sin dato UV","UV unavailable"):uv.protection);
  $("dayUVBadge").dataset.uv=uv.category;
  renderPrepHints(s);
@@ -836,6 +836,17 @@ function slots(){
    button.append(choice);
   }
   button.addEventListener("click",()=>{state.hour=s.hour;render()});container.append(button);
+ }
+ // Keep the chosen two-hour window visible in the swipeable mobile rail.
+ // Scroll the rail, not the document, so page position never jumps.
+ if(window.matchMedia("(max-width:710px)").matches){
+  const selected=container.querySelector(":scope > button.selected");
+  if(selected)requestAnimationFrame(()=>{
+   if(!selected.isConnected||!container.isConnected)return;
+   const rail=container.getBoundingClientRect(),tile=selected.getBoundingClientRect();
+   const centre=container.scrollLeft+tile.left-rail.left-(rail.width-tile.width)/2;
+   container.scrollLeft=Math.max(0,Math.min(container.scrollWidth-container.clientWidth,centre));
+  });
  }
  session();
 }
@@ -917,7 +928,7 @@ function session(){
   ["water-temperature",tr("AGUA · MODELO","WATER · MODEL"),num(s.waterTemperatureC)+" °C"],
   ["air-temperature",tr("AIRE · MODELO","AIR · MODEL"),num(s.temperatureC)+" °C"],
   ["wind-speed",tr("VIENTO · MODELO","WIND · MODEL"),num(s.windKmh,0)+" km/h"],
-  ["uv-index",tr("ÍNDICE UV","UV INDEX"),num(s.uvIndex)+" · "+s.uv.name]
+  ["uv-index",tr("UV · ESTA FRANJA","UV · THIS WINDOW"),num(s.uvIndex)+" · "+s.uv.name]
  ];
  for(const [kind,label,value] of essentials){
   const tag=el("div",null,"faro-kit-signal"+(kind==="uv-index"?" chile-uv-tag chile-uv-"+s.uv.category:""));

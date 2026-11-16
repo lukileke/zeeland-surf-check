@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#102427">
 <meta name="description" content="FARO Chile: lee el mar y encuentra tu franja de surf en Valparaíso. Oleaje, viento, período y UV modelados; índice experimental, no observación de la rompiente.">
+<link rel="canonical" href="https://lukileke.github.io/zeeland-surf-check/chile/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:site_name" content="FARO">
+<meta property="og:title" content="FARO Chile · Lee el mar. Elige tu momento.">
+<meta property="og:description" content="Encuentra franjas de surf en la costa de Valparaíso con oleaje, viento y exposición modelados. Índice experimental: verifica siempre el mar y los avisos oficiales.">
+<meta property="og:url" content="https://lukileke.github.io/zeeland-surf-check/chile/">
+<meta name="twitter:card" content="summary">
 <link rel="icon" type="image/svg+xml" href="../assets/faro-o-favicon.svg">
 <link rel="stylesheet" href="../assets/faro-icons.css?v=1"><link rel="stylesheet" href="../assets/faro-editorial-polish.css?v=1">
 <script src="../assets/faro-icons.js?v=1" defer></script>
@@ -23,13 +31,13 @@
 <link rel="stylesheet" href="../faro-spot-signals.css?v=1">
 <link rel="stylesheet" href="../faro-desktop.css?v=1">
 <link rel="stylesheet" href="../faro-country.css?v=1">
-<link rel="stylesheet" href="chile-forecast.css?v=10">
+<link rel="stylesheet" href="chile-forecast.css?v=11">
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=2">
 <!-- Final Chile-only layout contract after all shared FARO theme layers -->
 <link rel="stylesheet" href="../assets/faro-visual-system-v2.css?v=5">
 <link rel="stylesheet" href="../assets/faro-coastal-lens-v4.css?v=16">
 <!-- Single Chile-specific layout contract, loaded after all visual layers. -->
-<link rel="stylesheet" href="chile-visual-contract.css?v=9">
+<link rel="stylesheet" href="chile-visual-contract.css?v=10">
 <!-- FARO coastal art direction: finish, not a new competing design system -->
 
 
@@ -37,11 +45,11 @@
 <!-- Underwater beacon glow: single authentic FARO O, CSS-only, score-safe. -->
 
 <!-- Permanent invariant: quality score colours identical in dark and light, all viewports. -->
-<link rel="stylesheet" href="faro-editorial-experience-v2.css?v=5">
+<link rel="stylesheet" href="faro-editorial-experience-v2.css?v=7">
 
 
 
-<link rel="stylesheet" href="faro-tide-read.css?v=7">
+<link rel="stylesheet" href="faro-tide-read.css?v=9">
 <link rel="stylesheet" href="faro-score-colour-lock-v1.css?v=1">
 </head>
 <body>
@@ -244,8 +252,8 @@
    </div>
   </section>
    <section class="forecast-section hourly-section" aria-label="Horario">
-    <div class="forecast-section-heading"><div><h3 data-es="Encuentra tu hora" data-en="Find your window">Encuentra tu hora</h3><p data-es="Franjas de 2 horas" data-en="Two-hour windows">Franjas de 2 horas</p></div></div>
-    <div id="slots" class="slots"></div>
+    <div class="forecast-section-heading"><div><h3 data-es="Elige tu franja" data-en="Choose your window">Elige tu franja</h3><p data-es="Desliza para comparar · franjas de 2 h" data-en="Swipe to compare · 2-hour windows">Desliza para comparar · franjas de 2 h</p></div></div>
+    <div id="slots" class="slots" role="group" aria-label="Franjas de dos horas"></div>
      <div id="faroHourlyPreview" class="faro-hourly-preview" aria-live="polite">
       <div class="faro-hourly-read-meta">
        <small data-es="FARO · LECTURA SELECCIONADA" data-en="FARO · SELECTED READ">FARO · LECTURA SELECCIONADA</small>
@@ -298,13 +306,13 @@
    <section class="forecast-section session-section" aria-label="Sesión seleccionada">
     <div class="faro-session-intro">
      <div><small data-es="FARO · SESSION KIT" data-en="FARO · SESSION KIT">FARO · SESSION KIT</small>
-     <h3 data-es="Listo para entrar" data-en="Ready for the water">Listo para entrar</h3></div>
+     <h3 data-es="Prepara tu sesión" data-en="Prepare your session">Prepara tu sesión</h3></div>
      <p data-es="Traje, exposición y luz de tu franja. Todo en una lectura."
         data-en="Wetsuit, exposure and daylight for your window. All in one read.">Traje, exposición y luz de tu franja. Todo en una lectura.</p>
     </div>
     <details id="sessionDetailExpand" class="chile-session-disclosure">
      <summary class="chile-session-toggle">
-      <span class="chile-session-toggle-name"><small data-es="SESIÓN ELEGIDA" data-en="SELECTED SESSION">SESIÓN ELEGIDA</small><strong data-es="Equipo de la sesión" data-en="Session kit">Equipo de la sesión</strong></span>
+      <span class="chile-session-toggle-name"><small data-es="SESIÓN ELEGIDA" data-en="SELECTED SESSION">SESIÓN ELEGIDA</small><strong data-es="Traje y condiciones" data-en="Suit and conditions">Traje y condiciones</strong></span>
       <span id="sessionDetailSummary" class="chile-session-toggle-value" aria-live="polite">—</span>
       <span class="chile-session-toggle-arrow" aria-hidden="true">+</span>
      </summary>
@@ -421,14 +429,13 @@
  </section>
  <footer class="chile-footer faro-footer-v2" id="faroSiteFooter">
   <div class="faro-footer-manifesto">
-   <small data-es="FARO · LEE EL MAR" data-en="FARO · READ THE OCEAN">FARO · LEE EL MAR</small>
+   <small data-es="FARO · HASTA LA PRÓXIMA SESIÓN" data-en="FARO · UNTIL YOUR NEXT SESSION">FARO · HASTA LA PRÓXIMA SESIÓN</small>
    <strong data-es="El mar cambia. Tu lectura también." data-en="The ocean changes. So should your read.">El mar cambia. Tu lectura también.</strong>
-   <span data-es="Lee el mar. Elige tu momento." data-en="Read the ocean. Choose your moment.">Lee el mar. Elige tu momento.</span>
   </div>
   <div class="faro-footer-brand">
-   <strong>FARO <span>· READ THE OCEAN</span></strong>
-   <p data-es="Una lectura del mar para decidir cuándo salir. Pronósticos modelados, sin garantía de seguridad ni ola rompiente."
-      data-en="A read on the sea to help you decide when to paddle out. Modelled forecasts, not a safety or breaking-wave guarantee.">Una lectura del mar para decidir cuándo salir. Pronósticos modelados, sin garantía de seguridad ni ola rompiente.</p>
+   <strong>FARO <span data-es="· LEE EL MAR" data-en="· READ THE OCEAN">· LEE EL MAR</span></strong>
+   <p data-es="Explora las condiciones. Decide cuándo entrar. Datos modelados: verifica el mar y los avisos oficiales."
+      data-en="Explore the conditions. Choose when to paddle out. Modelled data: check actual surf and official notices.">Explora las condiciones. Decide cuándo entrar. Datos modelados: verifica el mar y los avisos oficiales.</p>
   </div>
   <nav class="faro-footer-nav" aria-label="FARO research and resources">
    <div><small data-es="EXPLORAR" data-en="EXPLORE">EXPLORAR</small>
@@ -445,21 +452,21 @@
        data-en="CHILE · EXPERIMENTAL MODEL · PARTIAL OFFICIAL MONITORING">CHILE · MODELO EXPERIMENTAL · VIGILANCIA OFICIAL PARCIAL</div>
  </footer>
 </main>
-<script src="valparaiso-score-lab.js?v=7"></script>
-<script src="faro-chile-live.js?v=12"></script>
-<script src="faro-physics-lab.js?v=1"></script>
-<script src="faro-spot-intelligence.js?v=2"></script>
-<script src="video-observation-lab.js?v=1"></script>
-<script src="faro-coastal-lens.js?v=1"></script>
-<script src="faro-notices.js?v=1"></script>
-<script src="coast-map.js?v=20"></script>
-<script src="faro-spot-registry.js?v=1"></script>
-<script src="faro-spot-diagnostics.js?v=1"></script>
-<script src="faro-session-decision.js?v=1"></script>
-<script src="faro-spot-chooser.js?v=1"></script>
-<script src="faro-thermal-guide.js?v=1"></script>
-<script src="chile-forecast.js?v=48"></script>
-<script src="faro-tide-read.js?v=4"></script>
-<script src="faro-official-watch.js?v=1"></script>
+<script src="valparaiso-score-lab.js?v=7" defer></script>
+<script src="faro-chile-live.js?v=12" defer></script>
+<script src="faro-physics-lab.js?v=1" defer></script>
+<script src="faro-spot-intelligence.js?v=2" defer></script>
+<script src="video-observation-lab.js?v=1" defer></script>
+<script src="faro-coastal-lens.js?v=1" defer></script>
+<script src="faro-notices.js?v=1" defer></script>
+<script src="coast-map.js?v=20" defer></script>
+<script src="faro-spot-registry.js?v=1" defer></script>
+<script src="faro-spot-diagnostics.js?v=1" defer></script>
+<script src="faro-session-decision.js?v=1" defer></script>
+<script src="faro-spot-chooser.js?v=1" defer></script>
+<script src="faro-thermal-guide.js?v=1" defer></script>
+<script src="chile-forecast.js?v=49" defer></script>
+<script src="faro-tide-read.js?v=4" defer></script>
+<script src="faro-official-watch.js?v=1" defer></script>
 </body>
 </html>
