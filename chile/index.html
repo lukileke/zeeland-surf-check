@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="../assets/faro-icons.css?v=1"><link rel="stylesheet" href="../assets/faro-editorial-polish.css?v=1">
 <script src="../assets/faro-icons.js?v=1" defer></script>
 <title>FARO · Lee el mar | Valparaíso</title>
-<script>try{const t=localStorage.getItem("zeeland-theme");document.documentElement.dataset.theme=(t==="light"||t==="dark")?t:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark")}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<script>try{const t=localStorage.getItem("zeeland-theme");document.documentElement.dataset.theme=(t==="light"||t==="dark")?t:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark")}catch(e){document.documentElement.dataset.theme="dark"};document.querySelector('meta[name="theme-color"]').content=document.documentElement.dataset.theme==="light"?"#f5f9f8":"#102427"</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@400;500;600;700;800&display=swap">
@@ -53,6 +53,7 @@
 <link rel="stylesheet" href="faro-score-colour-lock-v1.css?v=1">
 </head>
 <body>
+<a class="faro-skip-link" href="#faroForecastLead" data-es="Saltar al pronóstico" data-en="Skip to the forecast">Saltar al pronóstico</a>
 <main>
  <div class="top">
   <div class="faro-brand-block">
