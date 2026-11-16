@@ -28,6 +28,13 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
+      - name: Export verified source snapshot for full refactor audit
+        uses: actions/upload-artifact@v5
+        with:
+          name: faro-source-audit
+          path: .
+          if-no-files-found: error
+          retention-days: 1
       - name: Verify FARO layouts, automatic updates and widget model semantics
         run: |
           node --test \
