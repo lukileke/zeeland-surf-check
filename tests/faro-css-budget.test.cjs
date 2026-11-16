@@ -16,8 +16,8 @@ const get=p=>fs.readFileSync(path.join(root,'chile',p),'utf8');
 test('only 19 CSS files in Chile; invariant score palette is the last sheet',()=>{
  assert.equal(sheets.length,19,'The 2026-11-15 CSS request budget regressed');
  assert.equal(sheets.at(-1).href,'faro-score-colour-lock-v1.css?v=1');
- assert.equal(sheets.at(-2).href,'faro-tide-read.css?v=7');
- assert.equal(sheets.at(-3).href,'faro-editorial-experience-v2.css?v=5');
+ assert.equal(sheets.at(-2).href,'faro-tide-read.css?v=8');
+ assert.equal(sheets.at(-3).href,'faro-editorial-experience-v2.css?v=6');
  assert.ok(!sheets.some(x=>/@import\s/.test(x.css)),'Avoid hidden extra CSS requests');
 });
 test('explicit important budget cannot silently grow',()=>{

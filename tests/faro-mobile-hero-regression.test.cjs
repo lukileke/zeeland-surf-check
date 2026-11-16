@@ -65,11 +65,11 @@ test('underwater pulse is kept and WebKit shadow seam is not reintroduced',()=>{
 test('new CSS is before the invariant score palette, with no model changes',()=>{
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=7');
- assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=5');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=8');
+ assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=6');
  assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/faro-editorial-hero-focus-v1.css'));
  assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/faro-decision-balance-v1.css'));
- assert.ok(links.includes('faro-editorial-experience-v2.css?v=5'));
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=6'));
  assert.ok(!links.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
  assert.ok(!links.includes('faro-mobile-reading-order-v1.css?v=2'));
  assert.ok(!links.includes('faro-finish-pass-v1.css?v=1'));
@@ -78,7 +78,7 @@ test('new CSS is before the invariant score palette, with no model changes',()=>
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(css));
  assert.ok(editor.includes('FARO source: chile/faro-beacon-atmosphere-v4.css'));
  assert.ok(html.includes('faro-chile-live.js?v=12'));
- assert.ok(html.includes('chile-forecast.js?v=48'));
+ assert.ok(html.includes('chile-forecast.js?v=49'));
 });
 
 test('five decorative layers share one 5.4-second peak at half-cycle',()=>{

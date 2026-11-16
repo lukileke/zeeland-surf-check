@@ -19,7 +19,7 @@ const ids=[
 test('Chile CSS consolidation preserves source order and reduces requests',()=>{
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(x=>x[1]);
  assert.equal(links.filter(x=>/\.css(?:\?|$)/.test(x)).length,19,'FARO Chile should load 19 stylesheets after ownership consolidation');
- assert.ok(links.includes('faro-editorial-experience-v2.css?v=5'));
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=6'));
  for(const old of ['faro-finish-pass-v1.css?v=1','faro-mobile-reading-order-v1.css?v=2',
                    'faro-hero-synchronised-pulse-v1.css?v=1'])
   assert.ok(!links.includes(old),'old redundant external stylesheet: '+old);
@@ -62,7 +62,7 @@ test('dark/light shared hero and scores are retained, logo unchanged',()=>{
  assert.ok(html.includes('src="../assets/faro-logo-dark.svg"'));
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)];
  assert.equal(links.at(-1)[1],'faro-score-colour-lock-v1.css?v=1');
- assert.ok(links.some(x=>x[1]==='faro-editorial-experience-v2.css?v=5'));
+ assert.ok(links.some(x=>x[1]==='faro-editorial-experience-v2.css?v=6'));
  assert.ok(!css.includes('--brand-score-ink:')&&!css.includes('--faro-score-0:'));
 });
 test('editorial finishing preserves external pages and scientific disclaimers',()=>{
