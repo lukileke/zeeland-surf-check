@@ -57,6 +57,6 @@ test('asset versions are updated without overwriting Zeeland visual contract',()
  assert.match(html,/faro-coastal-lens-v4\.css\?v=10/);
  assert.match(html,/coast-map\.js\?v=15/);
  assert.match(html,/chile-forecast\.js\?v=21/);
- assert.match(html,/faro-visual-system-v2\.css\?v=5/);
- assert.match(read('index.html'),/faro-visual-system-v2\.css\?v=5/);
+ assert.match(html,/faro-visual-system-v2\.css\?v=6/);
+ assert.match(read('index.html'),/faro-visual-system-v2\.css\?v=6/);
 });
