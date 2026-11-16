@@ -968,6 +968,14 @@ function fixture(){
    assert.equal(await page.locator('#set').count(),1,'Translation must preserve sunset value element');
    assert.equal(await page.locator('#cutoff').count(),1,'Translation must preserve daylight cut-off element');
    await page.locator('#themeToggle').click();
+   const brandAccess=await page.evaluate(()=>({
+    scheme:document.documentElement.dataset.theme,
+    bar:document.querySelector('meta[name="theme-color"]')?.content,
+    skip:document.querySelector('.faro-skip-link')?.getAttribute('href')
+   }));
+   assert.equal(brandAccess.skip,'#faroForecastLead','Skip link must reach the modelled forecast');
+   assert.equal(brandAccess.bar,brandAccess.scheme==='light'?'#f5f9f8':'#102427',
+    'Mobile browser chrome must follow the FARO theme');
    assert.equal(scriptErrors.length,0,'No runtime errors during locale/theme/tab changes');
    if(width===390||width===1180){
     await page.locator('#navBest').click();
