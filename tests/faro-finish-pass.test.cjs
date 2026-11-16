@@ -13,7 +13,7 @@ const config=JSON.parse(get('chile/valparaiso-live.config.json'));
 const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
 
 test('priority preserves all 5 canonical score pigments',()=>{
- assert.ok(links.includes('faro-editorial-experience-v2.css?v=7'));
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=8'));
  assert.ok(!links.includes('faro-finish-pass-v1.css?v=1'));
  assert.ok(get('chile/faro-editorial-experience-v2.css').includes('faro-access-mark-core'));
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
@@ -70,5 +70,5 @@ test('the model and the original lighthouse brand remain intact',()=>{
  assert.ok(html.includes('faro-chile-live.js?v=12'));
  assert.ok(html.includes('src="../assets/faro-logo-dark.svg"'));
  assert.ok(html.includes('src="../assets/faro-logo.svg"'));
- assert.ok(html.includes('chile-forecast.js?v=49'));
+ assert.ok(html.includes('chile-forecast.js?v=50'));
 });
