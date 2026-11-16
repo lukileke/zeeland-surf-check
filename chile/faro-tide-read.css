@@ -663,9 +663,9 @@ html body main #forecastPage:not(.hide) #faroHourlySignals.faro-hourly-signals{
 #forecastPage #faroHourlySignals>.faro-hourly-signal{
  display:flex;
  flex-direction:column;
- gap:4px!important;
+ gap:4px;
  min-width:0;
- padding:0 10px 0 0!important;
+ padding:0 10px 0 0;
  background:transparent!important;
  border:0!important;
  border-right:1px solid var(--faro-line)!important;
@@ -865,7 +865,7 @@ html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
 /* Editorial headings: one useful title per panel. */
 #forecastPage #dayview .faro-decision-intro p,
 #forecastPage #dayview .day-editorial-overline{display:none}
-#forecastPage #dayview .faro-decision-intro{margin-bottom:13px!important}
+#forecastPage #dayview .faro-decision-intro{margin-bottom:13px}
 #forecastPage #dayview .faro-decision-intro h2,
 #forecastPage #dayview .hourly-section .forecast-section-heading h3{
   font-size:clamp(25px,2.5vw,35px)!important;letter-spacing:-.045em!important;
@@ -879,11 +879,11 @@ html body main #forecastPage:not(.hide) #dailyOverview{
   background:radial-gradient(ellipse at 110% -10%,rgba(120,214,209,.13),transparent 60%),var(--panel)!important
 }
 #forecastPage #dayview #dailyOverview>.day-overview-row{
-  order:0;flex:0 0 auto;margin:0 0 12px!important;
+  order:0;flex:0 0 auto;margin:0 0 12px;
 }
 #forecastPage #dayview #dailyOverview #datehead{
-  font-size:clamp(26px,2.55vw,37px)!important;
-  letter-spacing:-.045em;line-height:1.08!important
+  font-size:clamp(26px,2.55vw,37px);
+  letter-spacing:-.045em;line-height:1.08
 }
 #forecastPage #dayview #dailyOverview .best-session-brief{
   border-color:var(--read-line)!important
@@ -920,7 +920,7 @@ html body main #forecastPage:not(.hide) #dailyOverview{
 #forecastPage #dayview #dailyOverview .faro-surface-face{
   position:absolute;inset:0;z-index:1;min-width:0;min-height:0;
   overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;
-  padding:19px 20px!important
+  padding:19px 20px
 }
 #forecastPage #dayview #dailyOverview .faro-ocean-surface[data-mode=read] .faro-surface-back,
 #forecastPage #dayview #dailyOverview .faro-ocean-surface[data-mode=signals] .faro-surface-front{
@@ -930,10 +930,10 @@ html body main #forecastPage:not(.hide) #dailyOverview{
   display:flex;flex-direction:column;justify-content:space-between;gap:11px
 }
 #forecastPage #dayview #dailyOverview .faro-surface-front #chileDecisionBrief{
-  display:block;margin:0!important;padding:0!important
+  display:block;margin:0;padding:0
 }
 #forecastPage #dayview #dailyOverview .faro-surface-front #chileDecisionHeadline{
-  font-size:clamp(24px,2.45vw,35px)!important;line-height:1.14!important;
+  font-size:clamp(24px,2.45vw,35px);line-height:1.14;
   letter-spacing:-.045em;max-width:19ch;text-wrap:balance;
   margin:0
 }
@@ -987,7 +987,7 @@ html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySi
 }
 #forecastPage #dayview #dailyOverview .faro-surface-back #chileDecisionDriver{
   display:block;position:static;background:transparent!important;
-  font-size:12px;line-height:1.5!important;margin:0;padding:0;
+  font-size:12px;line-height:1.5;margin:0;padding:0;
   max-height:none;overflow:visible!important
 }
 #forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe{
@@ -1019,10 +1019,10 @@ html body main #forecastPage:not(.hide) #dailyOverview .faro-surface-back #daySi
 }
 #forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe :is(.faro-vibe-top,.chile-vibe-help){display:none!important}
 #forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe{
-  padding:1px 0!important;border:0!important;margin:0!important
+  padding:1px 0;border:0!important;margin:0
 }
 #forecastPage #dayview #dailyOverview .faro-surface-back .chile-vibe-summary{
-  min-height:28px;padding:1px 0!important
+  min-height:28px;padding:1px 0
 }
 /* Waterline control stays anchored, no floating button over readable text. */
 #forecastPage #dayview #dailyOverview .faro-surface-control{
