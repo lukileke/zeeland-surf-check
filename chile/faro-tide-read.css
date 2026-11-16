@@ -864,8 +864,7 @@ html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
 }
 /* Editorial headings: one useful title per panel. */
 #forecastPage #dayview .faro-decision-intro p,
-#forecastPage #dayview .day-editorial-overline,
-#forecastPage #dayview .hourly-section .forecast-section-heading p{display:none}
+#forecastPage #dayview .day-editorial-overline{display:none}
 #forecastPage #dayview .faro-decision-intro{margin-bottom:13px!important}
 #forecastPage #dayview .faro-decision-intro h2,
 #forecastPage #dayview .hourly-section .forecast-section-heading h3{
