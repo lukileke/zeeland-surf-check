@@ -143,9 +143,9 @@ test('selector complexity cannot grow silently across CSS component owners',()=>
 });
 
 test('Chile script dependencies load in order without blocking HTML parsing',()=>{
- const all=[...page.matchAll(/<script\\s+src="([^"]+\\.js\\?v=\\d+)"([^>]*)><\\/script>/g)];
+ const all=[...page.matchAll(/<script\s+src="([^"]+\.js\?v=\d+)"([^>]*)><\/script>/g)];
  assert.ok(all.length>=16,'Expected all model and UI modules');
- assert.ok(all.every(match=>/\\bdefer\\b/.test(match[2])),
+ assert.ok(all.every(match=>/\bdefer\b/.test(match[2])),
   'All external classic scripts should load deferred and preserve source order');
  const names=all.map(x=>x[1]);
  assert.ok(names.findIndex(x=>x.includes('faro-chile-live.js'))<
