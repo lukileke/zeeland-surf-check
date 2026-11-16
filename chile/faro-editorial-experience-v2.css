@@ -2806,7 +2806,7 @@ html body main #forecastPage:not(.hide)>.faro-footer-bridge{
  outline:2px solid #f4dc9c!important;outline-offset:3px!important;
 }
 html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
- margin:-1px 0 0!important;
+ margin:clamp(26px,3vw,44px) 0 14px!important;
  padding-top:23px;
  
  
@@ -2890,10 +2890,10 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
   border-radius:17px 17px 0 0!important;
  }
  html body main:has(#forecastPage:not(.hide))>footer.chile-footer.faro-footer-v2{
-  border-radius:0 0 17px 17px!important;
+  border-radius:22px!important;
  }
  html body main>footer.chile-footer.faro-footer-v2 .faro-footer-manifesto strong{
-  font-size:clamp(27px,7.5vw,39px)!important;
+  font-size:clamp(24px,6.2vw,34px)!important;
  }
 }
 @media(prefers-reduced-motion:reduce){

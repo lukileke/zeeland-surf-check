@@ -699,11 +699,11 @@ html body main>footer.chile-footer.faro-footer-v2{
  grid-template-columns:minmax(0,1.1fr) minmax(270px,.9fr)!important;
  align-items:start!important;
  gap:18px 34px!important;
- margin:clamp(18px,2.2vw,30px) 0 0!important;
- padding:clamp(22px,2.6vw,34px) clamp(20px,3.6vw,46px) 20px!important;
+ margin:clamp(26px,3vw,44px) 0 12px!important;
+ padding:clamp(27px,3.4vw,43px) clamp(22px,4vw,48px) 24px!important;
  border:0!important;
  border-top:1px solid rgba(174,223,213,.27)!important;
- border-radius:0!important;
+ border-radius:clamp(19px,3vw,26px)!important;
  box-shadow:none!important;
  background:
   radial-gradient(ellipse 58% 84% at 95% 4%,rgba(92,169,163,.09),transparent 77%),
@@ -1107,8 +1107,8 @@ html body main #forecastPage:not(.hide) .hourly-section #slots.slots>button.sele
 html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview.faro-hourly-in-place{
   position:relative!important;box-sizing:border-box;min-width:0;flex:0 0 auto;
   display:flex!important;flex-direction:column;gap:7px!important;
-  height:147px!important;min-height:147px!important;max-height:147px!important;
-  overflow:hidden!important;margin:0!important;padding:13px 16px!important;
+  height:136px!important;min-height:136px!important;max-height:136px!important;
+  overflow:hidden!important;margin:0!important;padding:11px 15px!important;
   border:1px solid rgba(143,205,202,.48)!important;border-left:3px solid #89c9c8!important;
   border-radius:14px;
   background:linear-gradient(108deg,rgba(92,153,153,.13),rgba(76,136,147,.045))!important;
@@ -1139,7 +1139,7 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #far
   position:relative!important;z-index:1;box-sizing:border-box;
   display:block!important;width:100%!important;min-width:100%;max-width:100%;
   grid-column:auto;grid-row:auto;
-  height:77px!important;min-height:77px!important;flex:0 0 77px!important;
+  height:69px!important;min-height:69px!important;flex:0 0 69px!important;
   overflow:hidden!important
 }
 #forecastPage #dayview #faroHourlyPreview .faro-hourly-face{
@@ -1244,11 +1244,11 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
     grid-auto-rows:84px!important;gap:9px!important
   }
   html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview.faro-hourly-in-place{
-    flex:0 0 auto;height:147px!important;min-height:147px!important;
-    max-height:147px!important;margin-top:0!important;overflow:hidden!important
+    flex:0 0 auto;height:136px!important;min-height:136px!important;
+    max-height:136px!important;margin-top:0!important;overflow:hidden!important
   }
   html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-window{
-    flex:0 0 77px!important;height:77px!important;min-height:77px!important;
+    flex:0 0 69px!important;height:69px!important;min-height:69px!important;
     width:100%!important
   }
   html body main #forecastPage:not(.hide) #faroHourlyPreview .faro-hourly-front{
@@ -1280,9 +1280,9 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
     max-width:88px!important;scroll-snap-align:start
   }
   html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section #faroHourlyPreview.faro-hourly-in-place{
-    height:147px!important;min-height:147px!important;max-height:147px!important
+    height:136px!important;min-height:136px!important;max-height:136px!important
   }
-  #forecastPage #dayview #faroHourlyPreview .faro-hourly-window{height:77px!important;flex-basis:77px!important}
+  #forecastPage #dayview #faroHourlyPreview .faro-hourly-window{height:69px!important;flex-basis:69px!important}
 }
 /* FARO's numerical score pigments must remain IDENTICAL in both themes.
    The light-theme hour instrument therefore uses a deep-ocean background
@@ -1375,7 +1375,7 @@ html[data-theme="light"] #forecastPage #dayview #faroHourlyPreview > #faroHourly
   max-width:31ch;font-size:12px;line-height:1.5;margin:0
 }
 #forecastPage #dayview>.session-section .faro-session-intro h3{
-  font-size:clamp(26px,2.9vw,37px);line-height:1.06;letter-spacing:-.043em;margin:7px 0 0
+  font-size:clamp(23px,2.6vw,32px);line-height:1.12;letter-spacing:-.038em;margin:7px 0 0
 }
 #forecastPage #dayview>.session-section .chile-session-disclosure{
   border-radius:18px;overflow:hidden;
@@ -1414,12 +1414,12 @@ html body main #forecastPage #dayview>.session-section #sessionAtGlance.session-
 }
 #forecastPage #dayview>.session-section .faro-session-kit-reading{
   display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:9px;margin:0 0 8px
+  gap:10px;margin:0 0 10px
 }
 #forecastPage #dayview>.session-section :is(.faro-kit-primary,.faro-kit-alternative){
   border:1px solid rgba(143,207,204,.37);border-radius:13px;
   padding:13px 15px;display:flex;flex-direction:column;gap:7px;min-width:0;
-  background:rgba(32,77,84,.25)
+  background:rgba(32,77,84,.11)
 }
 #forecastPage #dayview>.session-section .faro-kit-primary{
   background:linear-gradient(124deg,rgba(96,179,180,.24),rgba(76,146,154,.08));
@@ -1453,7 +1453,7 @@ html body main #forecastPage #dayview>.session-section #sessionEssentials.essent
 }
 #forecastPage #dayview>.session-section .faro-kit-signal{
   display:flex;align-items:start;flex-direction:column;gap:7px;min-width:0;
-  padding:11px 12px;border-radius:12px;border:1px solid rgba(139,199,196,.28);
+  padding:9px 11px;border-radius:11px;border:1px solid rgba(139,199,196,.24);
   background:rgba(45,99,104,.10)
 }
 #forecastPage #dayview>.session-section .faro-kit-signal>.faro-icon-slot{display:none}
@@ -1543,7 +1543,7 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav a:hover{text-
  #faroOfficialWatch.faro-official-watch{padding:12px;gap:10px;flex-wrap:wrap}
  #faroOfficialWatch .faro-watch-link{margin-left:20px}
  #forecastPage #dayview>.session-section .faro-session-intro{display:block}
- #forecastPage #dayview>.session-section .faro-session-intro p{margin-top:8px;max-width:45ch}
+ #forecastPage #dayview>.session-section .faro-session-intro p{margin-top:6px;max-width:45ch}
  #forecastPage #dayview>.session-section .chile-session-toggle{padding:13px}
  #forecastPage #dayview>.session-section .chile-session-toggle-value{flex-basis:100%;order:3}
  #forecastPage #dayview>.session-section .faro-session-kit-reading{gap:6px}
