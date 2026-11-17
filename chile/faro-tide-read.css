@@ -1923,6 +1923,14 @@ body>.faro-skip-link:focus-visible{
  }
 
 }
+/* Stable single-column footer at phone and tablet widths. The explicit
+   footer ID prevents older editorial grid declarations from winning the cascade
+   when the supporting coast modules reorder. */
+@media(max-width:1119px){
+ body:has(#forecastPage:not(.hide)) #faroSiteFooter.chile-footer{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+}
 /* A real loading state: never style missing numerical values like a finished
    forecast. Keep the place selector and official watch usable while loading.
    A failed provider call is explicitly labelled by the controller instead. */
