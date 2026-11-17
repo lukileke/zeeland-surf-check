@@ -1267,7 +1267,11 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
 }
 /* Mobile: readable peek into the next hour; no horizontal page overflow. */
 @media(max-width:710px){
-  #forecastPage #dayview #dailyOverview #datehead{font-size:clamp(25px,7vw,34px)}
+  #forecastPage #dayview #dailyOverview #datehead{
+    font:750 11px/1.35 var(--faro-text,system-ui)!important;
+    margin:0!important;letter-spacing:.01em;
+    color:var(--muted)!important;
+  }
   #forecastPage #dayview #dailyOverview .faro-surface-window{height:137px!important}
   #forecastPage #dayview #dailyOverview .faro-surface-face{padding:15px}
   #forecastPage #dayview #dailyOverview .faro-surface-front #chileDecisionHeadline{
