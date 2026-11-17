@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id),Live=window.FaroChileLive;
-const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,cameras:null,videoLab:null,coastMap:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,loadFailed:false,dataStale:false,cache:new Map(),serial:0,page:0};
+const state={lang:"es",theme:"dark",config:null,profiles:null,registry:null,sources:null,intelligence:null,cameras:null,videoLab:null,coastMap:null,selected:0,day:0,hour:null,tab:"forecast",forecast:null,loadFailed:false,dataStale:false,sharedSnapshot:false,cache:new Map(),serial:0,page:0};
 let coastSwitchCleanup=null,spotChooser=null;
 const tr=(es,en)=>state.lang==="es"?es:en,ok=x=>typeof x==="number"&&Number.isFinite(x),num=(x,d=1)=>ok(x)?x.toFixed(d):"—";
 const el=(tag,value,cls)=>{const x=document.createElement(tag);if(value!==undefined&&value!==null)x.textContent=String(value);if(cls)x.className=cls;return x};
@@ -13,6 +13,30 @@ const h=n=>String(n).padStart(2,"0");
 // clearly labelled OLD, and expires after four hours.
 const modelCachePrefix="faro-cl-last-valid-v1:";
 const maxModelAgeMs=4*60*60*1000;
+// Shared snapshot is a real provider capture served by GitHub Pages (same
+// origin), useful when iOS blocks the two third-party API connections.
+const maxSharedAgeMs=8*60*60*1000;
+async function readSharedForecast(id){
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),5000);
+ try{
+  const url="data/faro-model-snapshot.json?r="+Math.floor(Date.now()/120000);
+  const response=await fetch(url,{cache:"no-store",signal:controller.signal});
+  if(!response.ok)return null;
+  const snapshot=await response.json(),record=snapshot?.spots?.[id];
+  const age=Date.now()-Date.parse(record?.capturedAtUtc||"");
+  if(snapshot?.schema!==1||snapshot.region!=="CL-VS"||
+   snapshot.source!=="Open-Meteo"||!record?.marine||!record?.weather||
+   !Number.isFinite(age)||age<0||age>maxSharedAgeMs)return null;
+  const data=Live.extract(state.config,spot(),record.marine,record.weather,state.profiles,state.lang);
+  if(!data?.model?.coverage?.completeSlots||
+    !data.days.some(d=>d.date>=now().date&&d.slots.some(s=>s.modelComplete&&ok(s.score))))return null;
+  data.model.fetchedAt=record.capturedAtUtc;
+  data.model.firstPartySnapshot=true;
+  data.model.source="Open-Meteo · copia FARO";
+  return data;
+ }catch(error){return null}finally{clearTimeout(timer)}
+}
 function modelState(kind){
  document.body.classList.toggle("faro-model-pending",kind==="pending");
  document.body.classList.toggle("faro-model-unavailable",kind==="unavailable");
@@ -40,6 +64,19 @@ function readLastValid(id){
 function showStaleModel(){
  if(!state.forecast)return;
  const fetched=new Date(state.forecast.model.fetchedAt);
+ if(state.sharedSnapshot){
+  const stamp=new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{
+   timeZone:"America/Santiago",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"
+  }).format(fetched);
+  txt("status",tr("MODELO RESPALDO","BACKUP MODEL"));
+  txt("updated",tr("Datos auténticos de Open-Meteo capturados ","Authentic Open-Meteo data captured ")+stamp+
+   tr(" CL · copia FARO, no lectura en vivo."," CL · FARO snapshot, not a live observation."));
+  txt("faroLeadSignalTitle",tr("ÍNDICE DE SESIÓN · MODELO DE RESPALDO","SESSION INDEX · BACKUP MODEL"));
+  txt("faroLeadWindowLabel",tr("FRANJA DEL MODELO CAPTURADO","CAPTURED MODEL WINDOW"));
+  txt("faroLeadStatus",tr("Modelo de respaldo · confirma condiciones reales y avisos oficiales.",
+   "Backup forecast · verify actual surf and official warnings."));
+  return;
+ }
  const stamp=new Intl.DateTimeFormat(state.lang==="es"?"es-CL":"en-GB",{
   timeZone:"America/Santiago",hour:"2-digit",minute:"2-digit"
  }).format(fetched);
@@ -1077,15 +1114,17 @@ function renderSelectedWindow(){
 async function refresh(force=false,onSettled=null){
  if(!state.config)return;
  const id=spot().id,serial=++state.serial,stored=state.cache.get(id);
+ // Never show conditions from an earlier selected spot during a new request.
+ if(state.forecast?.spot?.id!==id){state.forecast=null;state.sharedSnapshot=false;}
  if(!force&&stored&&Date.now()-stored.at<activeModelCacheMs){
-  state.forecast=stored.forecast;state.loadFailed=false;state.dataStale=false;
+  state.forecast=stored.forecast;state.loadFailed=false;state.dataStale=false;state.sharedSnapshot=false;
   modelState("ready");render();onSettled?.();return
  }
  // Paint a labelled, last-valid local snapshot immediately after reload, while
  // two real provider requests run. Never mark this fallback as LIVE.
  if(!force&&!stored&&!state.forecast){
   const saved=readLastValid(id);
-  if(saved){state.forecast=saved;state.loadFailed=false;state.dataStale=true;modelState("ready");render();}
+  if(saved){state.forecast=saved;state.loadFailed=false;state.dataStale=true;state.sharedSnapshot=false;modelState("ready");render();}
  }
  state.loadFailed=false;
  if(!state.forecast){
@@ -1100,25 +1139,45 @@ async function refresh(force=false,onSettled=null){
  txt("updated",tr("Consultando modelos para ","Loading model for ")+spot().name+"…");
  txt("status",tr("ACTUALIZANDO…","UPDATING…"));
  try{
-  const data=await Live.fetchSpot(state.config,spot(),state.profiles,fetch,state.lang);
+  // Start the live request immediately. A same-origin verified forecast can
+  // paint the interface while Safari's direct third-party request is pending.
+  // An early network rejection is settled to avoid unhandled promises.
+  const live=Live.fetchSpot(state.config,spot(),state.profiles,fetch,state.lang)
+   .then(data=>({data}),error=>({error}));
+  const backup=await readSharedForecast(id);
+  if(serial!==state.serial)return;
+  if(backup&&(!state.forecast||state.dataStale)){
+   state.forecast=backup;state.loadFailed=false;state.dataStale=true;
+   state.sharedSnapshot=true;modelState("ready");render();
+  }
+  const result=await live;
+  if(result.error)throw result.error;
+  const data=result.data;
   if(serial!==state.serial)return;
   state.cache.set(id,{forecast:data,at:Date.now()});
   saveLastValid(id,data);
-  state.forecast=data;state.loadFailed=false;state.dataStale=false;
+  state.forecast=data;state.loadFailed=false;state.dataStale=false;state.sharedSnapshot=false;
   cancelReconnect();reconnectFailures=0;
    modelState("ready");
    txt("status",tr("LIVE · MODELO","LIVE · MODEL"));render();onSettled?.();
  }catch(err){
   if(serial!==state.serial)return;
+  // Prefer a recent, first-party captured forecast over a blank screen;
+  // it is labelled BACKUP, never LIVE or a beach observation.
+  if(state.sharedSnapshot&&state.forecast?.spot?.id===id){
+   state.loadFailed=false;state.dataStale=true;
+   modelState("ready");render();queueReconnect(err);
+   onSettled?.();return;
+  }
   const previous=readLastValid(id);
   if(previous){
    state.forecast=previous;state.day=0;state.hour=null;
-   state.loadFailed=false;state.dataStale=true;
+   state.loadFailed=false;state.dataStale=true;state.sharedSnapshot=false;
     modelState("ready");render();
    queueReconnect(err);
    onSettled?.();return;
   }
-  state.forecast=null;state.loadFailed=true;state.dataStale=false;
+  state.forecast=null;state.loadFailed=true;state.dataStale=false;state.sharedSnapshot=false;
    modelState("unavailable");
    renderPrepHints(null);renderLead(null,null);
   txt("status",modelErrorTitle(err));

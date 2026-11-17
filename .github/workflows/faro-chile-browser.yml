@@ -35,9 +35,16 @@ jobs:
       - name: Probe live marine and weather APIs (diagnostic only)
         continue-on-error: true
         run: node tests/faro-live-provider-probe.cjs
+      - name: Validate snapshot builder against real provider responses
+        continue-on-error: true
+        env:
+          FARO_RESEARCH_NONCOMMERCIAL_ACK: 'true'
+        run: node chile/build-first-party-model.cjs
       - name: Check production FARO model in an actual browser (diagnostic)
         continue-on-error: true
         run: node tests/faro-live-browser-probe.cjs
+      - name: Verify actual same-origin backup while API is blocked
+        run: node tests/faro-first-party-cache-browser.cjs
       - name: Verify automatic recovery after transient marine 503
         run: node tests/faro-chile-reconnect-browser.cjs
       - name: Check Valparaíso UX, UTC, sources and overflow
