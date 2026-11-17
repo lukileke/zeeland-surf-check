@@ -1036,6 +1036,32 @@ function render(){
  state.videoLab?.refreshCameras();updateCoastMap();renderHourlyPreview();if(state.tab==="board")match();
  if(state.dataStale)showStaleModel();
 }
+// A broken model request must never strand Safari in an offline state.
+// Retrying is strictly bounded and only runs while the page is visible.
+let reconnectTimer=null,reconnectFailures=0;
+function cancelReconnect(){
+ if(reconnectTimer!==null){clearTimeout(reconnectTimer);reconnectTimer=null}
+}
+function queueReconnect(error){
+ cancelReconnect();
+ if(!state.config||document.hidden)return;
+ const delays=[8000,25000,60000,120000];
+ const ms=Number(error?.status)===429?120000:delays[Math.min(reconnectFailures,delays.length-1)];
+ reconnectFailures=Math.min(reconnectFailures+1,delays.length);
+ reconnectTimer=setTimeout(()=>{
+  reconnectTimer=null;
+  if(!document.hidden&&state.config&&(state.loadFailed||state.dataStale))void refresh(true);
+ },ms);
+}
+function modelErrorTitle(error){
+ const status=Number(error?.status);
+ if(status===429)return tr("LÍMITE DEL PROVEEDOR","PROVIDER RATE LIMIT");
+ if([400,424].includes(status))return tr("DATOS DEL MODELO INCOMPLETOS","INCOMPLETE MODEL DATA");
+ if([502,503,504].includes(status))return tr("PROVEEDOR NO DISPONIBLE","PROVIDER UNAVAILABLE");
+ if(/failed to fetch|network|load failed|abort|timeout/i.test(String(error?.message||error)))
+  return tr("ERROR DE CONEXIÓN","CONNECTION ERROR");
+ return tr("MODELO NO DISPONIBLE","MODEL UNAVAILABLE");
+}
 // A time-slot click changes only the selected window. Keep week choices,
 // camera feeds, source checks and the rest of the model DOM intact instead of
 // rebuilding the entire forecast (and reinitialising expensive widgets).
@@ -1079,6 +1105,7 @@ async function refresh(force=false,onSettled=null){
   state.cache.set(id,{forecast:data,at:Date.now()});
   saveLastValid(id,data);
   state.forecast=data;state.loadFailed=false;state.dataStale=false;
+  cancelReconnect();reconnectFailures=0;
    modelState("ready");
    txt("status",tr("LIVE · MODELO","LIVE · MODEL"));render();onSettled?.();
  }catch(err){
@@ -1088,14 +1115,18 @@ async function refresh(force=false,onSettled=null){
    state.forecast=previous;state.day=0;state.hour=null;
    state.loadFailed=false;state.dataStale=true;
     modelState("ready");render();
+   queueReconnect(err);
    onSettled?.();return;
   }
   state.forecast=null;state.loadFailed=true;state.dataStale=false;
    modelState("unavailable");
    renderPrepHints(null);renderLead(null,null);
-  txt("status",tr("SIN CONEXIÓN","OFFLINE"));
+  txt("status",modelErrorTitle(err));
   txt("chileLiveState",tr("SIN DATOS","NO DATA"));
-  txt("updated",tr("No se puede cargar el pronóstico: ","Cannot load forecast: ")+String(err.message||err));
+  const reason=String(err.message||err);
+  txt("updated",tr("Sin datos nuevos · reintento automático. ","No new data · automatic retry. ")+reason);
+  $("updated").title=reason;
+  queueReconnect(err);
   $("dayStripItems").replaceChildren(el("p",tr("No hay datos nuevos; no se muestran scores ficticios.","Fresh data unavailable; no fictional scores shown."),"muted"));
   $("slots").replaceChildren();$("sessionAtGlance").replaceChildren();
   risk(null);onSettled?.();
@@ -1107,12 +1138,20 @@ function refreshWhenVisible(){
  if(document.hidden||!state.config)return;
  const cached=state.cache.get(spot().id);
  const nowMs=Date.now();
+ if(state.loadFailed||state.dataStale){
+  if(nowMs-lastModelFetchStartedAt<7000)return;
+  cancelReconnect();void refresh(true);return;
+ }
  if(cached&&nowMs-cached.at<activeModelCacheMs)return;
  if(nowMs-lastModelFetchStartedAt<activeModelCacheMs)return;
  void refresh(true);
 }
 document.addEventListener("visibilitychange",()=>{
- if(!document.hidden)refreshWhenVisible();
+ if(document.hidden)cancelReconnect();
+ else refreshWhenVisible();
+});
+window.addEventListener("online",()=>{
+ if(state.loadFailed||state.dataStale)refreshWhenVisible();
 });
 window.addEventListener("pageshow",refreshWhenVisible);
 window.addEventListener("focus",refreshWhenVisible);
