@@ -1625,29 +1625,29 @@ body>.faro-skip-link:focus-visible{
  * Evidence: real 390 px iPhone screenshots; WCAG 2.2 reflow/touch targets.
  */
 @media(max-width:710px){
- html body main{
+ main{
   padding-top:max(39px,env(safe-area-inset-top,0px));
  }
- html body main>.top{
+ main>.top{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) max-content;
   gap:10px;
   align-items:start;
   margin:0 0 13px!important;
  }
- html body main>.top .faro-brand-block{
+ main>.top .faro-brand-block{
   min-width:0;
   justify-self:start;
   align-self:start;
  }
- html body main>.top #regionTitle{
+ main>.top #regionTitle{
   font-size:9px;
   line-height:1.35;
   letter-spacing:.105em;
   overflow-wrap:normal;
   white-space:nowrap;
  }
- html body main>.top .top-actions{
+ main>.top .top-actions{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,max-content));
   justify-content:end;
@@ -1655,7 +1655,7 @@ body>.faro-skip-link:focus-visible{
   gap:5px 6px;
   max-width:100%;
  }
- html body main>.top #status.faro-cl-status{
+ main>.top #status.faro-cl-status{
   grid-column:1/-1;
   justify-self:end;
   min-width:0;
@@ -1664,12 +1664,12 @@ body>.faro-skip-link:focus-visible{
   font-size:9px;
   border-radius:999px;
  }
- html body main>.app-nav{
+ main>.app-nav{
   margin:0 0 13px!important;
   padding:3px;
   border-radius:13px;
  }
- html body main>.app-nav button{
+ main>.app-nav button{
   min-height:45px;
   padding:9px 4px;
   font-size:clamp(11px,3vw,13px);
@@ -1706,7 +1706,7 @@ body>.faro-skip-link:focus-visible{
   border-radius:12px;
   white-space:nowrap;
  }
- html body main #forecastPage:not(.hide)>.faro-context-dock{
+ main #forecastPage:not(.hide)>.faro-context-dock{
   background:transparent!important;
   box-shadow:none!important;
   border:0!important;
@@ -1714,14 +1714,14 @@ body>.faro-skip-link:focus-visible{
   padding:10px 0!important;
   margin:10px 0 8px!important;
  }
- html body main #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading{
+ main #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading{
   padding:0 2px;
   gap:5px 9px;
  }
  html main #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice{
   border-radius:13px;
  }
- html body main #forecastPage:not(.hide)>.faro-journey-nav{
+ main #forecastPage:not(.hide)>.faro-journey-nav{
   display:flex!important;
   flex-wrap:nowrap!important;
   align-items:center;
