@@ -14,7 +14,7 @@ const js=read('chile/chile-forecast.js');
 test('hero layout loaded immediately before shared score palette',()=>{
  const links=[...h.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(x=>x[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=11');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=12');
  assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=10');
  for(const source of ['faro-editorial-hero-focus-v1.css','faro-responsive-quality-v1.css','faro-decision-balance-v1.css'])
   assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/'+source));
@@ -33,7 +33,7 @@ test('hero has one visible action, score, window and readable editorial headline
  assert.ok(c.includes('.faro-lead-action-secondary {\n  display:none!important'));
  assert.ok(c.includes('.faro-lead-metrics,'));
  assert.ok(c.includes('display:none!important'));
- assert.ok(h.includes('data-es="Ver la lectura" data-en="See the outlook"'));
+ assert.ok(h.includes('data-es="Ver condiciones" data-en="See conditions"'));
 });
 
 test('numerical wave, period and wind metrics remain available beneath hero',()=>{

@@ -150,7 +150,7 @@ function fixture(){
    assert.ok(brand.daily>brand.top,
     'Branded model read must precede detailed Daily Take');
 
-   const art=await page.evaluate(()=>{
+   const art=await page.evaluate(async()=>{
     const lead=document.getElementById('faroForecastLead');
     const mark=lead.querySelector('.faro-beacon-symbol');
     const nav=document.querySelector('main > .app-nav');
@@ -159,6 +159,8 @@ function fixture(){
     const values={};
     for(const mode of ['dark','light']){
      document.documentElement.dataset.theme=mode;
+     // Let theme transitions finish before checking computed contrast.
+     await new Promise(resolve=>setTimeout(resolve,350));
      values[mode]={
       heroBackground:getComputedStyle(lead).backgroundImage,
       headlineInk:getComputedStyle(document.getElementById('faroLeadHeadline')).color,
@@ -166,6 +168,10 @@ function fixture(){
       beamOpacity:getComputedStyle(lead.querySelector('.faro-beacon-light')).opacity,
       iconOpacity:getComputedStyle(mark).opacity,
       activeNavBackground:getComputedStyle(active).backgroundImage,
+      activeNavInk:getComputedStyle(active).color,
+      inactiveNavInk:getComputedStyle(nav.querySelector('button:not(.active)')).color,
+      pickerBackground:getComputedStyle(document.querySelector('.faro-spot-choice')).backgroundColor,
+      pickerInk:getComputedStyle(document.querySelector('.faro-spot-choice-text')).color,
       activeNavRadius:parseFloat(getComputedStyle(active).borderTopLeftRadius),
       navBg:getComputedStyle(nav).backgroundColor
      };
@@ -199,6 +205,20 @@ function fixture(){
     'Premium three-tab navigation should follow the theme');
    assert.ok(art.light.activeNavRadius>=9&&art.dark.activeNavRadius>=9,
     'Tabs must use a unified rounded navigation surface, not outlined rectangles');
+   if(width<=710){
+    assert.equal(art.light.pickerBackground,'rgb(247, 250, 249)',
+     'Light-mode spot picker must be light, not an inverted dark tile');
+    assert.equal(art.dark.pickerBackground,'rgb(27, 57, 61)',
+     'Dark-mode spot picker must use deep-ocean background');
+    assert.equal(art.light.pickerInk,'rgb(27, 70, 73)',
+     'Light-mode beach name must be readable on pale background');
+    assert.equal(art.dark.pickerInk,'rgb(238, 248, 245)',
+     'Dark-mode beach name must be light on dark background');
+    assert.equal(art.light.activeNavInk,'rgb(22, 58, 63)');
+    assert.equal(art.dark.activeNavInk,'rgb(242, 250, 248)');
+    assert.equal(art.light.inactiveNavInk,'rgb(31, 59, 61)');
+    assert.equal(art.dark.inactiveNavInk,'rgb(199, 221, 218)');
+   }
 
    assert.ok(brand.width>=width*.75&&brand.scrollWidth<=brand.minWidth+3,
     'Responsive full-width FARO lead overflows: '+JSON.stringify(brand));
@@ -293,7 +313,10 @@ function fixture(){
     'Offshore evidence must use one to three responsive columns');
    assert.ok(['1','auto'].includes(visual.waveSpan),
     'Technical wave instrument must stay within its responsive grid');
-   assert.match(visual.dateFont,/Archivo/i,'Only editorial headings use Archivo');
+   // The date was intentionally demoted from a second display heading to
+   // a small supporting label on phones. Desktop retains its prior font.
+   assert.match(visual.dateFont,width<=710?/Manrope/i:/Archivo/i,
+    'Date typography must follow the revised responsive hierarchy');
    assert.match(visual.numericFont,/Manrope/i,'Numeric wave data uses readable Manrope');
    assert.match(visual.scoreFont,/Manrope/i,'Score numerals match other numeric metrics');
    assert.notEqual(visual.waveColor,visual.scoreColor,
@@ -524,6 +547,29 @@ function fixture(){
      'Map must include published coastal reference '+id);
    }
    if(width===390){
+    // Screenshot-driven iPhone contract: controls must occupy one row,
+    // the detailed reading must not repeat a second enormous date/window.
+    const hierarchy=await page.evaluate(()=>{
+     const nav=[...document.querySelectorAll('.faro-journey-nav button')];
+     const rect=selector=>{
+      const r=document.querySelector(selector).getBoundingClientRect();
+      return {height:r.height,width:r.width,top:r.top,bottom:r.bottom};
+     };
+     return {
+      rows:new Set(nav.map(el=>Math.round(el.getBoundingClientRect().top/3))).size,
+      navCount:nav.length,
+      date:rect('#datehead'),
+      context:rect('.faro-context-dock'),
+      surface:rect('.faro-surface-window'),
+      strip:rect('.faro-journey-nav'),
+      country:rect('.faro-country-options')
+     };
+    });
+    assert.equal(hierarchy.navCount,4,'Keep four useful navigation shortcuts');
+    assert.equal(hierarchy.rows,1,'Mobile jump navigation must not wrap onto a second line: '+JSON.stringify(hierarchy));
+    assert.ok(hierarchy.date.height<32,'Date is context, not a duplicated display headline: '+JSON.stringify(hierarchy));
+    assert.ok(hierarchy.surface.height<=150,'Ocean detail is too tall and redundant: '+JSON.stringify(hierarchy));
+    assert.ok(hierarchy.context.height<170,'Coast selector should not be a huge nested card: '+JSON.stringify(hierarchy));
     // The system select is preserved for model state, but only FARO's own
     // keyboard/mobile-friendly listbox may be visible to the surfer.
     assert.equal(await page.locator('#chileSpotSelect').getAttribute('tabindex'),'-1');
