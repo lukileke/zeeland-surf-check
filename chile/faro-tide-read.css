@@ -1848,13 +1848,7 @@ body>.faro-skip-link:focus-visible{
  #dailyOverview .day-identity{
   margin:0;padding:0;min-width:0;
  }
- #dailyOverview #datehead{
-  display:inline-block;
-  margin:0!important;padding:0;
-  font:750 11px/1.35 var(--faro-text,system-ui)!important;
-  letter-spacing:.01em;text-transform:capitalize;
-  color:var(--muted)!important;
- }
+
  #dailyOverview #spotname,
  #dailyOverview .best-session-brief{
   display:none!important;
