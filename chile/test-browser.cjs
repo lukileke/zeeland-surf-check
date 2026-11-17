@@ -103,6 +103,8 @@ function fixture(){
     for(const theme of ['dark','light']){
      await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
      const tag=width+'-'+theme;
+     await page.evaluate(()=>window.scrollTo(0,0));
+     await page.screenshot({path:path.join(dir,tag+'-opening.png')});
      await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-front.png')});
      await page.locator('.faro-surface-flip').click();
      await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-signals.png')});
