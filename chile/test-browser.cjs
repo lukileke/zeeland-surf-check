@@ -293,7 +293,10 @@ function fixture(){
     'Offshore evidence must use one to three responsive columns');
    assert.ok(['1','auto'].includes(visual.waveSpan),
     'Technical wave instrument must stay within its responsive grid');
-   assert.match(visual.dateFont,/Archivo/i,'Only editorial headings use Archivo');
+   // The date was intentionally demoted from a second display heading to
+   // a small supporting label on phones. Desktop retains its prior font.
+   assert.match(visual.dateFont,width<=710?/Manrope/i:/Archivo/i,
+    'Date typography must follow the revised responsive hierarchy');
    assert.match(visual.numericFont,/Manrope/i,'Numeric wave data uses readable Manrope');
    assert.match(visual.scoreFont,/Manrope/i,'Score numerals match other numeric metrics');
    assert.notEqual(visual.waveColor,visual.scoreColor,
