@@ -63,6 +63,8 @@ jobs:
           sleep 2
       - name: Responsive smoke tests and screenshots
         run: node tests/faro-responsive-browser.mjs
+      - name: Prove deployed iPhone WebKit loads published model with API hosts blocked
+        run: node tests/faro-production-webkit-proof.mjs
       - name: Upload screenshots for art-direction review
         if: always()
         uses: actions/upload-artifact@v5
