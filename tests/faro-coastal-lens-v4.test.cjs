@@ -123,7 +123,7 @@ test('FARO refresh replaces empty utility-first top with real-data branded lead'
  assert.match(html,/id="faroLeadTime"/);
  assert.match(html,/id="faroLeadRead"/);
  assert.match(html,/id="faroLeadMap"/);
- assert.ok(html.includes('faro-editorial-experience-v2.css?v=8'));
+ assert.ok(html.includes('faro-editorial-experience-v2.css?v=9'));
  assert.ok(read('chile/faro-editorial-experience-v2.css').includes('FARO source: chile/faro-brand-refresh-v1.css'));
  const lead=html.indexOf('id="faroForecastLead"');
  const tools=html.indexOf('class="forecast-toolbar"');
@@ -155,7 +155,7 @@ test('FARO lighthouse identity uses the original ring and core, not washed-out n
  assert.match(styles,/main>\.app-nav button\.active/);
 });
 test('asset version and shared Zeeland colours remain unaffected',()=>{
- assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=17"/);
+ assert.match(html,/href="\.\.\/assets\/faro-coastal-lens-v4\.css\?v=18"/);
  assert.match(html,/src="coast-map\.js\?v=20"/);
  assert.match(html,/src="chile-forecast\.js\?v=\d+"/);
  assert.match(html,/faro-visual-system-v2\.css\?v=6/);
