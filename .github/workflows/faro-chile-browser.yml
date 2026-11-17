@@ -35,6 +35,9 @@ jobs:
       - name: Probe live marine and weather APIs (diagnostic only)
         continue-on-error: true
         run: node tests/faro-live-provider-probe.cjs
+      - name: Check production FARO model in an actual browser (diagnostic)
+        continue-on-error: true
+        run: node tests/faro-live-browser-probe.cjs
       - name: Check Valparaíso UX, UTC, sources and overflow
         run: node chile/test-browser.cjs
       - name: Save FARO reading visuals for review
