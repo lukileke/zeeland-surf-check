@@ -1816,10 +1816,10 @@ body>.faro-skip-link:focus-visible{
   color:#c7ddda!important;opacity:1!important;
  }
  html[data-theme="light"] main>.app-nav button.active{
-  background:#fff!important;color:#163a3f!important;
+  background:linear-gradient(180deg,#ffffff,#ecf5f2)!important;color:#163a3f!important;
  }
  html:not([data-theme="light"]) main>.app-nav button.active{
-  background:#29484d!important;color:#f2faf8!important;
+  background:linear-gradient(180deg,#31565a,#234246)!important;color:#f2faf8!important;
  }
  #forecastPage>.faro-context-dock .faro-country-options>a{
   color:var(--fg)!important;opacity:.76!important;
