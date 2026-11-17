@@ -10,6 +10,16 @@ on:
       - 'chile/**'
       - '.github/workflows/faro-chile-browser.yml'
 jobs:
+  provider-health:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Diagnose live Open-Meteo offshore and weather feeds
+        run: node tests/faro-live-provider-probe.cjs
   chile-browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
@@ -22,6 +32,14 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
           google-chrome --version
+      - name: Probe live marine and weather APIs (diagnostic only)
+        continue-on-error: true
+        run: node tests/faro-live-provider-probe.cjs
+      - name: Check production FARO model in an actual browser (diagnostic)
+        continue-on-error: true
+        run: node tests/faro-live-browser-probe.cjs
+      - name: Verify automatic recovery after transient marine 503
+        run: node tests/faro-chile-reconnect-browser.cjs
       - name: Check Valparaíso UX, UTC, sources and overflow
         run: node chile/test-browser.cjs
       - name: Save FARO reading visuals for review
