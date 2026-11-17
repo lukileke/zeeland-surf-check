@@ -3173,8 +3173,8 @@ html body main #forecastPage:not(.hide) > .faro-forecast-lead
   }
   html body main #forecastPage:not(.hide) > .faro-forecast-lead
   > .faro-lead-beacon > .faro-lead-signature .faro-beacon-symbol {
-    filter:blur(2px)!important;
-    -webkit-filter:blur(2px)!important;
+    filter:blur(.65px)!important;
+    -webkit-filter:blur(.65px)!important;
   }
 }
 
