@@ -33,7 +33,7 @@ test('hero has one visible action, score, window and readable editorial headline
  assert.ok(c.includes('.faro-lead-action-secondary {\n  display:none!important'));
  assert.ok(c.includes('.faro-lead-metrics,'));
  assert.ok(c.includes('display:none!important'));
- assert.ok(h.includes('data-es="Ver la lectura" data-en="See the outlook"'));
+ assert.ok(h.includes('data-es="Ver condiciones" data-en="See conditions"'));
 });
 
 test('numerical wave, period and wind metrics remain available beneath hero',()=>{
