@@ -777,7 +777,8 @@ html body main>footer.chile-footer.faro-footer-v2 .faro-footer-legal{
  }
  html body main>footer.chile-footer.faro-footer-v2 .faro-footer-brand,
  html body main>footer.chile-footer.faro-footer-v2 .faro-footer-nav{
-  grid-column:1/-1;
+  /* Prevent implicit second track from legacy desktop child placement. */
+  grid-column:1/-1!important;
  }
 }
 @media(max-width:710px){
@@ -1922,14 +1923,6 @@ body>.faro-skip-link:focus-visible{
   color:#46686e;
  }
 
-}
-/* Stable single-column footer at phone and tablet widths. The explicit
-   footer ID prevents older editorial grid declarations from winning the cascade
-   when the supporting coast modules reorder. */
-@media(max-width:1119px){
- body:has(#forecastPage:not(.hide)) #faroSiteFooter.chile-footer{
-  grid-template-columns:minmax(0,1fr)!important;
- }
 }
 /* A real loading state: never style missing numerical values like a finished
    forecast. Keep the place selector and official watch usable while loading.
