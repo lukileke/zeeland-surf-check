@@ -13,7 +13,7 @@ const config=JSON.parse(get('chile/valparaiso-live.config.json'));
 const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
 
 test('priority preserves all 5 canonical score pigments',()=>{
- assert.ok(links.includes('faro-editorial-experience-v2.css?v=8'));
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=9'));
  assert.ok(!links.includes('faro-finish-pass-v1.css?v=1'));
  assert.ok(get('chile/faro-editorial-experience-v2.css').includes('faro-access-mark-core'));
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
