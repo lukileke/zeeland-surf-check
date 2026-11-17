@@ -1803,10 +1803,10 @@ body>.faro-skip-link:focus-visible{
   background:#1b393d!important;color:#f0f8f6!important;
   border-color:#638080!important;
  }
- html[data-theme="light"] #forecastPage:not(.hide)>.faro-context-dock .picker-grid>.faro-spot-choice :is(small,button,.faro-spot-choice-text){
+ html[data-theme="light"] #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice :is(small,button,.faro-spot-choice-text){
   color:#1b4649!important;
  }
- html:not([data-theme="light"]) #forecastPage:not(.hide)>.faro-context-dock .picker-grid>.faro-spot-choice :is(small,button,.faro-spot-choice-text){
+ html:not([data-theme="light"]) #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice :is(small,button,.faro-spot-choice-text){
   color:#eef8f5!important;
  }
  html[data-theme="light"] body main>nav.app-nav button{
