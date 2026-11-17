@@ -427,7 +427,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
  html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-score-row{
   min-width:0!important;
  }
- html body main #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading{
+ html main #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading{
   gap:6px;
  }
  html body main #forecastPage:not(.hide)>.faro-context-dock .faro-country-options>a{
@@ -1718,7 +1718,7 @@ body>.faro-skip-link:focus-visible{
   padding:0 2px;
   gap:5px 9px;
  }
- html body main #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice{
+ html main #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice{
   border-radius:13px;
  }
  html body main #forecastPage:not(.hide)>.faro-journey-nav{
