@@ -150,7 +150,7 @@ function fixture(){
    assert.ok(brand.daily>brand.top,
     'Branded model read must precede detailed Daily Take');
 
-   const art=await page.evaluate(()=>{
+   const art=await page.evaluate(async()=>{
     const lead=document.getElementById('faroForecastLead');
     const mark=lead.querySelector('.faro-beacon-symbol');
     const nav=document.querySelector('main > .app-nav');
@@ -159,6 +159,8 @@ function fixture(){
     const values={};
     for(const mode of ['dark','light']){
      document.documentElement.dataset.theme=mode;
+     // Let theme transitions finish before checking computed contrast.
+     await new Promise(resolve=>setTimeout(resolve,350));
      values[mode]={
       heroBackground:getComputedStyle(lead).backgroundImage,
       headlineInk:getComputedStyle(document.getElementById('faroLeadHeadline')).color,
