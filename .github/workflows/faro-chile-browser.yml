@@ -38,6 +38,8 @@ jobs:
       - name: Check production FARO model in an actual browser (diagnostic)
         continue-on-error: true
         run: node tests/faro-live-browser-probe.cjs
+      - name: Verify automatic recovery after transient marine 503
+        run: node tests/faro-chile-reconnect-browser.cjs
       - name: Check Valparaíso UX, UTC, sources and overflow
         run: node chile/test-browser.cjs
       - name: Save FARO reading visuals for review
