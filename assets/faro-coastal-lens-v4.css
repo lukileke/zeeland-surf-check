@@ -466,7 +466,7 @@ html #chileCoastMap .faro-map-brief{display:grid!important;grid-template-columns
  --fit-tone:#5b7882;
  --fit-tint:color-mix(in srgb,var(--fit-tone) 7%,var(--panel));
  border-left:3px solid var(--fit-tone)!important;
- background:var(--fit-tint)!important;
+ background:var(--fit-tint);
  min-width:0!important;gap:5px!important;
 }
 #chileCoastMap .faro-lens-quick-metric[data-fit="inside"]{--fit-tone:#2b8968}
