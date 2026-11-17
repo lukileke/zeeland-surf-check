@@ -524,6 +524,29 @@ function fixture(){
      'Map must include published coastal reference '+id);
    }
    if(width===390){
+    // Screenshot-driven iPhone contract: controls must occupy one row,
+    // the detailed reading must not repeat a second enormous date/window.
+    const hierarchy=await page.evaluate(()=>{
+     const nav=[...document.querySelectorAll('.faro-journey-nav button')];
+     const rect=selector=>{
+      const r=document.querySelector(selector).getBoundingClientRect();
+      return {height:r.height,width:r.width,top:r.top,bottom:r.bottom};
+     };
+     return {
+      rows:new Set(nav.map(el=>Math.round(el.getBoundingClientRect().top/3))).size,
+      navCount:nav.length,
+      date:rect('#datehead'),
+      context:rect('.faro-context-dock'),
+      surface:rect('.faro-surface-window'),
+      strip:rect('.faro-journey-nav'),
+      country:rect('.faro-country-options')
+     };
+    });
+    assert.equal(hierarchy.navCount,4,'Keep four useful navigation shortcuts');
+    assert.equal(hierarchy.rows,1,'Mobile jump navigation must not wrap onto a second line: '+JSON.stringify(hierarchy));
+    assert.ok(hierarchy.date.height<32,'Date is context, not a duplicated display headline: '+JSON.stringify(hierarchy));
+    assert.ok(hierarchy.surface.height<=150,'Ocean detail is too tall and redundant: '+JSON.stringify(hierarchy));
+    assert.ok(hierarchy.context.height<170,'Coast selector should not be a huge nested card: '+JSON.stringify(hierarchy));
     // The system select is preserved for model state, but only FARO's own
     // keyboard/mobile-friendly listbox may be visible to the surfer.
     assert.equal(await page.locator('#chileSpotSelect').getAttribute('tabindex'),'-1');
