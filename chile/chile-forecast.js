@@ -13,6 +13,12 @@ const h=n=>String(n).padStart(2,"0");
 // clearly labelled OLD, and expires after four hours.
 const modelCachePrefix="faro-cl-last-valid-v1:";
 const maxModelAgeMs=4*60*60*1000;
+function modelState(kind){
+ document.body.classList.toggle("faro-model-pending",kind==="pending");
+ document.body.classList.toggle("faro-model-unavailable",kind==="unavailable");
+ const lead=$("faroForecastLead");
+ if(lead)lead.setAttribute("aria-busy",String(kind==="pending"));
+}
 const activeModelCacheMs=5*60*1000; // avoid presenting 15-minute-old data as current
 let lastModelFetchStartedAt=0;
 function saveLastValid(id,forecast){
@@ -1047,15 +1053,23 @@ async function refresh(force=false,onSettled=null){
  const id=spot().id,serial=++state.serial,stored=state.cache.get(id);
  if(!force&&stored&&Date.now()-stored.at<activeModelCacheMs){
   state.forecast=stored.forecast;state.loadFailed=false;state.dataStale=false;
-  render();onSettled?.();return
+  modelState("ready");render();onSettled?.();return
  }
  // Paint a labelled, last-valid local snapshot immediately after reload, while
  // two real provider requests run. Never mark this fallback as LIVE.
  if(!force&&!stored&&!state.forecast){
   const saved=readLastValid(id);
-  if(saved){state.forecast=saved;state.loadFailed=false;state.dataStale=true;render();}
+  if(saved){state.forecast=saved;state.loadFailed=false;state.dataStale=true;modelState("ready");render();}
  }
  state.loadFailed=false;
+ if(!state.forecast){
+  modelState("pending");
+  const name=spot()?.shortName||spot()?.name||"Valparaíso";
+  txt("faroLeadLocation",spot()?.name||"Valparaíso · Chile");
+  txt("faroLeadHeadline",tr("Leyendo el mar en "+name,"Reading the ocean at "+name));
+  txt("faroLeadDeck",tr("Conectando oleaje y meteorología. El índice aparecerá solo cuando haya datos válidos.",
+   "Loading swell and weather models. The index appears only when valid model data is available."));
+ }
  lastModelFetchStartedAt=Date.now();
  txt("updated",tr("Consultando modelos para ","Loading model for ")+spot().name+"…");
  txt("status",tr("ACTUALIZANDO…","UPDATING…"));
@@ -1065,18 +1079,20 @@ async function refresh(force=false,onSettled=null){
   state.cache.set(id,{forecast:data,at:Date.now()});
   saveLastValid(id,data);
   state.forecast=data;state.loadFailed=false;state.dataStale=false;
-  txt("status",tr("LIVE · MODELO","LIVE · MODEL"));render();onSettled?.();
+   modelState("ready");
+   txt("status",tr("LIVE · MODELO","LIVE · MODEL"));render();onSettled?.();
  }catch(err){
   if(serial!==state.serial)return;
   const previous=readLastValid(id);
   if(previous){
    state.forecast=previous;state.day=0;state.hour=null;
    state.loadFailed=false;state.dataStale=true;
-   render();
+    modelState("ready");render();
    onSettled?.();return;
   }
   state.forecast=null;state.loadFailed=true;state.dataStale=false;
-  renderPrepHints(null);renderLead(null,null);
+   modelState("unavailable");
+   renderPrepHints(null);renderLead(null,null);
   txt("status",tr("SIN CONEXIÓN","OFFLINE"));
   txt("chileLiveState",tr("SIN DATOS","NO DATA"));
   txt("updated",tr("No se puede cargar el pronóstico: ","Cannot load forecast: ")+String(err.message||err));
@@ -1395,8 +1411,9 @@ async function initialize(){
   // Mobile keeps map detail optional, with a local geolocated SVG fallback.
   if(window.matchMedia("(min-width: 1120px)").matches)$("coastMapExpand").open=true;
   renderDNA();risk(null);await refresh();
- }catch(err){
-  txt("updated",tr("Error cargando FARO Chile: ","FARO Chile loading error: ")+String(err.message||err));
+  }catch(err){
+   modelState("unavailable");
+   txt("updated",tr("Error cargando FARO Chile: ","FARO Chile loading error: ")+String(err.message||err));
   txt("status",tr("SIN DATOS","NO DATA"));risk(null);
  }
 }

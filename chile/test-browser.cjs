@@ -103,6 +103,8 @@ function fixture(){
     for(const theme of ['dark','light']){
      await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
      const tag=width+'-'+theme;
+     await page.evaluate(()=>window.scrollTo(0,0));
+     await page.screenshot({path:path.join(dir,tag+'-opening.png')});
      await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-front.png')});
      await page.locator('.faro-surface-flip').click();
      await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-signals.png')});
@@ -112,6 +114,18 @@ function fixture(){
     await page.evaluate(theme=>{document.documentElement.dataset.theme=theme;window.scrollTo(0,0)},originalTheme);
    }
    assert.equal(scriptErrors.length,0,'Chile JS should boot cleanly: '+JSON.stringify(scriptErrors));
+   // Loading placeholders must never survive a valid forecast: previously
+   // the iPhone showed an enormous stack of empty score and daily cards.
+   const readyState=await page.evaluate(()=>({
+    pending:document.body.classList.contains('faro-model-pending'),
+    unavailable:document.body.classList.contains('faro-model-unavailable'),
+    busy:document.getElementById('faroForecastLead')?.getAttribute('aria-busy'),
+    title:document.getElementById('faroLeadHeadline')?.textContent
+   }));
+   assert.equal(readyState.pending,false,'Model loading state must clear on valid data: '+JSON.stringify(readyState));
+   assert.equal(readyState.unavailable,false,'Mock valid data cannot be shown as offline');
+   assert.equal(readyState.busy,'false','Hero must not remain busy after a successful model read');
+
    const brand=await page.evaluate(()=>{
     const $=id=>document.getElementById(id),rect=id=>$(id).getBoundingClientRect();
     const b=rect('faroForecastLead'),u=document.querySelector('.forecast-toolbar').getBoundingClientRect(),

@@ -82,7 +82,10 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       wind:rect('#daySignalMetrics>.day-signal-metric:nth-child(3)'),
       redundantBridge:!!document.querySelector('.faro-footer-bridge'),
       display:lead?getComputedStyle(lead).display:null,
-      button:rect('#faroLeadRead')
+      button:rect('#faroLeadRead'),
+      loading:document.body.classList.contains('faro-model-pending'),
+      offline:document.body.classList.contains('faro-model-unavailable'),
+      heroBusy:lead?.getAttribute('aria-busy')
      };
      if(lead){
       // Test CSS on a temporary twin, not the live hero: an asynchronous
@@ -131,12 +134,20 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     }else{
       assert.equal(found.footerColumns,2,'desktop footer should retain a balanced two-column ending');
     }
-    assert.ok(found.button.height>=40,'hero action must be tappable');
+    if(found.loading||found.offline){
+      // External forecasts are deliberately blocked in this regression.
+      // A hidden CTA is the correct no-data UX, not a lost touch target.
+      assert.equal(found.button.height,0,'no-data hero must hide dead action');
+      assert.equal(found.heroBusy,found.loading?'true':'false',
+        'loading semantics must track the provider state');
+    }else{
+      assert.ok(found.button.height>=40,'available hero action must be tappable');
+    }
     if(mobileLayout){
       assert.ok(found.nav.top<found.hero.top,'mobile navigation before hero');
       assert.ok(found.hero.top<found.dock.top,'mobile hero before selector');
       assert.equal(found.display,'flex');
-      assert.ok(found.button.height>=44,'iPhone action <44pt');
+      if(!found.loading&&!found.offline)assert.ok(found.button.height>=44,'iPhone action <44pt');
     }else{
       assert.ok(found.dock.top<found.hero.top,'desktop selector before hero');
     }
