@@ -216,7 +216,7 @@ function fixture(){
      'Dark-mode beach name must be light on dark background');
     assert.equal(art.light.activeNavInk,'rgb(22, 58, 63)');
     assert.equal(art.dark.activeNavInk,'rgb(242, 250, 248)');
-    assert.equal(art.light.inactiveNavInk,'rgb(34, 71, 75)');
+    assert.equal(art.light.inactiveNavInk,'rgb(31, 59, 61)');
     assert.equal(art.dark.inactiveNavInk,'rgb(199, 221, 218)');
    }
 
