@@ -33,7 +33,7 @@ html:not([data-theme="light"]) #bestPage{
 #forecastPage>.forecast-toolbar .forecast-updated-label{
  font:650 11px/1.4 var(--faro-text)!important;}
 /* Region controls read like a joined editorial selector, not two boxed forms. */
-#forecastPage>.picker-grid{gap:clamp(12px,2.6vw,26px)!important}
+#forecastPage>.picker-grid{gap:clamp(12px,2.6vw,26px)}
 #forecastPage .chile-spot-picker{
  min-height:68px;
  background:transparent!important;
@@ -63,7 +63,7 @@ html:not([data-theme="light"]) #bestPage{
 
 }
 #forecastPage>.faro-journey-nav .faro-journey-kicker{
- color:var(--faro-quiet)!important;letter-spacing:.12em
+ color:var(--faro-quiet);letter-spacing:.12em
 }
 #forecastPage>.faro-journey-nav button{
  min-height:38px;
@@ -243,7 +243,7 @@ html:not([data-theme="light"]) #forecastPage>.faro-access-notice.faro-safety-cen
  
  background:linear-gradient(100deg,
   color-mix(in srgb,var(--faro-selection) 6%,var(--faro-raised)) 0%,
-  var(--faro-raised) 70%)!important
+  var(--faro-raised) 70%)
 }
 #forecastPage .faro-ocean-tools-copy small{letter-spacing:.13em}
 #forecastPage .faro-ocean-tools-copy h3{letter-spacing:-.045em!important}
@@ -819,7 +819,7 @@ body main>.faro-country-switch{margin:0 0 13px!important}
   
   align-content:start;}
  #forecastPage #faroLeadScore{
-  font-size:clamp(39px,10vw,53px)!important
+  font-size:clamp(39px,10vw,53px)
  }
  #forecastPage .faro-lead-grade{
   display:block;;
@@ -830,13 +830,13 @@ body main>.faro-country-switch{margin:0 0 13px!important}
   align-content:center;flex-direction:column;
   
   }
- #forecastPage .faro-lead-best strong{font-size:clamp(16px,4.5vw,21px)!important}
+ #forecastPage .faro-lead-best strong{font-size:clamp(16px,4.5vw,21px)}
  #forecastPage .faro-lead-best small{font-size:8px!important}
  #forecastPage .faro-lead-metrics{
 
   gap:7px!important;padding-top:11px
  }
- #forecastPage .faro-lead-metrics strong{font-size:12px!important}
+ #forecastPage .faro-lead-metrics strong{font-size:12px}
  #forecastPage .faro-lead-metrics small{font-size:8px!important}
  #forecastPage .faro-lead-fineprint{
   
@@ -845,7 +845,7 @@ body main>.faro-country-switch{margin:0 0 13px!important}
  #forecastPage>.forecast-toolbar{
   justify-content:space-between!important;min-height:38px!important
  }
- #forecastPage>.picker-grid{grid-template-columns:1fr 1fr!important}
+ #forecastPage>.picker-grid{grid-template-columns:1fr 1fr}
  #forecastPage>.faro-journey-nav{margin:9px 0 0!important}
  #forecastPage #dayview>.faro-ocean-explorer{margin-top:17px!important}
 }
