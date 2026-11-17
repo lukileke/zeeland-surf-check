@@ -589,13 +589,13 @@ html:not([data-theme="light"]) #forecastPage :is(.day-chip,.slots>button,.chile-
 #chileCoastMap .faro-lens-footer-legend>small{margin-left:auto;max-width:35ch}
 #forecastPage .faro-detail-hub-grid{
 
- gap:clamp(11px,1.25vw,18px)!important}
+ gap:clamp(11px,1.25vw,18px)}
 #forecastPage .faro-hub-group.is-ready{
  grid-column:auto!important;grid-template-columns:minmax(0,1fr)}
 #forecastPage .faro-hub-group.is-ready>.faro-hub-group-head{grid-column:auto!important}
 
 
-#forecastPage #dayview>.faro-detail-hub{margin-top:12px!important}
+#forecastPage #dayview>.faro-detail-hub{margin-top:12px}
 .faro-footer-v2{gap:20px 38px;padding-top:25px}
 .faro-footer-v2 .faro-footer-nav{gap:18px 25px}
 #boardPage>.faro-guide{
