@@ -2980,7 +2980,7 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
    * avoiding the Safari WebKit dark-line artifact of SVG drop-shadows. */
   html body main #forecastPage:not(.hide) > .faro-forecast-lead
   > .faro-lead-beacon > .faro-lead-signature {
-    opacity:.29!important;
+    opacity:.40!important;
     pointer-events:none!important;
   }
   html body main #forecastPage:not(.hide) > .faro-forecast-lead
