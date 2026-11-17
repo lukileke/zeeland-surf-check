@@ -93,7 +93,7 @@ main>.app-nav{margin-bottom:20px}
 #faroSafetyCenter .faro-safety-expanded{
  display:block!important;
 
- background:color-mix(in srgb,var(--panel) 50%,var(--tile))!important;
+ background:color-mix(in srgb,var(--panel) 50%,var(--tile));
  border-top:1px solid var(--faro-line)!important;
 }
 #faroSafetyCenter .faro-safety-expanded>.faro-safety-inline-source{
