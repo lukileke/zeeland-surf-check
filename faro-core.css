@@ -116,7 +116,7 @@ main{width:100%;max-width:820px;padding:24px clamp(16px,4vw,32px) 76px}
 
 
 .forecast-refresh{;min-height:0;line-height:1.15;border-radius:8px!important}
-@media(max-width:520px){.forecast-refresh{;font-size:17px!important}}
+@media(max-width:520px){.forecast-refresh{;font-size:17px}}
 /* Compact, scannable session essentials */
 .session-essentials>small{font-size:10px;letter-spacing:.055em;margin-bottom:8px}
 .essentials-tags{display:flex;flex-wrap:wrap;gap:7px}
@@ -200,7 +200,7 @@ html[data-theme="light"] .safety-alert.safety-compact{background:#edf7f3!importa
 /* FARO hierarchy v2: fewer competing outlines, clear section labels */
 .forecast-section{margin:17px 0 21px;min-width:0}
 .forecast-section-heading{display:flex;align-items:center;gap:11px;margin:0 0 13px}
-.forecast-section-heading h3{font-size:17px!important;line-height:1.25;margin:0;letter-spacing:-.015em;color:var(--fg)}
+.forecast-section-heading h3{font-size:17px;line-height:1.25;margin:0;letter-spacing:-.015em;color:var(--fg)}
 .forecast-section-heading p{font-size:12px;line-height:1.35;margin:4px 0 0;color:var(--muted)}
 .section-step{width:28px;height:28px;flex:0 0 28px;border-radius:9px;display:grid;place-items:center;font-size:11px;font-weight:800;color:#92d8cc;background:rgba(73,156,145,.14);border:1px solid rgba(107,184,174,.22)}
 .day-strip-wrap.forecast-section{margin:15px 0 20px}
@@ -214,15 +214,15 @@ html[data-theme="light"] .safety-alert.safety-compact{background:#edf7f3!importa
 .detail-section{margin-top:23px;padding-top:18px;border-top:1px solid var(--border)}
 .detail-section>#detail{margin:0!important}
 
-#dayview .forecast-expand>summary{font-size:14px!important;font-weight:700;}
-#dayview .forecast-expand>summary span{font-size:11px!important;letter-spacing:0;opacity:.9}
-#dayview .forecast-expand:not([open]){background:transparent!important}
+#dayview .forecast-expand>summary{font-size:14px;font-weight:700;}
+#dayview .forecast-expand>summary span{font-size:11px;letter-spacing:0;opacity:.9}
+#dayview .forecast-expand:not([open]){background:transparent}
 #dayview .forecast-expand[open]{background:var(--panel)!important}
 #dayview .forecast-expand .insight-panel,#dayview .forecast-expand>.panel{padding:13px 14px!important}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 html[data-theme="light"] .section-step{color:#24766d;background:#e1f0ed;border-color:#b8d8d0}
 html[data-theme="light"] .hourly-section,html[data-theme="light"] .detail-section{border-top-color:#d5e0e4}
-@media(max-width:520px){.forecast-section-heading{gap:9px}.forecast-section-heading h3{font-size:16px!important}.forecast-section-heading p{font-size:11px}.hourly-section{margin-top:19px;padding-top:16px}.detail-section{margin-top:19px;padding-top:16px}}
+@media(max-width:520px){.forecast-section-heading{gap:9px}.forecast-section-heading h3{font-size:16px}.forecast-section-heading p{font-size:11px}.hourly-section{margin-top:19px;padding-top:16px}.detail-section{margin-top:19px;padding-top:16px}}
 /* Readability pass: larger day labels, legible scores and quieter section framing */
 .day-chip.tone-great{--tone:var(--surf-great)}.day-chip.tone-good{--tone:var(--surf-good)}.day-chip.tone-fair{--tone:var(--surf-fair)}.day-chip.tone-poor{--tone:var(--surf-poor)}.day-chip.tone-low{--tone:var(--surf-low)}
 :root{--surf-fair:#f4c96e}
@@ -258,7 +258,7 @@ html:not([data-theme="light"]) .day-chip.tone-fair strong{color:#f4c96e!importan
  #forecastPage>.forecast-overview{grid-column:1/-1!important;grid-row:4!important;margin:0!important;}
  #forecastPage>.forecast-overview>.row{grid-template-columns:minmax(0,1fr) minmax(210px,270px)!important}
  #forecastPage>.forecast-overview .metric{grid-template-columns:repeat(3,minmax(0,1fr));max-width:100%}
- #forecastPage>#dayview{grid-column:1/-1!important;grid-row:5!important;;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr)!important;;margin:0!important;align-items:start}
+ #forecastPage>#dayview{grid-column:1/-1!important;grid-row:5!important;;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);;margin:0!important;align-items:start}
  #forecastPage>#dayview.hide{display:none!important}
  #dayview>.session-section{;;margin:0!important;min-width:0}
  #dayview>#waveInsightExpand{;;margin:0!important;align-self:start}
@@ -314,7 +314,7 @@ html:not([data-theme="light"]) .day-chip.tone-fair strong{color:#f4c96e!importan
 }
 /* Editorial hierarchy: clear headings outside cards, no competing nested panels */
 #forecastPage .day-strip-title{align-items:baseline;margin-bottom:11px}
-#forecastPage .day-strip-title strong{font-size:19px!important;;text-transform:none}
+#forecastPage .day-strip-title strong{font-size:19px;;text-transform:none}
 #forecastPage .day-strip-title>span{font-size:12px!important}
 .day-outlook-section{margin:19px 0 22px}
 .day-outlook-section>.forecast-section-heading{margin-bottom:11px}
@@ -354,10 +354,10 @@ html:not([data-theme="light"]) .forecast-overview .best-session-brief{background
 #forecastPage .forecast-overview{;;;;;gap:10px!important}
 
 #forecastPage .forecast-overview .day-identity-label{;opacity:.75}
-#forecastPage .forecast-overview #spotname{font-size:18px!important}
-#forecastPage .forecast-overview #datehead{font-size:17px!important}
+#forecastPage .forecast-overview #spotname{font-size:18px}
+#forecastPage .forecast-overview #datehead{font-size:17px}
 #forecastPage .forecast-overview .best-session-brief{;padding-left:12px}
-#forecastPage .forecast-overview .metric{border-top:0!important;border-bottom:0!important;;;}
+#forecastPage .forecast-overview .metric{border-top:0;border-bottom:0;;;}
 #forecastPage .forecast-overview .metric>div{border:0!important}
 #forecastPage .forecast-overview .metric>div+div{border-left:1px solid color-mix(in srgb,var(--border) 55%,transparent)!important}
 
@@ -372,7 +372,7 @@ html:not([data-theme="light"]) .forecast-overview .best-session-brief{background
 #forecastPage #dayview .forecast-expand{margin:9px 0!important}
 html[data-theme="light"] #forecastPage .forecast-overview{background:transparent!important;border:0!important}
 html:not([data-theme="light"]) #forecastPage .forecast-overview{background:transparent!important;border:0!important}
-@media(max-width:520px){#forecastPage .forecast-overview #spotname{font-size:16px!important}#forecastPage .forecast-overview #datehead{font-size:16px!important}#forecastPage .forecast-overview .metric b{font-size:14px!important}#forecastPage .forecast-section-heading h3{font-size:16px!important}}
+@media(max-width:520px){#forecastPage .forecast-overview #spotname{font-size:16px}#forecastPage .forecast-overview #datehead{font-size:16px}#forecastPage .forecast-overview .metric b{font-size:14px!important}#forecastPage .forecast-section-heading h3{font-size:16px!important}}
 /* Location controls: primary navigation, high-contrast and understated coastal styling */
 
 #forecastPage .picker{min-width:0}
