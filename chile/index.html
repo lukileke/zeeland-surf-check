@@ -52,12 +52,12 @@
 <link rel="stylesheet" href="faro-tide-read.css?v=10">
 <link rel="stylesheet" href="faro-score-colour-lock-v1.css?v=1">
 </head>
-<body>
+<body class="faro-model-pending">
 <a class="faro-skip-link" href="#faroForecastLead" data-es="Saltar al pronóstico" data-en="Skip to the forecast">Saltar al pronóstico</a>
 <main>
  <div class="top">
   <div class="faro-brand-block">
-   <small id="regionTitle" data-es="PRONÓSTICO DE SURF · VALPARAÍSO" data-en="SURF FORECAST · VALPARAÍSO">PRONÓSTICO DE SURF · VALPARAÍSO</small>
+   <small id="regionTitle" data-es="VALPARAÍSO · CHILE" data-en="VALPARAÍSO · CHILE">VALPARAÍSO · CHILE</small>
    <h1 class="faro-logo" aria-label="FARO">
     <img class="faro-logo-art faro-logo-art--light" src="../assets/faro-logo.svg" width="129" height="44" alt="">
     <img class="faro-logo-art faro-logo-art--dark" src="../assets/faro-logo-dark.svg" width="129" height="44" alt="">
@@ -135,7 +135,7 @@
   </section>
   <!-- Brand refresh v1: one actual forecast-informed editorial lead, not a
        duplicated Daily Take. The detailed daily science remains below. -->
-  <section id="faroForecastLead" class="faro-forecast-lead is-loading" aria-labelledby="faroLeadHeadline">
+  <section id="faroForecastLead" class="faro-forecast-lead is-loading" aria-labelledby="faroLeadHeadline" aria-busy="true">
    <!-- Original FARO O geometry: warm beacon core plus four separate arcs.
         The beam is an atmospheric UI motif, never actual swell directions. -->
    <div class="faro-lead-beacon" aria-hidden="true"><span class="faro-beacon-pulse"></span><span class="faro-beacon-light"></span>
@@ -146,8 +146,8 @@
    <div class="faro-lead-main">
     <small class="faro-lead-kicker" data-es="FARO · LEE EL MAR" data-en="FARO · READ THE OCEAN">FARO · LEE EL MAR</small>
     <span class="faro-lead-location" id="faroLeadLocation">Valparaíso · Chile</span>
-    <h2 id="faroLeadHeadline" class="faro-lead-headline" data-es="La lectura del mar, primero." data-en="The ocean read comes first.">La lectura del mar, primero.</h2>
-    <p class="faro-lead-deck" id="faroLeadDeck" data-es="Consulta las condiciones modeladas de tu playa." data-en="Explore modelled conditions for your chosen break.">Consulta las condiciones modeladas de tu playa.</p>
+    <h2 id="faroLeadHeadline" class="faro-lead-headline" data-es="Leyendo tu costa…" data-en="Reading your coast…">Leyendo tu costa…</h2>
+    <p class="faro-lead-deck" id="faroLeadDeck" data-es="Conectando oleaje y meteorología. Sin datos, no mostramos un índice." data-en="Loading swell and weather. No data means no score.">Conectando oleaje y meteorología. Sin datos, no mostramos un índice.</p>
     <div class="faro-lead-actions">
      <button type="button" id="faroLeadRead" class="faro-lead-action-main" data-es="Ver la lectura" data-en="See the outlook">Ver la lectura <span aria-hidden="true">↘</span></button>
      <button type="button" id="faroLeadMap" class="faro-lead-action-secondary" data-es="Explorar el mapa" data-en="Explore the coast">Explorar el mapa <span aria-hidden="true">↗</span></button>
@@ -466,7 +466,7 @@
 <script src="faro-session-decision.js?v=1" defer></script>
 <script src="faro-spot-chooser.js?v=1" defer></script>
 <script src="faro-thermal-guide.js?v=1" defer></script>
-<script src="chile-forecast.js?v=50" defer></script>
+<script src="chile-forecast.js?v=51" defer></script>
 <script src="faro-tide-read.js?v=4" defer></script>
 <script src="faro-official-watch.js?v=2" defer></script>
 </body>
