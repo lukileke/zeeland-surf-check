@@ -1792,6 +1792,44 @@ body>.faro-skip-link:focus-visible{
   flex:0 0 auto;
   min-width:38px;min-height:38px;
  }
+
+ /* Theme-specific contrast: legacy shared tokens invert inside this dock.
+    The selected spot must be readable in BOTH themes, including Safari. */
+ html[data-theme="light"] #forecastPage>.faro-context-dock .picker-grid>.faro-spot-choice{
+  background:#f7faf9!important;color:#183c40!important;
+  border-color:#c6d9d7!important;
+ }
+ html:not([data-theme="light"]) #forecastPage>.faro-context-dock .picker-grid>.faro-spot-choice{
+  background:#1b393d!important;color:#f0f8f6!important;
+  border-color:#638080!important;
+ }
+ html[data-theme="light"] #forecastPage>.faro-context-dock .faro-spot-choice :is(small,button,.faro-spot-choice-text){
+  color:#1b4649!important;
+ }
+ html:not([data-theme="light"]) #forecastPage>.faro-context-dock .faro-spot-choice :is(small,button,.faro-spot-choice-text){
+  color:#eef8f5!important;
+ }
+ html[data-theme="light"] main>.app-nav button{
+  color:#22474b!important;opacity:1!important;
+ }
+ html:not([data-theme="light"]) main>.app-nav button{
+  color:#c7ddda!important;opacity:1!important;
+ }
+ html[data-theme="light"] main>.app-nav button.active{
+  background:#fff!important;color:#163a3f!important;
+ }
+ html:not([data-theme="light"]) main>.app-nav button.active{
+  background:#29484d!important;color:#f2faf8!important;
+ }
+ #forecastPage>.faro-context-dock .faro-country-options>a{
+  color:var(--fg)!important;opacity:.76!important;
+  font-weight:750;border-bottom:2px solid transparent!important;
+ }
+ #forecastPage>.faro-context-dock .faro-country-options>a[aria-current="page"]{
+  color:var(--fg)!important;opacity:1!important;
+  border-bottom-color:var(--faro-selection)!important;
+ }
+
  /* Four useful shortcuts, a single rail; never a wrapped second row. */
  body main #forecastPage:not(.hide)>nav.faro-journey-nav{
   display:grid!important;
