@@ -1274,7 +1274,7 @@ html body main #forecastPage:not(.hide) #faroHourlyPreview[data-mode=signals] > 
     font-size:clamp(17px,4.3vw,20px)!important;line-height:1.25!important;
     max-width:29ch;
   }
-  #forecastPage #dayview #dailyOverview .faro-brief-fact{padding:0 6px}
+  #dailyOverview .faro-brief-fact{padding:0 6px}
   #forecastPage #dayview #dailyOverview .faro-brief-fact strong{font-size:clamp(14px,4vw,18px)}
   html body main #forecastPage:not(.hide) .hourly-section #slots.slots{
     display:flex!important;flex-wrap:nowrap;
@@ -1789,7 +1789,7 @@ body>.faro-skip-link:focus-visible{
   min-width:38px;min-height:38px;
  }
  /* Four useful shortcuts, a single rail; never a wrapped second row. */
- html body main #forecastPage:not(.hide)>.faro-journey-nav{
+ body main #forecastPage:not(.hide)>nav.faro-journey-nav{
   display:grid!important;
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
   width:100%;gap:5px!important;
