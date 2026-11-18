@@ -178,10 +178,10 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       // On tablet, the compact selectable day/hero/hour console replaces
       // the old detailed hourly card. Test the NEW hierarchy, not its legacy
       // position below the overview.
-      assert.ok(found.days.bottom<=found.hero.top+2,
+      assert.ok(found.days.top+found.days.height<=found.hero.top+2,
         'tablet days must precede hero: '+JSON.stringify({days:found.days,hero:found.hero,hours:found.quickHours}));
-      assert.ok(found.hero.bottom<=found.quickHours.top+2,'tablet hours must follow hero');
-      assert.ok(found.quickHours.bottom<=found.overview.top+2,
+      assert.ok(found.hero.top+found.hero.height<=found.quickHours.top+2,'tablet hours must follow hero');
+      assert.ok(found.quickHours.top+found.quickHours.height<=found.overview.top+2,
         'tablet overview must follow the unified surf console');
     }
     assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score '+JSON.stringify(found.scoreProbe));
