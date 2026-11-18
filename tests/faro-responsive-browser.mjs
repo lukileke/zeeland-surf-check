@@ -163,8 +163,11 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       assert.ok(found.dock.top<found.hero.top,'desktop selector before hero');
     }
     if(s.width>=1120){
-      assert.ok(Math.abs(found.overview.top-found.hours.top)<=14,
-        'desktop day/time panels are not paired');
+      assert.ok(found.days.width>s.width*.55&&found.quickHours.width>s.width*.55,
+       'desktop must show the connected day and two-hour console at full width');
+      assert.ok(found.days.top<found.hero.top&&found.hero.top<found.quickHours.top,
+       'desktop must show day → hero → hours in that order');
+      assert.equal(found.hours.height,0,'the legacy duplicated desktop hour grid must be hidden');
       // Check three metrics occupy one row, not the former orphan wind row.
       if(found.wave&&found.period&&found.wind&&found.wave.height>0){
         assert.ok(Math.abs(found.wave.top-found.period.top)<=10,'period dropped under wave');
@@ -175,7 +178,8 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       // On tablet, the compact selectable day/hero/hour console replaces
       // the old detailed hourly card. Test the NEW hierarchy, not its legacy
       // position below the overview.
-      assert.ok(found.days.bottom<=found.hero.top+2,'tablet days must precede hero');
+      assert.ok(found.days.bottom<=found.hero.top+2,
+        'tablet days must precede hero: '+JSON.stringify({days:found.days,hero:found.hero,hours:found.quickHours}));
       assert.ok(found.hero.bottom<=found.quickHours.top+2,'tablet hours must follow hero');
       assert.ok(found.quickHours.bottom<=found.overview.top+2,
         'tablet overview must follow the unified surf console');
