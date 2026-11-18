@@ -849,17 +849,15 @@ function renderLead(day,session){
  }
  const name=spot()?.shortName||spot()?.name||tr("este spot","this break");
  txt("faroLeadHeadline",session.score>=8?
-  tr("Potencial alto frente a "+name,"Strong model signal at "+name):
-  session.score>=6?tr("Una ventana para mirar en "+name,"A window worth checking at "+name):
-  tr("Lectura moderada frente a "+name,"A mixed ocean read at "+name));
- txt("faroLeadDeck",session.score>=8?
-  tr("Una señal prometedora. Confirma las condiciones en la rompiente.",
-     "A promising signal. Confirm conditions at the break."):
-  session.score>=6?
-  tr("Hay una ventana interesante. Mira cómo entra el mar antes de salir.",
-     "A window worth a closer look. Check how the swell reaches the break."):
-  tr("Condiciones variables. Revisa las franjas y el viento en detalle.",
-     "Mixed conditions. Review the hourly windows and wind below."));
+  tr("Buena ventana en "+name,"Promising window at "+name):
+  session.score>=6?tr("Ventana para explorar en "+name,"Window to explore at "+name):
+  tr("Condiciones cambiantes en "+name,"Variable conditions at "+name));
+ // Data-first, no double marketing claim: distinguish modelled offshore
+ // waves from actual surf and retain the on-site verification caveat.
+ txt("faroLeadDeck",tr(
+  "Oleaje oceánico "+num(session.totalWaveHeightM)+" m · período "+num(session.swellPeriodS)+" s. Verifica la rompiente.",
+  "Offshore waves "+num(session.totalWaveHeightM)+" m · period "+num(session.swellPeriodS)+" s. Check conditions at the break."
+ ));
 }
 function renderPrepHints(s){
  const host=$("faroPrepHints");if(!host)return;
