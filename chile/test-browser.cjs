@@ -367,10 +367,10 @@ function fixture(){
      'The former 8-slot desktop instrument is deliberately hidden');
     const selectedQuick=page.locator('#faroQuickHours>button[aria-pressed="true"]');
     if(await selectedQuick.count()){
-     const selectedHour=await selectedQuick.getAttribute('data-hour');
-     assert.equal(selectedHour,
-      await page.locator('#slots>button.selected').getAttribute('data-hour'),
-      'Connected rail and legacy data controller must share one selected model hour');
+     const selectedScore=(await selectedQuick.locator('.faro-console-hour-score').textContent()).trim();
+     const controllerScore=(await page.locator('#slots>button.selected .chile-slot-score').textContent()).trim();
+     assert.equal(selectedScore,controllerScore,
+      'Connected rail and legacy data controller must share the same model score');
     }
    }
    // Both depths occupy the same fixed footprint without hiding safety.
