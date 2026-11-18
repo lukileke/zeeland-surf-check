@@ -109,7 +109,7 @@ function fixture(){
      await page.locator('.faro-surface-flip').click();
      await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-signals.png')});
      await page.locator('.faro-surface-flip').click();
-     await page.locator('#dayview>.hourly-section').screenshot({path:path.join(dir,tag+'-hours.png')});
+     await page.locator(width<1120?'#faroQuickHourRail':'#dayview>.hourly-section').screenshot({path:path.join(dir,tag+'-hours.png')});
     }
     await page.evaluate(theme=>{document.documentElement.dataset.theme=theme;window.scrollTo(0,0)},originalTheme);
    }
