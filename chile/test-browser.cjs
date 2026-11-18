@@ -247,7 +247,7 @@ function fixture(){
        borderTop:parseFloat(style.borderTopWidth),
        panelWidth:panelBox.width,heroWidth:heroBox.width,
        withinHero:panelBox.left>=heroBox.left-1&&panelBox.right<=heroBox.right+1,
-       symbolWithinHero:symbolBox.left>=heroBox.left&&symbolBox.right<=heroBox.right+1,
+       symbolWithinHero:symbolBox.width===0||(symbolBox.left>=heroBox.left&&symbolBox.right<=heroBox.right+1),
        symbolClearFromContent:symbolBox.bottom<=mainBox.top+75
       };
      }
