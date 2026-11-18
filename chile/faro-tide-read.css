@@ -1968,13 +1968,17 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage>.faro-console-hours{display:none}
 }
 @media(max-width:1119px){
- #forecastPage{--faro-console-gap:clamp(13px,2vw,22px)}
- #forecastPage>#faroDayRail{order:0}
- #forecastPage>section#faroForecastLead{order:1}
- #forecastPage>#faroQuickHourRail{order:2}
- #forecastPage>.faro-context-dock{order:3}
- #forecastPage>.faro-access-notice{order:4}
- #forecastPage>.faro-journey-nav{order:5}
+ #forecastPage{--faro-console-gap:clamp(13px,2vw,22px);row-gap:0!important}
+ #forecastPage>.faro-context-dock,
+ #forecastPage>.faro-access-notice,
+ #forecastPage>.faro-journey-nav,
+ #forecastPage>#dayview{margin-top:var(--faro-console-gap)!important}
+ #forecastPage>#faroDayRail{order:0!important}
+ #forecastPage>section#faroForecastLead{order:1!important}
+ #forecastPage>#faroQuickHourRail{order:2!important}
+ #forecastPage>.faro-context-dock{order:3!important}
+ #forecastPage>.faro-access-notice{order:4!important}
+ #forecastPage>.faro-journey-nav{order:5!important}
  #forecastPage>#dayStrip{display:none!important}
  #forecastPage>.faro-console-day,
  #forecastPage>.faro-console-hours{
@@ -1989,14 +1993,14 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage>#faroDayRail{
   border-radius:20px 20px 0 0;
   border-bottom:0;
-  margin:0 0 calc(-1 * var(--faro-console-gap))!important;
+  margin:0!important;
  }
  #forecastPage>section#faroForecastLead{
   border-radius:0!important;
   border-top:0;
   border-bottom:0;
   box-shadow:none!important;
-  margin:0 0 calc(-1 * var(--faro-console-gap))!important;
+  margin:0!important;
  }
  #forecastPage>#faroQuickHourRail{
   border-radius:0 0 20px 20px;
