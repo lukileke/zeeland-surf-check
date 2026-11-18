@@ -2119,7 +2119,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  }
  /* The detailed model analysis still exists, but the hours themselves
     have a single, prominent interaction surface inside the console. */
- #forecastPage #dayview>.hourly-section{display:none!important}
+ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{display:none!important}
 }
 @media(max-width:710px){
  #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
