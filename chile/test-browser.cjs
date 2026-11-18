@@ -521,6 +521,10 @@ function fixture(){
      'Seven-day detail must not duplicate the top-day selector on phones');
     assert.equal(await page.locator('#slots').isVisible(),false,
      'Legacy hourly grid must not repeat the quick hours below the hero');
+    // Playwright scrolls the target into view before a click. Capture the
+    // settled position after that intentional test navigation, so only
+    // application-driven jumps count as regressions.
+    await page.locator('#faroQuickDays > button').nth(1).scrollIntoViewIfNeeded();
     const start=await page.evaluate(()=>window.scrollY);
     await page.locator('#faroQuickDays > button').nth(1).click();
     assert.equal(await page.locator('#faroQuickDays > button').nth(1).getAttribute('aria-pressed'),'true');
