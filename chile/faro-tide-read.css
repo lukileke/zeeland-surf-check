@@ -1963,9 +1963,43 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  * existing desktop model tables and all score/safety tokens are unchanged.
  * The final colour-lock sheet owns numerical score pigments.
  */
+/* One forecast console and one semantic colour contract for all viewports. */
 @media(min-width:1120px){
- #forecastPage>.faro-console-day,
- #forecastPage>.faro-console-hours{display:none}
+ #forecastPage:not(.hide)>#faroDayRail,
+ #forecastPage:not(.hide)>#faroQuickHourRail{
+  display:block;
+  grid-column:1/-1;
+  min-width:0;
+  width:100%;
+  margin:0;
+  border-radius:20px;
+ }
+ #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead{
+  grid-column:1/-1!important;
+  grid-row:auto!important;
+ }
+ #forecastPage:not(.hide) #dayStrip{display:none!important}
+ #forecastPage:not(.hide) .faro-console-days{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:10px;
+  overflow:visible;
+  padding:2px;
+ }
+ #forecastPage:not(.hide) .faro-console-hour-list{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+  overflow:visible;
+  padding:2px;
+ }
+ #forecastPage:not(.hide) .faro-console-day-chip,
+ #forecastPage:not(.hide) .faro-console-hour-chip{
+  width:100%;
+  flex:initial;
+  min-width:0;
+  min-height:76px;
+ }
 }
 /* Tablet layout contract: the older Chile grid places its children by
  * fixed rows, so CSS order alone cannot assemble the connected console.
@@ -1990,7 +2024,9 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage>.faro-access-notice{order:4!important}
  #forecastPage>.faro-journey-nav{order:5!important}
  #forecastPage #dayStrip{display:none!important}
- #forecastPage>.faro-console-day,
+}
+/* Shared console atoms: avoid two independent desktop/mobile skins. */
+#forecastPage>.faro-console-day,
  #forecastPage>.faro-console-hours{
   display:block;
   color:#eff9f4;
@@ -2050,8 +2086,8 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   flex:0 0 108px;min-width:0;
   scroll-snap-align:center;
   color:#edf8f5;
-  background:rgba(225,248,241,.065);
-  border:1px solid rgba(211,240,232,.19);
+  background:rgba(225,248,241,.045);
+  border:1px solid rgba(211,240,232,.17);
   border-radius:12px;
   text-align:left;
   padding:10px 11px;
@@ -2066,9 +2102,9 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  }
  #forecastPage .faro-console-day-chip.is-selected,
  #forecastPage .faro-console-hour-chip.is-selected{
-  background:rgba(186,229,219,.19);
-  border-color:#9fd8ce;
-  box-shadow:inset 0 0 0 1px #9fd8ce;
+  background:rgba(186,229,219,.14);
+  border-color:#b6e0d5;
+  box-shadow:inset 0 2px 0 0 #b6e0d5;
  }
  #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip):focus-visible{
   outline:2px solid #f6e5a5;outline-offset:2px;
@@ -2134,7 +2170,6 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  /* The detailed model analysis still exists, but the hours themselves
     have a single, prominent interaction surface inside the console. */
  body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section.hourly-section{display:none!important}
-}
 @media(max-width:710px){
  #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
   gap:9px!important;
