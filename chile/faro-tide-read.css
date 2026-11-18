@@ -1956,3 +1956,236 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
 @media(prefers-reduced-motion:reduce){
  #faroOfficialWatch .faro-watch-lamp{transition:none}
 }
+
+
+/* FARO Forecast Console · one model, three connected interactions.
+ * This component is intentionally restricted to phone/tablet layouts:
+ * existing desktop model tables and all score/safety tokens are unchanged.
+ * The final colour-lock sheet owns numerical score pigments.
+ */
+@media(min-width:1120px){
+ #forecastPage>.faro-console-day,
+ #forecastPage>.faro-console-hours{display:none}
+}
+/* Tablet layout contract: the older Chile grid places its children by
+ * fixed rows, so CSS order alone cannot assemble the connected console.
+ * Restore the flex stack only for the unified responsive reading. */
+@media(min-width:711px) and (max-width:1119px){
+ #forecastPage#forecastPage{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch;
+ }
+}
+@media(max-width:1119px){
+ #forecastPage{--faro-console-gap:clamp(13px,2vw,22px);row-gap:0!important}
+ #forecastPage>.faro-context-dock,
+ #forecastPage>.faro-access-notice,
+ #forecastPage>.faro-journey-nav,
+ #forecastPage>#dayview{margin-top:var(--faro-console-gap)!important}
+ #forecastPage>#faroDayRail{order:0}
+ #forecastPage>section#faroForecastLead{order:1!important}
+ #forecastPage>#faroQuickHourRail{order:2}
+ #forecastPage:has(> #faroDayRail) > .faro-context-dock{order:3!important}
+ #forecastPage>.faro-access-notice{order:4!important}
+ #forecastPage>.faro-journey-nav{order:5!important}
+ #forecastPage #dayStrip{display:none!important}
+ #forecastPage>.faro-console-day,
+ #forecastPage>.faro-console-hours{
+  display:block;
+  color:#eff9f4;
+  background:linear-gradient(130deg,#153c3d 0%,#103336 55%,#0b2c30 100%);
+  border:1px solid rgba(167,216,206,.29);
+  box-shadow:none;
+  padding:15px clamp(15px,4vw,23px);
+  min-width:0;
+ }
+ #forecastPage>#faroDayRail{
+  border-radius:20px 20px 0 0;
+  border-bottom:0;
+  margin:0!important;
+ }
+ #forecastPage>section#faroForecastLead{
+  border-radius:0!important;
+  border-top:0;
+  border-bottom:0;
+  box-shadow:none!important;
+  margin:0!important;
+ }
+ #forecastPage>#faroQuickHourRail{
+  border-radius:0 0 20px 20px;
+  border-top:1px solid rgba(167,216,206,.2);
+  margin:0;
+  padding-top:13px;
+  padding-bottom:12px;
+ }
+ #forecastPage .faro-console-rail-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;margin-bottom:10px;
+ }
+ #forecastPage .faro-console-rail-head>span{
+  font-size:10px;font-weight:760;letter-spacing:.15em;color:#d4ece6;
+ }
+ #forecastPage .faro-console-rail-head>small{
+  font-size:10px;color:#a7c8c3;white-space:nowrap;
+ }
+ #forecastPage .faro-console-days,
+ #forecastPage .faro-console-hour-list{
+  display:flex;flex-wrap:nowrap;gap:8px;
+  overflow-x:auto;overflow-y:hidden;
+  overscroll-behavior-inline:contain;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;
+  scrollbar-width:none;
+  padding:2px 2px 5px;
+  touch-action:pan-x;
+ }
+ #forecastPage .faro-console-days::-webkit-scrollbar,
+ #forecastPage .faro-console-hour-list::-webkit-scrollbar{display:none}
+ #forecastPage .faro-console-day-chip,
+ #forecastPage .faro-console-hour-chip{
+  appearance:none;-webkit-appearance:none;
+  display:flex;flex-direction:column;justify-content:center;
+  align-items:flex-start;gap:5px;
+  flex:0 0 108px;min-width:0;
+  scroll-snap-align:center;
+  color:#edf8f5;
+  background:rgba(225,248,241,.065);
+  border:1px solid rgba(211,240,232,.19);
+  border-radius:12px;
+  text-align:left;
+  padding:10px 11px;
+  cursor:pointer;
+  transition:background .16s ease,border-color .16s ease;
+ }
+ #forecastPage .faro-console-day-chip{min-height:86px}
+ #forecastPage .faro-console-hour-chip{min-height:89px;flex-basis:96px}
+ #forecastPage .faro-console-day-chip:hover,
+ #forecastPage .faro-console-hour-chip:hover{
+  background:rgba(225,248,241,.12);
+ }
+ #forecastPage .faro-console-day-chip.is-selected,
+ #forecastPage .faro-console-hour-chip.is-selected{
+  background:rgba(186,229,219,.19);
+  border-color:#9fd8ce;
+  box-shadow:inset 0 0 0 1px #9fd8ce;
+ }
+ #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip):focus-visible{
+  outline:2px solid #f6e5a5;outline-offset:2px;
+ }
+ #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip):disabled{
+  cursor:not-allowed;border-style:dashed;
+ }
+ #forecastPage .faro-console-day-date,
+ #forecastPage .faro-console-hour-time{
+  font-size:11px;font-weight:760;
+  letter-spacing:.012em;color:#f0f9f6;
+  white-space:nowrap;
+ }
+ #forecastPage .faro-console-day-verdict{
+  display:flex;align-items:baseline;gap:6px;min-height:23px;
+  max-width:100%;
+ }
+ #forecastPage .faro-console-day-score,
+ #forecastPage .faro-console-hour-score{
+  font-size:21px;font-weight:800;line-height:1;
+  letter-spacing:-.05em;
+  color:var(--brand-score-ink,var(--faro-quiet));
+  -webkit-text-fill-color:var(--brand-score-ink,var(--faro-quiet));
+  font-variant-numeric:tabular-nums;
+ }
+ #forecastPage .faro-console-day-grade,
+ #forecastPage .faro-console-day-window,
+ #forecastPage .faro-console-hour-label{
+  font-size:10px;line-height:1.25;
+  color:#b8d6ce;white-space:nowrap;
+ }
+ #forecastPage .faro-console-empty .faro-console-day-grade{white-space:normal}
+ #forecastPage .faro-console-hour-chip.is-past{
+  border-style:dashed;
+ }
+ #forecastPage .faro-console-hour-chip.is-past .faro-console-hour-label{
+  color:#efd8a0;
+ }
+ /* Tablet and phone use the connected hourly rail, not a redundant
+    lead CTA. Two IDs beat the inherited button-level important display. */
+ #faroForecastLead #faroLeadRead,
+ #faroForecastLead #faroLeadMap{display:none!important}
+ #forecastPage .faro-console-footer{
+  display:flex;justify-content:space-between;
+  align-items:center;gap:10px;
+  margin-top:11px;padding-top:10px;
+  border-top:1px solid rgba(193,232,223,.18);
+ }
+ #forecastPage .faro-console-footer>span{
+  font-size:10px;line-height:1.35;
+  color:#b4d3cd;max-width:35ch;
+ }
+ #forecastPage #faroQuickDetails{
+  appearance:none;
+  color:#e7f7f0;background:transparent;border:0;
+  min-height:40px;padding:5px 2px;
+  font-size:11px;font-weight:750;white-space:nowrap;
+  cursor:pointer;
+ }
+ #forecastPage #faroQuickDetails:focus-visible{
+  outline:2px solid #f6e5a5;outline-offset:2px;border-radius:6px;
+ }
+ /* The detailed model analysis still exists, but the hours themselves
+    have a single, prominent interaction surface inside the console. */
+ body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section.hourly-section{display:none!important}
+}
+@media(max-width:710px){
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
+  gap:9px!important;
+  padding:15px 19px!important;
+ }
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead>.faro-lead-main{
+  gap:6px!important;
+ }
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-headline{
+  font-size:clamp(25px,6.4vw,31px)!important;
+  line-height:1.12!important;
+  max-width:24ch!important;
+  margin:1px 0!important;
+ }
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-deck{
+  font-size:12px!important;
+  line-height:1.42!important;
+  margin:0!important;
+ }
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-actions.faro-lead-actions,
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-qualification.faro-lead-qualification{
+  display:none!important;
+ }
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead>.faro-lead-signal{
+  gap:5px 12px!important;
+  padding:10px 0 0!important;
+ }
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-score-row strong{
+  font-size:clamp(33px,9vw,43px)!important;
+ }
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-fineprint{
+  font-size:10px!important;line-height:1.35!important;
+ }
+ #forecastPage>.faro-console-day,
+ #forecastPage>.faro-console-hours{padding-inline:14px}
+ #forecastPage .faro-console-day-chip{flex-basis:102px;min-height:80px}
+ #forecastPage .faro-console-hour-chip{flex-basis:94px;min-height:80px}
+}
+/* Empty model states do not show decorative rails with eight dashes.
+   Keep the original lead's accessible unavailable explanation intact. */
+@media(max-width:1119px){
+ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroDayRail,
+ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroQuickHourRail{
+  display:none!important;
+ }
+ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>section#faroForecastLead{
+  border-radius:20px!important;
+  margin-bottom:0!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip){transition:none}
+}
+

@@ -83,6 +83,10 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       redundantBridge:!!document.querySelector('.faro-footer-bridge'),
       display:lead?getComputedStyle(lead).display:null,
       button:rect('#faroLeadRead'),
+      days:rect('#faroDayRail'),
+      quickHours:rect('#faroQuickHourRail'),
+      daysCount:document.querySelectorAll('#faroQuickDays>button').length,
+      quickHoursCount:document.querySelectorAll('#faroQuickHours>button').length,
       loading:document.body.classList.contains('faro-model-pending'),
       offline:document.body.classList.contains('faro-model-unavailable'),
       heroBusy:lead?.getAttribute('aria-busy')
@@ -135,19 +139,26 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       assert.equal(found.footerColumns,2,'desktop footer should retain a balanced two-column ending');
     }
     if(found.loading||found.offline){
-      // External forecasts are deliberately blocked in this regression.
-      // A hidden CTA is the correct no-data UX, not a lost touch target.
-      assert.equal(found.button.height,0,'no-data hero must hide dead action');
+      assert.equal(found.button.height,0,'no-data hero hides dead action');
       assert.equal(found.heroBusy,found.loading?'true':'false',
-        'loading semantics must track the provider state');
-    }else{
-      assert.ok(found.button.height>=40,'available hero action must be tappable');
+        'loading semantics must reflect provider state');
+    }else if(s.width>=1120){
+      assert.ok(found.button.height>=40,'desktop hero action must be tappable');
     }
-    if(mobileLayout){
-      assert.ok(found.nav.top<found.hero.top,'mobile navigation before hero');
-      assert.ok(found.hero.top<found.dock.top,'mobile hero before selector');
-      assert.equal(found.display,'flex');
-      if(!found.loading&&!found.offline)assert.ok(found.button.height>=44,'iPhone action <44pt');
+    if(s.width<=1119){
+      assert.ok(found.nav.top<found.hero.top,'navigation precedes console');
+      assert.ok(found.hero.top<found.dock.top,'console precedes compact spot selector');
+      if(!found.loading&&!found.offline){
+       assert.equal(found.daysCount,7,'seven interactive forecast days');
+       assert.ok(found.quickHoursCount>=7,'two-hour mini-sessions must load');
+       assert.ok(found.days.top<found.hero.top&&found.hero.top<found.quickHours.top,
+        'days, lead and hours must read as one vertical module');
+       assert.ok(found.quickHours.top<found.dock.top,'hourly sessions precede spot selector');
+      }
+      if(mobileLayout){
+       assert.equal(found.display,'flex');
+       assert.equal(found.button.height,0,'mobile CTA is redundant with hours directly below hero');
+      }
     }else{
       assert.ok(found.dock.top<found.hero.top,'desktop selector before hero');
     }
@@ -161,7 +172,13 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       }
     }
     if(s.width>=711&&s.width<=1030){
-      assert.ok(found.hours.top>=found.overview.top,'tablet day/hour order');
+      // On tablet, the compact selectable day/hero/hour console replaces
+      // the old detailed hourly card. Test the NEW hierarchy, not its legacy
+      // position below the overview.
+      assert.ok(found.days.bottom<=found.hero.top+2,'tablet days must precede hero');
+      assert.ok(found.hero.bottom<=found.quickHours.top+2,'tablet hours must follow hero');
+      assert.ok(found.quickHours.bottom<=found.overview.top+2,
+        'tablet overview must follow the unified surf console');
     }
     assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score '+JSON.stringify(found.scoreProbe));
     rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;

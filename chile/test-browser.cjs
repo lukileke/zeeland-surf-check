@@ -109,7 +109,7 @@ function fixture(){
      await page.locator('.faro-surface-flip').click();
      await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-signals.png')});
      await page.locator('.faro-surface-flip').click();
-     await page.locator('#dayview>.hourly-section').screenshot({path:path.join(dir,tag+'-hours.png')});
+     await page.locator(width<1120?'#faroQuickHourRail':'#dayview>.hourly-section').screenshot({path:path.join(dir,tag+'-hours.png')});
     }
     await page.evaluate(theme=>{document.documentElement.dataset.theme=theme;window.scrollTo(0,0)},originalTheme);
    }
@@ -140,13 +140,10 @@ function fixture(){
      scrollWidth:document.documentElement.scrollWidth,
      grid:heroStyle.display==="flex"?1:heroStyle.gridTemplateColumns.split(' ').length};
    });
-   if(width<=710){
-    assert.ok(brand.bottom<=brand.toolbar+3,
-     'Phone hero precedes toolbar: '+JSON.stringify(brand));
-   }else{
-    assert.ok(brand.toolbar<=brand.top+3,
-     'Tablet/desktop context controls precede model hero: '+JSON.stringify(brand));
-   }
+   // Spot selection and the new day-first console may be reordered by the
+   // compact layout; their relative placement is verified as one system below.
+   assert.ok(brand.width>=width*.7&&brand.scrollWidth<=width+3,
+    'Model hero should stay readable without horizontal overflow');
    assert.ok(brand.daily>brand.top,
     'Branded model read must precede detailed Daily Take');
 
@@ -277,7 +274,18 @@ function fixture(){
     route:document.querySelector('.faro-journey-nav').getBoundingClientRect().top,
     week:document.getElementById('dayStrip').getBoundingClientRect().top
    }));
-   assert.ok(rects.daily<rects.week,'Daily read must precede the seven-day comparison');
+   if(width>=1120)assert.ok(rects.daily<rects.week,'Desktop daily read must precede week disclosure');
+   else {
+    assert.equal(await page.locator('#dayStrip').isVisible(),false,
+     'Mobile week disclosure is replaced by the top seven-day selector');
+    const rails=await page.evaluate(()=>({
+     days:document.getElementById('faroDayRail').getBoundingClientRect().top,
+     lead:document.getElementById('faroForecastLead').getBoundingClientRect().top,
+     hours:document.getElementById('faroQuickHourRail').getBoundingClientRect().top
+    }));
+    assert.ok(rails.days<rails.lead&&rails.lead<rails.hours,
+     'Interactive day/hero/hour sequence must lead the mobile forecast');
+   }
    assert.ok(Number.isFinite(rects.route),'Quick navigation must remain measurable');
 
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
@@ -488,29 +496,80 @@ function fixture(){
    assert.match(await page.locator('#chileOfficialSources .chile-official-state').textContent(),/parcial/i);
    assert.match(await page.locator('#dayStripSelected').textContent(),/\/10/,
     'Collapsed weekly summary still identifies the current selection');
-   await page.locator('#dayStrip > summary').click();
-   assert.equal(await page.locator('#dayStrip').evaluate(el=>el.open),true);
-   await page.locator('#dayStripItems .day-chip').nth(1).click();
+   if(width<1120){
+    // One decision console: seven days above the lead, eight sessions below.
+    assert.equal(await page.locator('#faroQuickDays > button').count(),7);
+    assert.equal(await page.locator('#faroQuickHours > button').count(),8);
+    const geometry=await page.evaluate(()=>{
+     const box=id=>document.getElementById(id).getBoundingClientRect();
+     const day=box('faroDayRail'),hero=box('faroForecastLead'),hours=box('faroQuickHourRail');
+     return {dayBottom:day.bottom,heroTop:hero.top,heroBottom:hero.bottom,
+      hoursTop:hours.top,dayWidth:day.width,hoursWidth:hours.width,
+      scrollY:window.scrollY};
+    });
+    if(width<=390){
+     const ordering=await page.evaluate(()=>{
+      const forecast=document.getElementById('forecastPage');
+      return {gap:getComputedStyle(forecast).gap,
+       items:[...forecast.children].map(el=>({
+        id:el.id,cls:el.className?.toString()?.slice(0,55),
+        order:getComputedStyle(el).order,
+        display:getComputedStyle(el).display,
+        marginBottom:getComputedStyle(el).marginBottom,
+        top:Math.round(el.getBoundingClientRect().top),
+        bottom:Math.round(el.getBoundingClientRect().bottom)
+       }))};
+     });
+     console.log('FARO_CONSOLE_GEOMETRY '+JSON.stringify(ordering));
+    }
+    assert.ok(geometry.dayBottom<=geometry.heroTop+4 &&
+     geometry.hoursTop>=geometry.heroBottom-4,
+     'Day -> hero -> hours must be one vertical sequence: '+JSON.stringify(geometry));
+    assert.ok(geometry.heroTop-geometry.dayBottom<7 &&
+     geometry.hoursTop-geometry.heroBottom<7,
+     'The three console panels cannot become separated cards: '+JSON.stringify(geometry));
+    assert.equal(await page.locator('#dayStrip').isVisible(),false,
+     'Seven-day detail must not duplicate the top-day selector on phones');
+    assert.equal(await page.locator('#slots').isVisible(),false,
+     'Legacy hourly grid must not repeat the quick hours below the hero');
+    // Playwright scrolls the target into view before a click. Capture the
+    // settled position after that intentional test navigation, so only
+    // application-driven jumps count as regressions.
+    await page.locator('#faroQuickDays > button').nth(1).scrollIntoViewIfNeeded();
+    const start=await page.evaluate(()=>window.scrollY);
+    await page.locator('#faroQuickDays > button').nth(1).click();
+    assert.equal(await page.locator('#faroQuickDays > button').nth(1).getAttribute('aria-pressed'),'true');
+    const after=await page.evaluate(()=>window.scrollY);
+    assert.ok(Math.abs(start-after)<80,'Changing a day should update in place, not jump across the document');
+   }else{
+    await page.locator('#dayStrip > summary').click();
+    assert.equal(await page.locator('#dayStrip').evaluate(el=>el.open),true);
+    await page.locator('#dayStripItems .day-chip').nth(1).click();
+   }
    // The 06:00 window has stronger wind than 08:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
-   const previousWeekChip=await page.locator('#dayStripItems .day-chip').first().elementHandle();
-   await page.locator('#slots button').first().click();
+   const dayControl=width<1120?'#faroQuickDays > button':'#dayStripItems .day-chip';
+   const slotControl=width<1120?'#faroQuickHours > button':'#slots button';
+   const previousWeekChip=await page.locator(dayControl).first().elementHandle();
+   await page.locator(slotControl).first().click();
    assert.equal(await previousWeekChip.evaluate(node=>node.isConnected),true,
     'Selecting an hourly window must not reconstruct the entire seven-day picker');
    assert.match(await page.locator('#chileDecisionHeadline').textContent(),/viento|wind/i,
     'A windy slot must lead with a wind-based verdict');
    assert.match(await page.locator('#chileVibeAction').textContent(),/Mejor candidata|Better option/i,
     'A poor slot must point to a grounded better upcoming forecast window');
-   await page.locator('#slots button').nth(1).click();
-   const chosen=page.locator('#slots button').nth(1);
+   await page.locator(slotControl).nth(1).click();
+   const chosen=page.locator(slotControl).nth(1);
+   const scoreSelector=width<1120?'.faro-console-hour-score':'.chile-slot-score';
+   const gradeSelector=width<1120?'.faro-console-hour-label':'.chile-slot-quality';
    assert.equal(await page.locator('#faroLeadWindowLabel').textContent(),
     'FRANJA SELECCIONADA','Lead must reflect manually chosen window, not another best pick');
    assert.equal(await page.locator('#faroLeadScore').textContent(),
-    await chosen.locator('.chile-slot-score').textContent(),
+    await chosen.locator(scoreSelector).textContent(),
     'Branded hero and detailed slot share exactly the same score');
 
-   const hourlyScore=Number(await chosen.locator('.chile-slot-score').textContent());
-   assert.equal(await chosen.locator('.chile-slot-quality').textContent(),qualityOf(hourlyScore),
+   const hourlyScore=Number(await chosen.locator(scoreSelector).textContent());
+   assert.equal(await chosen.locator(gradeSelector).textContent(),qualityOf(hourlyScore),
     'Hourly score must show the same Zeeland quality caption');
    assert.equal(await page.locator('#sessionAtGlance .chile-session-rating').count(),0,
     'Gear checklist must not repeat the daily score and offshore wave instrument');
@@ -735,6 +794,7 @@ function fixture(){
    assert.equal(await page.locator('#chileCoastMap .faro-lens-quick-metrics').count(),1,
     'Coastal read must separate swell and wind measures from the map');
    assert.match(await page.locator('#faroHourlyPreview').textContent(),/FARO · TU FRANJA|FARO · YOUR WINDOW/);
+   if(width>=1120){
    await page.locator('#faroLeadRead').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
@@ -778,6 +838,19 @@ function fixture(){
       })
      }));
     await page.locator('#faroHourlyGoLens').click();
+   }else{
+    // Mobile has a single, adjacent two-hour rail, so older hero/preview
+    // action buttons must not become dead duplicate interfaces.
+    assert.equal(await page.locator('#faroLeadRead').isVisible(),false);
+    assert.equal(await page.locator('.hourly-section').isVisible(),false);
+    assert.equal(await page.locator('#faroQuickHours > button').count(),8);
+    await page.locator('#faroQuickDetails').click();
+    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
+     'Mobile quick details must reveal existing scientific read');
+    assert.equal(await page.locator('#faroLeadScore').textContent(),
+     await page.locator('#faroQuickHours > button.is-selected .faro-console-hour-score').textContent(),
+     'Mini-session and hero must share one model score');
+   }
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
    // The supplementary map/compass switch is desktop-first. On mobile,
    // the selected-window map entry is the supported primary action.
