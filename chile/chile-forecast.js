@@ -959,7 +959,16 @@ function slots(){
    quick.append(mini);
   }
  }
- if(quick)quick.scrollLeft=preservedHoursScroll;
+ if(quick){
+  quick.scrollLeft=preservedHoursScroll;
+  const selected=quick.querySelector(".is-selected");
+  if(selected&&window.innerWidth<1120)requestAnimationFrame(()=>{
+   if(!selected.isConnected)return;
+   const rail=quick.getBoundingClientRect(),tile=selected.getBoundingClientRect();
+   const centre=quick.scrollLeft+tile.left-rail.left-(rail.width-tile.width)/2;
+   quick.scrollLeft=Math.max(0,Math.min(quick.scrollWidth-quick.clientWidth,centre));
+  });
+ }
  // Keep the chosen two-hour window visible in the swipeable mobile rail.
  // Scroll the rail, not the document, so page position never jumps.
  if(window.matchMedia("(max-width:710px)").matches){
@@ -1409,7 +1418,9 @@ async function initialize(){
  // no hidden target or dead anchor, and motion preferences are respected.
  for(const button of document.querySelectorAll(".faro-journey-nav [data-jump]")){
   button.addEventListener("click",()=>{
-   const target=$(button.dataset.jump);if(!target)return;
+   const mobileHours=button.dataset.jump==="slots"&&window.innerWidth<1120;
+   const target=$(mobileHours?"faroQuickHourRail":button.dataset.jump);
+   if(!target)return;
    if(target.tagName==="DETAILS")target.open=true;
    const motion=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
    const section=target.closest(".hourly-section")||target;
