@@ -15,9 +15,13 @@ test('one seven-day / hero / hour hierarchy exists, with no duplicate IDs',()=>{
  for(const id of ids)assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  const positions=['id="faroDayRail"','id="faroForecastLead"','id="faroQuickHourRail"'].map(v=>html.indexOf(v));
  assert.ok(positions.every((v,i)=>v>=0&&(i===0||v>positions[i-1])));
+ assert.match(html,/<\/aside>\s*<section id="faroQuickHourRail"/,
+  'The two-hour choices belong inside the hero, after its modelled reading');
+ assert.match(html,/<\/section>\s*<\/section>\s*<!-- Zeeland FARO safety-centre/,
+  'The embedded hourly section must close before the model hero closes');
  assert.match(css,/@media\(min-width:1120px\)\{[\s\S]*?#forecastPage:not\(\.hide\)>#faroDayRail/);
  assert.match(css,/grid-template-columns:repeat\(7,minmax\(0,1fr\)\)/);
- assert.match(css,/grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
+ assert.match(css,/grid-template-columns:repeat\(8,minmax\(0,1fr\)\)/);
 });
 test('window title is computed for the SELECTED day, not hard-coded to today',()=>{
  assert.match(html,/id="faroQuickHourHelp" aria-live="polite"/);
@@ -34,7 +38,7 @@ test('controls share one state machine and horizontal keyboard navigation',()=>{
 });
 test('offline rails disappear everywhere and model score colours remain canonical',()=>{
  assert.match(css,/body:is\(\.faro-model-pending,\.faro-model-unavailable\) #forecastPage>#faroDayRail/);
- assert.match(css,/body:is\(\.faro-model-pending,\.faro-model-unavailable\) #forecastPage>#faroQuickHourRail/);
+ assert.match(css,/body:is\(\.faro-model-pending,\.faro-model-unavailable\) #forecastPage>#faroForecastLead>#faroQuickHourRail/);
  assert.match(html,/<strong id="faroLeadScore">—<\/strong>/);
  assert.match(css,/color:var\(--brand-score-ink,var\(--faro-quiet\)\)/);
  assert.ok((css.match(/!important/g)||[]).length<=486);
