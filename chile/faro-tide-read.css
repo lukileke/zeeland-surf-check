@@ -1811,19 +1811,21 @@ body>.faro-skip-link:focus-visible{
   color:#eef8f5!important;
  }
  html[data-theme="light"] body main>nav.app-nav button{
-  color:#22474b!important;opacity:1!important;
+  color:#22474b!important;-webkit-text-fill-color:#22474b;opacity:1!important;
  }
  html:not([data-theme="light"]) body main>nav.app-nav button{
-  color:#c7ddda!important;opacity:1!important;
+  color:#c7ddda!important;-webkit-text-fill-color:#c7ddda;opacity:1!important;
  }
  html[data-theme="light"] body main>nav.app-nav button.active{
   background:linear-gradient(180deg,#ffffff,#ecf5f2)!important;color:#163a3f!important;
+  -webkit-text-fill-color:#163a3f;
  }
  html:not([data-theme="light"]) body main>nav.app-nav button.active{
   background:linear-gradient(180deg,#31565a,#234246)!important;color:#f2faf8!important;
+  -webkit-text-fill-color:#f2faf8;
  }
  html #forecastPage:not(.hide)>.faro-context-dock .faro-country-options>a{
-  color:var(--fg)!important;opacity:1!important;
+  color:var(--fg)!important;-webkit-text-fill-color:var(--fg);opacity:1!important;
   font-weight:750;border-bottom:2px solid transparent!important;
  }
  html #forecastPage:not(.hide)>.faro-context-dock .faro-country-options>a[aria-current="page"]{
@@ -1957,6 +1959,42 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #faroOfficialWatch .faro-watch-lamp{transition:none}
 }
 
+
+/* Contrast audit · same source of truth for controls in both page themes.
+   Desktop picker used to invert its background against the text; own the
+   surface and ink together, without changing the mobile unboxed treatment. */
+@media(min-width:711px){
+ html[data-theme="light"] #forecastPage:not(.hide)>.faro-context-dock{
+  --faro-spot-editorial-bg:#f7faf9;
+  --faro-spot-editorial-ink:#193f43;
+ }
+ html:not([data-theme="light"]) #forecastPage:not(.hide)>.faro-context-dock{
+  --faro-spot-editorial-bg:#1b393d;
+  --faro-spot-editorial-ink:#edf8f5;
+ }
+ #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice{
+  background:var(--faro-spot-editorial-bg)!important;
+ }
+ #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice :is(small,button,.faro-spot-choice-text){
+  color:var(--faro-spot-editorial-ink)!important;
+  -webkit-text-fill-color:var(--faro-spot-editorial-ink);
+ }
+}
+html[data-theme="light"] main>.app-nav button{
+ -webkit-text-fill-color:#22474b;
+}
+html[data-theme="light"] main>.app-nav button.active{
+ -webkit-text-fill-color:#163a3f;
+}
+html:not([data-theme="light"]) main>.app-nav button{
+ -webkit-text-fill-color:#c7ddda;
+}
+html:not([data-theme="light"]) main>.app-nav button.active{
+ -webkit-text-fill-color:#f2faf8;
+}
+#forecastPage .faro-country-options>a{
+ -webkit-text-fill-color:var(--fg);
+}
 
 /* FARO · Coastal Editorial Console (Nov 2026).
    One existing controller, one continuous day → reading → hours hierarchy.
