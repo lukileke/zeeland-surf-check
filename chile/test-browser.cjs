@@ -187,7 +187,10 @@ function fixture(){
    assert.equal(art.yellowCore,1,'Beacon must contain its warm yellow centre');
    assert.equal(art.contourCount,0,'Hero must not include decorative fake depth/swell curves');
    assert.equal(art.navButtons,3);
-   assert.ok(art.markRect.width>35,'FARO symbol must be recognisable, not reduced to a tiny icon');
+   if(width<=710)assert.equal(art.markRect.width,0,
+    'The mobile hero must not overlay its reading with the redundant blurred O mark');
+   else assert.ok(art.markRect.width>35,
+    'Desktop hero should retain the original recognisable FARO signature');
    // The cinematic FARO hero stays deep-ocean in both page themes.
    // The surrounding navigation, by contrast, reacts to the site theme.
    assert.equal(art.light.heroBackground,art.dark.heroBackground,
@@ -203,10 +206,10 @@ function fixture(){
    assert.ok(art.light.activeNavRadius>=9&&art.dark.activeNavRadius>=9,
     'Tabs must use a unified rounded navigation surface, not outlined rectangles');
    if(width<=710){
-    assert.equal(art.light.pickerBackground,'rgb(247, 250, 249)',
-     'Light-mode spot picker must be light, not an inverted dark tile');
-    assert.equal(art.dark.pickerBackground,'rgb(27, 57, 61)',
-     'Dark-mode spot picker must use deep-ocean background');
+    assert.equal(art.light.pickerBackground,'rgba(0, 0, 0, 0)',
+     'Light-mode spot picker should be an unboxed selector, not a competing white card');
+    assert.equal(art.dark.pickerBackground,'rgba(0, 0, 0, 0)',
+     'Dark-mode spot picker should be unboxed, leaving contrast to its readable text');
     assert.equal(art.light.pickerInk,'rgb(27, 70, 73)',
      'Light-mode beach name must be readable on pale background');
     assert.equal(art.dark.pickerInk,'rgb(238, 248, 245)',
@@ -244,7 +247,7 @@ function fixture(){
        borderTop:parseFloat(style.borderTopWidth),
        panelWidth:panelBox.width,heroWidth:heroBox.width,
        withinHero:panelBox.left>=heroBox.left-1&&panelBox.right<=heroBox.right+1,
-       symbolWithinHero:symbolBox.left>=heroBox.left&&symbolBox.right<=heroBox.right+1,
+       symbolWithinHero:symbolBox.width===0||(symbolBox.left>=heroBox.left&&symbolBox.right<=heroBox.right+1),
        symbolClearFromContent:symbolBox.bottom<=mainBox.top+75
       };
      }

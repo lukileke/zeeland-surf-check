@@ -14,7 +14,7 @@ const js=read('chile/chile-forecast.js');
 test('hero layout loaded immediately before shared score palette',()=>{
  const links=[...h.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(x=>x[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=14');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=15');
  assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=10');
  for(const source of ['faro-editorial-hero-focus-v1.css','faro-responsive-quality-v1.css','faro-decision-balance-v1.css'])
   assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/'+source));
@@ -43,14 +43,16 @@ test('numerical wave, period and wind metrics remain available beneath hero',()=
   assert.ok(h.includes('id="'+id+'"'),'legacy updater target still present '+id);
 });
 
-test('no live numerical detail is repeated in ordinary hero subtitle',()=>{
+test('hero copy is evidence-led without presenting offshore data as surf at the break',()=>{
  const from=js.indexOf(' const name=spot()?.shortName',js.indexOf('function renderLead('));
  const to=js.indexOf('\nfunction renderPrepHints',from);
  const copy=js.slice(from,to);
  assert.ok(copy.includes('session.score>=8?'));
- assert.ok(copy.includes('Una señal prometedora'));
- assert.ok(copy.includes('Condiciones variables'));
- assert.ok(!copy.includes('FARO estima '));
+ assert.ok(copy.includes('Buena ventana en '));
+ assert.ok(copy.includes('Condiciones cambiantes en '));
+ assert.ok(copy.includes('Oleaje oceánico '));
+ assert.ok(copy.includes('num(session.totalWaveHeightM)'));
+ assert.ok(copy.includes('Verifica la rompiente'));
  assert.ok(!copy.includes('num(session.windKmh'));
  assert.ok(h.includes('Modelo experimental · no es una medición de la rompiente'));
 });
