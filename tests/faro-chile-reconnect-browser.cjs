@@ -67,6 +67,9 @@ function fixture(){
    return restored?route.fulfill({json:marine}):route.fulfill({status:503,json:{reason:'Temporary ocean provider error'}});
   });
   await context.route('**/api.open-meteo.com/**',route=>route.fulfill({json:weather}));
+  // This test isolates recovery from the failing provider when no shared
+  // backup is available. The separate fallback suite tests the backup path.
+  await context.route('**/faro-model-snapshot.json**',route=>route.abort('failed'));
   await context.route('**/fonts.googleapis.com/**',r=>r.abort());
   await context.route('**/fonts.gstatic.com/**',r=>r.abort());
   await context.route('**/unpkg.com/**',r=>r.abort());
