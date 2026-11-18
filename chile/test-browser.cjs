@@ -499,6 +499,21 @@ function fixture(){
       hoursTop:hours.top,dayWidth:day.width,hoursWidth:hours.width,
       scrollY:window.scrollY};
     });
+    if(width===390){
+     const ordering=await page.evaluate(()=>{
+      const forecast=document.getElementById('forecastPage');
+      return {gap:getComputedStyle(forecast).gap,
+       items:[...forecast.children].map(el=>({
+        id:el.id,cls:el.className?.toString()?.slice(0,55),
+        order:getComputedStyle(el).order,
+        display:getComputedStyle(el).display,
+        marginBottom:getComputedStyle(el).marginBottom,
+        top:Math.round(el.getBoundingClientRect().top),
+        bottom:Math.round(el.getBoundingClientRect().bottom)
+       }))};
+     });
+     console.log('FARO_CONSOLE_GEOMETRY '+JSON.stringify(ordering));
+    }
     assert.ok(geometry.dayBottom<=geometry.heroTop+4 &&
      geometry.hoursTop>=geometry.heroBottom-4,
      'Day -> hero -> hours must be one vertical sequence: '+JSON.stringify(geometry));
