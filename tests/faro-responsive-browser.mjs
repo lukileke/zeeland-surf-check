@@ -147,13 +147,13 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     }
     if(s.width<=1119){
       assert.ok(found.nav.top<found.hero.top,'navigation precedes console');
-      assert.ok(found.hero.top<found.dock.top,'console precedes compact spot selector');
+      assert.ok(found.dock.top<found.days.top,'spot selector precedes the surf reading');
       if(!found.loading&&!found.offline){
        assert.equal(found.daysCount,7,'seven interactive forecast days');
        assert.ok(found.quickHoursCount>=7,'two-hour mini-sessions must load');
        assert.ok(found.days.top<found.hero.top&&found.hero.top<found.quickHours.top,
         'days, lead and hours must read as one vertical module');
-       assert.ok(found.quickHours.top<found.dock.top,'hourly sessions precede spot selector');
+       assert.ok(found.dock.top<found.days.top,'choose the spot before its modelled session windows');
       }
       if(mobileLayout){
        assert.equal(found.display,'flex');
