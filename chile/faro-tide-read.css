@@ -2010,6 +2010,11 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   flex-direction:column!important;
   align-items:stretch;
  }
+ /* High-specificity legacy order rules compete on tablet; the console
+    explicitly owns its first three positions without shifting the dock. */
+ #forecastPage#forecastPage>#faroDayRail{order:-3}
+ #forecastPage#forecastPage>section#faroForecastLead{order:-2!important}
+ #forecastPage#forecastPage>#faroQuickHourRail{order:-1}
 }
 @media(max-width:1119px){
  #forecastPage{--faro-console-gap:clamp(13px,2vw,22px);row-gap:0!important}
@@ -2144,9 +2149,11 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   color:#efd8a0;
  }
  /* Tablet and phone use the connected hourly rail, not a redundant
-    lead CTA. Two IDs beat the inherited button-level important display. */
- #faroForecastLead #faroLeadRead,
- #faroForecastLead #faroLeadMap{display:none!important}
+    lead CTA; desktop retains its original actionable hero button. */
+ @media(max-width:1119px){
+  #faroForecastLead #faroLeadRead,
+  #faroForecastLead #faroLeadMap{display:none!important}
+ }
  #forecastPage .faro-console-footer{
   display:flex;justify-content:space-between;
   align-items:center;gap:10px;
