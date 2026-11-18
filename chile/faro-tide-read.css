@@ -1965,6 +1965,9 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  */
 /* One forecast console and one semantic colour contract for all viewports. */
 @media(min-width:1120px){
+ /* Grid auto-placement honours inherited order, so reserve the console's
+    first four grid rows explicitly. A flex-only reorder is not enough. */
+ #forecastPage:not(.hide)>.faro-context-dock{grid-column:1/-1;grid-row:1}
  #forecastPage:not(.hide)>#faroDayRail,
  #forecastPage:not(.hide)>#faroQuickHourRail{
   display:block;
@@ -1974,9 +1977,11 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   margin:0;
   border-radius:20px;
  }
+ #forecastPage:not(.hide)>#faroDayRail{grid-row:2}
+ #forecastPage:not(.hide)>#faroQuickHourRail{grid-row:4}
  #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead{
   grid-column:1/-1;
-  grid-row:auto!important;
+  grid-row:3!important;
  }
  #forecastPage:not(.hide) #dayStrip{display:none!important}
  #forecastPage:not(.hide) .faro-console-days{
