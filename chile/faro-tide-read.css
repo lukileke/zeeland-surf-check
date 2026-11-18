@@ -2039,7 +2039,7 @@ body main #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
 }
 /* One route to technical details: the integrated hour rail owns the CTA.
    Hiding the old duplicate button reduces HERO height on desktop too. */
-html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-actions{
+body main #forecastPage:not(.hide)>#faroForecastLead .faro-lead-actions{
  display:none!important;
 }
 @media(min-width:711px){
