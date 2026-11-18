@@ -169,11 +169,6 @@ function fixture(){
       inactiveNavInk:getComputedStyle(nav.querySelector('button:not(.active)')).color,
       pickerBackground:getComputedStyle(document.querySelector('.faro-spot-choice')).backgroundColor,
       pickerInk:getComputedStyle(document.querySelector('.faro-spot-choice-text')).color,
-      pickerTriggerBackground:getComputedStyle(document.querySelector('.faro-spot-choice-trigger')).backgroundColor,
-      pickerTriggerInk:getComputedStyle(document.querySelector('.faro-spot-choice-trigger')).color,
-      pickerTextFill:getComputedStyle(document.querySelector('.faro-spot-choice-text')).webkitTextFillColor,
-      pickerThemeBackground:getComputedStyle(document.querySelector('.faro-spot-choice')).getPropertyValue('--faro-spot-editorial-bg'),
-      pickerThemeInk:getComputedStyle(document.querySelector('.faro-spot-choice')).getPropertyValue('--faro-spot-editorial-ink'),
       activeNavRadius:parseFloat(getComputedStyle(active).borderTopLeftRadius),
       navBg:getComputedStyle(nav).backgroundColor
      };
@@ -188,7 +183,16 @@ function fixture(){
      ...values
     };
    });
-   if(width>=1120)console.log('FARO_PICKER_CONTRAST '+JSON.stringify({width,light:art.light,dark:art.dark}));
+   if(width>=1120){
+    assert.equal(art.light.pickerBackground,'rgb(247, 250, 249)',
+     'Desktop light picker must be light, not an inverted dark field');
+    assert.equal(art.dark.pickerBackground,'rgb(27, 57, 61)',
+     'Desktop dark picker must be dark, not inverted white');
+    assert.equal(art.light.pickerInk,'rgb(25, 63, 67)',
+     'Light picker text must contrast with its background');
+    assert.equal(art.dark.pickerInk,'rgb(237, 248, 245)',
+     'Dark picker text must contrast with its background');
+   }
    assert.equal(art.ringSegments,4,'Beacon must preserve all four original FARO O segments');
    assert.equal(art.yellowCore,1,'Beacon must contain its warm yellow centre');
    assert.equal(art.contourCount,0,'Hero must not include decorative fake depth/swell curves');
