@@ -1982,7 +1982,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  }
  #forecastPage:not(.hide) .faro-console-hour-list{
   display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
-  gap:0;overflow:visible;padding:0;
+  column-gap:0;row-gap:8px;overflow:visible;padding:0;
  }
  #forecastPage:not(.hide) .faro-console-day-chip,
  #forecastPage:not(.hide) .faro-console-hour-chip{
