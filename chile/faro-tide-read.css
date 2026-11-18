@@ -2158,6 +2158,18 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage .faro-console-day-chip{flex-basis:102px;min-height:80px}
  #forecastPage .faro-console-hour-chip{flex-basis:94px;min-height:80px}
 }
+/* Empty model states do not show decorative rails with eight dashes.
+   Keep the original lead's accessible unavailable explanation intact. */
+@media(max-width:1119px){
+ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroDayRail,
+ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroQuickHourRail{
+  display:none!important;
+ }
+ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>section#faroForecastLead{
+  border-radius:20px!important;
+  margin-bottom:0!important;
+ }
+}
 @media(prefers-reduced-motion:reduce){
  #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip){transition:none}
 }
