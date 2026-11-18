@@ -795,47 +795,17 @@ function fixture(){
    await page.locator('#faroLeadRead').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
-   // The secondary hero action is intentionally hidden at some mobile widths.
-   if(await page.locator('#faroLeadMap').isVisible()){
-    await page.locator('#faroLeadMap').click();
-    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true,
-     'Visible hero map CTA opens the existing Coastal Lens');
+   // Desktop retains the hero CTA, but all hour decisions now use
+   // the same visible rail rather than a hidden secondary instrument.
+   assert.equal(await page.locator('#dayview>.hourly-section').isVisible(),false);
+   assert.equal(await page.locator('#faroQuickHours > button').count(),8);
+   const active=page.locator('#faroQuickHours > button.is-selected .faro-console-hour-score');
+   if(await active.count()){
+    assert.equal((await active.textContent()).trim(),
+     (await page.locator('#faroLeadScore').textContent()).trim(),
+     'Selected desktop mini-session must share the hero score');
    }
-      // Selected-hour details stay in the same footprint as the compact reading.
-    assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'read');
-    assert.equal(await page.locator('.faro-hourly-score-value').isVisible(),true,
-      'Model index is the visible, non-duplicated hourly headline');
-    const chosenGeometry=await page.locator('.faro-hourly-score-value').evaluate(el=>{
-      const r=el.getBoundingClientRect(),card=el.closest('#faroHourlyPreview').getBoundingClientRect();
-      return {width:r.width,height:r.height,x:r.x,right:r.right,y:r.y,
-        cardX:card.x,cardRight:card.right,cardTop:card.top,cardBottom:card.bottom,
-        windowWidth:el.closest('.faro-hourly-window').getBoundingClientRect().width,
-        frontWidth:el.closest('.faro-hourly-front').getBoundingClientRect().width};
-    });
-    assert.ok(chosenGeometry.width>20&&chosenGeometry.height>20&&
-      chosenGeometry.x>=chosenGeometry.cardX&&chosenGeometry.right<=chosenGeometry.cardRight+2&&
-      chosenGeometry.y>=chosenGeometry.cardTop&&chosenGeometry.y+chosenGeometry.height<=chosenGeometry.cardBottom+2,
-      'Selected index must be physically visible and inside the card at '+width+'px: '+JSON.stringify(chosenGeometry));
-    assert.equal((await page.locator('.faro-hourly-score-value').textContent()).trim(),
-      (await page.locator('#slots > button.selected .chile-slot-score').textContent()).trim());
-    const hourlySize=await page.locator('#faroHourlyPreview').boundingBox();
-    await page.locator('.faro-hourly-flip').click();
-    assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'signals');
-    const hourlyAfter=await page.locator('#faroHourlyPreview').boundingBox();
-    assert.ok(Math.abs(hourlyAfter.height-hourlySize.height)<2,
-     'Hourly detail must not expand the surface: '+JSON.stringify({
-      width,before:hourlySize.height,after:hourlyAfter.height,
-      preview:await page.locator('#faroHourlyPreview').evaluate(el=>{
-       const read=el.querySelector('.faro-hourly-window');
-       const front=el.querySelector('.faro-hourly-front');
-       const back=el.querySelector('.faro-hourly-back');
-       return {windowHeight:read.getBoundingClientRect().height,
-        frontHeight:front.getBoundingClientRect().height,backHeight:back.getBoundingClientRect().height,
-        windowDisplay:getComputedStyle(read).display,backPosition:getComputedStyle(back).position};
-      })
-     }));
-    await page.locator('#faroHourlyGoLens').click();
-   }else{
+  }else{
     // Mobile has a single, adjacent two-hour rail, so older hero/preview
     // action buttons must not become dead duplicate interfaces.
     assert.equal(await page.locator('#faroLeadRead').isVisible(),false);
@@ -1001,7 +971,7 @@ function fixture(){
    await page.locator('#chileOfficialSources summary').click();
    assert.ok(await page.locator('#faroOfficialSourceHealth a[href="https://meteoarmada.directemar.cl/"]').isVisible(),
     'The Armada source should remain discoverable in Before You Go');
-   const chipText=await page.locator('#dayStripItems .day-chip').first().innerText();
+   const chipText=await page.locator('#faroQuickDays > button').first().innerText();
    assert.ok(!chipText.includes('β')&&!chipText.includes('Promising'),
     'Model caveats belong in provenance, not duplicated after every score');
    await page.locator('#chileOfficialSources summary').click();
@@ -1132,38 +1102,36 @@ function fixture(){
      'Each ranking score is one continuous number');
     await page.locator('#navForecast').click();
    }
-   // Decision-first mobile regression: a late selected session must be visible
-   // in the swipe rail, not hidden behind the first morning windows.
+   // Visible mini-hours are the only user-facing mobile rail.
    if(width<=430){
-    const selectionBefore=await page.evaluate(()=>{
-     const rail=document.querySelector('#slots');
+    const previous=await page.evaluate(()=>{
+     const rail=document.querySelector('#faroQuickHours');
      const tiles=[...rail.querySelectorAll(':scope > button')];
-     const previous=tiles.findIndex(tile=>tile.classList.contains('selected'));
-     const latest=tiles.filter(tile=>!tile.disabled).at(-1);
-     latest?.click();
-     return previous;
+     const old=tiles.findIndex(tile=>tile.getAttribute('aria-pressed')==='true');
+     tiles.filter(tile=>!tile.disabled).at(-1)?.click();
+     return old;
     });
     await page.waitForFunction(()=>{
-     const rail=document.querySelector('#slots');
-     const chosen=rail?.querySelector(':scope > button.selected');
+     const rail=document.querySelector('#faroQuickHours');
+     const chosen=rail?.querySelector(':scope > button.is-selected');
      if(!chosen)return false;
      const a=rail.getBoundingClientRect(),b=chosen.getBoundingClientRect();
-     return b.left>=a.left-2 && b.right<=a.right+2;
+     return b.left>=a.left-2&&b.right<=a.right+2;
     },null,{timeout:6000});
-    const decisionLayout=await page.evaluate(()=>({
+    const info=await page.evaluate(()=>({
      radius:parseFloat(getComputedStyle(document.querySelector('#faroSiteFooter')).borderRadius),
-     docWidth:document.documentElement.scrollWidth,
+     width:document.documentElement.scrollWidth,
      viewport:document.documentElement.clientWidth,
-     uvMax:document.getElementById('dayUVLabel')?.textContent,
-     selectedUv:document.querySelector('#sessionEssentials .chile-uv-tag')?.textContent
+     uv:document.getElementById('dayUVLabel')?.textContent,
+     selected:document.querySelector('#sessionEssentials .chile-uv-tag')?.textContent
     }));
-    assert.ok(decisionLayout.radius>=18,'FARO footer must retain a rounded mobile brand finish');
-    assert.ok(decisionLayout.docWidth<=decisionLayout.viewport+3,'Hour rail should not expand page width');
-    assert.match(decisionLayout.uvMax,/DAY MAX UV|UV MÁX. DEL DÍA/);
-    assert.match(decisionLayout.selectedUv,/UV · THIS WINDOW|UV · ESTA FRANJA/);
-    if(selectionBefore>=0)await page.evaluate(index=>{
-     document.querySelectorAll('#slots > button')[index]?.click();
-    },selectionBefore);
+    assert.ok(info.radius>=18,'Keep the rounded FARO mobile brand finish');
+    assert.ok(info.width<=info.viewport+3,'Hour rail must not expand page width');
+    assert.match(info.uv,/DAY MAX UV|UV MÁX. DEL DÍA/);
+    assert.match(info.selected,/UV · THIS WINDOW|UV · ESTA FRANJA/);
+    if(previous>=0)await page.evaluate(i=>{
+     document.querySelectorAll('#faroQuickHours > button')[i]?.click();
+    },previous);
    }
    // Simulate an actual model threshold crossing to confirm hazards remain prominent.
    const severe=JSON.parse(JSON.stringify(weather));
