@@ -1967,6 +1967,16 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage>.faro-console-day,
  #forecastPage>.faro-console-hours{display:none}
 }
+/* Tablet layout contract: the older Chile grid places its children by
+ * fixed rows, so CSS order alone cannot assemble the connected console.
+ * Restore the flex stack only for the unified responsive reading. */
+@media(min-width:711px) and (max-width:1119px){
+ html body main #forecastPage:not(.hide){
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+ }
+}
 @media(max-width:1119px){
  #forecastPage{--faro-console-gap:clamp(13px,2vw,22px);row-gap:0!important}
  #forecastPage>.faro-context-dock,
