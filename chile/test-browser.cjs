@@ -540,14 +540,13 @@ function fixture(){
     const after=await page.evaluate(()=>window.scrollY);
     assert.ok(Math.abs(start-after)<80,'Changing a day should update in place, not jump across the document');
    }else{
-    await page.locator('#dayStrip > summary').click();
-    assert.equal(await page.locator('#dayStrip').evaluate(el=>el.open),true);
-    await page.locator('#dayStripItems .day-chip').nth(1).click();
+    await page.locator('#faroQuickDays > button').nth(1).click();
+    assert.equal(await page.locator('#faroQuickDays > button').nth(1).getAttribute('aria-pressed'),'true');
    }
    // The 06:00 window has stronger wind than 08:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
-   const dayControl=width<1120?'#faroQuickDays > button':'#dayStripItems .day-chip';
-   const slotControl=width<1120?'#faroQuickHours > button':'#slots button';
+   const dayControl='#faroQuickDays > button';
+   const slotControl='#faroQuickHours > button';
    const previousWeekChip=await page.locator(dayControl).first().elementHandle();
    await page.locator(slotControl).first().click();
    assert.equal(await previousWeekChip.evaluate(node=>node.isConnected),true,
@@ -558,8 +557,8 @@ function fixture(){
     'A poor slot must point to a grounded better upcoming forecast window');
    await page.locator(slotControl).nth(1).click();
    const chosen=page.locator(slotControl).nth(1);
-   const scoreSelector=width<1120?'.faro-console-hour-score':'.chile-slot-score';
-   const gradeSelector=width<1120?'.faro-console-hour-label':'.chile-slot-quality';
+   const scoreSelector='.faro-console-hour-score';
+   const gradeSelector='.faro-console-hour-label';
    assert.equal(await page.locator('#faroLeadWindowLabel').textContent(),
     'FRANJA SELECCIONADA','Lead must reflect manually chosen window, not another best pick');
    assert.equal(await page.locator('#faroLeadScore').textContent(),
