@@ -1975,6 +1975,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  }
  #forecastPage:not(.hide)>#faroQuickHourRail{grid-row:4}
  #forecastPage:not(.hide) #dayStrip{display:none!important}
+ #forecastPage:not(.hide)>#faroDayRail .faro-console-rail-head>small{display:none}
  #forecastPage:not(.hide) .faro-console-days{
   display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
   gap:0;overflow:visible;padding:0;
@@ -2236,9 +2237,16 @@ body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section.hourly-se
   background:transparent!important;border:0!important;
  }
  #forecastPage>.faro-context-dock .picker-grid>.faro-spot-choice{
+  padding:4px 2px 8px!important;
+ }
+ /* The earlier light/dark picker has high-specificity solid-card styles.
+    Neutralise the card at its original theme specificity, not with a new
+    stylesheet or a duplicate control. */
+ html[data-theme="light"] #forecastPage:not(.hide)>.faro-context-dock .picker-grid>.faro-spot-choice,
+ html:not([data-theme="light"]) #forecastPage:not(.hide)>.faro-context-dock .picker-grid>.faro-spot-choice{
   background:transparent!important;border:0!important;
   border-bottom:1px solid var(--faro-line,var(--border))!important;
-  border-radius:0!important;padding:4px 2px 8px!important;
+  border-radius:0!important;min-height:0!important;
  }
  #forecastPage>.faro-context-dock .faro-spot-choice-trigger{
   min-height:34px!important;padding:0!important;
