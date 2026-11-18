@@ -361,11 +361,8 @@ function fixture(){
     assert.equal(deck.buttons.length,8,'All eight model windows remain selectable');
     assert.ok(deck.buttons.every(x=>x.width>=70&&x.right<=deck.rail.right+2),
      'Every window must fit the desktop rail without clipping: '+JSON.stringify(deck));
-    assert.ok(Math.abs(deck.buttons[0].y-deck.buttons[5].y)<3&&
-      deck.buttons[6].y>deck.buttons[0].y+30,
-     'The second row must follow a consistent six-column grid');
-    assert.ok(deck.buttons[0].bottom+5<=deck.buttons[6].y,
-     'Desktop hourly rows need a clear separation, not overlap');
+    assert.ok(deck.buttons.every(x=>Math.abs(x.y-deck.buttons[0].y)<3),
+     'All eight desktop hours should form one readable timeline, not two stacked rows');
     assert.equal(await page.locator('#dayview>.hourly-section').isVisible(),false,
      'The former 8-slot desktop instrument is deliberately hidden');
     const selectedQuick=page.locator('#faroQuickHours>button[aria-pressed="true"]');
