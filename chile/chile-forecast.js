@@ -575,7 +575,10 @@ function risk(hazard){
  }
 }
 function strip(){
- const days=state.forecast?.days||[],host=$("dayStripItems");host.replaceChildren();
+ const days=state.forecast?.days||[],host=$("dayStripItems"),quick=$("faroQuickDays");
+ host.replaceChildren();
+ const preservedDaysScroll=quick?.scrollLeft||0;
+ quick?.replaceChildren();
  for(const [i,d]of days.entries()){
   const s=bestRemaining(d),button=el("button",null,"day-chip score-tint "+(s?scoreTone(s.score):"")+(i===state.day?" selected":""));
   button.type="button";button.setAttribute("aria-pressed",String(i===state.day));
@@ -584,7 +587,38 @@ function strip(){
   button.append(el("span",s?experimentalLabel(s):tr("Sin ventana","No daylight window"),"chile-chip-grade faro-grade "+gradeClass(s?.score)));
   button.append(el("small",s?sessionTime(s):tr("No evaluado","Not evaluated"),"chile-chip-time"));
   button.addEventListener("click",()=>{state.day=i;state.hour=null;render()});host.append(button);
+  if(quick){
+   const decision=s?sessionDecision(s):null;
+   const value=decision?.canRecommend?decision.sessionScore:null;
+   const today=d.date===now().date;
+   const textDay=today?tr("Hoy","Today"):Live.formatDay(d.date,state.lang);
+   const mini=el("button",null,"faro-console-day-chip "+
+    (ok(value)?scoreTone(value):"faro-console-empty")+
+    (i===state.day?" is-selected":""));
+   mini.type="button";
+   mini.dataset.dayIndex=String(i);
+   mini.setAttribute("aria-pressed",String(i===state.day));
+   mini.setAttribute("aria-label",textDay+" · "+(ok(value)?
+    grade(value)+" · "+num(value)+"/10 · "+sessionTime(s):
+    tr("Sin ventana futura evaluable","No eligible future window")));
+   mini.append(el("span",textDay,"faro-console-day-date"));
+   const verdict=el("span",null,"faro-console-day-verdict");
+   if(ok(value)){
+    verdict.append(el("strong",num(value),"faro-console-day-score"));
+    verdict.append(el("span",grade(value),"faro-console-day-grade"));
+   }else verdict.append(el("span",tr("Sin ventana","No window"),"faro-console-day-grade"));
+   mini.append(verdict);
+   mini.append(el("small",ok(value)?sessionTime(s):
+    today?tr("Sin más horas","No more slots"):tr("Sin franja","No slot"),
+    "faro-console-day-window"));
+   mini.addEventListener("click",()=>{
+    state.day=i;state.hour=null;render();
+    $("faroQuickDays")?.querySelector('[data-day-index="'+i+'"]')?.focus({preventScroll:true});
+   });
+   quick.append(mini);
+  }
  }
+ if(quick)quick.scrollLeft=preservedDaysScroll;
  const chosen=days[state.day],best=bestRemaining(chosen);
  txt("dayStripSelected",chosen?
    dateLabel(chosen.date)+" · "+(best?num(best.score)+"/10 · "+sessionTime(best):tr("Sin horario","No window")):"—");
@@ -802,6 +836,17 @@ function renderLead(day,session){
   }
   return;
  }
+ // Past intervals remain inspectable but are never recommended as future sessions.
+ const present=now();
+ const past=state.hour!==null&&day?.date&&
+  (day.date<present.date||(day.date===present.date&&session.hour+2<=present.hour));
+ if(past){
+  txt("faroLeadWindowLabel",tr("FRANJA YA TRANSCURRIDA","PAST WINDOW"));
+  txt("faroLeadHeadline",tr("Esta franja ya pasó","This window has passed"));
+  txt("faroLeadDeck",tr("Valores del modelo para horas anteriores; no representan una observación ni una oportunidad futura.",
+   "Model values for earlier hours; not an observation or future surf opportunity."));
+  return;
+ }
  const name=spot()?.shortName||spot()?.name||tr("este spot","this break");
  txt("faroLeadHeadline",session.score>=8?
   tr("Potencial alto frente a "+name,"Strong model signal at "+name):
@@ -862,8 +907,12 @@ function outlook(){
  renderLead(d,s);
 }
 function slots(){
- const container=$("slots");container.replaceChildren();
+ const container=$("slots"),quick=$("faroQuickHours");
+ container.replaceChildren();
+ const preservedHoursScroll=quick?.scrollLeft||0;
+ quick?.replaceChildren();
  const day=state.forecast?.days?.[state.day];if(!day)return;
+ const present=now();
  for(const s of day.slots){
   const slotSafety=Live.slotRisk(s,state.config);
   const dangerous=slotSafety==="danger",unknownRisk=slotSafety==="unknown";
@@ -881,7 +930,36 @@ function slots(){
    button.append(choice);
   }
   button.addEventListener("click",()=>{state.hour=s.hour;renderSelectedWindow()});container.append(button);
+  if(quick){
+   const past=day.date<present.date||
+    (day.date===present.date&&s.hour+2<=present.hour);
+   const value=decision.canRecommend?decision.sessionScore:null;
+   const label=past?tr("Ya pasó","Past"):
+    dangerous?tr("Riesgo","Risk"):
+    unknownRisk?tr("Sin evaluar","Unassessed"):
+    !s.daylight?.eligible?tr("Sin luz","No daylight"):
+    ok(value)?grade(value):tr("Sin score","No score");
+   const current=selection()?.hour===s.hour;
+   const mini=el("button",null,"faro-console-hour-chip "+
+    (ok(value)?scoreTone(value):"faro-console-empty")+
+    (current?" is-selected":"")+(past?" is-past":""));
+   mini.type="button";
+   mini.dataset.hour=String(s.hour);
+   mini.disabled=!s.modelComplete;
+   mini.setAttribute("aria-pressed",String(current));
+   mini.setAttribute("aria-label",sessionTime(s)+" · "+label+
+    (ok(value)?" · "+num(value)+"/10":""));
+   mini.append(el("span",h(s.hour)+"–"+h(s.hour+2),"faro-console-hour-time"));
+   mini.append(el("strong",ok(value)?num(value):"—","faro-console-hour-score"));
+   mini.append(el("small",label,"faro-console-hour-label"));
+   mini.addEventListener("click",()=>{
+    state.hour=s.hour;renderSelectedWindow();
+    $("faroQuickHours")?.querySelector('[data-hour="'+s.hour+'"]')?.focus({preventScroll:true});
+   });
+   quick.append(mini);
+  }
  }
+ if(quick)quick.scrollLeft=preservedHoursScroll;
  // Keep the chosen two-hour window visible in the swipeable mobile rail.
  // Scroll the rail, not the document, so page position never jumps.
  if(window.matchMedia("(max-width:710px)").matches){
@@ -1396,6 +1474,7 @@ async function initialize(){
   target.scrollIntoView({block:"start",behavior:motion});
  };
  $("faroLeadRead").addEventListener("click",()=>scrollToLeadTarget("dailyOverview"));
+ $("faroQuickDetails").addEventListener("click",()=>scrollToLeadTarget("dailyOverview"));
  $("faroLeadMap").addEventListener("click",()=>selectOcean("map",true));
   $("faroHourlyGoLens").addEventListener("click",()=>revealOcean("coastMapExpand"));
  $("openOceanMap").addEventListener("click",()=>revealOcean("coastMapExpand"));
