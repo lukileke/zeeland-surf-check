@@ -2022,7 +2022,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
 #forecastPage>#faroDayRail{
  border-radius:17px;margin:0 0 clamp(13px,1.6vw,20px);
 }
-#forecastPage>#faroForecastLead>#faroQuickHourRail{
+#forecastPage>.faro-forecast-lead>#faroQuickHourRail{
  display:block;position:relative;z-index:2;
  grid-column:1/-1;grid-row:auto;align-self:stretch;
  min-width:0;width:100%;box-sizing:border-box;
@@ -2145,7 +2145,7 @@ body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section.hourly-se
  #forecastPage:not(.hide)>#faroDayRail.faro-console-day{
   padding:17px 16px 9px;
  }
- #forecastPage:not(.hide)>#faroForecastLead>#faroQuickHourRail.faro-console-hours{
+ #forecastPage:not(.hide)>.faro-forecast-lead>#faroQuickHourRail.faro-console-hours{
   padding:12px 0 0;margin-top:12px;
  }
  #forecastPage .faro-console-day-chip{flex-basis:89px;min-height:63px;padding:7px 9px 10px}
@@ -2279,7 +2279,7 @@ body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section.hourly-se
    Keep the original lead's accessible unavailable explanation intact. */
 /* Loading, error and cached-model states must match on ALL devices. */
 body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroDayRail,
-body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroForecastLead>#faroQuickHourRail{
+body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>.faro-forecast-lead>#faroQuickHourRail{
  display:none!important;
 }
 body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>section#faroForecastLead{
