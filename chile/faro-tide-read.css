@@ -2286,7 +2286,5 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>section#faroF
  border-radius:20px!important;
  margin-bottom:0!important;
 }
-@media(prefers-reduced-motion:reduce){
- #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip){transition:none}
-}
+
 
