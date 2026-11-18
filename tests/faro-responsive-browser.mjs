@@ -147,7 +147,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     }
     if(s.width<=1119){
       assert.ok(found.nav.top<found.hero.top,'navigation precedes console');
-      assert.ok(found.dock.top<found.days.top,'spot selector precedes the surf reading');
+      assert.ok(found.dock.top<found.hero.top,'spot selector precedes the hero even if model rails are hidden');
       if(!found.loading&&!found.offline){
        assert.equal(found.daysCount,7,'seven interactive forecast days');
        assert.ok(found.quickHoursCount>=7,'two-hour mini-sessions must load');
