@@ -172,7 +172,13 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       }
     }
     if(s.width>=711&&s.width<=1030){
-      assert.ok(found.hours.top>=found.overview.top,'tablet day/hour order');
+      // On tablet, the compact selectable day/hero/hour console replaces
+      // the old detailed hourly card. Test the NEW hierarchy, not its legacy
+      // position below the overview.
+      assert.ok(found.days.bottom<=found.hero.top+2,'tablet days must precede hero');
+      assert.ok(found.hero.bottom<=found.quickHours.top+2,'tablet hours must follow hero');
+      assert.ok(found.quickHours.bottom<=found.overview.top+2,
+        'tablet overview must follow the unified surf console');
     }
     assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score '+JSON.stringify(found.scoreProbe));
     rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;
