@@ -1979,7 +1979,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage:has(> #faroDayRail) > .faro-context-dock{order:3!important}
  #forecastPage>.faro-access-notice{order:4!important}
  #forecastPage>.faro-journey-nav{order:5!important}
- #forecastPage>#dayStrip{display:none!important}
+ #forecastPage #dayStrip{display:none!important}
  #forecastPage>.faro-console-day,
  #forecastPage>.faro-console-hours{
   display:block;
