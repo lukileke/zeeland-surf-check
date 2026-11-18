@@ -1070,7 +1070,7 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
 }
 #forecastPage #dayview .hourly-section .forecast-section-heading{margin:0}
 html body main #forecastPage:not(.hide) .hourly-section #slots.slots{
-  min-width:0;width:100%;display:grid!important;
+  min-width:0;width:100%;display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:84px;
   overflow:hidden!important;gap:0;padding:0;margin:0;
   border:1px solid var(--read-line)!important;border-radius:15px;
@@ -1965,6 +1965,8 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  */
 /* One forecast console and one semantic colour contract for all viewports. */
 @media(min-width:1120px){
+ /* Take ownership of the desktop 12-column grid before placing rows. */
+ #forecastPage#forecastPage:not(.hide){display:grid!important}
  /* Grid auto-placement honours inherited order, so reserve the console's
     first four grid rows explicitly. A flex-only reorder is not enough. */
  #forecastPage:not(.hide)>.faro-context-dock{grid-column:1/-1;grid-row:1}
