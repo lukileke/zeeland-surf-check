@@ -2012,9 +2012,9 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  }
  /* High-specificity legacy order rules compete on tablet; the console
     explicitly owns its first three positions without shifting the dock. */
- #forecastPage#forecastPage>#faroDayRail{order:-3}
- #forecastPage#forecastPage>section#faroForecastLead{order:-2!important}
- #forecastPage#forecastPage>#faroQuickHourRail{order:-1}
+ #forecastPage#forecastPage>.faro-console-day{order:-3}
+ #forecastPage#forecastPage>section.faro-forecast-lead{order:-2!important}
+ #forecastPage#forecastPage>.faro-console-hours{order:-1}
 }
 @media(max-width:1119px){
  #forecastPage{--faro-console-gap:clamp(13px,2vw,22px);row-gap:0!important}
