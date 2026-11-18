@@ -274,7 +274,18 @@ function fixture(){
     route:document.querySelector('.faro-journey-nav').getBoundingClientRect().top,
     week:document.getElementById('dayStrip').getBoundingClientRect().top
    }));
-   assert.ok(rects.daily<rects.week,'Daily read must precede the seven-day comparison');
+   if(width>=1120)assert.ok(rects.daily<rects.week,'Desktop daily read must precede week disclosure');
+   else {
+    assert.equal(await page.locator('#dayStrip').isVisible(),false,
+     'Mobile week disclosure is replaced by the top seven-day selector');
+    const rails=await page.evaluate(()=>({
+     days:document.getElementById('faroDayRail').getBoundingClientRect().top,
+     lead:document.getElementById('faroForecastLead').getBoundingClientRect().top,
+     hours:document.getElementById('faroQuickHourRail').getBoundingClientRect().top
+    }));
+    assert.ok(rails.days<rails.lead&&rails.lead<rails.hours,
+     'Interactive day/hero/hour sequence must lead the mobile forecast');
+   }
    assert.ok(Number.isFinite(rects.route),'Quick navigation must remain measurable');
 
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
