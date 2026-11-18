@@ -143,7 +143,8 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       assert.equal(found.heroBusy,found.loading?'true':'false',
         'loading semantics must reflect provider state');
     }else if(s.width>=1120){
-      assert.ok(found.button.height>=40,'desktop hero action must be tappable');
+      assert.equal(found.button.height,0,'The old duplicate hero CTA must remain hidden');
+       assert.ok(found.quickHours.top>found.hero.top,'The HERO now owns the details action beside its hourly rail');
     }
     if(s.width<=1119){
       assert.ok(found.nav.top<found.hero.top,'navigation precedes console');
