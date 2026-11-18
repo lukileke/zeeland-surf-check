@@ -2115,10 +2115,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  }
  /* The detailed model analysis still exists, but the hours themselves
     have a single, prominent interaction surface inside the console. */
- #forecastPage #dayview>.hourly-section>.forecast-section-heading,
- #forecastPage #dayview>.hourly-section>#slots{display:none!important}
- #forecastPage #dayview>.hourly-section{margin-top:0}
- #forecastPage #dayview>.hourly-section>#faroHourlyPreview{margin-top:0}
+ #forecastPage #dayview>.hourly-section{display:none!important}
 }
 @media(max-width:710px){
  #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
@@ -2128,13 +2125,13 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead>.faro-lead-main{
   gap:6px!important;
  }
- #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead #faroLeadHeadline{
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-headline{
   font-size:clamp(25px,6.4vw,31px)!important;
   line-height:1.12!important;
   max-width:24ch!important;
   margin:1px 0!important;
  }
- #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead #faroLeadDeck{
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-deck{
   font-size:12px!important;
   line-height:1.42!important;
   margin:0!important;
@@ -2147,7 +2144,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   gap:5px 12px!important;
   padding:10px 0 0!important;
  }
- #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead #faroLeadScore{
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-score-row strong{
   font-size:clamp(33px,9vw,43px)!important;
  }
  #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-fineprint{
