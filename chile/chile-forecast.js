@@ -582,7 +582,7 @@ function strip(){
  for(const [i,d]of days.entries()){
   const s=bestRemaining(d),button=el("button",null,"day-chip score-tint "+(s?scoreTone(s.score):"")+(i===state.day?" selected":""));
   button.type="button";button.setAttribute("aria-pressed",String(i===state.day));
-  button.append(el("span",i===0?tr("Hoy","Today"):Live.formatDay(d.date,state.lang),"chile-chip-day"));
+  button.append(el("span",d.date===now().date?tr("Hoy","Today"):Live.formatDay(d.date,state.lang),"chile-chip-day"));
   button.append(el(s?"strong":"span",s?num(s.score):"—",s?"chile-chip-number":"chile-chip-empty"));
   button.append(el("span",s?experimentalLabel(s):tr("Sin ventana","No daylight window"),"chile-chip-grade faro-grade "+gradeClass(s?.score)));
   button.append(el("small",s?sessionTime(s):tr("No evaluado","Not evaluated"),"chile-chip-time"));
@@ -911,7 +911,12 @@ function slots(){
  container.replaceChildren();
  const preservedHoursScroll=quick?.scrollLeft||0;
  quick?.replaceChildren();
- const day=state.forecast?.days?.[state.day];if(!day)return;
+ const day=state.forecast?.days?.[state.day];
+ txt("faroQuickHourHelp",day?dateLabel(day.date):"—");
+ if(quick)quick.setAttribute("aria-label",day?
+  tr("Seleccionar horario del ","Choose a time window for ")+dateLabel(day.date):
+  tr("Sin horarios disponibles","No time windows available"));
+ if(!day)return;
  const present=now();
  for(const s of day.slots){
   const slotSafety=Live.slotRisk(s,state.config);
@@ -1414,12 +1419,35 @@ async function initialize(){
   setLanguage();state.cache.clear();void refresh(true);
  });
  $("themeToggle").addEventListener("click",()=>setTheme(true));
+ // Arrow/Home/End navigation works within either rail without scrolling
+ // the page or competing with the model's existing click state machine.
+ for(const railId of ["faroQuickDays","faroQuickHours"]){
+  const rail=$(railId);
+  rail?.addEventListener("keydown",event=>{
+   if(!["ArrowLeft","ArrowRight","Home","End"].includes(event.key))return;
+   const buttons=[...rail.querySelectorAll("button:not(:disabled)")];
+   const at=buttons.indexOf(document.activeElement);
+   if(at<0||buttons.length<2)return;
+   const next=event.key==="Home"?0:event.key==="End"?buttons.length-1:
+    Math.max(0,Math.min(buttons.length-1,at+(event.key==="ArrowRight"?1:-1)));
+   if(next===at)return;
+   const key=railId==="faroQuickDays"?"dayIndex":"hour";
+   const value=buttons[next].dataset[key];
+   event.preventDefault();
+   buttons[next].click();
+   const updated=[...rail.querySelectorAll("button")].find(button=>button.dataset[key]===value);
+   if(updated){
+    const bounds=rail.getBoundingClientRect(),tile=updated.getBoundingClientRect();
+    if(tile.left<bounds.left)rail.scrollLeft-=bounds.left-tile.left;
+    else if(tile.right>bounds.right)rail.scrollLeft+=tile.right-bounds.right;
+   }
+  });
+ }
  // Four direct, keyboard-accessible jumps. Disclosures open before scrolling;
  // no hidden target or dead anchor, and motion preferences are respected.
  for(const button of document.querySelectorAll(".faro-journey-nav [data-jump]")){
   button.addEventListener("click",()=>{
-   const mobileHours=button.dataset.jump==="slots"&&window.innerWidth<1120;
-   const target=$(mobileHours?"faroQuickHourRail":button.dataset.jump);
+   const target=$(button.dataset.jump==="slots"?"faroQuickHourRail":button.dataset.jump);
    if(!target)return;
    if(target.tagName==="DETAILS")target.open=true;
    const motion=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";

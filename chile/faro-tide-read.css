@@ -408,10 +408,10 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
   line-height:1.5!important;
  }
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots{
-  min-width:0!important;
+  min-width:0;
  }
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots>button {
-  min-width:0!important;
+  min-width:0;
  }
  html body main #forecastPage:not(.hide)>.faro-footer-bridge{
   gap:14px;
@@ -1070,7 +1070,7 @@ html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section{
 }
 #forecastPage #dayview .hourly-section .forecast-section-heading{margin:0}
 html body main #forecastPage:not(.hide) .hourly-section #slots.slots{
-  min-width:0;width:100%;display:grid!important;
+  min-width:0;width:100%;display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:84px;
   overflow:hidden!important;gap:0;padding:0;margin:0;
   border:1px solid var(--read-line)!important;border-radius:15px;
@@ -1963,9 +1963,50 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  * existing desktop model tables and all score/safety tokens are unchanged.
  * The final colour-lock sheet owns numerical score pigments.
  */
+/* One forecast console and one semantic colour contract for all viewports. */
 @media(min-width:1120px){
- #forecastPage>.faro-console-day,
- #forecastPage>.faro-console-hours{display:none}
+ /* Take ownership of the desktop 12-column grid before placing rows. */
+ #forecastPage#forecastPage:not(.hide){display:grid!important}
+ /* Grid auto-placement honours inherited order, so reserve the console's
+    first four grid rows explicitly. A flex-only reorder is not enough. */
+ #forecastPage:not(.hide)>.faro-context-dock{grid-column:1/-1;grid-row:1}
+ #forecastPage:not(.hide)>#faroDayRail,
+ #forecastPage:not(.hide)>#faroQuickHourRail{
+  display:block;
+  grid-column:1/-1;
+  min-width:0;
+  width:100%;
+  margin:0;
+  border-radius:20px;
+ }
+ #forecastPage:not(.hide)>#faroDayRail{grid-row:2}
+ #forecastPage:not(.hide)>#faroQuickHourRail{grid-row:4}
+ #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead{
+  grid-column:1/-1;
+  grid-row:3!important;
+ }
+ #forecastPage:not(.hide) #dayStrip{display:none!important}
+ #forecastPage:not(.hide) .faro-console-days{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:10px;
+  overflow:visible;
+  padding:2px;
+ }
+ #forecastPage:not(.hide) .faro-console-hour-list{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+  overflow:visible;
+  padding:2px;
+ }
+ #forecastPage:not(.hide) .faro-console-day-chip,
+ #forecastPage:not(.hide) .faro-console-hour-chip{
+  width:100%;
+  flex:initial;
+  min-width:0;
+  min-height:76px;
+ }
 }
 /* Tablet layout contract: the older Chile grid places its children by
  * fixed rows, so CSS order alone cannot assemble the connected console.
@@ -1976,6 +2017,11 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   flex-direction:column!important;
   align-items:stretch;
  }
+ /* High-specificity legacy order rules compete on tablet; the console
+    explicitly owns its first three positions without shifting the dock. */
+ #forecastPage#forecastPage>.faro-console-day{order:-3}
+ #forecastPage#forecastPage>section.faro-forecast-lead{order:-2!important}
+ #forecastPage#forecastPage>.faro-console-hours{order:-1}
 }
 @media(max-width:1119px){
  #forecastPage{--faro-console-gap:clamp(13px,2vw,22px);row-gap:0!important}
@@ -1990,7 +2036,9 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage>.faro-access-notice{order:4!important}
  #forecastPage>.faro-journey-nav{order:5!important}
  #forecastPage #dayStrip{display:none!important}
- #forecastPage>.faro-console-day,
+}
+/* Shared console atoms: avoid two independent desktop/mobile skins. */
+#forecastPage>.faro-console-day,
  #forecastPage>.faro-console-hours{
   display:block;
   color:#eff9f4;
@@ -2003,7 +2051,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage>#faroDayRail{
   border-radius:20px 20px 0 0;
   border-bottom:0;
-  margin:0!important;
+  margin:0;
  }
  #forecastPage>section#faroForecastLead{
   border-radius:0!important;
@@ -2050,8 +2098,8 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   flex:0 0 108px;min-width:0;
   scroll-snap-align:center;
   color:#edf8f5;
-  background:rgba(225,248,241,.065);
-  border:1px solid rgba(211,240,232,.19);
+  background:rgba(225,248,241,.045);
+  border:1px solid rgba(211,240,232,.17);
   border-radius:12px;
   text-align:left;
   padding:10px 11px;
@@ -2066,9 +2114,9 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  }
  #forecastPage .faro-console-day-chip.is-selected,
  #forecastPage .faro-console-hour-chip.is-selected{
-  background:rgba(186,229,219,.19);
-  border-color:#9fd8ce;
-  box-shadow:inset 0 0 0 1px #9fd8ce;
+  background:rgba(186,229,219,.14);
+  border-color:#b6e0d5;
+  box-shadow:inset 0 2px 0 0 #b6e0d5;
  }
  #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip):focus-visible{
   outline:2px solid #f6e5a5;outline-offset:2px;
@@ -2108,9 +2156,11 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   color:#efd8a0;
  }
  /* Tablet and phone use the connected hourly rail, not a redundant
-    lead CTA. Two IDs beat the inherited button-level important display. */
- #faroForecastLead #faroLeadRead,
- #faroForecastLead #faroLeadMap{display:none!important}
+    lead CTA; desktop retains its original actionable hero button. */
+ @media(max-width:1119px){
+  #faroForecastLead #faroLeadRead,
+  #faroForecastLead #faroLeadMap{display:none!important}
+ }
  #forecastPage .faro-console-footer{
   display:flex;justify-content:space-between;
   align-items:center;gap:10px;
@@ -2134,7 +2184,6 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  /* The detailed model analysis still exists, but the hours themselves
     have a single, prominent interaction surface inside the console. */
  body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section.hourly-section{display:none!important}
-}
 @media(max-width:710px){
  #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
   gap:9px!important;
@@ -2175,15 +2224,14 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
 }
 /* Empty model states do not show decorative rails with eight dashes.
    Keep the original lead's accessible unavailable explanation intact. */
-@media(max-width:1119px){
- body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroDayRail,
- body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroQuickHourRail{
-  display:none!important;
- }
- body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>section#faroForecastLead{
-  border-radius:20px!important;
-  margin-bottom:0!important;
- }
+/* Loading, error and cached-model states must match on ALL devices. */
+body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroDayRail,
+body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroQuickHourRail{
+ display:none!important;
+}
+body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>section#faroForecastLead{
+ border-radius:20px!important;
+ margin-bottom:0!important;
 }
 @media(prefers-reduced-motion:reduce){
  #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip){transition:none}

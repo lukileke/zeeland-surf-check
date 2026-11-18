@@ -40,7 +40,9 @@ try{
  assert.match(state.updated,/Open-Meteo/);
  assert.ok(state.rows>=3,'Deployed backup must include genuine forecast days');
  assert.ok(network.some(n=>n.status===200),'Published same-origin snapshot must return HTTP 200');
- assert.match(state.script,/chile-forecast\.js\?v=53/);
+ const scriptVersion=Number(state.script.match(/chile-forecast\.js\?v=(\d+)/)?.[1]);
+ assert.ok(Number.isInteger(scriptVersion)&&scriptVersion>=54,
+  'Published model script must not regress below last verified version 54: '+state.script);
  assert.equal(logs.length,0);
  console.log('PASS PRODUCTION WEBKIT · BOTH EXTERNAL API HOSTS BLOCKED, VERIFIED SAME-ORIGIN FORECAST LOADED');
 }finally{await context.close();await browser.close()}

@@ -109,7 +109,7 @@ function fixture(){
      await page.locator('.faro-surface-flip').click();
      await page.locator('#dailyOverview').screenshot({path:path.join(dir,tag+'-signals.png')});
      await page.locator('.faro-surface-flip').click();
-     await page.locator(width<1120?'#faroQuickHourRail':'#dayview>.hourly-section').screenshot({path:path.join(dir,tag+'-hours.png')});
+     await page.locator('#faroQuickHourRail').screenshot({path:path.join(dir,tag+'-hours.png')});
     }
     await page.evaluate(theme=>{document.documentElement.dataset.theme=theme;window.scrollTo(0,0)},originalTheme);
    }
@@ -274,17 +274,24 @@ function fixture(){
     route:document.querySelector('.faro-journey-nav').getBoundingClientRect().top,
     week:document.getElementById('dayStrip').getBoundingClientRect().top
    }));
-   if(width>=1120)assert.ok(rects.daily<rects.week,'Desktop daily read must precede week disclosure');
-   else {
-    assert.equal(await page.locator('#dayStrip').isVisible(),false,
-     'Mobile week disclosure is replaced by the top seven-day selector');
-    const rails=await page.evaluate(()=>({
-     days:document.getElementById('faroDayRail').getBoundingClientRect().top,
-     lead:document.getElementById('faroForecastLead').getBoundingClientRect().top,
-     hours:document.getElementById('faroQuickHourRail').getBoundingClientRect().top
-    }));
+   assert.equal(await page.locator('#dayStrip').isVisible(),false,
+    'The old duplicated week disclosure must be hidden on every viewport');
+   const rails=await page.evaluate(()=>({
+    days:document.getElementById('faroDayRail').getBoundingClientRect().top,
+    lead:document.getElementById('faroForecastLead').getBoundingClientRect().top,
+    hours:document.getElementById('faroQuickHourRail').getBoundingClientRect().top,
+    dayVisible:getComputedStyle(document.getElementById('faroDayRail')).display!=='none',
+    hourVisible:getComputedStyle(document.getElementById('faroQuickHourRail')).display!=='none'
+   }));
+   const modelUnavailable=await page.locator('body.faro-model-pending,body.faro-model-unavailable').count()>0;
+   if(modelUnavailable){
+    assert.ok(!rails.dayVisible&&!rails.hourVisible,
+     'Unavailable data must hide both unscored rails, not invent forecast values');
+   }else{
+    assert.ok(rails.dayVisible&&rails.hourVisible,
+     'The unified forecast rails must be visible at every breakpoint');
     assert.ok(rails.days<rails.lead&&rails.lead<rails.hours,
-     'Interactive day/hero/hour sequence must lead the mobile forecast');
+     'Interactive day/hero/hour sequence must lead the forecast at every width: '+JSON.stringify(rails));
    }
    assert.ok(Number.isFinite(rects.route),'Quick navigation must remain measurable');
 
@@ -333,47 +340,38 @@ function fixture(){
     assert.ok(gap>=-4&&gap<=48,
      'Unexpected whitespace or overlap between reading, preparation and UV: '+JSON.stringify({width,from,to,gap,visual}));
    }
-   // The previous desktop defect hid the eighth slot and left the two
-   // instruments visually unrelated. Assert actual boxes, not only CSS rules.
-   if(width>=1120){
+   // The actual desktop instrument is now the connected 2-hour rail
+   // immediately below the hero. The former #slots grid stays in the DOM
+   // for the model controller but is intentionally hidden at every width.
+   if(width>=1120&&!modelUnavailable){
     const deck=await page.evaluate(()=>{
      const r=s=>document.querySelector(s).getBoundingClientRect();
-     const buttons=[...document.querySelectorAll('#slots>button')].map(e=>{
-      const b=e.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom,width:b.width,height:b.height};
-     });
-     return {daily:r('.day-outlook-section'),hours:r('.hourly-section'),
-      rail:r('#slots'),buttons,columns:getComputedStyle(document.querySelector('#slots')).gridTemplateColumns.split(' ').length};
-    });
-    assert.equal(deck.columns,4,'Four readable score windows per desktop row');
-    assert.equal(deck.buttons.length,8,'All eight two-hour windows should remain accessible');
-    assert.ok(deck.buttons.every(x=>x.width>=70&&x.right<=deck.rail.right+2),
-     'Every hourly score, including 20–22, must fit completely inside its panel');
-    assert.ok(Math.abs(deck.buttons[0].y-deck.buttons[3].y)<3&&
-      deck.buttons[4].y>deck.buttons[0].y+35,
-     'Desktop score windows must form two intentional rows');
-    assert.ok(deck.buttons[0].bottom+5<=deck.buttons[4].y,
-     'Desktop score rows must have an actual visible gap: '+JSON.stringify(deck.buttons));
-    assert.ok(Math.abs(deck.daily.top-deck.hours.top)<12,
-     'The two desktop reading instruments should align at the top');
-    assert.ok(Math.abs(deck.daily.height-deck.hours.height)<120,
-     'Desktop panels should be proportionate without forcing empty space');
-    const selectedHeight=await page.locator('#faroHourlyPreview').evaluate(el=>el.getBoundingClientRect().height);
-    assert.ok(selectedHeight<=168,
-     'Selected-hour card should not stretch into a large blank panel: '+selectedHeight);
-    const selected=await page.locator('.faro-hourly-score-value').evaluate(el=>{
+     const rail=document.querySelector('#faroQuickHours');
+     const buttons=[...rail.querySelectorAll('button')].map(el=>{
       const box=el.getBoundingClientRect();
-      const frame=el.closest('#faroHourlyPreview').getBoundingClientRect();
-      return {score:{x:box.x,y:box.y,width:box.width,height:box.height},
-       frame:{x:frame.x,y:frame.y,width:frame.width,height:frame.height},
-       text:el.textContent};
+      return {x:box.x,y:box.y,right:box.right,bottom:box.bottom,width:box.width,height:box.height};
+     });
+     return {rail:r('#faroQuickHours'),buttons,
+      columns:getComputedStyle(rail).gridTemplateColumns.split(' ').length};
     });
-    assert.ok(selected.score.width>22&&selected.score.height>20&&
-      selected.score.y>=selected.frame.y&&
-      selected.score.y+selected.score.height<=selected.frame.y+selected.frame.height+2,
-      'Chosen FARO index must be visible inside the desktop instrument: '+JSON.stringify(selected));
-    assert.equal(selected.text.trim(),
-      (await page.locator('#slots > button.selected .chile-slot-score').textContent()).trim(),
-      'Chosen index and hourly rail must display the same model score');
+    assert.equal(deck.columns,6,'Six concise 2-hour windows per desktop row');
+    assert.equal(deck.buttons.length,8,'All eight model windows remain selectable');
+    assert.ok(deck.buttons.every(x=>x.width>=70&&x.right<=deck.rail.right+2),
+     'Every window must fit the desktop rail without clipping: '+JSON.stringify(deck));
+    assert.ok(Math.abs(deck.buttons[0].y-deck.buttons[5].y)<3&&
+      deck.buttons[6].y>deck.buttons[0].y+30,
+     'The second row must follow a consistent six-column grid');
+    assert.ok(deck.buttons[0].bottom+5<=deck.buttons[6].y,
+     'Desktop hourly rows need a clear separation, not overlap');
+    assert.equal(await page.locator('#dayview>.hourly-section').isVisible(),false,
+     'The former 8-slot desktop instrument is deliberately hidden');
+    const selectedQuick=page.locator('#faroQuickHours>button[aria-pressed="true"]');
+    if(await selectedQuick.count()){
+     const selectedScore=(await selectedQuick.locator('.faro-console-hour-score').textContent()).trim();
+     const controllerScore=(await page.locator('#slots>button.selected .chile-slot-score').textContent()).trim();
+     assert.equal(selectedScore,controllerScore,
+      'Connected rail and legacy data controller must share the same model score');
+    }
    }
    // Both depths occupy the same fixed footprint without hiding safety.
    const fixedBefore=await page.locator('.faro-ocean-surface').boundingBox();
@@ -542,14 +540,13 @@ function fixture(){
     const after=await page.evaluate(()=>window.scrollY);
     assert.ok(Math.abs(start-after)<80,'Changing a day should update in place, not jump across the document');
    }else{
-    await page.locator('#dayStrip > summary').click();
-    assert.equal(await page.locator('#dayStrip').evaluate(el=>el.open),true);
-    await page.locator('#dayStripItems .day-chip').nth(1).click();
+    await page.locator('#faroQuickDays > button').nth(1).click();
+    assert.equal(await page.locator('#faroQuickDays > button').nth(1).getAttribute('aria-pressed'),'true');
    }
    // The 06:00 window has stronger wind than 08:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
-   const dayControl=width<1120?'#faroQuickDays > button':'#dayStripItems .day-chip';
-   const slotControl=width<1120?'#faroQuickHours > button':'#slots button';
+   const dayControl='#faroQuickDays > button';
+   const slotControl='#faroQuickHours > button';
    const previousWeekChip=await page.locator(dayControl).first().elementHandle();
    await page.locator(slotControl).first().click();
    assert.equal(await previousWeekChip.evaluate(node=>node.isConnected),true,
@@ -560,8 +557,8 @@ function fixture(){
     'A poor slot must point to a grounded better upcoming forecast window');
    await page.locator(slotControl).nth(1).click();
    const chosen=page.locator(slotControl).nth(1);
-   const scoreSelector=width<1120?'.faro-console-hour-score':'.chile-slot-score';
-   const gradeSelector=width<1120?'.faro-console-hour-label':'.chile-slot-quality';
+   const scoreSelector='.faro-console-hour-score';
+   const gradeSelector='.faro-console-hour-label';
    assert.equal(await page.locator('#faroLeadWindowLabel').textContent(),
     'FRANJA SELECCIONADA','Lead must reflect manually chosen window, not another best pick');
    assert.equal(await page.locator('#faroLeadScore').textContent(),
@@ -777,13 +774,11 @@ function fixture(){
      'Practical gear checklist must follow map and swell compass, not conceal them');
     assert.ok(mapBounds.width>=sessionBounds.width*.95,'Coastal map must span the full-width reading area');
     const daily=await page.locator('.day-outlook-section').boundingBox();
-    const hourly=await page.locator('#dayview > .hourly-section').boundingBox();
-    assert.ok(daily&&hourly,'Daily and hourly decisions both render');
-    assert.ok(Math.abs(daily.y-hourly.y)<24,'Daily and hourly must start on the same decision row');
-    assert.ok(mapBounds.y>=Math.max(daily.y+daily.height,hourly.y+hourly.height)-10,
-     'Ocean tools must follow the paired day and hourly decision row');
-    assert.ok(sessionBounds.width>hourly.width*1.5,
-     'Selected session disclosure spans the desktop instead of reserving dead left space');
+    const hours=await page.locator('#faroQuickHourRail').boundingBox();
+    assert.ok(daily&&hours,'Daily decision and unified hourly rail must render');
+    assert.ok(hours.y+hours.height<=daily.y+12,'Hourly console must precede detailed reading');
+    assert.ok(mapBounds.y>=daily.y+daily.height-10,'Ocean tools must follow daily decision');
+    assert.ok(sessionBounds.width>=daily.width*.95,'Session disclosure needs the full reading width');
     const font=await page.locator('#dayWave').evaluate(el=>getComputedStyle(el).fontFamily);
     assert.match(font,/Manrope|faro-text|system-ui/i,'Model wave size must use Zeeland number font, not Archivo Black');
    }
@@ -798,47 +793,17 @@ function fixture(){
    await page.locator('#faroLeadRead').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
-   // The secondary hero action is intentionally hidden at some mobile widths.
-   if(await page.locator('#faroLeadMap').isVisible()){
-    await page.locator('#faroLeadMap').click();
-    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true,
-     'Visible hero map CTA opens the existing Coastal Lens');
+   // Desktop retains the hero CTA, but all hour decisions now use
+   // the same visible rail rather than a hidden secondary instrument.
+   assert.equal(await page.locator('#dayview>.hourly-section').isVisible(),false);
+   assert.equal(await page.locator('#faroQuickHours > button').count(),8);
+   const active=page.locator('#faroQuickHours > button.is-selected .faro-console-hour-score');
+   if(await active.count()){
+    assert.equal((await active.textContent()).trim(),
+     (await page.locator('#faroLeadScore').textContent()).trim(),
+     'Selected desktop mini-session must share the hero score');
    }
-      // Selected-hour details stay in the same footprint as the compact reading.
-    assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'read');
-    assert.equal(await page.locator('.faro-hourly-score-value').isVisible(),true,
-      'Model index is the visible, non-duplicated hourly headline');
-    const chosenGeometry=await page.locator('.faro-hourly-score-value').evaluate(el=>{
-      const r=el.getBoundingClientRect(),card=el.closest('#faroHourlyPreview').getBoundingClientRect();
-      return {width:r.width,height:r.height,x:r.x,right:r.right,y:r.y,
-        cardX:card.x,cardRight:card.right,cardTop:card.top,cardBottom:card.bottom,
-        windowWidth:el.closest('.faro-hourly-window').getBoundingClientRect().width,
-        frontWidth:el.closest('.faro-hourly-front').getBoundingClientRect().width};
-    });
-    assert.ok(chosenGeometry.width>20&&chosenGeometry.height>20&&
-      chosenGeometry.x>=chosenGeometry.cardX&&chosenGeometry.right<=chosenGeometry.cardRight+2&&
-      chosenGeometry.y>=chosenGeometry.cardTop&&chosenGeometry.y+chosenGeometry.height<=chosenGeometry.cardBottom+2,
-      'Selected index must be physically visible and inside the card at '+width+'px: '+JSON.stringify(chosenGeometry));
-    assert.equal((await page.locator('.faro-hourly-score-value').textContent()).trim(),
-      (await page.locator('#slots > button.selected .chile-slot-score').textContent()).trim());
-    const hourlySize=await page.locator('#faroHourlyPreview').boundingBox();
-    await page.locator('.faro-hourly-flip').click();
-    assert.equal(await page.locator('#faroHourlyPreview').getAttribute('data-mode'),'signals');
-    const hourlyAfter=await page.locator('#faroHourlyPreview').boundingBox();
-    assert.ok(Math.abs(hourlyAfter.height-hourlySize.height)<2,
-     'Hourly detail must not expand the surface: '+JSON.stringify({
-      width,before:hourlySize.height,after:hourlyAfter.height,
-      preview:await page.locator('#faroHourlyPreview').evaluate(el=>{
-       const read=el.querySelector('.faro-hourly-window');
-       const front=el.querySelector('.faro-hourly-front');
-       const back=el.querySelector('.faro-hourly-back');
-       return {windowHeight:read.getBoundingClientRect().height,
-        frontHeight:front.getBoundingClientRect().height,backHeight:back.getBoundingClientRect().height,
-        windowDisplay:getComputedStyle(read).display,backPosition:getComputedStyle(back).position};
-      })
-     }));
-    await page.locator('#faroHourlyGoLens').click();
-   }else{
+  }else{
     // Mobile has a single, adjacent two-hour rail, so older hero/preview
     // action buttons must not become dead duplicate interfaces.
     assert.equal(await page.locator('#faroLeadRead').isVisible(),false);
@@ -1004,7 +969,7 @@ function fixture(){
    await page.locator('#chileOfficialSources summary').click();
    assert.ok(await page.locator('#faroOfficialSourceHealth a[href="https://meteoarmada.directemar.cl/"]').isVisible(),
     'The Armada source should remain discoverable in Before You Go');
-   const chipText=await page.locator('#dayStripItems .day-chip').first().innerText();
+   const chipText=await page.locator('#faroQuickDays > button').first().innerText();
    assert.ok(!chipText.includes('β')&&!chipText.includes('Promising'),
     'Model caveats belong in provenance, not duplicated after every score');
    await page.locator('#chileOfficialSources summary').click();
@@ -1135,38 +1100,36 @@ function fixture(){
      'Each ranking score is one continuous number');
     await page.locator('#navForecast').click();
    }
-   // Decision-first mobile regression: a late selected session must be visible
-   // in the swipe rail, not hidden behind the first morning windows.
+   // Visible mini-hours are the only user-facing mobile rail.
    if(width<=430){
-    const selectionBefore=await page.evaluate(()=>{
-     const rail=document.querySelector('#slots');
+    const previous=await page.evaluate(()=>{
+     const rail=document.querySelector('#faroQuickHours');
      const tiles=[...rail.querySelectorAll(':scope > button')];
-     const previous=tiles.findIndex(tile=>tile.classList.contains('selected'));
-     const latest=tiles.filter(tile=>!tile.disabled).at(-1);
-     latest?.click();
-     return previous;
+     const old=tiles.findIndex(tile=>tile.getAttribute('aria-pressed')==='true');
+     tiles.filter(tile=>!tile.disabled).at(-1)?.click();
+     return old;
     });
     await page.waitForFunction(()=>{
-     const rail=document.querySelector('#slots');
-     const chosen=rail?.querySelector(':scope > button.selected');
+     const rail=document.querySelector('#faroQuickHours');
+     const chosen=rail?.querySelector(':scope > button.is-selected');
      if(!chosen)return false;
      const a=rail.getBoundingClientRect(),b=chosen.getBoundingClientRect();
-     return b.left>=a.left-2 && b.right<=a.right+2;
+     return b.left>=a.left-2&&b.right<=a.right+2;
     },null,{timeout:6000});
-    const decisionLayout=await page.evaluate(()=>({
+    const info=await page.evaluate(()=>({
      radius:parseFloat(getComputedStyle(document.querySelector('#faroSiteFooter')).borderRadius),
-     docWidth:document.documentElement.scrollWidth,
+     width:document.documentElement.scrollWidth,
      viewport:document.documentElement.clientWidth,
-     uvMax:document.getElementById('dayUVLabel')?.textContent,
-     selectedUv:document.querySelector('#sessionEssentials .chile-uv-tag')?.textContent
+     uv:document.getElementById('dayUVLabel')?.textContent,
+     selected:document.querySelector('#sessionEssentials .chile-uv-tag')?.textContent
     }));
-    assert.ok(decisionLayout.radius>=18,'FARO footer must retain a rounded mobile brand finish');
-    assert.ok(decisionLayout.docWidth<=decisionLayout.viewport+3,'Hour rail should not expand page width');
-    assert.match(decisionLayout.uvMax,/DAY MAX UV|UV MÁX. DEL DÍA/);
-    assert.match(decisionLayout.selectedUv,/UV · THIS WINDOW|UV · ESTA FRANJA/);
-    if(selectionBefore>=0)await page.evaluate(index=>{
-     document.querySelectorAll('#slots > button')[index]?.click();
-    },selectionBefore);
+    assert.ok(info.radius>=18,'Keep the rounded FARO mobile brand finish');
+    assert.ok(info.width<=info.viewport+3,'Hour rail must not expand page width');
+    assert.match(info.uv,/DAY MAX UV|UV MÁX. DEL DÍA/);
+    assert.match(info.selected,/UV · THIS WINDOW|UV · ESTA FRANJA/);
+    if(previous>=0)await page.evaluate(i=>{
+     document.querySelectorAll('#faroQuickHours > button')[i]?.click();
+    },previous);
    }
    // Simulate an actual model threshold crossing to confirm hazards remain prominent.
    const severe=JSON.parse(JSON.stringify(weather));
