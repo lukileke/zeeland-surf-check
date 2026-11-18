@@ -2026,8 +2026,8 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  display:block;position:relative;z-index:2;
  grid-column:1/-1;grid-row:auto;align-self:stretch;
  min-width:0;width:100%;box-sizing:border-box;
- margin:clamp(14px,2.3vw,24px) 0 0;
- padding:clamp(12px,1.4vw,18px) 0 0;
+ margin:5px 0 0;
+ padding:11px 0 0;
  border:0;border-top:1px solid rgba(191,231,218,.18);
  border-radius:0;background:transparent;color:#edf7f2;
 }
@@ -2036,6 +2036,17 @@ body main #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
  border:1px solid rgba(166,218,205,.24)!important;
  box-shadow:none!important;border-radius:21px!important;
  margin:0!important;isolation:isolate;
+}
+/* One route to technical details: the integrated hour rail owns the CTA.
+   Hiding the old duplicate button reduces HERO height on desktop too. */
+html body main #forecastPage:not(.hide)>.faro-forecast-lead .faro-lead-actions{
+ display:none!important;
+}
+@media(min-width:711px){
+ body main #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
+  padding:clamp(19px,2.1vw,27px)!important;
+  row-gap:13px;
+ }
 }
 #forecastPage .faro-console-rail-head{
  display:flex;align-items:center;justify-content:space-between;
@@ -2124,7 +2135,7 @@ body main #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
 #forecastPage .faro-console-hour-chip.is-past .faro-console-hour-label{color:#e3c995}
 #forecastPage .faro-console-footer{
  display:flex;justify-content:space-between;align-items:center;gap:10px;
- margin-top:7px;padding-top:10px;
+ margin-top:4px;padding-top:6px;
  border-top:1px solid rgba(194,232,221,.11);
 }
 #forecastPage .faro-console-footer>span{
