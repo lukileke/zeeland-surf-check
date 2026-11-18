@@ -800,7 +800,7 @@ function fixture(){
     'Coastal read must separate swell and wind measures from the map');
    assert.match(await page.locator('#faroHourlyPreview').textContent(),/FARO · TU FRANJA|FARO · YOUR WINDOW/);
    if(width>=1120){
-   await page.locator('#faroLeadRead').click();
+   await page.locator('#faroQuickDetails').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
    // Desktop retains the hero CTA, but all hour decisions now use
