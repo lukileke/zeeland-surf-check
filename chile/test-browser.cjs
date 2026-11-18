@@ -794,6 +794,7 @@ function fixture(){
    assert.equal(await page.locator('#chileCoastMap .faro-lens-quick-metrics').count(),1,
     'Coastal read must separate swell and wind measures from the map');
    assert.match(await page.locator('#faroHourlyPreview').textContent(),/FARO · TU FRANJA|FARO · YOUR WINDOW/);
+   if(width>=1120){
    await page.locator('#faroLeadRead').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
@@ -837,6 +838,19 @@ function fixture(){
       })
      }));
     await page.locator('#faroHourlyGoLens').click();
+   }else{
+    // Mobile has a single, adjacent two-hour rail, so older hero/preview
+    // action buttons must not become dead duplicate interfaces.
+    assert.equal(await page.locator('#faroLeadRead').isVisible(),false);
+    assert.equal(await page.locator('.hourly-section').isVisible(),false);
+    assert.equal(await page.locator('#faroQuickHours > button').count(),8);
+    await page.locator('#faroQuickDetails').click();
+    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
+     'Mobile quick details must reveal existing scientific read');
+    assert.equal(await page.locator('#faroLeadScore').textContent(),
+     await page.locator('#faroQuickHours > button.is-selected .faro-console-hour-score').textContent(),
+     'Mini-session and hero must share one model score');
+   }
    assert.equal(await page.locator('#coastMapExpand').evaluate(el=>el.open),true);
    // The supplementary map/compass switch is desktop-first. On mobile,
    // the selected-window map entry is the supported primary action.
