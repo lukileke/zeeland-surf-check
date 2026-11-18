@@ -274,18 +274,19 @@ function fixture(){
     route:document.querySelector('.faro-journey-nav').getBoundingClientRect().top,
     week:document.getElementById('dayStrip').getBoundingClientRect().top
    }));
-   if(width>=1120)assert.ok(rects.daily<rects.week,'Desktop daily read must precede week disclosure');
-   else {
-    assert.equal(await page.locator('#dayStrip').isVisible(),false,
-     'Mobile week disclosure is replaced by the top seven-day selector');
-    const rails=await page.evaluate(()=>({
-     days:document.getElementById('faroDayRail').getBoundingClientRect().top,
-     lead:document.getElementById('faroForecastLead').getBoundingClientRect().top,
-     hours:document.getElementById('faroQuickHourRail').getBoundingClientRect().top
-    }));
-    assert.ok(rails.days<rails.lead&&rails.lead<rails.hours,
-     'Interactive day/hero/hour sequence must lead the mobile forecast');
-   }
+   assert.equal(await page.locator('#dayStrip').isVisible(),false,
+    'The old duplicated week disclosure must be hidden on every viewport');
+   const rails=await page.evaluate(()=>({
+    days:document.getElementById('faroDayRail').getBoundingClientRect().top,
+    lead:document.getElementById('faroForecastLead').getBoundingClientRect().top,
+    hours:document.getElementById('faroQuickHourRail').getBoundingClientRect().top,
+    dayVisible:getComputedStyle(document.getElementById('faroDayRail')).display!=='none',
+    hourVisible:getComputedStyle(document.getElementById('faroQuickHourRail')).display!=='none'
+   }));
+   assert.ok(rails.dayVisible&&rails.hourVisible,
+    'The unified forecast rails must be visible at every breakpoint');
+   assert.ok(rails.days<rails.lead&&rails.lead<rails.hours,
+    'Interactive day/hero/hour sequence must lead the forecast at every width');
    assert.ok(Number.isFinite(rects.route),'Quick navigation must remain measurable');
 
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
