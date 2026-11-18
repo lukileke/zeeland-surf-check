@@ -340,47 +340,38 @@ function fixture(){
     assert.ok(gap>=-4&&gap<=48,
      'Unexpected whitespace or overlap between reading, preparation and UV: '+JSON.stringify({width,from,to,gap,visual}));
    }
-   // The previous desktop defect hid the eighth slot and left the two
-   // instruments visually unrelated. Assert actual boxes, not only CSS rules.
-   if(width>=1120){
+   // The actual desktop instrument is now the connected 2-hour rail
+   // immediately below the hero. The former #slots grid stays in the DOM
+   // for the model controller but is intentionally hidden at every width.
+   if(width>=1120&&!modelUnavailable){
     const deck=await page.evaluate(()=>{
      const r=s=>document.querySelector(s).getBoundingClientRect();
-     const buttons=[...document.querySelectorAll('#slots>button')].map(e=>{
-      const b=e.getBoundingClientRect();return {x:b.x,y:b.y,right:b.right,bottom:b.bottom,width:b.width,height:b.height};
-     });
-     return {daily:r('.day-outlook-section'),hours:r('.hourly-section'),
-      rail:r('#slots'),buttons,columns:getComputedStyle(document.querySelector('#slots')).gridTemplateColumns.split(' ').length};
-    });
-    assert.equal(deck.columns,4,'Four readable score windows per desktop row');
-    assert.equal(deck.buttons.length,8,'All eight two-hour windows should remain accessible');
-    assert.ok(deck.buttons.every(x=>x.width>=70&&x.right<=deck.rail.right+2),
-     'Every hourly score, including 20–22, must fit completely inside its panel');
-    assert.ok(Math.abs(deck.buttons[0].y-deck.buttons[3].y)<3&&
-      deck.buttons[4].y>deck.buttons[0].y+35,
-     'Desktop score windows must form two intentional rows');
-    assert.ok(deck.buttons[0].bottom+5<=deck.buttons[4].y,
-     'Desktop score rows must have an actual visible gap: '+JSON.stringify(deck.buttons));
-    assert.ok(Math.abs(deck.daily.top-deck.hours.top)<12,
-     'The two desktop reading instruments should align at the top');
-    assert.ok(Math.abs(deck.daily.height-deck.hours.height)<120,
-     'Desktop panels should be proportionate without forcing empty space');
-    const selectedHeight=await page.locator('#faroHourlyPreview').evaluate(el=>el.getBoundingClientRect().height);
-    assert.ok(selectedHeight<=168,
-     'Selected-hour card should not stretch into a large blank panel: '+selectedHeight);
-    const selected=await page.locator('.faro-hourly-score-value').evaluate(el=>{
+     const rail=document.querySelector('#faroQuickHours');
+     const buttons=[...rail.querySelectorAll('button')].map(el=>{
       const box=el.getBoundingClientRect();
-      const frame=el.closest('#faroHourlyPreview').getBoundingClientRect();
-      return {score:{x:box.x,y:box.y,width:box.width,height:box.height},
-       frame:{x:frame.x,y:frame.y,width:frame.width,height:frame.height},
-       text:el.textContent};
+      return {x:box.x,y:box.y,right:box.right,bottom:box.bottom,width:box.width,height:box.height};
+     });
+     return {rail:r('#faroQuickHours'),buttons,
+      columns:getComputedStyle(rail).gridTemplateColumns.split(' ').length};
     });
-    assert.ok(selected.score.width>22&&selected.score.height>20&&
-      selected.score.y>=selected.frame.y&&
-      selected.score.y+selected.score.height<=selected.frame.y+selected.frame.height+2,
-      'Chosen FARO index must be visible inside the desktop instrument: '+JSON.stringify(selected));
-    assert.equal(selected.text.trim(),
-      (await page.locator('#slots > button.selected .chile-slot-score').textContent()).trim(),
-      'Chosen index and hourly rail must display the same model score');
+    assert.equal(deck.columns,6,'Six concise 2-hour windows per desktop row');
+    assert.equal(deck.buttons.length,8,'All eight model windows remain selectable');
+    assert.ok(deck.buttons.every(x=>x.width>=70&&x.right<=deck.rail.right+2),
+     'Every window must fit the desktop rail without clipping: '+JSON.stringify(deck));
+    assert.ok(Math.abs(deck.buttons[0].y-deck.buttons[5].y)<3&&
+      deck.buttons[6].y>deck.buttons[0].y+30,
+     'The second row must follow a consistent six-column grid');
+    assert.ok(deck.buttons[0].bottom+5<=deck.buttons[6].y,
+     'Desktop hourly rows need a clear separation, not overlap');
+    assert.equal(await page.locator('#dayview>.hourly-section').isVisible(),false,
+     'The former 8-slot desktop instrument is deliberately hidden');
+    const selectedQuick=page.locator('#faroQuickHours>button[aria-pressed="true"]');
+    if(await selectedQuick.count()){
+     const selectedHour=await selectedQuick.getAttribute('data-hour');
+     assert.equal(selectedHour,
+      await page.locator('#slots>button.selected').getAttribute('data-hour'),
+      'Connected rail and legacy data controller must share one selected model hour');
+    }
    }
    // Both depths occupy the same fixed footprint without hiding safety.
    const fixedBefore=await page.locator('.faro-ocean-surface').boundingBox();
