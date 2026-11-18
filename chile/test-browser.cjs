@@ -774,13 +774,11 @@ function fixture(){
      'Practical gear checklist must follow map and swell compass, not conceal them');
     assert.ok(mapBounds.width>=sessionBounds.width*.95,'Coastal map must span the full-width reading area');
     const daily=await page.locator('.day-outlook-section').boundingBox();
-    const hourly=await page.locator('#dayview > .hourly-section').boundingBox();
-    assert.ok(daily&&hourly,'Daily and hourly decisions both render');
-    assert.ok(Math.abs(daily.y-hourly.y)<24,'Daily and hourly must start on the same decision row');
-    assert.ok(mapBounds.y>=Math.max(daily.y+daily.height,hourly.y+hourly.height)-10,
-     'Ocean tools must follow the paired day and hourly decision row');
-    assert.ok(sessionBounds.width>hourly.width*1.5,
-     'Selected session disclosure spans the desktop instead of reserving dead left space');
+    const hours=await page.locator('#faroQuickHourRail').boundingBox();
+    assert.ok(daily&&hours,'Daily decision and unified hourly rail must render');
+    assert.ok(hours.y+hours.height<=daily.y+12,'Hourly console must precede detailed reading');
+    assert.ok(mapBounds.y>=daily.y+daily.height-10,'Ocean tools must follow daily decision');
+    assert.ok(sessionBounds.width>=daily.width*.95,'Session disclosure needs the full reading width');
     const font=await page.locator('#dayWave').evaluate(el=>getComputedStyle(el).fontFamily);
     assert.match(font,/Manrope|faro-text|system-ui/i,'Model wave size must use Zeeland number font, not Archivo Black');
    }
