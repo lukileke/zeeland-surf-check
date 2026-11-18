@@ -38,7 +38,7 @@ test('controls share one state machine and horizontal keyboard navigation',()=>{
 });
 test('offline rails disappear everywhere and model score colours remain canonical',()=>{
  assert.match(css,/body:is\(\.faro-model-pending,\.faro-model-unavailable\) #forecastPage>#faroDayRail/);
- assert.match(css,/body:is\(\.faro-model-pending,\.faro-model-unavailable\) #forecastPage>#faroForecastLead>#faroQuickHourRail/);
+ assert.match(css,/body:is\(\.faro-model-pending,\.faro-model-unavailable\) #forecastPage>\.faro-forecast-lead>#faroQuickHourRail/);
  assert.match(html,/<strong id="faroLeadScore">—<\/strong>/);
  assert.match(css,/color:var\(--brand-score-ink,var\(--faro-quiet\)\)/);
  assert.ok((css.match(/!important/g)||[]).length<=486);
