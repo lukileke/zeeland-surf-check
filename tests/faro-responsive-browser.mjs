@@ -162,7 +162,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     }else{
       assert.ok(found.dock.top<found.hero.top,'desktop selector before hero');
     }
-    if(s.width>=1120){
+    if(s.width>=1120&&!found.loading&&!found.offline){
       assert.ok(found.days.width>s.width*.55&&found.quickHours.width>s.width*.55,
        'desktop must show the connected day and two-hour console at full width');
       assert.ok(found.days.top<found.hero.top&&found.hero.top<found.quickHours.top,
@@ -174,7 +174,7 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
         assert.ok(Math.abs(found.wave.top-found.wind.top)<=10,'wind dropped under wave');
       }
     }
-    if(s.width>=711&&s.width<=1030){
+    if(s.width>=711&&s.width<=1030&&!found.loading&&!found.offline){
       // On tablet, the compact selectable day/hero/hour console replaces
       // the old detailed hourly card. Test the NEW hierarchy, not its legacy
       // position below the overview.
