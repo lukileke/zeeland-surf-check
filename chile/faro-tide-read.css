@@ -2140,8 +2140,8 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   line-height:1.42!important;
   margin:0!important;
  }
- #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-actions,
- #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-qualification{
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-actions.faro-lead-actions,
+ #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead .faro-lead-qualification.faro-lead-qualification{
   display:none!important;
  }
  #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead>.faro-lead-signal{
