@@ -283,10 +283,16 @@ function fixture(){
     dayVisible:getComputedStyle(document.getElementById('faroDayRail')).display!=='none',
     hourVisible:getComputedStyle(document.getElementById('faroQuickHourRail')).display!=='none'
    }));
-   assert.ok(rails.dayVisible&&rails.hourVisible,
-    'The unified forecast rails must be visible at every breakpoint');
-   assert.ok(rails.days<rails.lead&&rails.lead<rails.hours,
-    'Interactive day/hero/hour sequence must lead the forecast at every width');
+   const modelUnavailable=await page.locator('body.faro-model-pending,body.faro-model-unavailable').count()>0;
+   if(modelUnavailable){
+    assert.ok(!rails.dayVisible&&!rails.hourVisible,
+     'Unavailable data must hide both unscored rails, not invent forecast values');
+   }else{
+    assert.ok(rails.dayVisible&&rails.hourVisible,
+     'The unified forecast rails must be visible at every breakpoint');
+    assert.ok(rails.days<rails.lead&&rails.lead<rails.hours,
+     'Interactive day/hero/hour sequence must lead the forecast at every width: '+JSON.stringify(rails));
+   }
    assert.ok(Number.isFinite(rects.route),'Quick navigation must remain measurable');
 
    assert.equal(await page.locator('#dayStripItems .day-chip').count(),7);
