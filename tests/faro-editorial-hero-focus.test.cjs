@@ -14,7 +14,7 @@ const js=read('chile/chile-forecast.js');
 test('hero layout loaded immediately before shared score palette',()=>{
  const links=[...h.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(x=>x[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=14');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=15');
  assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=10');
  for(const source of ['faro-editorial-hero-focus-v1.css','faro-responsive-quality-v1.css','faro-decision-balance-v1.css'])
   assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/'+source));
