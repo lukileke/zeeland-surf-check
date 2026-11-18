@@ -2030,7 +2030,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  border-top:0;border-radius:0 0 22px 22px;margin:0;
  padding-top:9px;padding-bottom:15px;
 }
-html body main #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
+body main #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
  background:radial-gradient(ellipse 70% 80% at 94% 18%,rgba(137,204,185,.115),transparent 72%),
             #123538!important;
  border:1px solid rgba(166,218,205,.19)!important;
@@ -2153,7 +2153,7 @@ body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section.hourly-se
  #forecastPage .faro-console-hour-chip{flex-basis:82px;min-height:63px;padding:7px 9px 9px}
  #forecastPage .faro-console-day-score,
  #forecastPage .faro-console-hour-score{font-size:20px}
- html body main #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
+ body main #forecastPage:not(.hide)>#faroForecastLead.faro-forecast-lead{
   display:flex!important;flex-direction:column!important;align-items:stretch;
   gap:8px!important;
   padding:13px 20px 12px!important;
