@@ -151,8 +151,11 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       if(!found.loading&&!found.offline){
        assert.equal(found.daysCount,7,'seven interactive forecast days');
        assert.ok(found.quickHoursCount>=7,'two-hour mini-sessions must load');
-       assert.ok(found.days.top<found.hero.top&&found.hero.top<found.quickHours.top,
-        'days, lead and hours must read as one vertical module');
+       assert.ok(found.days.top+found.days.height<=found.hero.top+2,
+        'Independent week timeline must finish above the hero');
+       assert.ok(found.quickHours.top>found.hero.top&&
+        found.quickHours.top+found.quickHours.height<=found.hero.top+found.hero.height+2,
+        'Two-hour choices are contained inside the hero');
        assert.ok(found.dock.top<found.days.top,'choose the spot before its modelled session windows');
       }
       if(mobileLayout){
@@ -165,8 +168,11 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
     if(s.width>=1120&&!found.loading&&!found.offline){
       assert.ok(found.days.width>s.width*.55&&found.quickHours.width>s.width*.55,
        'desktop must show the connected day and two-hour console at full width');
-      assert.ok(found.days.top<found.hero.top&&found.hero.top<found.quickHours.top,
-       'desktop must show day → hero → hours in that order');
+      assert.ok(found.days.top+found.days.height<=found.hero.top+2,
+       'Desktop day timeline is separate from the hero');
+      assert.ok(found.quickHours.top>found.hero.top&&
+       found.quickHours.top+found.quickHours.height<=found.hero.top+found.hero.height+2,
+       'Desktop hours belong to the hero, not a third independent panel');
       assert.equal(found.hours.height,0,'the legacy duplicated desktop hour grid must be hidden');
       // Check three metrics occupy one row, not the former orphan wind row.
       if(found.wave&&found.period&&found.wind&&found.wave.height>0){
@@ -180,9 +186,11 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
       // position below the overview.
       assert.ok(found.days.top+found.days.height<=found.hero.top+2,
         'tablet days must precede hero: '+JSON.stringify({days:found.days,hero:found.hero,hours:found.quickHours}));
-      assert.ok(found.hero.top+found.hero.height<=found.quickHours.top+2,'tablet hours must follow hero');
-      assert.ok(found.quickHours.top+found.quickHours.height<=found.overview.top+2,
-        'tablet overview must follow the unified surf console');
+      assert.ok(found.quickHours.top>found.hero.top&&
+       found.quickHours.top+found.quickHours.height<=found.hero.top+found.hero.height+2,
+       'Tablet hours must sit inside the hero');
+      assert.ok(found.hero.top+found.hero.height<=found.overview.top+2,
+       'Tablet detail view follows the complete hero');
     }
     assert.equal(found.scoreInk,'rgb(177, 213, 116)','canonical score '+JSON.stringify(found.scoreProbe));
     rgbByEngine[engine][s.width+'-'+theme]=found.scoreInk;
