@@ -49,7 +49,7 @@
 
 
 
-<link rel="stylesheet" href="faro-tide-read.css?v=15">
+<link rel="stylesheet" href="faro-tide-read.css?v=16">
 <link rel="stylesheet" href="faro-score-colour-lock-v1.css?v=1">
 </head>
 <body class="faro-model-pending">
@@ -133,8 +133,8 @@
    <button id="refreshForecast" class="forecast-refresh" type="button" aria-label="Actualizar pronóstico">↻ <span data-es="Actualizar" data-en="Refresh">Actualizar</span></button>
   </div>
   </section>
-  <!-- One forecast console: days → model decision → 2-hour windows.
-       A selected day or hour changes the existing model view in place. -->
+  <!-- Days form a separate week selector. Two-hour choices live inside
+       the HERO and update the same source-of-truth forecast model. -->
   <section id="faroDayRail" class="faro-console-day" aria-label="Seleccionar día del pronóstico">
    <div class="faro-console-rail-head">
     <span data-es="PRÓXIMOS 7 DÍAS" data-en="NEXT 7 DAYS">PRÓXIMOS 7 DÍAS</span>
@@ -174,17 +174,17 @@
     </div>
     <small class="faro-lead-fineprint" id="faroLeadStatus" data-es="Guías locales + modelo · sin calibración en la rompiente" data-en="Local guides + model · not calibrated at the break">Guías locales + modelo · sin calibración en la rompiente</small>
    </aside>
-  </section>
-  <section id="faroQuickHourRail" class="faro-console-hours" aria-label="Elegir franja del día">
-   <div class="faro-console-rail-head">
-    <span data-es="FRANJAS DE 2 HORAS" data-en="2-HOUR WINDOWS">FRANJAS DE 2 HORAS</span>
-    <small id="faroQuickHourHelp" aria-live="polite">—</small>
-   </div>
-   <div id="faroQuickHours" class="faro-console-hour-list" role="group" aria-label="Seleccionar franja de dos horas"></div>
-   <div class="faro-console-footer">
-    <span data-es="Índice experimental · comprueba el mar y los avisos" data-en="Experimental index · check real surf and warnings">Índice experimental · comprueba el mar y los avisos</span>
-    <button id="faroQuickDetails" type="button" data-es="Ver análisis" data-en="See analysis">Ver análisis <span aria-hidden="true">↗</span></button>
-   </div>
+   <section id="faroQuickHourRail" class="faro-console-hours" aria-label="Elegir franja del día">
+    <div class="faro-console-rail-head">
+     <span data-es="FRANJAS DE 2 HORAS" data-en="2-HOUR WINDOWS">FRANJAS DE 2 HORAS</span>
+     <small id="faroQuickHourHelp" aria-live="polite">—</small>
+    </div>
+    <div id="faroQuickHours" class="faro-console-hour-list" role="group" aria-label="Seleccionar franja de dos horas"></div>
+    <div class="faro-console-footer">
+     <span data-es="Índice experimental · comprueba el mar y los avisos" data-en="Experimental index · check real surf and warnings">Índice experimental · comprueba el mar y los avisos</span>
+     <button id="faroQuickDetails" type="button" data-es="Ver análisis" data-en="See analysis">Ver análisis <span aria-hidden="true">↗</span></button>
+    </div>
+   </section>
   </section>
   <!-- Zeeland FARO safety-centre hierarchy, with the FARO mark. -->
   <details id="ventanasAccessNotice" class="faro-access-notice faro-safety-center caution" hidden>
