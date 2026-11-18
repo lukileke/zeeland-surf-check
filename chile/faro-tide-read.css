@@ -2097,6 +2097,10 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage .faro-console-hour-chip.is-past .faro-console-hour-label{
   color:#efd8a0;
  }
+ /* Tablet and phone use the connected hourly rail, not a redundant
+    lead CTA. Two IDs beat the inherited button-level important display. */
+ #faroForecastLead #faroLeadRead,
+ #faroForecastLead #faroLeadMap{display:none!important}
  #forecastPage .faro-console-footer{
   display:flex;justify-content:space-between;
   align-items:center;gap:10px;
