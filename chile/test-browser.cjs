@@ -169,6 +169,11 @@ function fixture(){
       inactiveNavInk:getComputedStyle(nav.querySelector('button:not(.active)')).color,
       pickerBackground:getComputedStyle(document.querySelector('.faro-spot-choice')).backgroundColor,
       pickerInk:getComputedStyle(document.querySelector('.faro-spot-choice-text')).color,
+      pickerTriggerBackground:getComputedStyle(document.querySelector('.faro-spot-choice-trigger')).backgroundColor,
+      pickerTriggerInk:getComputedStyle(document.querySelector('.faro-spot-choice-trigger')).color,
+      pickerTextFill:getComputedStyle(document.querySelector('.faro-spot-choice-text')).webkitTextFillColor,
+      pickerThemeBackground:getComputedStyle(document.querySelector('.faro-spot-choice')).getPropertyValue('--faro-spot-editorial-bg'),
+      pickerThemeInk:getComputedStyle(document.querySelector('.faro-spot-choice')).getPropertyValue('--faro-spot-editorial-ink'),
       activeNavRadius:parseFloat(getComputedStyle(active).borderTopLeftRadius),
       navBg:getComputedStyle(nav).backgroundColor
      };
@@ -183,6 +188,7 @@ function fixture(){
      ...values
     };
    });
+   if(width>=1120)console.log('FARO_PICKER_CONTRAST '+JSON.stringify({width,light:art.light,dark:art.dark}));
    assert.equal(art.ringSegments,4,'Beacon must preserve all four original FARO O segments');
    assert.equal(art.yellowCore,1,'Beacon must contain its warm yellow centre');
    assert.equal(art.contourCount,0,'Hero must not include decorative fake depth/swell curves');
