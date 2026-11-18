@@ -43,14 +43,16 @@ test('numerical wave, period and wind metrics remain available beneath hero',()=
   assert.ok(h.includes('id="'+id+'"'),'legacy updater target still present '+id);
 });
 
-test('no live numerical detail is repeated in ordinary hero subtitle',()=>{
+test('hero copy is evidence-led without presenting offshore data as surf at the break',()=>{
  const from=js.indexOf(' const name=spot()?.shortName',js.indexOf('function renderLead('));
  const to=js.indexOf('\nfunction renderPrepHints',from);
  const copy=js.slice(from,to);
  assert.ok(copy.includes('session.score>=8?'));
- assert.ok(copy.includes('Una señal prometedora'));
- assert.ok(copy.includes('Condiciones variables'));
- assert.ok(!copy.includes('FARO estima '));
+ assert.ok(copy.includes('Buena ventana en '));
+ assert.ok(copy.includes('Condiciones cambiantes en '));
+ assert.ok(copy.includes('Oleaje oceánico '));
+ assert.ok(copy.includes('num(session.totalWaveHeightM)'));
+ assert.ok(copy.includes('Verifica la rompiente'));
  assert.ok(!copy.includes('num(session.windKmh'));
  assert.ok(h.includes('Modelo experimental · no es una medición de la rompiente'));
 });
