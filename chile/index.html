@@ -49,7 +49,7 @@
 
 
 
-<link rel="stylesheet" href="faro-tide-read.css?v=13">
+<link rel="stylesheet" href="faro-tide-read.css?v=14">
 <link rel="stylesheet" href="faro-score-colour-lock-v1.css?v=1">
 </head>
 <body class="faro-model-pending">
@@ -138,7 +138,7 @@
   <section id="faroDayRail" class="faro-console-day" aria-label="Seleccionar día del pronóstico">
    <div class="faro-console-rail-head">
     <span data-es="PRÓXIMOS 7 DÍAS" data-en="NEXT 7 DAYS">PRÓXIMOS 7 DÍAS</span>
-    <small data-es="Desliza para comparar" data-en="Swipe to compare">Desliza para comparar</small>
+    <small data-es="Elige un día" data-en="Choose a day">Elige un día</small>
    </div>
    <div id="faroQuickDays" class="faro-console-days" role="group" aria-label="Cambiar día y actualizar el pronóstico"></div>
   </section>
@@ -165,7 +165,7 @@
    </div>
    <aside class="faro-lead-signal" aria-label="Resumen de condiciones modeladas">
     <div class="faro-lead-signal-top"><span id="faroLeadSignalTitle" data-es="ÍNDICE DE SESIÓN · MODELO" data-en="SESSION INDEX · MODEL">ÍNDICE DE SESIÓN · MODELO</span></div>
-    <div class="faro-lead-score-row"><strong id="faroLeadScore" style="color:var(--brand-score-ink,var(--faro-quiet))!important;-webkit-text-fill-color:var(--brand-score-ink,var(--faro-quiet))!important">—</strong><span>/10</span><span id="faroLeadGrade" class="faro-lead-grade">—</span></div>
+    <div class="faro-lead-score-row"><strong id="faroLeadScore">—</strong><span>/10</span><span id="faroLeadGrade" class="faro-lead-grade">—</span></div>
     <div class="faro-lead-best"><small id="faroLeadWindowLabel" data-es="MEJOR FRANJA EVALUABLE" data-en="BEST ELIGIBLE WINDOW">MEJOR FRANJA EVALUABLE</small><strong id="faroLeadTime">—</strong></div>
     <div class="faro-lead-metrics">
      <div><small data-es="ALTURA OCEÁNICA" data-en="OFFSHORE HEIGHT">ALTURA OCEÁNICA</small><strong id="faroLeadWave">—</strong></div>
@@ -177,10 +177,10 @@
   </section>
   <section id="faroQuickHourRail" class="faro-console-hours" aria-label="Elegir franja del día">
    <div class="faro-console-rail-head">
-    <span data-es="HORAS DEL DÍA" data-en="TODAY'S WINDOWS">HORAS DEL DÍA</span>
-    <small id="faroQuickHourHelp" data-es="Franjas de 2 h · desliza" data-en="2-hour slots · swipe">Franjas de 2 h · desliza</small>
+    <span data-es="FRANJAS DE 2 HORAS" data-en="2-HOUR WINDOWS">FRANJAS DE 2 HORAS</span>
+    <small id="faroQuickHourHelp" aria-live="polite">—</small>
    </div>
-   <div id="faroQuickHours" class="faro-console-hour-list" role="group" aria-label="Seleccionar sesión de dos horas"></div>
+   <div id="faroQuickHours" class="faro-console-hour-list" role="group" aria-label="Seleccionar franja de dos horas"></div>
    <div class="faro-console-footer">
     <span data-es="Índice experimental · comprueba el mar y los avisos" data-en="Experimental index · check real surf and warnings">Índice experimental · comprueba el mar y los avisos</span>
     <button id="faroQuickDetails" type="button" data-es="Ver análisis" data-en="See analysis">Ver análisis <span aria-hidden="true">↗</span></button>
@@ -486,7 +486,7 @@
 <script src="faro-session-decision.js?v=1" defer></script>
 <script src="faro-spot-chooser.js?v=1" defer></script>
 <script src="faro-thermal-guide.js?v=1" defer></script>
-<script src="chile-forecast.js?v=54" defer></script>
+<script src="chile-forecast.js?v=55" defer></script>
 <script src="faro-tide-read.js?v=4" defer></script>
 <script src="faro-official-watch.js?v=2" defer></script>
 </body>
