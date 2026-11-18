@@ -408,10 +408,10 @@ html body main #forecastPage:not(.hide) > .faro-footer-bridge {
   line-height:1.5!important;
  }
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots{
-  min-width:0!important;
+  min-width:0;
  }
  html body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section .slots>button {
-  min-width:0!important;
+  min-width:0;
  }
  html body main #forecastPage:not(.hide)>.faro-footer-bridge{
   gap:14px;
@@ -1975,7 +1975,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
   border-radius:20px;
  }
  #forecastPage:not(.hide)>section#faroForecastLead.faro-forecast-lead{
-  grid-column:1/-1!important;
+  grid-column:1/-1;
   grid-row:auto!important;
  }
  #forecastPage:not(.hide) #dayStrip{display:none!important}
@@ -2039,7 +2039,7 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
  #forecastPage>#faroDayRail{
   border-radius:20px 20px 0 0;
   border-bottom:0;
-  margin:0!important;
+  margin:0;
  }
  #forecastPage>section#faroForecastLead{
   border-radius:0!important;
@@ -2210,15 +2210,14 @@ body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage:not(.hide)>.f
 }
 /* Empty model states do not show decorative rails with eight dashes.
    Keep the original lead's accessible unavailable explanation intact. */
-@media(max-width:1119px){
- body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroDayRail,
- body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroQuickHourRail{
-  display:none!important;
- }
- body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>section#faroForecastLead{
-  border-radius:20px!important;
-  margin-bottom:0!important;
- }
+/* Loading, error and cached-model states must match on ALL devices. */
+body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroDayRail,
+body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>#faroQuickHourRail{
+ display:none!important;
+}
+body:is(.faro-model-pending,.faro-model-unavailable) #forecastPage>section#faroForecastLead{
+ border-radius:20px!important;
+ margin-bottom:0!important;
 }
 @media(prefers-reduced-motion:reduce){
  #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip){transition:none}
