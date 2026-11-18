@@ -32,6 +32,8 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
           google-chrome --version
+      - name: Check Valparaíso UX, UTC, sources and overflow
+        run: node chile/test-browser.cjs
       - name: Probe live marine and weather APIs (diagnostic only)
         continue-on-error: true
         run: node tests/faro-live-provider-probe.cjs
@@ -47,8 +49,6 @@ jobs:
         run: node tests/faro-first-party-cache-browser.cjs
       - name: Verify automatic recovery after transient marine 503
         run: node tests/faro-chile-reconnect-browser.cjs
-      - name: Check Valparaíso UX, UTC, sources and overflow
-        run: node chile/test-browser.cjs
       - name: Save FARO reading visuals for review
         if: always()
         uses: actions/upload-artifact@v5
