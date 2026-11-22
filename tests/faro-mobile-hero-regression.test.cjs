@@ -99,7 +99,7 @@ test('iPhone retains visible floating FARO mark without introducing a second ani
  assert.doesNotMatch(finalCSS,/#forecastPage:not\(\.hide\)>#faroForecastLead>\.faro-lead-beacon\s*\{\s*display:none/);
  assert.match(editor,/@keyframes faro-hero-mark-breathe[\s\S]*?translate:0 -5px/);
  assert.match(editor,/opacity:\.58!important/);
- assert.match(editor,/translate:0 0!important/);
+ assert.match(editor,/translate:0 0;/);
 });
 test('iPhone halo is no longer opacity-locked; all five layers stop for reduced motion',()=>{
  assert.ok(css.includes('opacity:.77; /* let synchronised keyframes modulate luminance */'));
