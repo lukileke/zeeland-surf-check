@@ -231,5 +231,42 @@ assert.equal(L.wallClock(Date.parse('2026-04-05T02:30:00Z')/1000,'America/Santia
  assert.equal(fallback.model.optionalSwellFallback,true);
  assert.equal(fallback.days[0].slots[0].secondarySwell,null);
  assert.ok(fallback.days[0].best?.score>0,'Optional partitions must not disable primary surf guidance');
- console.log('FARO Chile: UTC/DST, 7-day windows, optional partitions with fallback, risk and provenance checks passed.');
+
+ // A lost TCP connection is not an HTTP 400/429. Two consecutive transport
+ // failures should trigger the weather-model endpoint rather than blank FARO.
+ let weatherCalls=0,gfsUsed=false;
+ const recoveringNetwork=async uri=>{
+  const url=new URL(uri);
+  if(url.hostname==='marine-api.open-meteo.com')
+   return {ok:true,json:async()=>epochMarine};
+  if(url.pathname==='/v1/forecast'){
+   weatherCalls++;
+   const error=new TypeError('fetch failed');
+   error.cause={code:'UND_ERR_CONNECT_TIMEOUT'};
+   throw error;
+  }
+  if(url.pathname==='/v1/gfs'){
+   gfsUsed=true;
+   return {ok:true,json:async()=>epochWeather};
+  }
+  throw Error('Unexpected fallback URI '+url);
+ };
+ const recovered=await L.fetchSpot(config,config.pilots[0],profile,recoveringNetwork,'es',
+  {timeoutMs:30000});
+ assert.equal(weatherCalls,2,'Only one retry of the original weather URL is allowed');
+ assert.equal(gfsUsed,true,'Transport failure must try an independently computed weather model URL');
+ assert.equal(recovered.model.weatherModelFallback,'gfs');
+ assert.ok(recovered.days[0].slots[0].modelComplete,'Only verified complete model hours may score');
+
+ // A genuine provider rate limit must not trigger extra API requests.
+ let throttled=0;
+ const rateLimited=async uri=>{
+  if(new URL(uri).hostname==='marine-api.open-meteo.com')return {ok:true,json:async()=>epochMarine};
+  throttled++;
+  return {ok:false,status:429,headers:new Map()};
+ };
+ await assert.rejects(L.fetchSpot(config,config.pilots[0],profile,rateLimited,'es'),
+  /meteorología: HTTP 429/);
+ assert.equal(throttled,1,'Never retry or bypass the provider 429 rate limit');
+ console.log('FARO Chile: network recovery, 429 guard, UTC/DST, 7-day windows and authentic-source checks passed.');
 })().catch(e=>{console.error(e);process.exitCode=1});
