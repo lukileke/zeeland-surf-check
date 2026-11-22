@@ -2207,9 +2207,6 @@ body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section.hourly-se
   padding:13px 20px 12px!important;
   min-height:0!important;
  }
- #forecastPage:not(.hide)>#faroForecastLead>.faro-lead-beacon{
-  display:none!important;
- }
  #forecastPage:not(.hide)>#faroForecastLead>.faro-lead-main{
   gap:5px!important;min-width:0;max-width:100%;
  }
