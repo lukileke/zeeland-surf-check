@@ -15,6 +15,15 @@ test('one seven-day / hero / hour hierarchy exists, with no duplicate IDs',()=>{
  for(const id of ids)assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  const positions=['id="faroDayRail"','id="faroForecastLead"','id="faroQuickHourRail"'].map(v=>html.indexOf(v));
  assert.ok(positions.every((v,i)=>v>=0&&(i===0||v>positions[i-1])));
+ // Structural contract: the week is a sibling above the hero, but the
+ // time slots are genuine DOM children of the hero, not a visually adjacent card.
+ const leadStart=html.indexOf('<section id="faroForecastLead"');
+ const hoursStart=html.indexOf('<section id="faroQuickHourRail"');
+ const nextSection=html.indexOf('<details id="ventanasAccessNotice"',hoursStart);
+ const leadEnd=html.lastIndexOf('\n  </section>',nextSection);
+ assert.ok(positions[0]<leadStart&&leadStart<hoursStart&&hoursStart<leadEnd&&leadEnd<nextSection,
+  'Week above hero; 2-hour instrument and analysis link inside hero itself');
+ assert.match(css,/#forecastPage>\.faro-forecast-lead>#faroQuickHourRail/);
  assert.match(html,/<\/aside>\s*<section id="faroQuickHourRail"/,
   'The two-hour choices belong inside the hero, after its modelled reading');
  assert.match(html,/<\/section>\s*<\/section>\s*<!-- Zeeland FARO safety-centre/,
