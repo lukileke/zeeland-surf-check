@@ -65,11 +65,29 @@ function buildUrls(spot,config){
  weather.search=new URLSearchParams({...common,hourly:config.modelProviders.requiredVariables.weather.join(","),daily:"sunrise,sunset,uv_index_max,precipitation_sum",wind_speed_unit:"kmh",temperature_unit:"celsius",precipitation_unit:"mm"}).toString();
  return {marine:marine.toString(),weather:weather.toString()};
 }
+function isTransportFailure(err){
+ // Connectivity is different from HTTP status. Intentional aborts stay fatal.
+ if(!err||err.name==="AbortError"||err.name==="TimeoutError")return false;
+ const cause=err.cause;
+ return (err.name==="TypeError"&&/fetch failed|network/i.test(String(err.message)))||
+  ["ECONNRESET","ECONNREFUSED","ETIMEDOUT","EAI_AGAIN","ENETUNREACH","EHOSTUNREACH",
+   "UND_ERR_CONNECT_TIMEOUT","UND_ERR_SOCKET"].includes(err.code||cause?.code);
+}
 async function fetchJSON(url,fetcher){
- // An intermittent 502/503/504 must not blank the whole forecast on the
- // first failed GET. Retry ONCE; never retry a 400 or a 429 rate limit.
+ // Retry one transient transport error or HTTP 502/503/504 only.
+ // 400, 429 and timeouts stay terminal. Never fabricate measurements.
  for(let attempt=0;attempt<2;attempt++){
-  const res=await fetcher(url);
+  let res;
+  try{res=await fetcher(url)}
+  catch(err){
+   if(attempt===0&&isTransportFailure(err)){
+    await new Promise(resolve=>setTimeout(resolve,900));
+    continue;
+   }
+   if(isTransportFailure(err)&&err.cause?.code)
+    err.message+=" ["+String(err.cause.code).slice(0,45)+"]";
+   throw err;
+  }
   if(res?.ok)return res.json();
   const status=res?.status||"unknown";
   if(attempt===0&&[502,503,504].includes(status)){
@@ -380,13 +398,13 @@ function providerError(status,source,reason){
  e.status=status;e.source=source;
  return e;
 }
-async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
+async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es",options={}){
  const urls=buildUrls(spot,config);
- // A slow/offline provider must not leave the interface in an endless
- // loading state. Apply one deadline to the entire marine + weather cycle,
- // including fallbacks and retries. Injected test fetchers may ignore options.
+ // Browser stays at 16s. Snapshot captures can allow one slower recovery.
+ const requested=Number(options?.timeoutMs);
+ const timeoutMs=Number.isFinite(requested)&&requested>=5000&&requested<=60000?requested:16000;
  const deadline=(typeof AbortSignal!=="undefined"&&typeof AbortSignal.timeout==="function")
-  ?AbortSignal.timeout(16000):null;
+  ?AbortSignal.timeout(timeoutMs):null;
  const timedFetch=(url)=>deadline?fetcher(url,{signal:deadline}):fetcher(url);
  const marineFields=["wave_height","wave_direction","wave_period",
   "swell_wave_height","swell_wave_direction","swell_wave_period"];
@@ -410,7 +428,7 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
    return await readMarine(urls.marine);
   }catch(e){
    previous=e;
-   if(![400,424,502,503,504].includes(e.status)){
+   if(![400,424,502,503,504].includes(e.status)&&!isTransportFailure(e)){
     e.source="marine";throw e;
    }
   }
@@ -432,7 +450,7 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
     return d;
    }catch(e){
     previous=e;
-    if(![400,424,502,503,504].includes(e.status)){
+    if(![400,424,502,503,504].includes(e.status)&&!isTransportFailure(e)){
      e.source="marine";throw e;
     }
    }
@@ -442,7 +460,7 @@ async function fetchSpot(config,spot,profiles,fetcher=fetch,locale="es"){
  const weatherRequest=async()=>{
   try{return await readWeather(urls.weather)}
   catch(e){
-   if(![424,502,503,504].includes(e.status)){
+   if(![424,502,503,504].includes(e.status)&&!isTransportFailure(e)){
     e.source="weather";throw e;
    }
    const gfs=new URL(urls.weather);
