@@ -24,7 +24,9 @@ async function capture(spot){
   raw[kind]=data;
   return {ok:true,status:response.status,headers:response.headers,json:async()=>data};
  };
- const result=await Live.fetchSpot(config,spot,profiles,observed,'es');
+ // Browser deadlines stay short; the scheduled capture can retry one slow
+ // network connection without publishing missing or stale data as fresh.
+ const result=await Live.fetchSpot(config,spot,profiles,observed,'es',{timeoutMs:45000});
  if(!raw.marine||!raw.weather||!result.model.coverage.completeSlots)
   throw Error('Incomplete authentic model for '+spot.id);
  return {capturedAtUtc:new Date().toISOString(),marine:raw.marine,weather:raw.weather};
