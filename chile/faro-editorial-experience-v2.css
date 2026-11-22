@@ -3197,7 +3197,7 @@ html body main #forecastPage:not(.hide) > .faro-forecast-lead
     animation:none!important;
     -webkit-animation:none!important;
     scale:1!important;
-    translate:0 0!important;
+    translate:0 0;
   }
 }
 
