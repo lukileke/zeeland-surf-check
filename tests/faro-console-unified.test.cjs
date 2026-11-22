@@ -15,9 +15,22 @@ test('one seven-day / hero / hour hierarchy exists, with no duplicate IDs',()=>{
  for(const id of ids)assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  const positions=['id="faroDayRail"','id="faroForecastLead"','id="faroQuickHourRail"'].map(v=>html.indexOf(v));
  assert.ok(positions.every((v,i)=>v>=0&&(i===0||v>positions[i-1])));
+ // Structural contract: the week is a sibling above the hero, but the
+ // time slots are genuine DOM children of the hero, not a visually adjacent card.
+ const leadStart=html.indexOf('<section id="faroForecastLead"');
+ const hoursStart=html.indexOf('<section id="faroQuickHourRail"');
+ const nextSection=html.indexOf('<details id="ventanasAccessNotice"',hoursStart);
+ const leadEnd=html.lastIndexOf('\n  </section>',nextSection);
+ assert.ok(positions[0]<leadStart&&leadStart<hoursStart&&hoursStart<leadEnd&&leadEnd<nextSection,
+  'Week above hero; 2-hour instrument and analysis link inside hero itself');
+ assert.match(css,/#forecastPage>\.faro-forecast-lead>#faroQuickHourRail/);
+ assert.match(html,/<\/aside>\s*<section id="faroQuickHourRail"/,
+  'The two-hour choices belong inside the hero, after its modelled reading');
+ assert.match(html,/<\/section>\s*<\/section>\s*<!-- Zeeland FARO safety-centre/,
+  'The embedded hourly section must close before the model hero closes');
  assert.match(css,/@media\(min-width:1120px\)\{[\s\S]*?#forecastPage:not\(\.hide\)>#faroDayRail/);
  assert.match(css,/grid-template-columns:repeat\(7,minmax\(0,1fr\)\)/);
- assert.match(css,/grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
+ assert.match(css,/grid-template-columns:repeat\(8,minmax\(0,1fr\)\)/);
 });
 test('window title is computed for the SELECTED day, not hard-coded to today',()=>{
  assert.match(html,/id="faroQuickHourHelp" aria-live="polite"/);
@@ -34,7 +47,7 @@ test('controls share one state machine and horizontal keyboard navigation',()=>{
 });
 test('offline rails disappear everywhere and model score colours remain canonical',()=>{
  assert.match(css,/body:is\(\.faro-model-pending,\.faro-model-unavailable\) #forecastPage>#faroDayRail/);
- assert.match(css,/body:is\(\.faro-model-pending,\.faro-model-unavailable\) #forecastPage>#faroQuickHourRail/);
+ assert.match(css,/body:is\(\.faro-model-pending,\.faro-model-unavailable\) #forecastPage>\.faro-forecast-lead>#faroQuickHourRail/);
  assert.match(html,/<strong id="faroLeadScore">—<\/strong>/);
  assert.match(css,/color:var\(--brand-score-ink,var\(--faro-quiet\)\)/);
  assert.ok((css.match(/!important/g)||[]).length<=486);

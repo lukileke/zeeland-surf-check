@@ -317,7 +317,9 @@ html:not([data-theme="light"]) #forecastPage>.faro-access-notice.faro-safety-cen
 #forecastPage>.picker-grid:has(.faro-spot-choice.is-open){z-index:80!important}
 #forecastPage .faro-spot-choice{
  position:relative;overflow:visible!important;z-index:1;
- transition:border-color .18s ease,background-color .18s ease!important;
+ /* Theme-dependent foreground/background must switch atomically:
+    animating only the surface causes 180ms of unreadable inverted text. */
+ transition:border-color .18s ease!important;
 }
 #forecastPage .faro-spot-choice.is-open{z-index:90}
 #forecastPage .faro-spot-choice select.faro-spot-native{

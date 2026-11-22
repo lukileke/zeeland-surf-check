@@ -183,6 +183,16 @@ function fixture(){
      ...values
     };
    });
+   if(width>=1120){
+    assert.equal(art.light.pickerBackground,'rgb(247, 250, 249)',
+     'Desktop light picker must be light, not an inverted dark field');
+    assert.equal(art.dark.pickerBackground,'rgb(27, 57, 61)',
+     'Desktop dark picker must be dark, not inverted white');
+    assert.equal(art.light.pickerInk,'rgb(25, 63, 67)',
+     'Light picker text must contrast with its background');
+    assert.equal(art.dark.pickerInk,'rgb(237, 248, 245)',
+     'Dark picker text must contrast with its background');
+   }
    assert.equal(art.ringSegments,4,'Beacon must preserve all four original FARO O segments');
    assert.equal(art.yellowCore,1,'Beacon must contain its warm yellow centre');
    assert.equal(art.contourCount,0,'Hero must not include decorative fake depth/swell curves');
@@ -294,7 +304,18 @@ function fixture(){
     assert.ok(rails.dayVisible&&rails.hourVisible,
      'The unified forecast rails must be visible at every breakpoint');
     assert.ok(rails.days<rails.lead&&rails.lead<rails.hours,
-     'Interactive day/hero/hour sequence must lead the forecast at every width: '+JSON.stringify(rails));
+      'Week navigation precedes an internally timed hero: '+JSON.stringify(rails));
+     const placement=await page.evaluate(()=>{
+      const day=document.querySelector('#faroDayRail').getBoundingClientRect();
+      const hero=document.querySelector('#faroForecastLead').getBoundingClientRect();
+      const hours=document.querySelector('#faroQuickHourRail').getBoundingClientRect();
+      return {dayBottom:day.bottom,heroTop:hero.top,heroBottom:hero.bottom,
+       hoursTop:hours.top,hoursBottom:hours.bottom};
+     });
+     assert.ok(placement.dayBottom<=placement.heroTop+2,
+      'Day timeline must be OUTSIDE the hero: '+JSON.stringify(placement));
+     assert.ok(placement.hoursTop>placement.heroTop&&placement.hoursBottom<=placement.heroBottom+2,
+      'Hours must be INSIDE the hero: '+JSON.stringify(placement));
    }
    assert.ok(Number.isFinite(rects.route),'Quick navigation must remain measurable');
 
@@ -357,15 +378,12 @@ function fixture(){
      return {rail:r('#faroQuickHours'),buttons,
       columns:getComputedStyle(rail).gridTemplateColumns.split(' ').length};
     });
-    assert.equal(deck.columns,6,'Six concise 2-hour windows per desktop row');
+    assert.equal(deck.columns,8,'Eight 2-hour windows should occupy one desktop HERO timeline');
     assert.equal(deck.buttons.length,8,'All eight model windows remain selectable');
     assert.ok(deck.buttons.every(x=>x.width>=70&&x.right<=deck.rail.right+2),
      'Every window must fit the desktop rail without clipping: '+JSON.stringify(deck));
-    assert.ok(Math.abs(deck.buttons[0].y-deck.buttons[5].y)<3&&
-      deck.buttons[6].y>deck.buttons[0].y+30,
-     'The second row must follow a consistent six-column grid');
-    assert.ok(deck.buttons[0].bottom+5<=deck.buttons[6].y,
-     'Desktop hourly rows need a clear separation, not overlap');
+    assert.ok(deck.buttons.every(x=>Math.abs(x.y-deck.buttons[0].y)<3),
+     'All eight desktop hours should form one readable timeline, not two stacked rows');
     assert.equal(await page.locator('#dayview>.hourly-section').isVisible(),false,
      'The former 8-slot desktop instrument is deliberately hidden');
     const selectedQuick=page.locator('#faroQuickHours>button[aria-pressed="true"]');
@@ -524,11 +542,10 @@ function fixture(){
      console.log('FARO_CONSOLE_GEOMETRY '+JSON.stringify(ordering));
     }
     assert.ok(geometry.dayBottom<=geometry.heroTop+4 &&
-     geometry.hoursTop>=geometry.heroBottom-4,
-     'Day -> hero -> hours must be one vertical sequence: '+JSON.stringify(geometry));
-    assert.ok(geometry.heroTop-geometry.dayBottom<7 &&
-     geometry.hoursTop-geometry.heroBottom<7,
-     'The three console panels cannot become separated cards: '+JSON.stringify(geometry));
+      geometry.hoursTop>geometry.heroTop && geometry.hoursTop<geometry.heroBottom,
+      'Week outside, hours inside HERO: '+JSON.stringify(geometry));
+    assert.ok(geometry.heroTop-geometry.dayBottom<35,
+      'A deliberate but compact gutter separates the week from the HERO: '+JSON.stringify(geometry));
     assert.equal(await page.locator('#dayStrip').isVisible(),false,
      'Seven-day detail must not duplicate the top-day selector on phones');
     assert.equal(await page.locator('#slots').isVisible(),false,
@@ -793,7 +810,7 @@ function fixture(){
     'Coastal read must separate swell and wind measures from the map');
    assert.match(await page.locator('#faroHourlyPreview').textContent(),/FARO · TU FRANJA|FARO · YOUR WINDOW/);
    if(width>=1120){
-   await page.locator('#faroLeadRead').click();
+   await page.locator('#faroQuickDetails').click();
    assert.ok((await page.locator('#dailyOverview').boundingBox())!==null,
     'Hero CTA leads to the existing detailed scientific read');
    // Desktop retains the hero CTA, but all hour decisions now use
