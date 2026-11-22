@@ -65,11 +65,11 @@ test('underwater pulse is kept and WebKit shadow seam is not reintroduced',()=>{
 test('new CSS is before the invariant score palette, with no model changes',()=>{
  const links=[...html.split('</head>')[0].matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(links.at(-1),'faro-score-colour-lock-v1.css?v=1');
- assert.equal(links.at(-2),'faro-tide-read.css?v=16');
- assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=11');
+ assert.equal(links.at(-2),'faro-tide-read.css?v=17');
+ assert.equal(links.at(-3),'faro-editorial-experience-v2.css?v=12');
  assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/faro-editorial-hero-focus-v1.css'));
  assert.ok(read('chile/faro-tide-read.css').includes('FARO source: chile/faro-decision-balance-v1.css'));
- assert.ok(links.includes('faro-editorial-experience-v2.css?v=11'));
+ assert.ok(links.includes('faro-editorial-experience-v2.css?v=12'));
  assert.ok(!links.includes('faro-hero-synchronised-pulse-v1.css?v=1'));
  assert.ok(!links.includes('faro-mobile-reading-order-v1.css?v=2'));
  assert.ok(!links.includes('faro-finish-pass-v1.css?v=1'));
@@ -93,6 +93,13 @@ test('five decorative layers share one 5.4-second peak at half-cycle',()=>{
  assert.doesNotMatch(pulse,/drop-shadow/);
  assert.ok(!pulse.includes('--brand-score-ink:'));
  assert.ok(!pulse.includes('html[data-theme'));
+});
+test('iPhone retains visible floating FARO mark without introducing a second animation system',()=>{
+ const finalCSS=read('chile/faro-tide-read.css');
+ assert.doesNotMatch(finalCSS,/#forecastPage:not\(\.hide\)>#faroForecastLead>\.faro-lead-beacon\s*\{\s*display:none/);
+ assert.match(editor,/@keyframes faro-hero-mark-breathe[\s\S]*?translate:0 -5px/);
+ assert.match(editor,/opacity:\.58!important/);
+ assert.match(editor,/translate:0 0;/);
 });
 test('iPhone halo is no longer opacity-locked; all five layers stop for reduced motion',()=>{
  assert.ok(css.includes('opacity:.77; /* let synchronised keyframes modulate luminance */'));

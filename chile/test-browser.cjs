@@ -150,6 +150,8 @@ function fixture(){
    const art=await page.evaluate(async()=>{
     const lead=document.getElementById('faroForecastLead');
     const mark=lead.querySelector('.faro-beacon-symbol');
+    const signature=lead.querySelector('.faro-lead-signature');
+    const beacon=lead.querySelector('.faro-lead-beacon');
     const nav=document.querySelector('main > .app-nav');
     const active=nav.querySelector('button.active');
     const theme=document.documentElement.dataset.theme;
@@ -164,6 +166,9 @@ function fixture(){
       scorePanelBackground:getComputedStyle(lead.querySelector('.faro-lead-signal')).backgroundImage,
       beamOpacity:getComputedStyle(lead.querySelector('.faro-beacon-light')).opacity,
       iconOpacity:getComputedStyle(mark).opacity,
+       beaconDisplay:getComputedStyle(beacon).display,
+       beaconAnimation:getComputedStyle(signature).animationName,
+       beaconOpacity:Number(getComputedStyle(signature).opacity),
       activeNavBackground:getComputedStyle(active).backgroundImage,
       activeNavInk:getComputedStyle(active).color,
       inactiveNavInk:getComputedStyle(nav.querySelector('button:not(.active)')).color,
@@ -197,10 +202,16 @@ function fixture(){
    assert.equal(art.yellowCore,1,'Beacon must contain its warm yellow centre');
    assert.equal(art.contourCount,0,'Hero must not include decorative fake depth/swell curves');
    assert.equal(art.navButtons,3);
-   if(width<=710)assert.equal(art.markRect.width,0,
-    'The mobile hero must not overlay its reading with the redundant blurred O mark');
-   else assert.ok(art.markRect.width>35,
-    'Desktop hero should retain the original recognisable FARO signature');
+   assert.ok(art.markRect.width>=55,
+    'The original illuminated FARO O must be visible on all screen sizes');
+   for(const theme of ['light','dark']){
+    assert.notEqual(art[theme].beaconDisplay,'none',
+     'The mobile redesign must not hide the original FARO emblem');
+    assert.match(art[theme].beaconAnimation,/faro-hero-mark-breathe/,
+     'The original floating animation must remain active');
+    assert.ok(art[theme].beaconOpacity>=.35,
+     'The emblem must have enough opacity to be recognisable');
+   }
    // The cinematic FARO hero stays deep-ocean in both page themes.
    // The surrounding navigation, by contrast, reacts to the site theme.
    assert.equal(art.light.heroBackground,art.dark.heroBackground,
@@ -257,7 +268,7 @@ function fixture(){
        borderTop:parseFloat(style.borderTopWidth),
        panelWidth:panelBox.width,heroWidth:heroBox.width,
        withinHero:panelBox.left>=heroBox.left-1&&panelBox.right<=heroBox.right+1,
-       symbolWithinHero:symbolBox.width===0||(symbolBox.left>=heroBox.left&&symbolBox.right<=heroBox.right+1),
+       symbolWithinHero:symbolBox.width>=55&&symbolBox.left>=heroBox.left-2&&symbolBox.right<=heroBox.right+2,
        symbolClearFromContent:symbolBox.bottom<=mainBox.top+75
       };
      }
