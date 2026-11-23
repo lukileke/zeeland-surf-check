@@ -2004,7 +2004,7 @@ html:not([data-theme="light"]) main>.app-nav button.active{
  #forecastPage#forecastPage:not(.hide){display:grid!important}
  /* Decision-first: the three-tier location card becomes one utility row,
     placing the real forecast in the first desktop viewport. */
- html body main #forecastPage:not(.hide)>.faro-context-dock{
+ #forecastPage:not(.hide)>.faro-context-dock{
   display:grid;
   grid-template-columns:minmax(260px,1.35fr) auto minmax(240px,.85fr);
   grid-template-areas:"spot region updated";
@@ -2016,7 +2016,7 @@ html:not([data-theme="light"]) main>.app-nav button.active{
   grid-area:region;justify-self:center;justify-content:center;
  }
  #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading>div:first-child{display:none}
- html body main #forecastPage:not(.hide)>.faro-context-dock .picker-grid{
+ #forecastPage:not(.hide)>.faro-context-dock .picker-grid{
   display:grid;grid-template-columns:minmax(0,1fr);gap:0;
  }
  #forecastPage:not(.hide)>.faro-context-dock .picker-grid>.chile-spot-picker:first-child{display:none}
