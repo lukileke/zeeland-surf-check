@@ -598,6 +598,10 @@ function strip(){
    mini.type="button";
    mini.dataset.dayIndex=String(i);
    mini.setAttribute("aria-pressed",String(i===state.day));
+   // A restrained day trend bar uses the real eligible 0–10 score. No
+   // fabricated value or visual bar for days that cannot be assessed.
+   if(ok(value))mini.style.setProperty("--faro-day-pct",
+    (Math.max(0,Math.min(10,value))/10).toFixed(3));
    mini.setAttribute("aria-label",textDay+" · "+(ok(value)?
     grade(value)+" · "+num(value)+"/10 · "+sessionTime(s):
     tr("Sin ventana futura evaluable","No eligible future window")));
@@ -950,11 +954,19 @@ function slots(){
    mini.dataset.hour=String(s.hour);
    mini.disabled=!s.modelComplete;
    mini.setAttribute("aria-pressed",String(current));
+   // Swap repeated quality text for modelled wind in safe, future hours.
+   // Preserve risk, caution, darkness and past labels in all other cases.
+   const windReady=!past&&!dangerous&&!unknownRisk&&slotSafety!=="caution"&&
+    s.daylight?.eligible&&ok(value)&&ok(s.windKmh)&&ok(s.windDirection);
+   const compactWind=windReady?Live.cardinal(s.windDirection)+" · "+num(s.windKmh,0):null;
    mini.setAttribute("aria-label",sessionTime(s)+" · "+label+
-    (ok(value)?" · "+num(value)+"/10":""));
+    (ok(value)?" · "+num(value)+"/10":"")+
+    (windReady?tr(" · viento "," · wind ")+num(s.windKmh,0)+" km/h · "+
+     Live.cardinal(s.windDirection):""));
    mini.append(el("span",h(s.hour)+"–"+h(s.hour+2),"faro-console-hour-time"));
    mini.append(el("strong",ok(value)?num(value):"—","faro-console-hour-score"));
-   mini.append(el("small",label,"faro-console-hour-label"));
+   mini.append(el("small",compactWind||label,"faro-console-hour-label"+
+    (windReady?" is-wind":"")));
    mini.addEventListener("click",()=>{
     state.hour=s.hour;renderSelectedWindow();
     $("faroQuickHours")?.querySelector('[data-hour="'+s.hour+'"]')?.focus({preventScroll:true});

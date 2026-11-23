@@ -2002,6 +2002,37 @@ html:not([data-theme="light"]) main>.app-nav button.active{
    This replaces, rather than layers over, the old boxed console rules. */
 @media(min-width:1120px){
  #forecastPage#forecastPage:not(.hide){display:grid!important}
+ /* Decision-first: the three-tier location card becomes one utility row,
+    placing the real forecast in the first desktop viewport. */
+ #forecastPage:not(.hide)>.faro-context-dock{
+  display:grid;
+  grid-template-columns:minmax(260px,1.35fr) auto minmax(240px,.85fr);
+  grid-template-areas:"spot region updated";
+  align-items:center;column-gap:18px;row-gap:0;
+  padding:11px 17px;margin:0 0 12px;min-height:0;
+ }
+ #forecastPage:not(.hide)>.faro-context-dock>.faro-context-controls{grid-area:spot}
+ #forecastPage:not(.hide)>.faro-context-dock>.faro-context-heading{
+  grid-area:region;justify-self:center;justify-content:center;
+ }
+ #forecastPage:not(.hide)>.faro-context-dock .faro-context-heading>div:first-child{display:none}
+ #forecastPage:not(.hide)>.faro-context-dock .picker-grid{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:0;
+ }
+ #forecastPage:not(.hide)>.faro-context-dock .picker-grid>.chile-spot-picker:first-child{display:none}
+ #forecastPage:not(.hide)>.faro-context-dock .faro-spot-choice{
+  min-height:62px;padding-block:7px;
+ }
+ #forecastPage:not(.hide)>.faro-context-dock>.forecast-toolbar{
+  grid-area:updated;display:flex;flex-direction:column;
+  justify-content:center;align-items:flex-end;gap:2px;
+  padding:0;margin:0;min-height:0;
+ }
+ #forecastPage:not(.hide)>.faro-context-dock .forecast-updated{min-width:0;max-width:100%}
+ #forecastPage:not(.hide)>.faro-context-dock #updated{
+  text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:100%;font-size:10px;
+ }
  #forecastPage:not(.hide)>.faro-context-dock{grid-column:1/-1;grid-row:1}
  #forecastPage:not(.hide)>#faroDayRail{
   display:block;grid-column:1/-1;min-width:0;width:100%;
@@ -2136,6 +2167,17 @@ body main #forecastPage:not(.hide)>#faroForecastLead .faro-lead-actions{
 }
 #forecastPage .faro-console-day-chip.is-selected::before,
 #forecastPage .faro-console-hour-chip.is-selected::before{display:none}
+/* 0–10 quality magnitude; ink comes from the canonical colour contract. */
+#forecastPage .faro-console-day-chip[class*="brand-band-"]::after{
+ content:"";position:absolute;left:9px;top:2px;height:2px;
+ width:calc((100% - 18px)*var(--faro-day-pct,0));
+ border-radius:3px;background:var(--brand-score-ink);
+ pointer-events:none;
+}
+#forecastPage .faro-console-hour-label.is-wind{
+ color:#d5e9e2;font-variant-numeric:tabular-nums;
+ white-space:nowrap;letter-spacing:-.012em;
+}
 #forecastPage :is(.faro-console-day-chip,.faro-console-hour-chip):focus-visible{
  outline:2px solid #f0dc9d;outline-offset:-2px;border-radius:9px;
 }
@@ -2192,12 +2234,13 @@ body main #forecastPage:not(.hide)>#dayview:not(.hide)>.hourly-section.hourly-se
 @media(max-width:710px){
  /* FARO is a reading, not a stack of boxed weather widgets. */
  #forecastPage:not(.hide)>#faroDayRail.faro-console-day{
-  padding:17px 16px 9px;
+  padding:11px 14px 9px;
  }
+ #forecastPage #faroDayRail .faro-console-rail-head{margin-bottom:6px}
  #forecastPage:not(.hide)>.faro-forecast-lead>#faroQuickHourRail.faro-console-hours{
   padding:12px 0 0;margin-top:12px;
  }
- #forecastPage .faro-console-day-chip{flex-basis:89px;min-height:63px;padding:7px 9px 10px}
+ #forecastPage .faro-console-day-chip{flex-basis:89px;min-height:60px;padding:7px 9px 8px}
  #forecastPage .faro-console-hour-chip{flex-basis:82px;min-height:63px;padding:7px 9px 9px}
  #forecastPage .faro-console-day-score,
  #forecastPage .faro-console-hour-score{font-size:20px}

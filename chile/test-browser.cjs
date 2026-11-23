@@ -597,8 +597,12 @@ function fixture(){
     'Branded hero and detailed slot share exactly the same score');
 
    const hourlyScore=Number(await chosen.locator(scoreSelector).textContent());
-   assert.equal(await chosen.locator(gradeSelector).textContent(),qualityOf(hourlyScore),
-    'Hourly score must show the same Zeeland quality caption');
+   assert.ok((await chosen.getAttribute('aria-label')).includes(qualityOf(hourlyScore)),
+    'The accessible hour still names its quality grade');
+   assert.match(await chosen.locator(gradeSelector).textContent(),/^[NSEW]{1,3} · \d+$/,
+    'A safe daylight window now compares cardinal wind and speed, not a repeated grade');
+   assert.match(await chosen.getAttribute('aria-label'),/km\/h/,
+    'The compact wind value must retain its speed unit for screen readers');
    assert.equal(await page.locator('#sessionAtGlance .chile-session-rating').count(),0,
     'Gear checklist must not repeat the daily score and offshore wave instrument');
    assert.match(await page.locator('#sessionDetailSummary').textContent(),/\d{2}:\d{2}/,
