@@ -113,7 +113,14 @@ assert.ok(css.includes('.faro-safety-expanded'),'Expanded explanation styled');
 assert.ok(html.indexOf('id="faroSafetyCenter"')<html.indexOf('id="forecastPage"'),'Safety banner not trapped inside Forecast');
 assert.ok(/<script\s+src="faro-safety\.js(?:\?v=\d+)?"[^>]*><\/script>/.test(html),'Dedicated safety module loads');
 assert.ok(html.includes('gust:w')===false,'Gusts not accidentally fabricated as constants');
-assert.ok(html.includes('gust:scores.reduce('),'Entire two-hour window uses worst gust');
+{
+ const scope={};new Function('globalThis',engine)(scope);
+ const x={h:1,period:7,wd:325,wind:12,dir:145,gust:25,precip:0,code:0};
+ const s=scope.FaroModelCore.summarizeWindow([x,{...x,gust:85}],325,0);
+ assert.equal(s.gust,85,'Entire two-hour window uses worst gust');
+ assert.equal(s.canRecommend,false,'Dangerous gust blocks recommendation, not raw data');
+ assert.ok(Number.isFinite(s.rawScore),'Raw quality retained for diagnostics');
+}
 assert.ok(css.includes('.faro-safety-center.danger'),'Severe alert is visible separately from score');
 assert.ok(css.includes('#forecastPage #dayStrip{\n contain:layout paint!important'),'Seven-day rail parent isolates paint and layout');
 assert.ok(css.includes('#forecastPage #dayStripItems{\n contain:layout paint!important'),'Rail cannot widen document layout');
