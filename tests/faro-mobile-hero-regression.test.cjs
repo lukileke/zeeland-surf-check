@@ -77,7 +77,7 @@ test('new CSS is before the invariant score palette, with no model changes',()=>
  assert.ok(editor.includes('--beacon-y:8%'));
  assert.ok(!/--faro-score-[0-4]:|--brand-score-ink:/.test(css));
  assert.ok(editor.includes('FARO source: chile/faro-beacon-atmosphere-v4.css'));
- assert.ok(html.includes('faro-chile-live.js?v=12'));
+ assert.ok(Number(html.match(/faro-chile-live\.js\?v=(\d+)/)?.[1])>=13,'Shared model adapter must not regress to a pre-phase-2 version');
  assert.match(html,/chile-forecast\.js\?v=\d+/);
 });
 
