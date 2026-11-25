@@ -78,43 +78,43 @@ html[data-faro-region] body>main{
 
 /* Information library: one neutral, compact reading system for both coasts.
    New semantic classes retire regional card skins, not their data or controls. */
-#forecastPage .faro-info-library{
+.faro-info-library{
  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:clamp(1rem,2.5vw,2rem);align-items:start;min-inline-size:0;margin-block:1.5rem;color:var(--fg)
 }
-#forecastPage .faro-info-group{min-inline-size:0;display:grid;align-content:start;gap:0;border-top:1px solid var(--faro-line,var(--border));padding-block:.7rem 0}
-#forecastPage .faro-info-head{margin:0;padding:.2rem 0 .55rem}
-#forecastPage .faro-info-head h3{margin:0;font:800 clamp(1.15rem,1rem + .55vw,1.45rem)/1.3 Manrope,system-ui,sans-serif;letter-spacing:-.035em;color:var(--fg)}
-#forecastPage .faro-info-row{display:block;min-inline-size:0;max-inline-size:100%;margin:0;padding:0;background:transparent;border:0;border-bottom:1px solid var(--faro-line,var(--border));border-radius:0;box-shadow:none;color:var(--fg);overflow:visible}
-#forecastPage .faro-info-summary{display:flex;align-items:center;justify-content:space-between;gap:.75rem;min-block-size:3.2rem;margin:0;padding:.6rem .1rem;list-style:none;cursor:pointer;color:var(--fg);background:transparent;border:0;box-shadow:none;text-align:start}
-#forecastPage .faro-info-summary::-webkit-details-marker{display:none}
-#forecastPage .faro-info-summary::after,#forecastPage .faro-info-summary::before{content:none}
-#forecastPage .faro-info-label{display:grid;gap:.15rem;min-inline-size:0;flex:1;text-align:start;max-inline-size:100%}
-#forecastPage .faro-info-title{display:block;font-size:.91rem;line-height:1.35;font-weight:750;color:var(--fg)}
-#forecastPage .faro-info-label small{display:block;font-size:.75rem;line-height:1.35;font-weight:500;color:var(--faro-quiet,var(--muted));overflow-wrap:anywhere;text-align:start}
-#forecastPage .faro-info-indicator{inline-size:.65rem;block-size:.65rem;flex:none;border-inline-end:1.5px solid var(--faro-selection);border-block-end:1.5px solid var(--faro-selection);transform:rotate(45deg);margin-inline-end:.25rem}
-#forecastPage .faro-info-row[open] .faro-info-indicator{transform:rotate(225deg)}
-#forecastPage .faro-info-summary:focus-visible{outline:2px solid var(--faro-selection);outline-offset:2px}
-#forecastPage .faro-info-row[open]{padding-block-end:.8rem}
-#forecastPage .faro-info-row>p,#forecastPage .faro-info-content>p{font-size:.85rem;line-height:1.6;margin:.4rem 0 .8rem;color:var(--faro-quiet,var(--muted));max-inline-size:72ch}
-#forecastPage .faro-info-row :is(.faro-technical-inner,.faro-info-content,.faro-safety-guide-body){min-inline-size:0;max-inline-size:100%;margin:0;padding:.15rem 0 .5rem}
-#forecastPage .faro-info-row :is(.panel,.insight-panel){min-inline-size:0;max-inline-size:100%;margin:.2rem 0;padding:.7rem;border:1px solid var(--faro-line,var(--border));border-radius:.65rem;background:var(--panel);box-shadow:none}
-#forecastPage .faro-info-row .faro-provider-list,#forecastPage .faro-info-row .chile-source-links,#forecastPage .faro-info-row .faro-official-health{display:grid;gap:0;min-inline-size:0;margin:.25rem 0}
-#forecastPage .faro-info-row :is(.faro-provider-list,.chile-source-links,.faro-official-health)>a{display:grid;gap:.18rem;min-block-size:2.75rem;padding:.55rem .3rem;border:0;border-bottom:1px solid var(--faro-line,var(--border));border-radius:0;color:var(--fg);background:transparent;overflow-wrap:anywhere;text-decoration:none;font-size:.83rem}
-#forecastPage .faro-info-row :is(.faro-provider-list,.faro-official-health) strong{font-size:.83rem;font-weight:750}
-#forecastPage .faro-info-row :is(.faro-provider-list,.faro-official-health) small{font-size:.72rem;color:var(--faro-quiet,var(--muted));font-weight:500}
-#forecastPage .faro-info-row a:hover{text-decoration:underline}
-#forecastPage .faro-info-row .faro-official-health[data-loaded="true"]+.chile-source-links{display:none}
-#forecastPage .faro-info-row .faro-science-snapshot{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,6rem),1fr));gap:.5rem;margin:.3rem 0 .75rem}
-#forecastPage .faro-info-row .faro-lab-metric{padding:.45rem 0;border:0;border-bottom:1px solid var(--faro-line,var(--border));background:transparent;border-radius:0}
-#forecastPage .faro-info-row .faro-lab-metric strong{font-size:1.15rem}
-#forecastPage .faro-info-row .faro-lab-caveat{grid-column:1/-1}
-#forecastPage .faro-info-row .faro-lab-readout-group{margin:.75rem 0;border:0;border-top:1px solid var(--faro-line,var(--border));border-radius:0;background:transparent}
-#forecastPage .faro-info-row .faro-lab-readout-group>h5{font-size:.8rem;text-transform:none;letter-spacing:0;background:transparent;color:var(--fg);padding:.6rem 0;border:0}
-#forecastPage .faro-info-row .chile-model-table{width:100%;table-layout:fixed;font-size:.79rem}
-#forecastPage .faro-info-row .chile-model-table :is(th,td){padding:.45rem .15rem;vertical-align:top;white-space:normal;overflow-wrap:anywhere;border-bottom:1px solid var(--faro-line,var(--border))}
-#forecastPage .faro-info-row .chile-model-table th{text-align:start;font-weight:550;color:var(--faro-quiet,var(--muted))}
-#forecastPage .faro-info-row .chile-model-table td{text-align:end;font-variant-numeric:tabular-nums;color:var(--fg)}
-#forecastPage .faro-info-row .faro-science-table{overscroll-behavior-inline:contain}
-@media(max-width:40rem){#forecastPage .faro-info-library{grid-template-columns:minmax(0,1fr);gap:1.15rem;margin-block:1.1rem}}
+.faro-info-group{min-inline-size:0;display:grid;align-content:start;gap:0;border-top:1px solid var(--faro-line,var(--border));padding-block:.7rem 0}
+.faro-info-head{margin:0;padding:.2rem 0 .55rem}
+.faro-info-head h3{margin:0;font:800 clamp(1.15rem,1rem + .55vw,1.45rem)/1.3 Manrope,system-ui,sans-serif;letter-spacing:-.035em;color:var(--fg)}
+.faro-info-row{display:block;min-inline-size:0;margin:0;padding:0;background:transparent;border:0;border-bottom:1px solid var(--faro-line,var(--border));border-radius:0;box-shadow:none;color:var(--fg);overflow:visible}
+.faro-info-summary{display:flex;align-items:center;justify-content:space-between;gap:.75rem;min-block-size:3.2rem;margin:0;padding:.6rem .1rem;list-style:none;cursor:pointer;color:var(--fg);background:transparent;border:0;box-shadow:none;text-align:start}
+.faro-info-summary::-webkit-details-marker{display:none}
+.faro-info-summary::after,.faro-info-summary::before{content:none}
+.faro-info-label{display:grid;gap:.15rem;min-inline-size:0;flex:1;text-align:start;max-inline-size:100%}
+.faro-info-title{display:block;font-size:.91rem;line-height:1.35;font-weight:750;color:var(--fg)}
+.faro-info-label small{display:block;font-size:.75rem;line-height:1.35;font-weight:500;color:var(--faro-quiet,var(--muted));overflow-wrap:anywhere;text-align:start}
+.faro-info-indicator{inline-size:.65rem;block-size:.65rem;flex:none;border-inline-end:1.5px solid var(--faro-selection);border-block-end:1.5px solid var(--faro-selection);transform:rotate(45deg);margin-inline-end:.25rem}
+.faro-info-row[open] .faro-info-indicator{transform:rotate(225deg)}
+.faro-info-summary:focus-visible{outline:2px solid var(--faro-selection);outline-offset:2px}
+.faro-info-row[open]{padding-block-end:.8rem}
+.faro-info-row>p,.faro-info-content>p{font-size:.85rem;line-height:1.6;margin:.4rem 0 .8rem;color:var(--faro-quiet,var(--muted));max-inline-size:72ch}
+.faro-info-row :is(.faro-technical-inner,.faro-info-content,.faro-safety-guide-body){min-inline-size:0;max-inline-size:100%;padding:.15rem 0 .5rem}
+.faro-info-row :is(.panel,.insight-panel){min-inline-size:0;margin:.2rem 0;padding:.7rem;border:1px solid var(--faro-line,var(--border));border-radius:.65rem;background:var(--panel);box-shadow:none}
+.faro-info-row .faro-provider-list,.faro-info-row .chile-source-links,.faro-info-row .faro-official-health{display:grid;gap:0;min-inline-size:0;margin:.25rem 0}
+.faro-info-row :is(.faro-provider-list,.chile-source-links,.faro-official-health)>a{display:grid;gap:.18rem;min-block-size:2.75rem;padding:.55rem .3rem;border:0;border-bottom:1px solid var(--faro-line,var(--border));border-radius:0;color:var(--fg);background:transparent;overflow-wrap:anywhere;text-decoration:none;font-size:.83rem}
+.faro-info-row :is(.faro-provider-list,.faro-official-health) strong{font-size:.83rem;font-weight:750}
+.faro-info-row :is(.faro-provider-list,.faro-official-health) small{font-size:.72rem;color:var(--faro-quiet,var(--muted));font-weight:500}
+.faro-info-row a:hover{text-decoration:underline}
+.faro-info-row .faro-official-health[data-loaded="true"]+.chile-source-links{display:none}
+.faro-info-row .faro-science-snapshot{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,6rem),1fr));gap:.5rem;margin:.3rem 0 .75rem}
+.faro-info-row .faro-lab-metric{padding:.45rem 0;border:0;border-bottom:1px solid var(--faro-line,var(--border));background:transparent;border-radius:0}
+.faro-info-row .faro-lab-metric strong{font-size:1.15rem}
+.faro-info-row .faro-lab-caveat{grid-column:1/-1}
+.faro-info-row .faro-lab-readout-group{margin:.75rem 0;border:0;border-top:1px solid var(--faro-line,var(--border));border-radius:0;background:transparent}
+.faro-info-row .faro-lab-readout-group>h5{font-size:.8rem;text-transform:none;letter-spacing:0;background:transparent;color:var(--fg);padding:.6rem 0;border:0}
+.faro-info-row .chile-model-table{width:100%;table-layout:fixed;font-size:.79rem}
+.faro-info-row .chile-model-table :is(th,td){padding:.45rem .15rem;vertical-align:top;white-space:normal;overflow-wrap:anywhere;border-bottom:1px solid var(--faro-line,var(--border))}
+.faro-info-row .chile-model-table th{text-align:start;font-weight:550;color:var(--faro-quiet,var(--muted))}
+.faro-info-row .chile-model-table td{text-align:end;font-variant-numeric:tabular-nums;color:var(--fg)}
+.faro-info-row .faro-science-table{overscroll-behavior-inline:contain}
+@media(max-width:40rem){.faro-info-library{grid-template-columns:minmax(0,1fr);gap:1.15rem;margin-block:1.1rem}}
 
 .faro-common-science .faro-method-note{border-top:1px solid var(--faro-line,var(--border));padding-block:.5rem 0}.faro-common-science .faro-method-note summary{font-size:.8rem;font-weight:700;cursor:pointer;min-block-size:2.25rem}.faro-common-science .faro-method-note p{padding-block:.25rem .5rem}
