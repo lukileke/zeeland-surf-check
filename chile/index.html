@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="../faro-colours.css?v=5">
 <link rel="stylesheet" href="../faro-spot-signals.css?v=1">
 
-<link rel="stylesheet" href="../faro-desktop.css?v=7">
+<link rel="stylesheet" href="../faro-desktop.css?v=8">
 <link rel="stylesheet" href="../faro-country.css?v=1">
 <link rel="stylesheet" href="chile-forecast.css?v=13">
 <link rel="stylesheet" href="../faro-spot-dna-editorial.css?v=3">
@@ -348,9 +348,32 @@
     </details>
     </div>
     </details>
-    <div class="chile-official-inline">
-     <details id="chileOfficialSources" class="chile-official-sources">
-      <summary><span data-es="Fuentes oficiales · vigencia" data-en="Official sources · validity">Fuentes oficiales · vigencia</span><span class="chile-official-state" data-es="Verificación parcial" data-en="Partial verification">Verificación parcial</span><span aria-hidden="true">⌄</span></summary>
+    </section>
+<section class="faro-detail-hub" aria-label="FARO"><section class="faro-info-library" aria-label="FARO information"><section class="faro-info-group" data-info-group="session"><header class="faro-info-head"><h3 data-es="Tu sesión" data-en="Your session">Tu sesión</h3></header><details id="wearExpand" class=" faro-info-row">
+    <summary class="faro-info-summary"><span class="faro-info-label"><strong class="faro-info-title" data-es="Traje y equipo" data-en="Wetsuit & gear">Traje y equipo</strong><small class="faro-info-meta" data-es="Preparación de la sesión" data-en="Session preparation">Preparación de la sesión</small></span><span class="faro-info-indicator" aria-hidden="true"></span></summary>
+    <div id="wetsuit" class="panel">—</div>
+   </details></section><section class="faro-info-group" data-info-group="spot"><header class="faro-info-head"><h3 data-es="Explora el spot" data-en="Explore the spot">Explora el spot</h3></header><details id="spotInsightExpand" class=" faro-info-row">
+    <summary class="faro-info-summary"><span class="faro-info-label"><strong class="faro-info-title" data-es="Spot DNA" data-en="Spot DNA">Spot DNA</strong><small id="spotInsightContextTag" class="forecast-accordion-meta" data-es="Condiciones y carácter" data-en="Local character">Condiciones y carácter</small></span><span class="faro-info-indicator" aria-hidden="true"></span></summary>
+    <div id="spotinsight" class="insight-panel"><p class="muted">—</p></div>
+   </details><details id="cameraExpand" class=" faro-info-row">
+    <summary class="faro-info-summary"><span class="faro-info-label"><strong class="faro-info-title" data-es="Cámaras" data-en="Cameras">Cámaras</strong><small class="faro-info-meta" data-es="Vistas externas" data-en="External views">Vistas externas</small></span><span class="faro-info-indicator" aria-hidden="true"></span></summary>
+    <div class="insight-panel" id="chileCameraSources">—</div>
+   </details><details id="fieldNotesExpand" class=" faro-info-row">
+    <summary class="faro-info-summary"><span class="faro-info-label"><strong class="faro-info-title" data-es="Diario de campo" data-en="Field notes">Diario de campo</strong><small class="faro-info-meta" data-es="Observaciones personales" data-en="Personal observations">Observaciones personales</small></span><span class="faro-info-indicator" aria-hidden="true"></span></summary>
+    <div id="chileFieldNotes" class="insight-panel">
+     <p data-es="FARO Lab cruza observaciones con pronósticos guardados antes de la sesión. Un video propio se reproduce solo en tu navegador; no se sube ni se guarda." data-en="FARO Lab pairs observations with forecasts archived before the session. Your authorised video plays only on your device; it is not uploaded or stored.">FARO Lab cruza observaciones con pronósticos guardados antes de la sesión. Un video propio se reproduce solo en tu navegador; no se sube ni se guarda.</p>
+     <div id="faroVideoLab"></div>
+     <a href="field-observations-template.csv" class="faro-safety-link" data-es="Plantilla CSV avanzada" data-en="Advanced CSV template">Plantilla CSV avanzada</a>
+    </div>
+   </details></section><section class="faro-info-group" data-info-group="science"><header class="faro-info-head"><h3 data-es="Ciencia y fuentes" data-en="Science & sources">Ciencia y fuentes</h3></header><details id="faroTechnicalExpand" class="faro-technical faro-info-row">
+    <summary class="faro-info-summary"><span class="faro-info-label"><strong class="faro-info-title" data-es="Datos del modelo" data-en="Model data">Datos del modelo</strong><small class="faro-info-meta" data-es="Oleaje, viento y física" data-en="Waves, wind and physics">Oleaje, viento y física</small></span><span class="faro-info-indicator" aria-hidden="true"></span></summary>
+    <div id="faroScienceSnapshot" class="faro-science-snapshot" aria-live="polite"></div><div class="faro-technical-inner"><div class="panel" id="detail">—</div></div>
+   </details><details id="forecastSources" class=" faro-info-row">
+   <summary class="faro-info-summary"><span class="faro-info-label"><strong class="faro-info-title" data-es="Fuentes del pronóstico" data-en="Forecast sources">Fuentes del pronóstico</strong><small class="faro-info-meta" data-es="Proveedores y limitaciones" data-en="Providers and limitations">Proveedores y limitaciones</small></span><span class="faro-info-indicator" aria-hidden="true"></span></summary>
+   <p data-es="FARO combina pronósticos de Open-Meteo y referencias locales de surf. La altura oceánica no es la altura de rompiente; el índice no está calibrado con observaciones de cada banco. La marea, las corrientes, la contaminación y la vigencia de avisos oficiales siguen sin acreditación automática completa. Una cámara visible gratis no autoriza su uso para entrenar IA."
+      data-en="FARO combines Open-Meteo forecasts with published local surf guidance. Offshore wave height is not breaking-wave height, and the index lacks local sandbank calibration. Tide, currents, water quality and official bulletin validity are not fully certified by FARO. Free-to-view cameras are not licensed AI training data.">FARO combina pronósticos de Open-Meteo y referencias locales de surf. La altura oceánica no es la altura de rompiente; el índice no está calibrado con observaciones de cada banco. La marea, las corrientes, la contaminación y los avisos oficiales requieren comprobación independiente. Una cámara visible gratis no autoriza su uso para entrenar IA.</p>
+  <div class="faro-provider-list"><a href="https://open-meteo.com/en/docs/marine-weather-api" target="_blank" rel="noopener noreferrer"><strong>Open-Meteo · Marine</strong><small data-es="Oleaje oceánico y particiones" data-en="Offshore waves and partitions">Oleaje oceánico y particiones</small></a><a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer"><strong>Open-Meteo · Weather</strong><small data-es="Viento y meteorología" data-en="Wind and weather">Viento y meteorología</small></a></div></details><details id="chileOfficialSources" class=" faro-info-row">
+      <summary class="faro-info-summary"><span class="faro-info-label"><strong class="faro-info-title" data-es="Avisos oficiales y seguridad" data-en="Official warnings & safety">Avisos oficiales y seguridad</strong><small class="chile-official-state" data-es="Verificación parcial" data-en="Partial verification">Verificación parcial</small></span><span class="faro-info-indicator" aria-hidden="true"></span></summary>
       <p data-es="FARO consulta periódicamente portales oficiales, pero no puede confirmar automáticamente la vigencia o cobertura de cada boletín. Ante dudas, abre la autoridad. Sin aviso detectado no significa playa segura." data-en="FARO periodically checks official portals, but cannot automatically certify the validity or scope of every bulletin. Check the authority when uncertain. No notice detected does not mean a safe beach.">FARO consulta periódicamente portales oficiales, pero no puede confirmar automáticamente la vigencia o cobertura de cada boletín. Ante dudas, abre la autoridad. Sin aviso detectado no significa playa segura.</p>
       <div id="faroOfficialSourceHealth" class="faro-official-health" aria-live="polite"></div>
       <div class="chile-source-links">
@@ -358,67 +381,9 @@
        <a href="https://senapred.cl/alertas/" target="_blank" rel="noopener noreferrer">SENAPRED</a>
        <a href="https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml" target="_blank" rel="noopener noreferrer">DMC</a>
       </div>
-     </details>
-    </div>
-   </section>
-   <section class="faro-detail-hub" aria-labelledby="faroExploreHeading">
-    <header class="faro-detail-hub-heading">
-      <div><small data-es="FARO · EXPLORA" data-en="FARO · EXPLORE">FARO · EXPLORA</small>
-      <h3 id="faroExploreHeading" data-es="Bajo la superficie." data-en="Below the surface.">Bajo la superficie.</h3></div>
-      <p data-es="Entiende las señales. Explora los datos." data-en="Understand the signals. Explore the data.">Entiende las señales. Explora los datos.</p>
-    </header>
-    <div class="faro-detail-hub-grid">
-    <section class="faro-hub-group is-read">
-     <header class="faro-hub-group-head">
-      <small class="faro-lab-kicker">FARO · OCEAN LAB / 01</small><h4 data-es="Radiografía del mar" data-en="Ocean diagnostics">Radiografía del mar</h4>
-      <p data-es="Las variables que explican esta franja." data-en="The physics behind your selected window.">Las variables que explican esta franja.</p>
-     </header>
-     <div id="faroScienceSnapshot" class="faro-science-snapshot" aria-live="polite"></div>
-     <details id="faroTechnicalExpand" class="forecast-expand faro-technical">
-    <summary><span data-faro-icon="info"></span><span class="forecast-accordion-title" data-es=" Explorar datos completos" data-en=" Full model readout"> Explorar datos completos</span><span class="forecast-accordion-meta" data-es="Modelo y UV" data-en="Model & UV">Modelo y UV</span></summary>
-    <div class="faro-technical-inner"><div class="panel" id="detail">—</div></div>
-   </details>
-    </section>
-    <section class="faro-hub-group is-know">
-     <header class="faro-hub-group-head">
-      <h4 data-es="Conoce la playa" data-en="Know the break">Conoce la playa</h4>
-      <p data-es="Identidad, referencias y cámaras externas." data-en="Break character, local references and external cameras.">Identidad, referencias y cámaras externas.</p>
-     </header>
-     <details id="spotInsightExpand" class="forecast-expand">
-    <summary><span data-faro-icon="spot-dna"></span><span class="forecast-accordion-title" data-es=" Spot DNA · Identidad del spot" data-en=" Spot DNA · Local break profile"> Spot DNA · Identidad del spot</span><span id="spotInsightContextTag" class="forecast-accordion-meta" data-es="Condiciones y carácter" data-en="Local character">Condiciones y carácter</span></summary>
-    <div id="spotinsight" class="insight-panel"><p class="muted">—</p></div>
-   </details>
-     <details id="cameraExpand" class="forecast-expand">
-    <summary><span data-faro-icon="camera"></span><span class="forecast-accordion-title" data-es=" Mira el spot · cámaras" data-en=" See the surf · cameras"> Mira el spot · cámaras</span><span class="forecast-accordion-meta" data-es="Vistas externas · sin captura automática" data-en="External views · no auto capture">Vistas externas · sin captura automática</span></summary>
-    <div class="insight-panel" id="chileCameraSources">—</div>
-   </details>
-    </section>
-    <section class="faro-hub-group is-ready">
-     <header class="faro-hub-group-head">
-      <h4 data-es="Diario de campo" data-en="Field journal">Diario de campo</h4>
-      <p data-es="Lo que el mar muestra, más allá del modelo." data-en="What the ocean shows beyond the model.">Lo que el mar muestra, más allá del modelo.</p>
-     </header>
-     <details id="wearExpand" class="forecast-expand">
-    <summary><span data-faro-icon="wetsuit"></span><span class="forecast-accordion-title" data-es=" Qué usar" data-en=" What to Wear"> Qué usar</span><span class="forecast-accordion-meta" data-es="Traje y equipo" data-en="Wetsuit & gear">Traje y equipo</span></summary>
-    <div id="wetsuit" class="panel">—</div>
-   </details>
-     <details id="fieldNotesExpand" class="forecast-expand">
-    <summary><span data-faro-icon="field-notes" aria-hidden="true"></span><span class="forecast-accordion-title" data-es=" FARO Field Notes" data-en=" FARO Field Notes"> FARO Field Notes</span><span class="forecast-accordion-meta" data-es="Observaciones reales" data-en="Observed surf">Observaciones reales</span></summary>
-    <div id="chileFieldNotes" class="insight-panel">
-     <p data-es="FARO Lab cruza observaciones con pronósticos guardados antes de la sesión. Un video propio se reproduce solo en tu navegador; no se sube ni se guarda." data-en="FARO Lab pairs observations with forecasts archived before the session. Your authorised video plays only on your device; it is not uploaded or stored.">FARO Lab cruza observaciones con pronósticos guardados antes de la sesión. Un video propio se reproduce solo en tu navegador; no se sube ni se guarda.</p>
-     <div id="faroVideoLab"></div>
-     <a href="field-observations-template.csv" class="faro-safety-link" data-es="Plantilla CSV avanzada" data-en="Advanced CSV template">Plantilla CSV avanzada</a>
-    </div>
-   </details>
-    </section>
-    </div>
-   </section>
-  </div>
-  <details id="forecastSources" class="chile-method-disclaimer">
-   <summary data-es="Fuentes y límites del pronóstico" data-en="Forecast sources and limitations">Fuentes y límites del pronóstico</summary>
-   <p data-es="FARO combina pronósticos de Open-Meteo y referencias locales de surf. La altura oceánica no es la altura de rompiente; el índice no está calibrado con observaciones de cada banco. La marea, las corrientes, la contaminación y la vigencia de avisos oficiales siguen sin acreditación automática completa. Una cámara visible gratis no autoriza su uso para entrenar IA."
-      data-en="FARO combines Open-Meteo forecasts with published local surf guidance. Offshore wave height is not breaking-wave height, and the index lacks local sandbank calibration. Tide, currents, water quality and official bulletin validity are not fully certified by FARO. Free-to-view cameras are not licensed AI training data.">FARO combina pronósticos de Open-Meteo y referencias locales de surf. La altura oceánica no es la altura de rompiente; el índice no está calibrado con observaciones de cada banco. La marea, las corrientes, la contaminación y los avisos oficiales requieren comprobación independiente. Una cámara visible gratis no autoriza su uso para entrenar IA.</p>
-  </details>
+     </details></section></section></section>
+</div>
+
  </div>
  <section id="bestPage" class="hide">
   <div class="best-intro"><small data-es="DESCUBRE · VALPARAÍSO" data-en="DISCOVER · VALPARAÍSO">DESCUBRE · VALPARAÍSO</small><h2 data-es="Señales para la semana" data-en="Weekly outlook">Señales para la semana</h2><p class="muted" data-es="Una selección breve de franjas estimadas. Los índices limitados al mismo techo no permiten ordenar su calidad real." data-en="A short comparison of estimated windows. Similar capped scores are not meaningful ties to break.">Una selección breve de franjas estimadas. Los índices limitados al mismo techo no permiten ordenar su calidad real.</p></div>
@@ -479,7 +444,7 @@
 <script src="valparaiso-score-lab.js?v=7" defer></script>
 <script src="faro-chile-live.js?v=13" defer></script>
 <script src="faro-physics-lab.js?v=1" defer></script>
-<script src="../assets/faro-region-response.js?v=2" defer></script>
+<script src="../assets/faro-region-response.js?v=3" defer></script>
 <script src="faro-spot-intelligence.js?v=2" defer></script>
 <script src="video-observation-lab.js?v=1" defer></script>
 <script src="faro-coastal-lens.js?v=1" defer></script>
@@ -492,7 +457,7 @@
 <script src="faro-thermal-guide.js?v=1" defer></script>
 <script src="../assets/faro-extended-outlook.js?v=2" defer></script>
 <script src="../assets/faro-forecast-console.js?v=10" defer></script>
-<script src="chile-forecast.js?v=66" defer></script>
+<script src="chile-forecast.js?v=67" defer></script>
 <script src="faro-tide-read.js?v=4" defer></script>
 <script src="faro-official-watch.js?v=2" defer></script>
 </body>

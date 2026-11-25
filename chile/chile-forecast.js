@@ -1007,7 +1007,7 @@ function slots(){
 }
 function basicTable(rows){
  const t=el("table",null,"chile-model-table");
- for(const [name,value]of rows){const row=el("tr");row.append(el("td",name),el("td",value));t.append(row)}
+ for(const [name,value]of rows){const row=el("tr"),label=el("th",name);label.scope="row";row.append(label,el("td",value));t.append(row)}
  return t;
 }
 /* The map already visualises bearing vectors at the actual break.
@@ -1152,10 +1152,10 @@ function session(){
   [tr("Celda meteorológica a referencia costera","Weather grid to coastal reference"),ok(metGrid?.distanceKm)?num(metGrid.distanceKm)+" km":tr("No disponible","Unavailable")]
  ];
  const groups=[
-  [0,6,tr("01 · Oleaje y swell","01 · Waves & swell")],
-  [6,8,tr("02 · Viento","02 · Wind")],
-  [8,13,tr("03 · Ambiente","03 · Environment")],
-  [13,scientificRows.length,tr("04 · Trazabilidad del modelo","04 · Model provenance")]
+  [0,6,tr("Oleaje y swell","Waves & swell")],
+  [6,8,tr("Viento","Wind")],
+  [8,13,tr("Nivel del mar y ambiente","Sea level & environment")],
+  [13,scientificRows.length,tr("Trazabilidad del modelo","Model provenance")]
  ];
  for(const [from,to,title] of groups){
   const section=el("section",null,"faro-lab-readout-group");
