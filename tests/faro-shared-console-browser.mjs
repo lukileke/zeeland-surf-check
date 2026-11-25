@@ -49,6 +49,23 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
        if(scale===1&&[375,1366,1920].includes(width))await page.screenshot({path:out+"/"+engine+"-"+region+"-"+theme+"-"+width+"-shared.png",fullPage:true});
       }
      }
+     await page.setViewportSize({width:375,height:812});await page.evaluate(()=>document.documentElement.style.removeProperty("font-size"));
+     const tools=consoleHost.locator(".week-tools");await tools.waitFor({state:"visible"});
+     const beforeScroll=await consoleHost.locator(".days").evaluate(el=>el.scrollLeft);
+     await consoleHost.locator('[data-key="next-day"]').click();
+     await page.waitForFunction(()=>document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".days").scrollLeft>0);
+     assert.ok(await consoleHost.locator(".days").evaluate(el=>el.scrollLeft)>beforeScroll,"Day navigation is usable without a swipe");
+     if(region==="cl"){
+      assert.equal(await page.locator("#dailyOverview").isVisible(),false,"Duplicate daily overview retired");
+      assert.equal(await page.locator("#faroHourlyPreview").isVisible(),false,"Duplicate selected-window card retired");
+      assert.ok(await consoleHost.locator(".local-read details").count(),"Unique local interpretation retained");
+      await consoleHost.locator('[data-key="explore"]').click();
+      assert.equal(await page.locator("#coastMapExpand").evaluate(el=>el.open),true,"Hero map action opens the actual disclosure");
+      await consoleHost.locator('[data-key="details"]').click();
+      assert.equal(await page.locator("#sessionDetailExpand").evaluate(el=>el.open),true,"Preparation action opens actual session kit");
+      await consoleHost.locator('[data-key="dna"]').click();
+      assert.equal(await page.locator("#spotInsightExpand").evaluate(el=>el.open),true,"Spot DNA remains reachable");
+     }
      await page.setViewportSize({width:1366,height:1000});await page.evaluate(()=>document.documentElement.style.removeProperty("font-size"));
      await page.emulateMedia({reducedMotion:"no-preference"});await page.evaluate(()=>{window.faroBeaconBefore=document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".beacon svg")});
      await consoleHost.locator(".days button").nth(1).click();assert.equal(await consoleHost.locator(".days button").nth(1).getAttribute("aria-pressed"),"true");
