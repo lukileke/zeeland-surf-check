@@ -50,7 +50,7 @@ const detectedFamily=(typeof config!=="undefined"&&config.widgetFamily)||"medium
 const family=(typeof config!=="undefined"&&config.runsInApp&&PREVIEW)?PREVIEW:detectedFamily;
 const lockFamily=family.startsWith("accessory");
 const fm=FileManager.local();
-const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v6.js");
+const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v7.js");
 const cacheName=isBest?"all":chosen.map(x=>x[0]+"-"+x[1]).join("_").replace(/[^a-zA-Z0-9_-]/g,"-").slice(0,80);
 const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v5-"+cacheName+".json");
 function palette(light,dark){return EFFECTIVE_THEME==="LIGHT"?new Color(light):new Color(dark)}
@@ -233,7 +233,7 @@ async function engine(){
  if(exists&&age<6*3600000)src=fm.readString(enginePath);
  if(!src){
   try{
-   const req=new Request(SITE+"surf-engine.js?v=3");
+   const req=new Request(SITE+"surf-engine.js?v=4");
    req.timeoutInterval=12;src=await req.loadString();
    if(!src.includes("root.ZeelandEngine=")||src.length>30000)throw Error("Invalid shared engine");
    fm.writeString(enginePath,src);
@@ -291,7 +291,7 @@ function candidateSessions(data,E,spots,now=localParts()){
     const light=core.eligibleWindow(day,hour,timeMin(daily.sunrise[di]),timeMin(daily.sunset[di]),now);
     if(!light?.upcoming)continue;
     const session=core.summarizeWindow(core.windowSamples(m,w,day,hour),spot[4],spot[5]);
-    if(!session)continue;
+    if(!session?.canRecommend)continue;
     out.push({spot,day,h:hour,score:session.v,x:{...session,h:round1(session.h),period:round1(session.period),wind:Math.round(session.wind)}});
    }
   }
