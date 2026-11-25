@@ -58,11 +58,13 @@ h2{font-family:"Archivo Black",Manrope,system-ui,sans-serif;font-weight:800;lett
 .actions button{color:var(--ink);min-block-size:2.6rem;padding:.55em .9em;border-color:var(--line);font-size:.82rem;font-weight:700}
 .actions button:first-child{background:#d9ebe6;color:#12383d;border-color:#d9ebe6}
 .beacon{position:absolute;z-index:-1;inset-block-start:0;inset-inline-end:1%;inline-size:clamp(5rem,17cqi,13rem);aspect-ratio:1;display:grid;place-items:center;pointer-events:none;opacity:.55}
-.beacon::before{content:"";position:absolute;inset:-35%;background:radial-gradient(circle,#edbf6a40,transparent 64%);animation:breathe 5.4s ease-in-out infinite}
+.beacon::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,#edbf6a40,transparent 64%);animation:breathe 5.4s ease-in-out infinite}
 .beacon svg{inline-size:38%;block-size:auto;fill:#d0f0e5;animation:float 5.4s ease-in-out infinite}
 .beacon .faro-beacon-core{fill:#efc477}
 @keyframes breathe{0%,100%{opacity:.55;scale:.96}50%{opacity:1;scale:1.07}}
 @keyframes float{0%,100%{translate:0 0}50%{translate:0 -.3rem}}
+.beacon{overflow:clip}
+@container faro (max-width:43.99rem){.beacon{inline-size:clamp(4rem,17cqi,7rem);inset-inline-end:.5rem;inset-block-start:.35rem;opacity:.4}.read .location,.read .kicker{padding-inline-end:clamp(3rem,14cqi,6rem)}}
 @container faro (min-width:44rem){.hero-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}}
 @container faro (min-width:52rem){.days{grid-template-columns:repeat(7,minmax(0,1fr))}}
 @container faro (min-width:58rem){.hours{grid-template-columns:repeat(8,minmax(0,1fr))}}
