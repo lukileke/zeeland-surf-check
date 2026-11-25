@@ -32,7 +32,7 @@ const priorityCaps=Object.freeze({
  'assets/faro-icons.css':1,'assets/faro-editorial-polish.css':8,
  'faro-core.css':388,'faro-ui.css':906,'faro-brand.css':602,
  'faro-daily.css':86,'faro-rhythm.css':320,'faro-colours.css':55,
- 'faro-spot-signals.css':45,'faro-desktop.css':113,'faro-country.css':1,
+ 'faro-spot-signals.css':45,'faro-desktop.css':19,'faro-country.css':1,
  'chile/chile-forecast.css':112,'faro-spot-dna-editorial.css':72,
  'assets/faro-visual-system-v2.css':164,'assets/faro-coastal-lens-v4.css':318,
  'chile/chile-visual-contract.css':266,'chile/faro-editorial-experience-v2.css':896,
