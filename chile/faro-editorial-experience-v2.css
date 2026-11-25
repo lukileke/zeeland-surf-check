@@ -2066,9 +2066,6 @@ html body #forecastPage #dayview>.faro-ocean-explorer{
  background:transparent!important;border-radius:0;min-width:0;
 }
 #forecastPage #dayview #coastMapExpand>summary{
- display:none;
-}
-html[data-faro-shared] #coastMapExpand>summary{
  display:flex;justify-content:space-between;align-items:center;gap:.5rem;min-height:2.75rem;padding:.5rem;cursor:pointer;color:var(--fg);
 }
 html[data-faro-shared] #coastMapExpand>summary::after{content:"+"}
