@@ -49,20 +49,20 @@ h2{font-family:Manrope,system-ui,sans-serif;font-weight:750;letter-spacing:-.025
 .deck{font-size:clamp(.78rem,.74rem + .18cqi,.95rem);color:var(--muted);max-inline-size:62ch;overflow-wrap:anywhere}
 .location{font-size:.76rem;color:var(--accent);font-weight:650;overflow-wrap:anywhere}
 .signal{display:grid;gap:.65rem;align-content:start;min-inline-size:0;position:relative;z-index:2}
-.session-primary{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:.5rem 1rem;align-items:end}
+.session-primary{display:grid;grid-template-columns:minmax(0,1fr);gap:.25rem;align-items:end}
 .session-primary>div{min-inline-size:0;display:grid;gap:.2rem}
 .session-primary .kicker{font-size:.63rem;letter-spacing:.065em}
 .timing{align-content:start}
-.window{font-size:clamp(1.65rem,1.3rem + 1.9cqi,3.15rem);font-weight:800;letter-spacing:-.055em;font-variant-numeric:tabular-nums;line-height:1.08;overflow-wrap:normal}
+.window{font-size:clamp(1.9rem,1.4rem + 2.5cqi,3.5rem);font-weight:800;letter-spacing:-.055em;font-variant-numeric:tabular-nums;line-height:1.08;overflow-wrap:normal}
 .scoreline{display:flex;align-items:baseline;gap:.24rem;flex-wrap:wrap}
-.scoreline strong{font-size:clamp(1.45rem,1.2rem + 1.15cqi,2.35rem);font-weight:800;line-height:1.08;letter-spacing:-.045em;font-variant-numeric:tabular-nums;color:var(--score,var(--ink))}
+.scoreline strong{font-size:clamp(1.15rem,1rem + .8cqi,1.65rem);font-weight:800;line-height:1.08;letter-spacing:-.045em;font-variant-numeric:tabular-nums;color:var(--score,var(--ink))}
 .scoreline small{font-size:.68rem}.scoreline .grade{font-weight:650;color:var(--score,var(--muted));font-size:.73rem}
 .hero[data-unavailable] .session-primary{display:none}
-.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;border-top:1px solid var(--line);padding-top:.6rem}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;padding-block:.65rem}.conditions{border-bottom:1px solid var(--border,#42565a);padding:.2rem .1rem .6rem}.conditions .metrics small{color:var(--outer-muted)}.conditions .metrics div:first-child b{color:var(--outer-ink)}.excluded{font-size:.72rem;color:var(--muted)}.excluded summary{cursor:pointer;min-block-size:2.75rem;display:flex;align-items:center;gap:.4rem;list-style:none}.excluded summary::before{content:"+"}.excluded[open] summary::before{content:"−"}.excluded:not([open])>.hours{display:none}
 .metrics div{min-inline-size:0;display:grid;gap:.12rem}
 .metrics small{font-size:.67rem;line-height:1.3}.metrics b{font-size:clamp(.95rem,.85rem + .5cqi,1.25rem);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.metrics div:first-child b{color:#8acde1}
-.hours{grid-template-columns:repeat(auto-fit,minmax(min(100%,5rem),1fr));background:rgba(24,59,65,.42);border:1px solid var(--line);border-radius:.6rem;gap:0;padding:.15rem}
-.hours button{color:var(--ink);min-block-size:3.25rem;padding-block:.4rem;gap:.15rem}
+.hours{grid-template-columns:repeat(auto-fit,minmax(min(100%,3.85rem),1fr));background:rgba(24,59,65,.30);border:1px solid var(--line);border-radius:.6rem;gap:0;padding:.15rem}
+.hours button{color:var(--ink);min-block-size:2.75rem;padding-block:.3rem;gap:.1rem}
 .hours button strong{font-size:clamp(1rem,.9rem + .5cqi,1.35rem)}
 .hours button .tile-label{font-size:.72rem}
 .hours button small{font-size:.64rem}
@@ -108,10 +108,9 @@ h2{font-family:Manrope,system-ui,sans-serif;font-weight:750;letter-spacing:-.025
 @keyframes mark{0%,100%{translate:0 0;scale:1;opacity:.44}50%{translate:0 -.3rem;scale:1.028;opacity:.60}}
 @container faro (min-width:39rem){.context{grid-template-columns:minmax(0,.8fr) minmax(0,1.25fr)}.update{grid-column:1/-1}}
 @container faro (min-width:55rem){.context{grid-template-columns:minmax(0,.8fr) minmax(0,1.3fr) minmax(9rem,.7fr)}.update{grid-column:auto;justify-content:flex-end}.update span{text-align:end}}
-@container faro (min-width:44rem){.hero-grid{grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr);gap:clamp(1rem,2.4cqi,2.25rem);align-items:center}.read{padding-inline-end:0}.signal{padding-inline-end:clamp(2rem,5cqi,5rem)}}
+@container faro (min-width:44rem){.hero-grid{grid-template-columns:minmax(0,1fr);gap:.4rem;padding-inline-end:clamp(5rem,16cqi,12rem)}.read{padding-inline-end:0}.session-primary{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:1rem}}
 @container faro (max-width:43.99rem){.beacon{inline-size:clamp(6rem,21cqi,9rem)}}
-@container faro (min-width:32rem) and (max-width:57.99rem){.hours{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@container faro (min-width:58rem){.hours{grid-template-columns:repeat(8,minmax(0,1fr))}}
+
 @container faro (max-width:29rem){
  .context{padding:.65rem;gap:.5rem;grid-template-columns:minmax(0,1fr) auto;align-items:end}
  .coast{grid-column:1/-1;grid-template-columns:auto minmax(0,1fr);gap:.65rem}
@@ -122,13 +121,11 @@ h2{font-family:Manrope,system-ui,sans-serif;font-weight:750;letter-spacing:-.025
  .days button{padding:.7rem .45rem .45rem;min-block-size:4.1rem;gap:.12rem}
  .days .tile-grade{display:none}
  .hero{padding:.85rem;gap:.65rem}
- .session-primary{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:.4rem .65rem}
- .hours{grid-template-columns:repeat(2,minmax(0,1fr))}
- .hours button{min-block-size:3.25rem}
+ .hours button{min-block-size:2.75rem}
  .hours-head{padding-top:.45rem}
  .hero-footer .disclaimer{font-size:.67rem}
 }
-@container faro (min-width:21rem) and (max-width:31.99rem){.hours{grid-template-columns:repeat(4,minmax(0,1fr))}.hours button{padding-inline:.35rem}}
+
 @container faro (max-width:19rem){.session-primary{grid-template-columns:minmax(0,1fr)}}
 @media(hover:hover){.days button:not(:disabled):hover,.hours button:not(:disabled):hover{background:rgba(220,246,235,.08)}.actions button:not(:disabled):hover,.update button:hover{border-color:var(--accent)}}
 @media(prefers-reduced-motion:reduce){.beacon::before,.beacon::after,.beacon .pulse,.beacon .beam{animation:none;opacity:.75}.beacon svg{animation:none;opacity:.55}.days button,.hours button{transition:none}}
@@ -160,31 +157,33 @@ function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails
   days.addEventListener("scroll",syncRail,{passive:true});
   const addTile=(parent,item,fn,prefix)=>{const b=control("",()=>fn(item.id),prefix+item.id);b.setAttribute("aria-pressed",String(!!item.selected));b.setAttribute("aria-label",[item.label,valid(item.score)?score(item.score,lang)+"/10":t("Sin score","No score"),item.grade,item.note].filter(Boolean).join(" · "));b.disabled=!!item.disabled;if(valid(item.score)){tint(b,item.score);b.dataset.scored="";b.style.setProperty("--quality",String(Math.max(0,Math.min(10,item.score))/10))}b.append(make("span","tile-label",item.label),make("strong",null,score(item.score,lang)));if(item.grade)b.append(make("span","tile-grade",item.grade));b.append(make("small",null,item.note||"—"));parent.append(b)};
   for(const item of d.days||[])addTile(days,item,onDay,"day");
-  const existingHero=layout.querySelector(".hero"),hero=existingHero||make("section","hero"),grid=make("div","hero-grid"),read=make("div","read"),signal=make("div","signal");
+  const existingHero=layout.querySelector(".hero"),hero=existingHero||make("section","hero"),grid=make("div","hero-grid"),read=make("div","read"),signal=make("div","signal"),excludedOpen=!!existingHero?.querySelector(".excluded")?.open;
   for(const child of [...hero.children])if(!child.classList.contains("beacon"))child.remove();
   if(beacon&&!existingHero){const glow=make("div","beacon");glow.setAttribute("aria-hidden","true");const svg=beacon.cloneNode(true);svg.removeAttribute("class");glow.append(make("span","pulse"),make("span","beam"),svg);hero.append(glow)}
   const available=valid(d.score)&&!!d.window&&d.window!=="—";
   hero.toggleAttribute("data-unavailable",!available);
-  read.append(make("span","location",d.location||"—"),make("h2",null,available?(d.verdict||d.headline||t("Lectura del mar","Ocean read")):(d.headline||t("Leyendo tu costa…","Reading your coast…"))));
+  read.append(make("span","location",d.location||"—"));if(!available)read.append(make("h2",null,d.headline||t("Leyendo tu costa…","Reading your coast…")));
   if(!available&&d.deck)read.append(make("p","deck",d.deck));
   const actions=make("div","actions"),details=control(t("Ver datos de la sesión","Session details"),onDetails,"details");details.disabled=!(d.days||[]).length;actions.append(details);if(onExplore)actions.append(control(t("Explorar costa ↗","Explore coast ↗"),onExplore,"explore"));actions.append(control("FARO Match",onMatch,"match"));
   const scoreline=make("div","scoreline");scoreline.append(tint(make("strong",null,score(d.score,lang)),d.score),make("small",null,valid(d.score)?"/10":""));
   if(d.grade)scoreline.append(tint(make("small","grade",d.grade),d.score));
   const primary=make("div","session-primary"),rating=make("div","rating"),timing=make("div","timing");
-  rating.append(make("span","kicker",t("Score · modelo","Model score")),scoreline);
-  timing.append(make("span","kicker",d.windowLabel||t("Franja","Window")),make("div","window",d.window||"—"));primary.append(timing,rating);signal.append(primary);
-  const metrics=make("div","metrics");for(const m of [[t("Altura oceánica","Offshore height"),d.wave],[t("Período","Period"),d.period],[t("Viento","Wind"),d.wind]]){const x=make("div");x.append(make("small",null,m[0]),make("b",null,m[1]||"—"));metrics.append(x)}signal.append(metrics);const prep=make("div","prep");for(const item of d.prep||[]){if(!item.value)continue;const x=make("div");x.append(make("small",null,item.label),make("b",null,item.value));prep.append(x)}if(available&&d.reason)signal.append(make("p","deck",d.reason));grid.append(read,signal);hero.append(grid);
-  const hourHead=make("div","hours-head"),hours=make("div","hours");hours.setAttribute("role","group");hours.setAttribute("aria-label",t("Seleccionar franja","Select time window"));hourHead.append(make("span","kicker",t("Elegir otra franja","Choose another window")));hero.append(hourHead,hours);
-  for(const item of d.hours||[])addTile(hours,item,onHour,"hour");
-  const footer=make("div","hero-footer");footer.append(make("p","disclaimer",d.disclaimer||t("Modelo orientativo. No es una medición de la rompiente ni una garantía de seguridad.","Model guidance, not a breaking-wave measurement or safety clearance.")));hero.append(footer);
+  rating.append(scoreline);scoreline.setAttribute("aria-label",t("Índice de sesión modelado","Modelled session index")+" "+score(d.score,lang)+"/10 "+(d.grade||""));
+  timing.append(make("span","kicker",/seleccionada|selected/i.test(d.windowLabel||"")?t("Franja seleccionada · modelo","Selected window · model"):t("Mejor ventana · modelo","Best window · model")),make("h2","window",d.window||"—"));primary.append(timing,rating);signal.append(primary);
+  const metrics=make("div","metrics");for(const m of [[t("Altura oceánica","Offshore height"),d.wave],[t("Período","Period"),d.period],[t("Viento","Wind"),d.wind]]){const x=make("div");x.append(make("small",null,m[0]),make("b",null,m[1]||"—"));metrics.append(x)}const prep=make("div","prep");for(const item of d.prep||[]){if(!item.value)continue;const x=make("div");x.append(make("small",null,item.label),make("b",null,item.value));prep.append(x)}const caution=available&&(d.caution===true||/precauci[oó]n|caution/i.test((d.grade||"")+" "+(d.verdict||"")));if(caution&&d.reason)signal.append(make("p","deck",d.reason));grid.append(read,signal);hero.append(grid);
+  const hourHead=make("div","hours-head"),hours=make("div","hours");hours.setAttribute("role","group");hours.setAttribute("aria-label",t("Seleccionar franja","Select time window"));hourHead.append(make("span","kicker",t("Franjas disponibles","Available windows")));const eligible=(d.hours||[]).filter(x=>!x.disabled&&valid(x.score)),other=(d.hours||[]).filter(x=>x.disabled||!valid(x.score));
+  if(eligible.length){hero.append(hourHead,hours);for(const item of eligible){addTile(hours,item,onHour,"hour");const note=hours.lastElementChild.querySelector("small");if(note){if(/precauci[oó]n|caution/i.test(item.note||""))note.textContent=t("Precaución","Caution");else note.remove()}}}
+  const excluded=make("details","excluded"),excludedRail=make("div","hours");if(other.length){excluded.open=excludedOpen;excluded.append(make("summary",null,t("Franjas no evaluables","Ineligible windows")+" ("+other.length+")"),excludedRail);for(const item of other)addTile(excludedRail,item,onHour,"hour");hero.append(excluded)}
+  const footer=make("div","hero-footer");footer.append(make("p","disclaimer",(!available||caution)&&d.disclaimer?d.disclaimer:t("Modelo experimental · no garantiza seguridad ni altura de rompiente.","Experimental model · not a safety or breaking-height guarantee.")));hero.append(footer);
   const oldLocal=layout.querySelector(".local-read"),local=make("section","local-read");
+  if(available){const conditions=make("section","conditions");conditions.append(make("span","kicker",t("Condiciones de la franja","Window conditions")),metrics);if(d.reason&&!caution){const why=make("details","why");why.open=!!oldLocal?.querySelector(".why")?.open;why.append(make("summary",null,t("¿Por qué esta franja?","Why this window?")),make("p",null,d.reason));conditions.append(why)}local.append(conditions)}
   if(prep.children.length){const kit=make("details","kit"),summary=make("summary",null,t("Prepara tu sesión","Prepare your session"));kit.open=!!oldLocal?.querySelector(".kit")?.open;kit.append(summary,prep);local.append(kit)}
   if(d.local?.uvAdvice)local.append(make("p","uv-advice",d.local.uvAdvice));
   local.append(actions);
   if(d.local?.headline){const detail=make("details","interpretation"),summary=make("summary",null,t("Lectura local · ","Local read · ")+d.local.headline);detail.open=!!oldLocal?.querySelector(".interpretation")?.open;detail.append(summary);for(const p of d.local.paragraphs||[])if(p)detail.append(make("p",null,p));local.append(detail)}
   const links=make("div","local-links");if(onDNA)links.append(control("Spot DNA",onDNA,"dna"));if(onCamera)links.append(control(t("Cámaras","Cameras"),onCamera,"camera"));if(links.children.length)local.append(links);
   if(existingHero){layout.querySelector(".context").replaceWith(context);layout.querySelector(".week").replaceWith(week);if(oldLocal)oldLocal.replaceWith(local);else layout.append(local)}else layout.replaceChildren(context,week,hero,local);days.scrollLeft=previousScroll;railObserver?.disconnect();if(typeof ResizeObserver==="function"){railObserver=new ResizeObserver(syncRail);railObserver.observe(days)}requestAnimationFrame(syncRail);
-  for(const rail of [days,hours])rail.addEventListener("keydown",event=>{if(!["ArrowLeft","ArrowRight","Home","End"].includes(event.key))return;const buttons=[...rail.querySelectorAll("button:not(:disabled)")],i=buttons.indexOf(shadow.activeElement);if(i<0)return;event.preventDefault();const next=event.key==="Home"?0:event.key==="End"?buttons.length-1:Math.max(0,Math.min(buttons.length-1,i+(event.key==="ArrowRight"?1:-1)));if(next!==i){buttons[next].focus({preventScroll:true});buttons[next].click()}});
+  for(const rail of [days,hours,excludedRail])rail.addEventListener("keydown",event=>{if(!["ArrowLeft","ArrowRight","Home","End"].includes(event.key))return;const buttons=[...rail.querySelectorAll("button:not(:disabled)")],i=buttons.indexOf(shadow.activeElement);if(i<0)return;event.preventDefault();const next=event.key==="Home"?0:event.key==="End"?buttons.length-1:Math.max(0,Math.min(buttons.length-1,i+(event.key==="ArrowRight"?1:-1)));if(next!==i){buttons[next].focus({preventScroll:true});buttons[next].click()}});
   if(focus){const next=[...shadow.querySelectorAll("[data-key]")].find(x=>x.dataset.key===focus);next?.focus({preventScroll:true})}
   if(!retired){
    for(const node of retire.filter(Boolean)){
