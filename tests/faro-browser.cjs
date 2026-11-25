@@ -28,7 +28,7 @@ function data(){
    swell_wave_period:constant(7),wind_wave_height:constant(0.4),
    wind_wave_direction:constant(295)}},
   weather:{hourly:{time:times,wind_speed_10m:constant(21),
-   wind_direction_10m:constant(145),wind_gusts_10m:constant(87),
+   wind_direction_10m:constant(145),wind_gusts_10m:times.map((v,i)=>i>=24&&i<48?87:25),
    precipitation:constant(0),cloud_cover:constant(30),
    weather_code:constant(2),temperature_2m:constant(11),
    apparent_temperature:constant(9)},
@@ -72,6 +72,7 @@ async function swipe(session,x0,y0,x1,y1){
     isMobile:true,hasTouch:true});
    await context.route('**/marine-api.open-meteo.com/**',route=>route.fulfill({json:marine}));
    await context.route('**/api.open-meteo.com/**',route=>route.fulfill({json:weather}));
+   await context.route('**/faro-forecast-console.js*',route=>route.abort());
    await context.route('**/fonts.googleapis.com/**',route=>route.abort());
    await context.route('**/fonts.gstatic.com/**',route=>route.abort());
    const page=await context.newPage();
