@@ -52,6 +52,6 @@ function evaluate({potentialScore=null,slotRisk="unknown",access=null,officialAl
   warning:"Advisory gate, not a certified safety forecast; official warnings are not synchronised automatically."
  });
 }
-root.FaroSessionDecision=Object.freeze({evaluate});
+root.FaroSessionDecision=Object.freeze({evaluate:root.FaroModelCore?.decideSession||evaluate});
 if(typeof module==="object"&&module.exports)module.exports=root.FaroSessionDecision;
 })(typeof window!=="undefined"?window:globalThis);
