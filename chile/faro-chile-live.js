@@ -8,7 +8,7 @@
 "use strict";
 const clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
 const finite=v=>typeof v==="number"&&Number.isFinite(v);
-const mean=a=>{const f=a.filter(finite);return f.length?f.reduce((x,y)=>x+y,0)/f.length:null};
+const mean=root.FaroModelCore?.mean|| (a=>{const f=a.filter(finite);return f.length?f.reduce((x,y)=>x+y,0)/f.length:null});
 const max=a=>{const f=a.filter(finite);return f.length?Math.max(...f):null};
 // Distance from a documented coastal reference point to the actual model grid.
 // It is NOT the distance to a confirmed breaking-wave location.
@@ -18,12 +18,12 @@ function gridDistanceKm(aLat,aLon,bLat,bLon){
  const z=Math.sin(dl/2)**2+Math.cos(aLat*rad)*Math.cos(bLat*rad)*Math.sin(dLon/2)**2;
  return 6371*2*Math.atan2(Math.sqrt(z),Math.sqrt(Math.max(0,1-z)));
 }
-const circleMean=a=>{
+const circleMean=root.FaroModelCore?.circleMean||(a=>{
  const f=a.filter(finite);if(!f.length)return null;
  const sin=f.reduce((z,n)=>z+Math.sin(n*Math.PI/180),0),cos=f.reduce((z,n)=>z+Math.cos(n*Math.PI/180),0);
  if(Math.hypot(sin,cos)<1e-6)return null;
  return ((Math.atan2(sin,cos)*180/Math.PI)%360+360)%360;
-};
+});
 // Numeric forecast instants are UTC epoch seconds; render in the real IANA zone.
 function wallClock(instant,zone){
  if(!finite(instant))return String(instant);
