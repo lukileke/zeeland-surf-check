@@ -75,21 +75,22 @@ h2{font-family:var(--faro-display,Manrope,system-ui,sans-serif);font-weight:800;
 .actions button{color:var(--ink);min-block-size:2.5rem;padding:.5em .75em;border-color:var(--line);font-size:.78rem;font-weight:750}
 .actions button:first-child{background:#d9ebe6;color:#12383d;border-color:#d9ebe6}.prep{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,6rem),1fr));gap:.4rem;padding-block:.4rem;border-top:1px solid var(--line)}.prep:empty{display:none}.prep div{display:grid;gap:.1rem;min-inline-size:0}.prep small{font-size:.67rem;color:var(--muted)}.prep b{font-size:.9rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.session-primary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,7.5rem),1fr));align-items:end;gap:.4rem .75rem}.session-primary>div{min-inline-size:0;display:grid;gap:.2rem}.hours button:disabled{opacity:.7}.hours button:disabled strong{color:var(--muted)}
 /* The original four-arc O, with independent water, halo, core and beam.
-   All layers use a single 5.4s phase. The SVG itself has no shadow filter. */
-.beacon{position:absolute;z-index:1;inset-block-start:0;inset-inline-end:0;inline-size:clamp(7rem,23cqi,17rem);aspect-ratio:1;display:grid;place-items:center;pointer-events:none;overflow:clip}
+   All layers use a single 5.4s phase. Static Gaussian blur restores the
+   original submerged emblem; never animate an SVG filter or use drop-shadow. */
+.beacon{position:absolute;z-index:1;inset-block-start:0;inset-inline-end:0;inline-size:clamp(7rem,23cqi,17rem);aspect-ratio:1;display:grid;place-items:center;pointer-events:none;overflow:visible}
 .beacon::before,.beacon::after,.beacon .pulse,.beacon .beam{content:"";position:absolute;inset:0;pointer-events:none}
-.beacon::before{background:radial-gradient(ellipse,rgba(111,193,181,.25),transparent 70%);animation:water 5.4s ease-in-out infinite}
-.beacon::after{background:radial-gradient(circle,rgba(255,211,111,.36),rgba(110,204,182,.12) 32%,transparent 63%);animation:halo 5.4s ease-in-out infinite}
-.beacon .pulse{inset:22%;background:radial-gradient(circle,rgba(255,216,122,.75),rgba(255,200,93,.22) 32%,transparent 65%);filter:blur(.4rem);animation:core 5.4s ease-in-out infinite}
-.beacon .beam{background:radial-gradient(ellipse at 58% 45%,rgba(173,232,206,.28),transparent 62%);animation:beam 5.4s ease-in-out infinite}
+.beacon::before{background:radial-gradient(ellipse,rgba(111,193,181,.31) 0%,rgba(85,158,153,.12) 43%,transparent 76%);filter:blur(.5rem);animation:water 5.4s ease-in-out infinite}
+.beacon::after{background:radial-gradient(circle,rgba(255,211,111,.27),rgba(110,204,182,.17) 35%,transparent 73%);filter:blur(clamp(.65rem,1.6cqi,1.75rem));animation:halo 5.4s ease-in-out infinite}
+.beacon .pulse{inset:14%;background:radial-gradient(circle,rgba(255,216,122,.62),rgba(255,200,93,.19) 38%,transparent 72%);filter:blur(clamp(.65rem,1.65cqi,1.35rem));animation:core 5.4s ease-in-out infinite}
+.beacon .beam{background:radial-gradient(ellipse at 58% 45%,rgba(173,232,206,.22),transparent 72%);filter:blur(.8rem);animation:beam 5.4s ease-in-out infinite}
 .read>*,.signal>*{position:relative;z-index:2}
-.beacon svg{position:relative;z-index:1;inline-size:37%;block-size:auto;fill:#d4ece5;opacity:.92;animation:mark 5.4s ease-in-out infinite}
+.beacon svg{position:relative;z-index:1;inline-size:37%;block-size:auto;fill:#d4ece5;opacity:.55;filter:blur(clamp(.05rem,.18cqi,.085rem));transform:rotate(-8deg);animation:mark 5.4s ease-in-out infinite}
 .beacon .faro-beacon-core{fill:#ffda71}.beacon .faro-beacon-ring{fill:#d4ece5}
 @keyframes water{0%,100%{opacity:.6;scale:.98}50%{opacity:.85;scale:1.03}}
 @keyframes halo{0%,100%{opacity:.61;scale:.97}50%{opacity:.96;scale:1.055}}
 @keyframes core{0%,100%{opacity:.42;scale:.945}50%{opacity:1;scale:1.08}}
 @keyframes beam{0%,100%{opacity:.45;scale:.975}50%{opacity:.85;scale:1.045}}
-@keyframes mark{0%,100%{translate:0 0;scale:1}50%{translate:0 -.3rem;scale:1.028}}
+@keyframes mark{0%,100%{translate:0 0;scale:1;opacity:.44}50%{translate:0 -.3rem;scale:1.028;opacity:.60}}
 @container faro (min-width:39rem){.context{grid-template-columns:minmax(0,.8fr) minmax(0,1.25fr)}.update{grid-column:1/-1}}
 @container faro (min-width:55rem){.context{grid-template-columns:minmax(0,.8fr) minmax(0,1.3fr) minmax(9rem,.7fr)}.update{grid-column:auto;justify-content:flex-end}.update span{text-align:end}}
 @container faro (min-width:44rem){.hero-grid{grid-template-columns:minmax(0,1.22fr) minmax(0,1fr);gap:clamp(1rem,2.5cqi,2.4rem);align-items:center}.signal .session-primary{grid-template-columns:minmax(0,1fr)}.signal .rating{padding-inline-end:clamp(3rem,7cqi,6rem)}}
@@ -121,7 +122,7 @@ h2{font-family:var(--faro-display,Manrope,system-ui,sans-serif);font-weight:800;
 }
 @container faro (min-width:21rem) and (max-width:31.99rem){.hours{grid-template-columns:repeat(4,minmax(0,1fr))}.hours button{padding-inline:.35rem}}
 @media(hover:hover){.days button:not(:disabled):hover,.hours button:not(:disabled):hover{background:rgba(220,246,235,.08)}.actions button:not(:disabled):hover,.update button:hover{border-color:var(--accent)}}
-@media(prefers-reduced-motion:reduce){.beacon::before,.beacon::after,.beacon .pulse,.beacon .beam,.beacon svg{animation:none;opacity:1}.days button,.hours button{transition:none}}
+@media(prefers-reduced-motion:reduce){.beacon::before,.beacon::after,.beacon .pulse,.beacon .beam{animation:none;opacity:.75}.beacon svg{animation:none;opacity:.55}.days button,.hours button{transition:none}}
 `;
 const shades=["var(--faro-score-0,#ef9b77)","var(--faro-score-1,#efbd6e)","var(--faro-score-2,#e0cc73)","var(--faro-score-3,#b1d574)","var(--faro-score-4,#8cc584)"];
 const score=(n,lang)=>valid(n)?new Intl.NumberFormat(lang==="es"?"es-CL":"en-GB",{minimumFractionDigits:1,maximumFractionDigits:1}).format(n):"—";
