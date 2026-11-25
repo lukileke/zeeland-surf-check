@@ -67,6 +67,10 @@ function fixture(){
    },testNowMs);
    await context.route('**/marine-api.open-meteo.com/**',route=>route.fulfill({json:marine}));
    await context.route('**/api.open-meteo.com/**',route=>route.fulfill({json:weather}));
+   // This existing exhaustive suite retains its historical model and DOM
+   // assertions for the supported fallback. Primary shared UI uses
+   // tests/faro-shared-console-browser.mjs on both actual routes.
+   await context.route('**/faro-forecast-console.js*',route=>route.abort());
    await context.route('**/fonts.googleapis.com/**',route=>route.abort());
    await context.route('**/fonts.gstatic.com/**',route=>route.abort());
    // Exercise the first-party geographic map independently of external CDN uptime.
