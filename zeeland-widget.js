@@ -50,7 +50,7 @@ const detectedFamily=(typeof config!=="undefined"&&config.widgetFamily)||"medium
 const family=(typeof config!=="undefined"&&config.runsInApp&&PREVIEW)?PREVIEW:detectedFamily;
 const lockFamily=family.startsWith("accessory");
 const fm=FileManager.local();
-const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v7.js");
+const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v8.js");
 const cacheName=isBest?"all":chosen.map(x=>x[0]+"-"+x[1]).join("_").replace(/[^a-zA-Z0-9_-]/g,"-").slice(0,80);
 const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v5-"+cacheName+".json");
 function palette(light,dark){return EFFECTIVE_THEME==="LIGHT"?new Color(light):new Color(dark)}
@@ -220,7 +220,16 @@ const word=(es,en)=>LANG==="es"?es:en;
 // Five visual quality bands; original SVG logo is kept separate from score colour.
 async function json(url){
  const req=new Request(url);req.timeoutInterval=17;
- return await req.loadJSON();
+ try{const data=await req.loadJSON();if(req.response?.statusCode>=400){const e=Error("HTTP "+req.response.statusCode);e.status=req.response.statusCode;throw e}return data}
+ catch(e){if(req.response?.statusCode>=400){const err=Error("HTTP "+req.response.statusCode);err.status=req.response.statusCode;throw err}throw e}
+}
+async function marineJson(url){
+ try{return await json(url)}catch(e){
+  if(e.status!==400)throw e;
+  const from="&hourly="+globalThis.FaroModelCore.marineFields;
+  if(!url.includes(from))throw e;
+  return json(url.replace(from,"&hourly="+globalThis.FaroModelCore.marineRequiredFields));
+ }
 }
 function readCache(path){
  try{if(fm.fileExists(path))return JSON.parse(fm.readString(path))}catch(e){}
@@ -233,7 +242,7 @@ async function engine(){
  if(exists&&age<6*3600000)src=fm.readString(enginePath);
  if(!src){
   try{
-   const req=new Request(SITE+"surf-engine.js?v=4");
+   const req=new Request(SITE+"surf-engine.js?v=5");
    req.timeoutInterval=12;src=await req.loadString();
    if(!src.includes("root.ZeelandEngine=")||src.length>30000)throw Error("Invalid shared engine");
    fm.writeString(enginePath,src);
@@ -267,7 +276,7 @@ async function fetchModel(spots){
   return {...cached,stale:false,fromCache:true};
  try{
   const [marineUrl,weatherUrl]=forecastUrls(spots);
-  const [m,w]=await Promise.all([json(marineUrl),json(weatherUrl)]);
+  const [m,w]=await Promise.all([marineJson(marineUrl),json(weatherUrl)]);
   const mm=Array.isArray(m)?m:[m],ww=Array.isArray(w)?w:[w];
   if(mm.length!==spots.length||ww.length!==spots.length)throw Error("Wrong API locations");
   if(mm.some((x,i)=>!x.hourly?.time?.length||!ww[i]?.hourly?.time?.length||!ww[i]?.daily?.time?.length))
