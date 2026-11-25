@@ -50,3 +50,12 @@ html[data-faro-region] body>main{
 .faro-extended th{color:var(--muted);font-weight:650;font-size:11px}
 .faro-extended :is(th,td):first-child{text-align:left;padding-left:0}
 .faro-extended-retry{margin-top:10px}
+
+/* Routine source-health notice: a compact utility, never a safety clearance.
+   Hazard and access notices retain their original regional treatment. */
+[data-faro-shared] #faroOfficialWatch.faro-official-watch{
+ padding:clamp(.5rem,.9vw,.8rem) clamp(.65rem,1.2vw,1rem);margin-block:.4rem;
+ gap:clamp(.35rem,.7vw,.7rem);box-shadow:none;
+}
+[data-faro-shared] #faroOfficialWatch .faro-watch-copy strong{font-size:.85rem;line-height:1.3}
+[data-faro-shared] #faroOfficialWatch .faro-watch-copy>span{font-size:.72rem;line-height:1.35}
