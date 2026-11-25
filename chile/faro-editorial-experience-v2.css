@@ -2068,11 +2068,11 @@ html body #forecastPage #dayview>.faro-ocean-explorer{
 #forecastPage #dayview #coastMapExpand>summary{
  display:none;
 }
-html[data-faro-shared] #forecastPage #dayview #coastMapExpand>summary{
+html[data-faro-shared] #coastMapExpand>summary{
  display:flex;justify-content:space-between;align-items:center;gap:.5rem;min-height:2.75rem;padding:.5rem;cursor:pointer;color:var(--fg);
 }
-html[data-faro-shared] #forecastPage #dayview #coastMapExpand>summary::after{content:"+"}
-html[data-faro-shared] #forecastPage #dayview #coastMapExpand[open]>summary::after{content:"−"}
+html[data-faro-shared] #coastMapExpand>summary::after{content:"+"}
+html[data-faro-shared] #coastMapExpand[open]>summary::after{content:"−"}
 
 #forecastPage #dayview #chileCoastMap{min-width:0}
 #forecastPage #dayview #waveInsightExpand{
