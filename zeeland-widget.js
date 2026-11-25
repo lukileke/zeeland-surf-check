@@ -50,9 +50,9 @@ const detectedFamily=(typeof config!=="undefined"&&config.widgetFamily)||"medium
 const family=(typeof config!=="undefined"&&config.runsInApp&&PREVIEW)?PREVIEW:detectedFamily;
 const lockFamily=family.startsWith("accessory");
 const fm=FileManager.local();
-const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v5.js");
+const enginePath=fm.joinPath(fm.cacheDirectory(),"faro-widget-engine-v6.js");
 const cacheName=isBest?"all":chosen.map(x=>x[0]+"-"+x[1]).join("_").replace(/[^a-zA-Z0-9_-]/g,"-").slice(0,80);
-const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v4-"+cacheName+".json");
+const dataPath=fm.joinPath(fm.cacheDirectory(),"faro-widget-data-v5-"+cacheName+".json");
 function palette(light,dark){return EFFECTIVE_THEME==="LIGHT"?new Color(light):new Color(dark)}
 const C={
  bg:palette("#F7FAFA","#102427"),ink:palette("#1F3B3D","#F3F8F7"),
@@ -233,7 +233,7 @@ async function engine(){
  if(exists&&age<6*3600000)src=fm.readString(enginePath);
  if(!src){
   try{
-   const req=new Request(SITE+"surf-engine.js?v=2");
+   const req=new Request(SITE+"surf-engine.js?v=3");
    req.timeoutInterval=12;src=await req.loadString();
    if(!src.includes("root.ZeelandEngine=")||src.length>30000)throw Error("Invalid shared engine");
    fm.writeString(enginePath,src);
@@ -244,7 +244,7 @@ async function engine(){
  }
  // Trusted first-party static engine, cached locally for offline rendering.
  eval(src);
- if(!globalThis.ZeelandEngine||typeof globalThis.ZeelandEngine.evaluate!=="function")
+ if(!globalThis.ZeelandEngine||typeof globalThis.ZeelandEngine.evaluate!=="function"||globalThis.FaroModelCore?.version!=="1.0.0")
   throw Error("Shared FARO score engine unavailable");
  return globalThis.ZeelandEngine;
 }
@@ -254,9 +254,9 @@ function forecastUrls(spots){
   "&timezone=Europe%2FAmsterdam&forecast_days=7";
  return [
   "https://marine-api.open-meteo.com/v1/marine?"+qs+
-   "&hourly=wave_height,wave_direction,wave_period",
+   "&hourly="+globalThis.FaroModelCore.marineFields,
   "https://api.open-meteo.com/v1/forecast?"+qs+
-   "&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code"+
+   "&hourly="+globalThis.FaroModelCore.weatherFields+
    "&daily=sunrise,sunset"
  ];
 }
@@ -282,40 +282,17 @@ async function fetchModel(spots){
  }
 }
 function candidateSessions(data,E,spots,now=localParts()){
- const out=[];
+ const out=[],core=globalThis.FaroModelCore;
  for(let si=0;si<spots.length;si++){
-  const spot=spots[si],m=data.marine[si].hourly,w=data.weather[si].hourly;
-  const daily=data.weather[si].daily;
-  const wi=new Map(w.time.map((t,i)=>[t,i]));
-  const marineByTime=new Map(m.time.map((t,i)=>[t,i]));
+  const spot=spots[si],m=data.marine[si].hourly,w=data.weather[si].hourly,daily=data.weather[si].daily;
   for(let di=0;di<Math.min(7,daily.time.length);di++){
-   const day=daily.time[di],rise=timeMin(daily.sunrise[di])+15,set=timeMin(daily.sunset[di])-30;
-   if(!Number.isFinite(rise)||!Number.isFinite(set))continue;
+   const day=daily.time[di];
    for(let hour=6;hour<22;hour+=2){
-    const start=Math.max(hour*60,rise),end=Math.min((hour+2)*60,set);
-    if(end-start<40)continue;
-    if(day<now.date||(day===now.date&&end-now.minutes<40))continue;
-    const indexes=[day+"T"+clockHour(hour)+":00",day+"T"+clockHour(hour+1)+":00"];
-    const samples=[];
-    for(const t of indexes){
-     const i=marineByTime.get(t),j=wi.get(t);
-     if(i===undefined||j===undefined)break;
-     const x={h:m.wave_height?.[i],period:m.wave_period?.[i],
-      wd:m.wave_direction?.[i],wind:w.wind_speed_10m?.[j],
-      dir:w.wind_direction_10m?.[j],gust:w.wind_gusts_10m?.[j],
-      precip:w.precipitation?.[j],code:w.weather_code?.[j]};
-     if([x.h,x.period,x.wd,x.wind,x.dir].some(v=>!Number.isFinite(v)))break;
-     samples.push({...x,...E.evaluate(x,spot[4],spot[5])});
-    }
-    if(samples.length!==2)continue;
-    const x=samples[1],score=round1((samples[0].v+samples[1].v)/2);
-    out.push({spot,day,h:hour,score,x:{
-     ...x,h:round1((samples[0].h+samples[1].h)/2),
-     period:round1((samples[0].period+samples[1].period)/2),
-     wind:Math.round((samples[0].wind+samples[1].wind)/2),
-     gust:Math.max(...samples.map(a=>Number.isFinite(a.gust)?a.gust:0)),
-     code:samples.some(a=>a.code>=95&&a.code<=99)?95:x.code
-    }});
+    const light=core.eligibleWindow(day,hour,timeMin(daily.sunrise[di]),timeMin(daily.sunset[di]),now);
+    if(!light?.upcoming)continue;
+    const session=core.summarizeWindow(core.windowSamples(m,w,day,hour),spot[4],spot[5]);
+    if(!session)continue;
+    out.push({spot,day,h:hour,score:session.v,x:{...session,h:round1(session.h),period:round1(session.period),wind:Math.round(session.wind)}});
    }
   }
  }
