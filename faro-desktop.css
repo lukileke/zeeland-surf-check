@@ -18,6 +18,7 @@ html[data-faro-region] body>main{
  display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,28rem),1fr))!important;
  gap:clamp(.8rem,1.6vw,1.5rem)!important;align-items:start;min-inline-size:0;
 }
+[data-faro-shared] #dayview>.hourly-section{display:block!important}
 [data-faro-shared] #dayview>*{
  grid-column:auto!important;grid-row:auto!important;min-inline-size:0;
 }
