@@ -9,7 +9,7 @@ html[data-faro-region] #forecastPage{min-width:0}
 html[data-faro-region] #forecastPage :is(.picker-grid,.forecast-section,.faro-context-dock,.faro-forecast-lead,.faro-console-hours,.session-glance,.faro-detail-hub){min-width:0;box-sizing:border-box}
 html[data-faro-region] #forecastPage :is(.day-chip,.slots>button,.faro-console-days>button,.faro-console-hour-list>button){min-width:0;box-sizing:border-box}
 .faro-extended{
- margin:20px 0;min-width:0;max-width:100%;box-sizing:border-box;
+ order:99;margin:20px 0;min-width:0;max-width:100%;box-sizing:border-box;
  border-top:1px solid var(--faro-line,var(--border));border-bottom:1px solid var(--faro-line,var(--border));
  color:var(--fg);background:transparent;
 }
