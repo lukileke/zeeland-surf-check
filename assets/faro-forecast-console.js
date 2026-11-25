@@ -27,6 +27,7 @@ a{color:inherit}
 .days button,.hours button{display:grid;gap:.2rem;text-align:start;align-content:start;min-inline-size:0;min-block-size:4.8rem;font-size:.8rem;background:var(--tile,#243239);border-color:var(--border,var(--line));padding:clamp(.5rem,1.05cqi,.85rem);overflow-wrap:anywhere}
 .days button[aria-pressed="true"],.hours button[aria-pressed="true"]{border-color:var(--faro-selection,#a0d6cf);box-shadow:inset 0 0 0 1px var(--faro-selection,#a0d6cf)}
 .days strong,.hours strong{font-size:clamp(1.15rem,1rem + 1cqi,1.7rem);font-variant-numeric:tabular-nums;line-height:1.1;color:var(--score,currentColor)}
+.days strong{inline-size:fit-content;background:#22363b;border-radius:.3rem;padding:.08em .23em;color:var(--score,#edf6f4)}
 .days small,.hours small{font-size:.72rem;color:var(--outer-muted);line-height:1.35}
 .hero{position:relative;isolation:isolate;overflow:hidden;display:grid;gap:var(--gap);padding:var(--space);border:1px solid #46686e;border-radius:clamp(.8rem,1.7cqi,1.4rem);background:radial-gradient(ellipse at 84% 4%,#27565a 0%,transparent 52%),linear-gradient(125deg,#153d45,#0b2934);color:var(--ink)}
 .hero .kicker,.hero small{color:var(--muted)}
@@ -72,12 +73,13 @@ const shades=["var(--faro-score-0,#ef9b77)","var(--faro-score-1,#efbd6e)","var(-
 const score=(n,lang)=>valid(n)?new Intl.NumberFormat(lang==="es"?"es-CL":"en-GB",{minimumFractionDigits:1,maximumFractionDigits:1}).format(n):"—";
 const tint=(e,n)=>{if(valid(n))e.style.setProperty("--score",shades[Math.max(0,Math.min(4,Math.floor(n/2)))]);return e};
 function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails,onMatch,beacon,regionLinks}){
- if(!before?.parentNode||!before.attachShadow&&typeof HTMLElement==="undefined")return null;
+ if(!before?.parentNode||!HTMLElement.prototype.attachShadow)return null;
  const host=make("div","faro-shared-console");host.id="faroSharedConsole";host.style.setProperty("display","block","important");host.style.setProperty("grid-column","1/-1","important");
  const shadow=host.attachShadow({mode:"open"}),style=make("style",null,css),layout=make("section","layout");shadow.append(style,layout);
  before.parentNode.insertBefore(host,before);
- let last="",retired=false;
- function update(){
+ let last="",retired=false,failed=false;const prior=new Map();
+ function paint(){
+  if(failed)return;
   const d=getData();if(!d)return;const key=JSON.stringify(d);if(key===last)return;last=key;
   const lang=d.lang==="es"?"es":"en",t=(es,en)=>lang==="es"?es:en;
   const focus=shadow.activeElement?.dataset?.key,previousScroll=layout.querySelector(".days")?.scrollLeft||0;
@@ -104,10 +106,26 @@ function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails
   hero.append(make("p","disclaimer",d.disclaimer||t("Modelo orientativo. No es una medición de la rompiente ni una garantía de seguridad.","Model guidance, not a breaking-wave measurement or safety clearance.")));
   layout.replaceChildren(context,updated,week,hero);days.scrollLeft=previousScroll;
   if(focus){const next=[...shadow.querySelectorAll("[data-key]")].find(x=>x.dataset.key===focus);next?.focus({preventScroll:true})}
-  if(!retired){for(const node of retire.filter(Boolean)){node.setAttribute("data-faro-ui-retired","");node.setAttribute("inert","");node.setAttribute("aria-hidden","true")}retired=true;document.documentElement.setAttribute("data-faro-shared","")}
+  if(!retired){
+   for(const node of retire.filter(Boolean)){
+    prior.set(node,{display:node.style.getPropertyValue("display"),priority:node.style.getPropertyPriority("display"),inert:node.hasAttribute("inert"),aria:node.getAttribute("aria-hidden")});
+    node.style.setProperty("display","none","important");node.setAttribute("data-faro-ui-retired","");node.setAttribute("inert","");node.setAttribute("aria-hidden","true");
+   }
+   retired=true;document.documentElement.setAttribute("data-faro-shared","");
+  }
  }
- try{update()}catch(e){host.remove();throw e}
- return {update,host};
+ function update(){
+  try{paint()}catch(e){
+   failed=true;console.error("FARO shared console failed; restoring legacy interface",e);
+   for(const [node,p] of prior){
+    if(p.display)node.style.setProperty("display",p.display,p.priority);else node.style.removeProperty("display");
+    node.removeAttribute("data-faro-ui-retired");if(!p.inert)node.removeAttribute("inert");
+    if(p.aria===null)node.removeAttribute("aria-hidden");else node.setAttribute("aria-hidden",p.aria);
+   }
+   document.documentElement.removeAttribute("data-faro-shared");host.remove();
+  }
+ }
+ update();return failed?null:{update,host};
 }
 root.FaroForecastConsole=Object.freeze({mount});
 })(window);
