@@ -50,17 +50,22 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
        assert.ok(hierarchy.excludedCollapsed&&hierarchy.visibleUnavailable===0,"Unavailable windows cannot compete with actionable windows");
        const visual=await page.evaluate(()=>{const r=document.querySelector("#faroSharedConsole").shadowRoot,day=r.querySelector(".days button[data-scored]"),mark=r.querySelector(".beacon svg"),read=r.querySelector(".hero .read"),update=r.querySelector(".update");return {scoreBg:day?getComputedStyle(day.querySelector("strong")).backgroundColor:null,bar:day?getComputedStyle(day,"::after").backgroundColor:null,score:day?getComputedStyle(day.querySelector("strong")).color:null,mark:!!mark,core:!!r.querySelector(".beacon .pulse"),beam:!!r.querySelector(".beacon .beam"),dock:update.parentElement.classList.contains("context"),read:!!read,reduced:mark?getComputedStyle(mark).animationName:null}});
        assert.ok(visual.mark&&visual.core&&visual.beam&&visual.dock&&visual.read,"Visual identity missing");assert.equal(visual.reduced,"none","Reduced motion respected");
-       const optics=await page.evaluate(()=>{const b=document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".beacon"),m=getComputedStyle(b.querySelector("svg"));return {filter:m.filter,opacity:Number(m.opacity),halo:getComputedStyle(b,"::after").filter,core:getComputedStyle(b.querySelector(".pulse")).filter,markRatio:b.querySelector("svg").getBoundingClientRect().width/b.getBoundingClientRect().width}});
+       const optics=await page.evaluate(()=>{const b=document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".beacon"),m=getComputedStyle(b.querySelector("svg"));return {filter:m.filter,opacity:Number(m.opacity),halo:getComputedStyle(b,"::after").filter,core:getComputedStyle(b.querySelector(".pulse")).filter,markRatio:parseFloat(m.width)/parseFloat(getComputedStyle(b).width)}});
        assert.match(optics.filter,/^blur\(/,"Submerged logo uses static Gaussian blur, not a sharp icon or drop-shadow");assert.ok(optics.opacity>=.4&&optics.opacity<=.65,"Submerged logo retains translucent still frame");assert.ok(optics.markRatio>=.54&&optics.markRatio<=.61,"FARO mark retains brand presence relative to the halo");assert.match(optics.halo,/^blur\(/);assert.match(optics.core,/^blur\(/);assert.equal(visual.scoreBg,"rgba(0, 0, 0, 0)","Day scores must not be detached pills");assert.equal(visual.bar,visual.score,"Day bar uses the canonical score pigment");
        if(scale===1&&[375,1366,1920].includes(width))await page.screenshot({path:out+"/"+engine+"-"+region+"-"+theme+"-"+width+"-shared.png",fullPage:true});
       }
      }
      await page.setViewportSize({width:375,height:812});await page.evaluate(()=>document.documentElement.style.removeProperty("font-size"));
      const tools=consoleHost.locator(".week-tools");await tools.waitFor({state:"visible"});
+     const forward=consoleHost.locator('[data-key="next-day"]'),back=consoleHost.locator('[data-key="prev-day"]');
+     // A previous resize or font-scale test may leave the rail at the end.
+     // Test the actual enabled direction first, then verify both directions.
+     if(await forward.isDisabled()){await back.click();await page.waitForFunction(()=>!document.querySelector("#faroSharedConsole").shadowRoot.querySelector('[data-key="next-day"]').disabled)}
      const beforeScroll=await consoleHost.locator(".days").evaluate(el=>el.scrollLeft);
-     await consoleHost.locator('[data-key="next-day"]').click();
-     await page.waitForFunction(()=>document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".days").scrollLeft>0);
+     await forward.click();
+     await page.waitForFunction(before=>document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".days").scrollLeft>before+.5,beforeScroll);
      assert.ok(await consoleHost.locator(".days").evaluate(el=>el.scrollLeft)>beforeScroll,"Day navigation is usable without a swipe");
+     const afterScroll=await consoleHost.locator(".days").evaluate(el=>el.scrollLeft);await back.click();await page.waitForFunction(after=>document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".days").scrollLeft<after-.5,afterScroll);
      if(region==="cl"){
       assert.equal(await page.locator("#dailyOverview").isVisible(),false,"Duplicate daily overview retired");
       assert.equal(await page.locator("#faroHourlyPreview").isVisible(),false,"Duplicate selected-window card retired");
