@@ -25,10 +25,41 @@ function zeeland(input,orientation,reference,shared,engine=root.FaroChileScoreLa
   minimumEnergyGateM2S:reference.min**2*reference.periodMin};
  const science=engine.potentialScore(input,profile,H);
  if(!finite(science?.unrounded))return null;
- return {potential:Math.round(Math.max(0,Math.min(10,science.unrounded))*10)/10,
+ return {potential:Math.round(Math.max(0,Math.min(10,science.unrounded))*10)/10,modelVersion:'faro-spot-response-v0.4',
   responseScaleM2S:H.energyResponseScaleM2S,minimumGateM2S:H.minimumEnergyGateM2S,
   evidence:"legacy-profile-derived-uncalibrated",validated:false};
 }
-root.FaroRegionResponse=Object.freeze({zeeland});
+
+function chile(input,config,spotId,engine=root.FaroChileScoreLab){
+ if(!engine?.evaluate||!config||!input)return null;
+ const profile=config.profiles?.[spotId];if(!profile)return null;
+ const result=engine.evaluate(config,spotId,input);
+ return finite(result.score)?{potential:result.score,modelVersion:result.indexVersion,evidence:"local-guide-derived-uncalibrated",validated:false}:null;
+}
+function report(input,response,thermalInput,physics=root.FaroChilePhysicsLab,thermal=root.FaroThermalGuide){
+ const p=input?physics?.evaluate(input):null;
+ const rows=p?.systems||[];
+ const parts=rows.map(x=>({name:x.name,available:x.available,heightM:x.heightM,periodS:x.periodS,fromDeg:x.fromDeg,proxyM2S:x.proxyM2S}));
+ return {modelVersion:"faro-spot-response-v0.4",response:response||null,parts,
+  coverage:{primary:parts[0]?.available===true,secondary:parts[1]?.available===true,tertiary:parts[2]?.available===true},
+  crossingAngleDeg:p?.crossingAngleDeg??null,windSeaHeightM:finite(input?.windSeaHeightM)?input.windSeaHeightM:null,
+  windSeaToTotalHeightRatio:p?.windSeaToTotalHeightRatio??null,
+  thermal:thermalInput?thermal?.guide(thermalInput)||null:null,validated:false};
+}
+function markup(report,locale="es"){
+ const es=locale==="es",t=(a,b)=>es?a:b,f=(v,n=1)=>finite(v)?new Intl.NumberFormat(es?"es-CL":"en-GB",{minimumFractionDigits:n,maximumFractionDigits:n}).format(v):"—";
+ const cell=(label,value)=>'<div><small>'+label+'</small><strong>'+value+'</strong></div>';
+ const parts=[["primary",t("Swell primario","Primary swell")],["secondary",t("Swell secundario","Secondary swell")],["tertiary",t("Swell terciario","Tertiary swell")]];
+ const partitionRows=parts.map(([key,label])=>{const p=report?.parts?.find(x=>x.name===key);return '<tr><th scope="row">'+label+'</th><td>'+f(p?.heightM)+'</td><td>'+f(p?.periodS)+'</td><td>'+f(p?.fromDeg,0)+'</td><td>'+f(p?.proxyM2S,2)+'</td></tr>'}).join("");
+ const response=report?.response,wear=report?.thermal,score=finite(response?.potential)?f(response.potential)+"/10":"—";
+ return '<section class="faro-common-science" aria-label="'+t("Física y método FARO","FARO physics and method")+'"><header><small>FARO · MODEL LAB</small><h4>'+t("Física del oleaje","Ocean physics")+'</h4></header><div class="faro-science-grid">'+
+ cell(t("Potencial oceánico experimental","Experimental offshore potential"),score)+
+ cell(t("Ángulo entre swells","Swell crossing angle"),finite(report?.crossingAngleDeg)?f(report.crossingAngleDeg,0)+"°":"—")+
+ cell(t("Altura de mar de viento","Wind-sea height"),finite(report?.windSeaHeightM)?f(report.windSeaHeightM)+" m":"—")+
+ cell(t("Traje orientativo","Wetsuit guidance"),wear?.available?wear.primary+" mm":"—")+
+ '</div><div class="faro-science-table"><table><thead><tr><th>'+t("Componente","Partition")+'</th><th>Hs (m)</th><th>T (s)</th><th>'+t("Desde (°)","From (°)")+'</th><th>Hs²T (m²·s)</th></tr></thead><tbody>'+partitionRows+
+ '</tbody></table></div><p>'+t("Misma ecuación FARO v0.4, con parámetros locales sin calibración empírica. Hs²T es un proxy relativo, no potencia medida ni altura de rompiente. Las componentes ausentes no equivalen a cero. El mar de viento se informa por separado; este índice no estima su contribución al surf ni acredita seguridad.","Same FARO v0.4 equation, with locally derived, uncalibrated parameters. Hs²T is a relative proxy, not measured wave power or breaking height. Missing partitions are not zero. Wind sea is shown separately; this index does not estimate its surf contribution or establish safety.")+'</p></section>';
+}
+root.FaroRegionResponse=Object.freeze({zeeland,chile,report,markup});
 if(typeof module==="object"&&module.exports)module.exports=root.FaroRegionResponse;
 })(typeof globalThis!=="undefined"?globalThis:this);
