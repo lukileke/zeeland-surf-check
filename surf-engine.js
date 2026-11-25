@@ -115,6 +115,7 @@ const mean=a=>{const v=a.filter(finite);return v.length?v.reduce((x,y)=>x+y,0)/v
 const circleMean=a=>{const v=a.filter(finite);if(!v.length)return null;const x=v.reduce((n,d)=>n+Math.cos(d*Math.PI/180),0),y=v.reduce((n,d)=>n+Math.sin(d*Math.PI/180),0);return Math.hypot(x,y)<1e-6?null:((Math.atan2(y,x)*180/Math.PI)%360+360)%360};
 const round=(v,n=1)=>finite(v)?Math.round(v*10**n)/10**n:null;
 const at=(row,key,i)=>finite(row?.[key]?.[i])?row[key][i]:null;
+const marineRequiredFields="wave_height,wave_direction,wave_period,sea_surface_temperature";
 const marineFields="wave_height,wave_direction,wave_period,sea_surface_temperature,swell_wave_height,swell_wave_direction,swell_wave_period,secondary_swell_wave_height,secondary_swell_wave_direction,secondary_swell_wave_period,tertiary_swell_wave_height,tertiary_swell_wave_direction,tertiary_swell_wave_period,wind_wave_height,wind_wave_direction,wind_wave_period";
 const weatherFields="wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,cloud_cover,weather_code,temperature_2m,apparent_temperature";
 function readHour(m,w,i,j){
@@ -196,7 +197,7 @@ function zeelandRisk(rows){
  if(!Array.isArray(rows)||rows.length!==2)return "unknown";
  const danger=rows.some(x=>finite(x.code)&&x.code>=95&&x.code<=99||finite(x.gust)&&x.gust>=75||finite(x.wind)&&x.wind>=55||x.code===48||finite(x.h)&&x.h>=3||finite(x.water)&&x.water<7);
  if(danger)return "danger";
- const caution=rows.some(x=>finite(x.gust)&&x.gust>=50||finite(x.wind)&&x.wind>=35||finite(x.h)&&x.h>=2||x.code===45||finite(x.water)&&x.water<12||finite(x.air)&&x.air<=0||finite(x.precip)&&x.precip>=7);
+ const caution=rows.some(x=>finite(x.gust)&&x.gust>=50||finite(x.wind)&&x.wind>=35||finite(x.h)&&x.h>=2||x.code===45||finite(x.precip)&&x.precip>=7);
  if(!rows.every(x=>[x.gust,x.wind,x.code,x.precip].every(finite)))return "unknown";
  return caution?"caution":"none";
 }
@@ -222,7 +223,7 @@ function eligibleWindow(date,hour,rise,set,now){
  const from=Math.max(hour*60,rise+15),to=Math.min((hour+2)*60,set-30),available=Math.max(0,to-from);
  return {from,to,available,valid:available>=40,upcoming:available>=40&&(date>now.date||(date===now.date&&to-now.minutes>=40))};
 }
-root.FaroModelCore=Object.freeze({version:"1.0.0",mean,circleMean,readHour,windowSamples,summarizeWindow,scienceInput,eligibleWindow,marineFields,weatherFields,decideSession,zeelandRisk});
+root.FaroModelCore=Object.freeze({version:"1.0.0",mean,circleMean,readHour,windowSamples,summarizeWindow,scienceInput,eligibleWindow,marineFields,marineRequiredFields,weatherFields,decideSession,zeelandRisk});
 
 root.ZeelandEngine={surfProfiles,qualityComponents,weatherPenalty,waveCharacter,quickRead,evaluate};
 })(typeof globalThis!=='undefined'?globalThis:this);
