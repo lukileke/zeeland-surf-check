@@ -1106,6 +1106,12 @@ function session(){
   science.append(caveat);
  }
  const content=$("detail");content.replaceChildren();
+ const lab=window.FaroRegionResponse;
+ if(lab){
+  const input=s.modelComplete?{swellHeightM:s.swellHeightM,swellPeriodS:s.swellPeriodS,swellFromDeg:s.swellDirection,swellDirection:s.swellDirection,secondarySwell:s.secondarySwell,tertiarySwell:s.tertiarySwell,windSeaHeightM:s.windSeaHeightM,totalWaveHeightM:s.totalWaveHeightM,windFromDeg:s.windDirection,windDirection:s.windDirection,windKmh:s.windKmh,gustKmh:s.gustKmh}:null;
+  const response=input?lab.chile(input,state.profiles,s.spotId):null;
+  content.insertAdjacentHTML("beforeend",lab.markup(lab.report(input,response,{waterC:s.waterTemperatureC,airC:s.temperatureC,windKmh:s.windKmh}),state.lang));
+ }
  const grid=state.forecast?.model?.marineGrid,metGrid=state.forecast?.model?.weatherGrid;
  const coverage=state.forecast?.model?.coverage;
  const coordinateStatus=state.forecast?.model?.referencePointStatus||"unverified";
