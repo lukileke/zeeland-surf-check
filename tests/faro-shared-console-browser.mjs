@@ -44,6 +44,9 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
        assert.ok(geometry.days.bottom<=geometry.hero.top+2&&geometry.hours.top>geometry.hero.top&&geometry.hours.bottom<=geometry.hero.bottom+2,"Day rail above hero; hours inside");
        assert.ok(geometry.heroOverflow<=2&&geometry.hourOverflow<=2,"Internal overflow");
        assert.equal(geometry.dayCount,7);assert.equal(geometry.visibleRetired,0);
+       const hierarchy=await page.evaluate(()=>{const r=document.querySelector("#faroSharedConsole").shadowRoot,h=r.querySelector(".hero"),w=h.querySelector(".window"),s=h.querySelector(".scoreline strong");return {timeSize:parseFloat(getComputedStyle(w).fontSize),scoreSize:parseFloat(getComputedStyle(s).fontSize),timeFirst:!!(w.compareDocumentPosition(s)&Node.DOCUMENT_POSITION_FOLLOWING),prepInHero:!!h.querySelector(".prep"),actionsInHero:!!h.querySelector(".actions"),hasPrep:!!r.querySelector(".local-read .kit"),hasActions:!!r.querySelector(".local-read .actions")};});
+       assert.ok(hierarchy.timeFirst&&hierarchy.timeSize>hierarchy.scoreSize,"Window must precede and visually outweigh the numerical score");
+       assert.ok(!hierarchy.prepInHero&&!hierarchy.actionsInHero&&hierarchy.hasActions,"Secondary tools do not compete inside the hero");
        const visual=await page.evaluate(()=>{const r=document.querySelector("#faroSharedConsole").shadowRoot,day=r.querySelector(".days button[data-scored]"),mark=r.querySelector(".beacon svg"),read=r.querySelector(".hero .read"),update=r.querySelector(".update");return {scoreBg:day?getComputedStyle(day.querySelector("strong")).backgroundColor:null,bar:day?getComputedStyle(day,"::after").backgroundColor:null,score:day?getComputedStyle(day.querySelector("strong")).color:null,mark:!!mark,core:!!r.querySelector(".beacon .pulse"),beam:!!r.querySelector(".beacon .beam"),dock:update.parentElement.classList.contains("context"),read:!!read,reduced:mark?getComputedStyle(mark).animationName:null}});
        assert.ok(visual.mark&&visual.core&&visual.beam&&visual.dock&&visual.read,"Visual identity missing");assert.equal(visual.reduced,"none","Reduced motion respected");
        const optics=await page.evaluate(()=>{const b=document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".beacon"),m=getComputedStyle(b.querySelector("svg"));return {filter:m.filter,opacity:Number(m.opacity),halo:getComputedStyle(b,"::after").filter,core:getComputedStyle(b.querySelector(".pulse")).filter}});
@@ -60,7 +63,7 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
      if(region==="cl"){
       assert.equal(await page.locator("#dailyOverview").isVisible(),false,"Duplicate daily overview retired");
       assert.equal(await page.locator("#faroHourlyPreview").isVisible(),false,"Duplicate selected-window card retired");
-      assert.ok(await consoleHost.locator(".local-read details").count(),"Unique local interpretation retained");
+      assert.ok(await consoleHost.locator(".local-read .interpretation").count(),"Unique local interpretation retained");
       await consoleHost.locator('[data-key="explore"]').click();
       assert.equal(await page.locator("#coastMapExpand").evaluate(el=>el.open),true,"Hero map action opens the actual disclosure");
       await consoleHost.locator('[data-key="details"]').click();
