@@ -174,9 +174,9 @@ const localRead=(s,spotId=spot()?.id)=>window.FaroChileSpotIntelligence&&state.i
  window.FaroChileSpotIntelligence.evaluate(s,spotId,state.intelligence,state.lang,
   {risk:Live.slotRisk(s,state.config)}):null;
 function now(){
- const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"America/Santiago",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"America/Santiago",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
  const obj=Object.fromEntries(parts.map(x=>[x.type,x.value]));
- return {date:obj.year+"-"+obj.month+"-"+obj.day,hour:Number(obj.hour)};
+ return {date:obj.year+"-"+obj.month+"-"+obj.day,hour:Number(obj.hour),minutes:Number(obj.hour)*60+Number(obj.minute)};
 }
 function dateLabel(iso){
  if(!iso)return "—";
@@ -196,13 +196,20 @@ function sessionDecision(s,beach=spot()){
   windSpeedRangeKmh:s?.windSpeedRangeKmh
  });
 }
+function remainingWindow(day,slot,present=now()){
+ if(!day||!slot)return false;
+ const mins=v=>{const m=String(v??"").match(/T(\d\d):(\d\d)/);return m?Number(m[1])*60+Number(m[2]):null};
+ const rise=mins(day.sunrise),set=mins(day.sunset);
+ const light=window.FaroModelCore?.eligibleWindow(day.date,slot.hour,rise,set,present);
+ return light?.upcoming===true&&slot.daylight?.eligible===true;
+}
 function bestRemaining(day,spotId=spot()?.id){
  if(!day)return null;
  const present=now();
  // Opportunity first, old guide-fit score only as a tie-breaker.
  // A caution/unknown risk does not become the "best time" by high score.
  return day.slots.filter(s=>sessionDecision(s,state.config.pilots.find(p=>p.id===spotId)).canRecommend&&
-  (day.date>present.date||day.date===present.date&&s.hour+2>present.hour))
+  remainingWindow(day,s,present))
   .sort((a,b)=>sessionDecision(b,state.config.pilots.find(p=>p.id===spotId)).sessionScore-
    sessionDecision(a,state.config.pilots.find(p=>p.id===spotId)).sessionScore||
    (localRead(b,spotId)?.decision?.priority??2)-(localRead(a,spotId)?.decision?.priority??2)||
@@ -210,7 +217,7 @@ function bestRemaining(day,spotId=spot()?.id){
 }
 function selection(){
  const day=state.forecast?.days?.[state.day];
- return state.hour===null?bestRemaining(day):day?.slots.find(s=>s.hour===state.hour)||null;
+ const selected=day?.slots.find(s=>s.hour===state.hour);return selected&&remainingWindow(day,selected)?selected:bestRemaining(day);
 }
 function setLanguage(){
  const saved=(()=>{try{return localStorage.getItem("zeeland-language")}catch(e){return "es"}})();
@@ -1172,21 +1179,22 @@ function session(){
 
 function faroCLConsoleData(){
  const lang=state.lang,es=lang==='es',t=(a,b)=>es?a:b,days=state.forecast?.days||[],d=days[state.day],s=selection(),decision=sessionDecision(s),present=now();
- const past=!!s&&(d.date<present.date||(d.date===present.date&&s.hour+2<=present.hour));
+ const past=!!s&&!remainingWindow(d,s,present);
  const read=id=>$(id)?.textContent?.trim()||'';
  const fmt=new Intl.DateTimeFormat(es?'es-CL':'en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'});
+ const g=s?thermal(s):null,prep=[];if(s&&decision.canRecommend&&g?.available)prep.push({label:t('Traje orientativo','Suggested suit'),value:g.primary+' mm'});if(ok(s?.waterTemperatureC))prep.push({label:t('Agua · modelo','Water · model'),value:num(s.waterTemperatureC)+' °C'});if(ok(d?.uvMax))prep.push({label:t('UV máx. día','Day max UV'),value:num(d.uvMax,0)+' · '+Live.statusUV(d.uvMax,lang).name});
  return {lang,spots:(state.config?.pilots||[]).map(p=>({id:p.id,label:p.name})),spotId:spot()?.id,location:(spot()?.name||'Valparaíso')+(d?' · '+dateLabel(d.date):''),updated:read('updated'),
  days:days.map((v,i)=>{const b=bestRemaining(v),z=b?sessionDecision(b):null;return {id:i,label:v.date===present.date?t('Hoy','Today'):fmt.format(new Date(v.date+'T12:00:00Z')),score:z?.canRecommend?z.sessionScore:null,grade:z?.canRecommend?grade(z.sessionScore):'',note:b?sessionTime(b):t('Sin ventana','No window'),selected:i===state.day}}),
- hours:(d?.slots||[]).map(v=>{const z=sessionDecision(v),past=d.date<present.date||(d.date===present.date&&v.hour+2<=present.hour),risk=Live.slotRisk(v,state.config);return {id:v.hour,label:h(v.hour)+'–'+h(v.hour+2),selected:s?.hour===v.hour,disabled:!v.modelComplete,score:!past&&z.canRecommend?z.sessionScore:null,note:past?t('Ya pasó','Past'):risk==='danger'?t('Riesgo','Risk'):risk==='caution'?t('Precaución','Caution'):risk==='unknown'?t('Sin evaluar','Unassessed'):!v.daylight?.eligible?t('Sin luz','No daylight'):ok(v.windKmh)?(ok(v.windDirection)?Live.cardinal(v.windDirection)+' · ':'')+Math.round(v.windKmh)+' km/h':t('Sin datos','No data')}}),
- hourDate:d?dateLabel(d.date):'',headline:read('faroLeadHeadline'),deck:read('faroLeadDeck'),score:!past&&decision.canRecommend?decision.sessionScore:null,grade:past?t('Ya pasó','Past'):read('faroLeadGrade'),scoreLabel:read('faroLeadSignalTitle'),windowLabel:read('faroLeadWindowLabel'),window:s?sessionTime(s):'—',wave:s&&ok(s.totalWaveHeightM)?num(s.totalWaveHeightM)+' m':'—',period:s&&ok(s.swellPeriodS)?num(s.swellPeriodS)+' s':'—',wind:s&&ok(s.windKmh)?num(s.windKmh,0)+' km/h':'—',disclaimer:read('faroLeadStatus')};
+ hours:(d?.slots||[]).map(v=>{const z=sessionDecision(v),past=d.date<present.date||(d.date===present.date&&(v.hour+2)*60<=present.minutes),remaining=remainingWindow(d,v,present),risk=Live.slotRisk(v,state.config);return {id:v.hour,label:h(v.hour)+'–'+h(v.hour+2),selected:s?.hour===v.hour,disabled:!v.modelComplete||!remaining||!z.canRecommend,score:remaining&&z.canRecommend?z.sessionScore:null,note:past?t('Ya pasó','Past'):risk==='danger'?t('Riesgo','Risk'):risk==='caution'?t('Precaución','Caution'):risk==='unknown'?t('Sin evaluar','Unassessed'):!v.daylight?.eligible?t('Sin luz','No daylight'):!remaining?t('Sin tiempo','Too late'):ok(v.windKmh)?(ok(v.windDirection)?Live.cardinal(v.windDirection)+' · ':'')+Math.round(v.windKmh)+' km/h':t('Sin datos','No data')}}),
+ prep,hourDate:d?dateLabel(d.date):'',headline:read('faroLeadHeadline'),deck:read('faroLeadDeck'),score:!past&&decision.canRecommend?decision.sessionScore:null,grade:past?t('Ya pasó','Past'):read('faroLeadGrade'),scoreLabel:read('faroLeadSignalTitle'),windowLabel:state.hour!==null&&s?.hour===state.hour?t('Franja seleccionada','Selected window'):t('Mejor franja evaluable','Best eligible window'),window:s?sessionTime(s):'—',wave:s&&ok(s.totalWaveHeightM)?num(s.totalWaveHeightM)+' m':'—',period:s&&ok(s.swellPeriodS)?num(s.swellPeriodS)+' s':'—',wind:s&&ok(s.windKmh)?num(s.windKmh,0)+' km/h':'—',disclaimer:read('faroLeadStatus')};
 }
 function mountFaroCLConsole(){
  try{window.faroConsole=window.FaroForecastConsole?.mount({
- before:$('faroDayRail'),retire:[document.querySelector('.faro-context-dock'),$('faroDayRail'),$('faroForecastLead'),document.querySelector('#dayview>.hourly-section>.forecast-section-heading'),$('slots'),$('dayStrip')],
+ before:$('faroDayRail'),retire:[document.querySelector('.faro-context-dock'),$('faroDayRail'),$('faroForecastLead'),document.querySelector('#dayview>.faro-decision-intro'),document.querySelector('#dayview>.hourly-section'),$('dayStrip'),$('daySignalMetrics'),$('chileDecisionBrief'),$('faroPrepHints'),document.querySelector('#dailyOverview>.day-overview-row'),document.querySelector('#dailyOverview>.day-editorial-overline'),$('openSpotDNA'),document.querySelector('.faro-journey-nav')],
  getData:faroCLConsoleData,beacon:document.querySelector('#faroForecastLead .faro-beacon-symbol'),regionLinks:[{label:'Zeeland',href:'../'},{label:'Chile',href:'./',current:true}],
  onSpot:id=>{const select=$('chileSpotSelect');select.value=id;select.dispatchEvent(new Event('change',{bubbles:true}))},
  onDay:i=>{state.day=i;state.hour=null;render()},onHour:i=>{state.hour=i;renderSelectedWindow()},
- onRefresh:()=>void refresh(true),onDetails:()=>{$('dailyOverview').scrollIntoView({block:'start',behavior:'smooth'})},onExplore:()=>selectOcean('map',true),onMatch:()=>tab('board')
+ onRefresh:()=>void refresh(true),onDetails:()=>{const d=$('sessionDetailExpand');d.open=true;d.scrollIntoView({block:'start',behavior:'smooth'})},onExplore:()=>$('faroLeadMap').click(),onMatch:()=>tab('board')
  });if(window.faroConsole)document.querySelector('.faro-skip-link')?.setAttribute('href','#faroSharedConsole')}catch(e){console.error('FARO shared console unavailable',e)}
 }
 
@@ -1447,7 +1455,7 @@ function match(){
     "The model can estimate offshore potential but the health restriction has not been verified lifted. Check official sources before any activity.")));
   return;
  }
- const s=selection(),fit=Live.boardFit(s,$("matchBoard").value,$("matchAbility").value,$("matchStyle").value,state.lang,state.forecast?.hazard);
+ const s=selection(),fit=Live.boardFit(sessionDecision(s).canRecommend?s:null,$("matchBoard").value,$("matchAbility").value,$("matchStyle").value,state.lang,state.forecast?.hazard);
  const host=$("matchResult");host.replaceChildren(el("strong",fit.label),el("p",fit.reason),el("p",tr("Spot: ","Spot: ")+(spot()?.name||"—")+(s?" · "+sessionTime(s):"")));
  const button=el("button",tr("Ver pronóstico","View forecast"));button.type="button";button.addEventListener("click",()=>tab("forecast"));host.append(button);
 }
@@ -1564,7 +1572,7 @@ async function initialize(){
   $("openOceanCompass").setAttribute("aria-pressed",String($("waveInsightExpand").open));
  });
  $("coastMapExpand").addEventListener("toggle",()=>{
-  if(!$("coastMapExpand").open)$("coastMapExpand").open=true;
+  if(!window.faroConsole&&!$("coastMapExpand").open)$("coastMapExpand").open=true;
  });
  $("chileSpotSelect").addEventListener("change",event=>{
   const i=state.config.pilots.findIndex(x=>x.id===$("chileSpotSelect").value);
@@ -1644,6 +1652,7 @@ async function initialize(){
   })||null;
   picker();
   mountFaroCLConsole();
+  if(window.faroConsole&&window.matchMedia("(max-width: 55rem)").matches)$("coastMapExpand").open=false;
   window.faroOutlook=window.FaroExtendedOutlook?.mount({getSpot:()=>{const s=spot();return s?{lat:s.latitude,lon:s.longitude,zone:state.config.timezone,name:s.name}:null},getLang:()=>state.lang});
   if(window.FaroChileVideoLab)state.videoLab=window.FaroChileVideoLab.init({
    container:$("faroVideoLab"),spotId:()=>spot()?.id,
