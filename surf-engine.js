@@ -144,8 +144,62 @@ function windowSamples(m,w,date,hour){
  const rows=stamps.map(t=>{const i=m.time.indexOf(t),j=w.time.indexOf(t);return readHour(m,w,i,j)});
  return rows.every(Boolean)?rows:null;
 }
-// Operational Zeeland score is deliberately unchanged; only aggregation and
-// coverage are consolidated. No regional recalibration is implied.
+// Retain the raw Zeeland quality equation; separately apply the common
+// conservative recommendation policy. No regional recalibration is implied.
+const known=new Set(["none","caution","danger","unknown"]);
+function decideSession({potentialScore=null,slotRisk="unknown",access=null,officialAlert=null,modelCoverage="unknown",daylight=true,windSpeedRangeKmh=null}={}){
+ const raw=finite(potentialScore)?Math.max(0,Math.min(10,potentialScore)):null;
+ const restricted=access?.publicRecommendationAllowed===false||
+   (access?.status==="restriction_reported_not_live_verified"&&access?.clearanceVerified!==true);
+ // External official alerts are accepted only with traceable, independently
+ // fetched evidence. We DO NOT claim FARO automatically checks these.
+ const verified=officialAlert?.verified===true &&
+  typeof officialAlert?.authority==="string"&&officialAlert.authority.trim() &&
+  /^https:\/\//.test(officialAlert.sourceUrl||"") &&
+  !Number.isNaN(Date.parse(officialAlert.checkedAtUtc||""));
+ const officialLevel=verified&&known.has(officialAlert?.level)?officialAlert.level:null;
+ const risk=known.has(slotRisk)?slotRisk:"unknown";
+ const hard=restricted||officialLevel==="danger"||risk==="danger";
+ const blocked=hard||!daylight||raw===null||risk==="unknown"||modelCoverage!=="complete";
+ const caution=risk==="caution"||officialLevel==="caution";
+ // Bounded, explicit conservative *session* policy: when caution is known,
+ // cap recommended opportunity at 5.9, but preserve raw offshore potential.
+ // Explicitly provisional forecast-window regulariser (not empirically
+ // fitted): rapid 2-hour changes may reduce usable time inside the window.
+ // No assumption of a 'stable' sea state if optional variability is absent.
+ const variationPenalty=finite(windSpeedRangeKmh)&&windSpeedRangeKmh>10?
+  round(Math.min(0.5,(windSpeedRangeKmh-10)/40)):0;
+ const adjusted=blocked?null:round(Math.max(0,
+  (caution?Math.min(raw,5.9):raw)-variationPenalty));
+ const reasons=[];
+ if(restricted)reasons.push("reported_access_restriction");
+ if(officialLevel==="danger")reasons.push("verified_official_danger");
+ if(risk==="danger")reasons.push("dangerous_model_window");
+ if(risk==="unknown")reasons.push("risk_data_incomplete");
+ if(!daylight)reasons.push("no_daylight");
+ if(raw===null)reasons.push("no_potential_score");
+ if(modelCoverage!=="complete")reasons.push("forecast_incomplete");
+ if(caution)reasons.push("model_or_official_caution");
+ return Object.freeze({
+  potentialScore:raw,sessionScore:adjusted,canRecommend:!blocked,
+  windVariabilityAdjustment:variationPenalty,
+  windVariabilityEvidence:finite(windSpeedRangeKmh)?"complete_2h_model":"not_measured",
+  status:hard?"blocked":blocked?"unassessed":caution?"caution":"eligible",
+  reasons,officialAlertChecked:verified,officialLevel,
+  safetyProbability:null,confidenceInterval:null,
+  policy:"faro-session-policy-v0.5",
+  warning:"Advisory gate, not a certified safety forecast; official warnings are not synchronised automatically."
+ });
+}
+
+function zeelandRisk(rows){
+ if(!Array.isArray(rows)||rows.length!==2)return "unknown";
+ const danger=rows.some(x=>finite(x.code)&&x.code>=95&&x.code<=99||finite(x.gust)&&x.gust>=75||finite(x.wind)&&x.wind>=55||x.code===48||finite(x.h)&&x.h>=3||finite(x.water)&&x.water<7);
+ if(danger)return "danger";
+ const caution=rows.some(x=>finite(x.gust)&&x.gust>=50||finite(x.wind)&&x.wind>=35||finite(x.h)&&x.h>=2||x.code===45||finite(x.water)&&x.water<12||finite(x.air)&&x.air<=0||finite(x.precip)&&x.precip>=7);
+ if(!rows.every(x=>[x.gust,x.wind,x.code,x.precip].every(finite)))return "unknown";
+ return caution?"caution":"none";
+}
 function summarizeWindow(rows,orientation,ai){
  if(!Array.isArray(rows)||rows.length!==2||!rows.every(Boolean)||!surfProfiles[ai])return null;
  const scored=rows.map(x=>({...x,...evaluate(x,orientation,ai)})),last=scored[1];
@@ -155,19 +209,20 @@ function summarizeWindow(rows,orientation,ai){
  // A contradictory mean direction is unknown, not an invented 0 degrees.
  // Retain no window if the direction cannot be represented coherently.
  if(!finite(wd)||!finite(dir))return null;
+ const rawScore=round(avg("v")),windSpeedRangeKmh=Math.abs(rows[0].wind-rows[1].wind),risk=zeelandRisk(rows),decision=decideSession({potentialScore:rawScore,slotRisk:risk,modelCoverage:"complete",daylight:true,windSpeedRangeKmh});
  return {...last,h:avg("h"),period:avg("period"),wd,wind:avg("wind"),dir,
   gust:maximum("gust"),code:scored.some(x=>finite(x.code)&&x.code>=95&&x.code<=99)?95:maximum("code"),
   precip:optional("precip"),air:optional("air"),feels:optional("feels"),water:optional("water"),cloud:optional("cloud"),
   windQuality:avg("windQuality"),swellQuality:avg("swellQuality"),heightQuality:avg("heightQuality"),periodQuality:avg("periodQuality"),
-  surf:round(avg("surf")),penalty:avg("penalty"),v:round(avg("v")),modelCoverage:"complete",science:scienceInput(rows),
-  windSpeedRangeKmh:Math.abs(rows[0].wind-rows[1].wind),scoreVersion:"zeeland-operational-v1"};
+  surf:round(avg("surf")),penalty:avg("penalty"),v:decision.sessionScore??rawScore,rawScore,sessionScore:decision.sessionScore,canRecommend:decision.canRecommend,risk,decision,modelCoverage:"complete",science:scienceInput(rows),
+  windSpeedRangeKmh,scoreVersion:"zeeland-operational-v1+session-policy-v0.5"};
 }
 function eligibleWindow(date,hour,rise,set,now){
  if(![hour,rise,set,now?.minutes].every(finite)||typeof date!=="string"||typeof now?.date!=="string")return null;
  const from=Math.max(hour*60,rise+15),to=Math.min((hour+2)*60,set-30),available=Math.max(0,to-from);
  return {from,to,available,valid:available>=40,upcoming:available>=40&&(date>now.date||(date===now.date&&to-now.minutes>=40))};
 }
-root.FaroModelCore=Object.freeze({version:"1.0.0",mean,circleMean,readHour,windowSamples,summarizeWindow,scienceInput,eligibleWindow,marineFields,weatherFields});
+root.FaroModelCore=Object.freeze({version:"1.0.0",mean,circleMean,readHour,windowSamples,summarizeWindow,scienceInput,eligibleWindow,marineFields,weatherFields,decideSession,zeelandRisk});
 
 root.ZeelandEngine={surfProfiles,qualityComponents,weatherPenalty,waveCharacter,quickRead,evaluate};
 })(typeof globalThis!=='undefined'?globalThis:this);
