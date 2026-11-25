@@ -2033,7 +2033,7 @@ html body #forecastPage #dayview>.faro-ocean-explorer{
  padding:0;align-self:stretch;
 }
 #forecastPage .faro-ocean-explorer-header{
- padding:clamp(18px,2.2vw,30px);
+ padding:clamp(.75rem,1.6vw,1.25rem);
  border:1px solid var(--faro-line,var(--border))!important;
  border-bottom:0!important;border-radius:20px 20px 0 0;
  background:linear-gradient(115deg,
@@ -2068,6 +2068,12 @@ html body #forecastPage #dayview>.faro-ocean-explorer{
 #forecastPage #dayview #coastMapExpand>summary{
  display:none;
 }
+html[data-faro-shared] #forecastPage #dayview #coastMapExpand>summary{
+ display:flex;justify-content:space-between;align-items:center;gap:.5rem;min-height:2.75rem;padding:.5rem;cursor:pointer;color:var(--fg);
+}
+html[data-faro-shared] #forecastPage #dayview #coastMapExpand>summary::after{content:"+"}
+html[data-faro-shared] #forecastPage #dayview #coastMapExpand[open]>summary::after{content:"−"}
+
 #forecastPage #dayview #chileCoastMap{min-width:0}
 #forecastPage #dayview #waveInsightExpand{
  margin:12px 0 0;display:block;
@@ -2374,7 +2380,7 @@ main>footer.faro-footer-v2 .faro-footer-legal{
  }
  #forecastPage .faro-ocean-explorer-header{
   border-radius:15px 15px 0 0!important;
-  padding:19px 16px;
+  padding:.85rem;
  }
  #forecastPage .faro-ocean-explorer-content{
   padding:0 11px 13px;border-radius:0 0 15px 15px!important;
