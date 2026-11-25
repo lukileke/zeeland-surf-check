@@ -22,38 +22,10 @@ html[data-faro-region] body>main{
 [data-faro-shared] #dayview>*{
  grid-column:auto!important;grid-row:auto!important;min-inline-size:0;
 }
-[data-faro-shared] #dayview>:is(.day-outlook-section,.session-section,.faro-ocean-explorer,.faro-detail-hub,.faro-decision-intro){
+[data-faro-shared] #dayview>:is(.session-section,.faro-ocean-explorer,.faro-detail-hub,.faro-decision-intro){
  grid-column:1/-1!important;
 }
-[data-faro-shared] #dayview>.day-outlook-section,
-[data-faro-shared] #dailyOverview{
- min-block-size:0!important;height:auto!important;
- margin:0!important;padding:0!important;
- background:transparent!important;border:0!important;box-shadow:none!important;
-}
-[data-faro-shared] #dailyOverview{
- display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))!important;
- gap:.65rem!important;align-items:start!important;
-}
-[data-faro-shared] #dailyOverview>.chile-vibe{margin:0!important;padding:.65rem!important;background:var(--panel)!important;border:1px solid var(--border)!important;border-radius:.75rem!important;color:var(--fg)!important}
-[data-faro-shared] #dailyOverview>#dayUVBadge{margin:0!important;min-inline-size:0!important}
-[data-faro-shared] #dayview #coastMapExpand>summary{display:flex!important;justify-content:space-between;align-items:center;min-block-size:2.75rem;padding:.65rem;color:var(--fg)!important;cursor:pointer}
-[data-faro-shared] #dayview #coastMapExpand:not([open])> :not(summary){display:none!important}
-[data-faro-shared] #dayview #coastMapExpand>summary::after{content:"+"}
-[data-faro-shared] #dayview #coastMapExpand[open]>summary::after{content:"−"}
-[data-faro-shared] #dayview .faro-ocean-explorer-header,
-[data-faro-shared] #dayview .faro-ocean-explorer-content{padding:clamp(.65rem,1.5vw,1rem)!important}
-[data-faro-shared] #dayview .faro-lab-kicker{color:var(--faro-selection,var(--fg))!important}
-[data-faro-shared] #dayview .faro-session-intro,
-[data-faro-shared] #dayview .faro-detail-hub-heading{gap:.35rem!important;margin-block:0 .65rem!important;padding-block:.35rem!important}
-[data-faro-shared] #dayview .faro-session-intro h3,
-[data-faro-shared] #dayview .faro-detail-hub-heading h3,
-[data-faro-shared] #dayview .faro-ocean-tools-copy h3{font-size:clamp(1.25rem,1rem + 1.3vw,2rem)!important;line-height:1.15!important}
-[data-faro-shared] #dayview .faro-session-intro p,
-[data-faro-shared] #dayview .faro-detail-hub-heading p,
-[data-faro-shared] #dayview .faro-ocean-tools-copy p{margin-block:.3rem!important;font-size:.85rem!important;line-height:1.45!important}
 [data-faro-shared][data-faro-region="nl"] #sessionAtGlance>:is(.glance-heading,.hero-stats,.glance-footer){display:none!important}
-[data-faro-shared][data-faro-region="nl"] #sessionAtGlance{padding:0!important;min-height:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
 [data-faro-shared] main>.app-nav{
  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
  width:min(100%,48rem)!important;max-width:100%!important;
