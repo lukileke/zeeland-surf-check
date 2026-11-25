@@ -24,6 +24,7 @@ a{color:inherit}
 .update button{padding:.4em .75em;min-block-size:2.25rem;color:var(--outer-ink)}
 .week{display:grid;gap:.55rem}
 .days,.hours{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,6.5rem),1fr));gap:clamp(.4rem,.85cqi,.8rem);min-inline-size:0}
+.days{grid-template-columns:repeat(7,minmax(6.5rem,1fr));overflow-x:auto;scroll-snap-type:inline proximity;padding-block:.15rem .35rem}.days button{scroll-snap-align:start}
 .days button,.hours button{display:grid;gap:.2rem;text-align:start;align-content:start;min-inline-size:0;min-block-size:4.8rem;font-size:.8rem;background:var(--tile,#243239);border-color:var(--border,var(--line));padding:clamp(.5rem,1.05cqi,.85rem);overflow-wrap:anywhere}
 .days button[aria-pressed="true"],.hours button[aria-pressed="true"]{border-color:var(--faro-selection,#a0d6cf);box-shadow:inset 0 0 0 1px var(--faro-selection,#a0d6cf)}
 .days strong,.hours strong{font-size:clamp(1.15rem,1rem + 1cqi,1.7rem);font-variant-numeric:tabular-nums;line-height:1.1;color:var(--score,currentColor)}
@@ -66,9 +67,9 @@ h2{font-family:"Archivo Black",Manrope,system-ui,sans-serif;font-weight:800;lett
 .beacon{overflow:clip}
 @container faro (max-width:43.99rem){.beacon{inline-size:clamp(4rem,17cqi,7rem);inset-inline-end:.5rem;inset-block-start:.35rem;opacity:.4}.read .location,.read .kicker{padding-inline-end:clamp(3rem,14cqi,6rem)}}
 @container faro (min-width:44rem){.hero-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}}
-@container faro (min-width:52rem){.days{grid-template-columns:repeat(7,minmax(0,1fr))}}
+@container faro (min-width:32rem) and (max-width:57.99rem){.hours{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @container faro (min-width:58rem){.hours{grid-template-columns:repeat(8,minmax(0,1fr))}}
-@container faro (max-width:29rem){.days{grid-template-columns:repeat(7,minmax(5.6rem,1fr));overflow-x:auto;scroll-snap-type:inline proximity;padding-block:.15rem .35rem}.days button{scroll-snap-align:start}.hours{grid-template-columns:repeat(auto-fit,minmax(min(100%,4.8rem),1fr))}}
+@container faro (max-width:29rem){.days{grid-template-columns:repeat(7,minmax(5.6rem,1fr))}.hours{grid-template-columns:repeat(auto-fit,minmax(min(100%,4.8rem),1fr))}}
 @media(prefers-reduced-motion:reduce){.beacon::before,.beacon svg{animation:none}}
 `;
 const shades=["var(--faro-score-0,#ef9b77)","var(--faro-score-1,#efbd6e)","var(--faro-score-2,#e0cc73)","var(--faro-score-3,#b1d574)","var(--faro-score-4,#8cc584)"];
@@ -92,21 +93,22 @@ function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails
   const label=make("label"),select=make("select");select.dataset.key="spot";label.append(make("span","kicker",t("Playa / spot","Beach / spot")),select);
   for(const p of d.spots||[]){const o=make("option",null,p.label);o.value=p.id;select.append(o)}select.value=d.spotId||"";select.disabled=!select.options.length;select.addEventListener("change",()=>onSpot(select.value));context.append(coast,label);
   const updated=make("div","update"),status=make("span",null,d.updated||t("Consultando el modelo…","Loading model…"));status.setAttribute("role","status");updated.append(status,control(t("Actualizar","Refresh"),onRefresh,"refresh"));
-  const week=make("section","week"),days=make("div","days");week.append(make("span","kicker",t("Próximos 7 días","Next 7 days")),days);
+  const week=make("section","week"),days=make("div","days");days.setAttribute("role","group");days.setAttribute("aria-label",t("Seleccionar día","Select day"));week.append(make("span","kicker",t("Próximos 7 días","Next 7 days")),days);
   const addTile=(parent,item,fn,prefix)=>{const b=control("",()=>fn(item.id),prefix+item.id);b.setAttribute("aria-pressed",String(!!item.selected));b.disabled=!!item.disabled;b.append(make("span",null,item.label),tint(make("strong",null,score(item.score,lang)),item.score),make("small",null,item.note||"—"));parent.append(b)};
   for(const item of d.days||[])addTile(days,item,onDay,"day");
   const hero=make("section","hero"),grid=make("div","hero-grid"),read=make("div","read"),signal=make("div","signal");
   if(beacon){const glow=make("div","beacon");glow.setAttribute("aria-hidden","true");const svg=beacon.cloneNode(true);svg.removeAttribute("class");glow.append(svg);hero.append(glow)}
   read.append(make("span","kicker",t("FARO · Lee el mar","FARO · Read the ocean")),make("span","location",d.location||"—"),make("h2",null,d.headline||t("Leyendo tu costa…","Reading your coast…")),make("p","deck",d.deck||""));
-  const actions=make("div","actions");actions.append(control(t("Ver análisis","See analysis"),onDetails,"details"),control("FARO Match",onMatch,"match"));read.append(actions);
+  const actions=make("div","actions"),details=control(t("Ver análisis","See analysis"),onDetails,"details");details.disabled=!(d.days||[]).length;actions.append(details,control("FARO Match",onMatch,"match"));read.append(actions);
   const scoreline=make("div","scoreline");scoreline.append(tint(make("strong",null,score(d.score,lang)),d.score),make("small",null,valid(d.score)?"/10":""));
   if(d.grade)scoreline.append(make("small",null,d.grade));
   signal.append(make("span","kicker",d.scoreLabel||t("Índice del modelo","Model index")),scoreline,make("span","kicker",d.windowLabel||t("Franja","Window")),make("div","window",d.window||"—"));
   const metrics=make("div","metrics");for(const m of [[t("Altura oceánica","Offshore height"),d.wave],[t("Período","Period"),d.period],[t("Viento","Wind"),d.wind]]){const x=make("div");x.append(make("small",null,m[0]),make("b",null,m[1]||"—"));metrics.append(x)}signal.append(metrics);grid.append(read,signal);hero.append(grid);
-  const hourHead=make("div","hours-head"),hours=make("div","hours");hourHead.append(make("span","kicker",t("Franjas de 2 horas","Two-hour windows")),make("small",null,d.hourDate||""));hero.append(hourHead,hours);
+  const hourHead=make("div","hours-head"),hours=make("div","hours");hours.setAttribute("role","group");hours.setAttribute("aria-label",t("Seleccionar franja","Select time window"));hourHead.append(make("span","kicker",t("Franjas de 2 horas","Two-hour windows")),make("small",null,d.hourDate||""));hero.append(hourHead,hours);
   for(const item of d.hours||[])addTile(hours,item,onHour,"hour");
   hero.append(make("p","disclaimer",d.disclaimer||t("Modelo orientativo. No es una medición de la rompiente ni una garantía de seguridad.","Model guidance, not a breaking-wave measurement or safety clearance.")));
   layout.replaceChildren(context,updated,week,hero);days.scrollLeft=previousScroll;
+  for(const rail of [days,hours])rail.addEventListener("keydown",event=>{if(!["ArrowLeft","ArrowRight","Home","End"].includes(event.key))return;const buttons=[...rail.querySelectorAll("button:not(:disabled)")],i=buttons.indexOf(shadow.activeElement);if(i<0)return;event.preventDefault();const next=event.key==="Home"?0:event.key==="End"?buttons.length-1:Math.max(0,Math.min(buttons.length-1,i+(event.key==="ArrowRight"?1:-1)));if(next!==i)buttons[next].click()});
   if(focus){const next=[...shadow.querySelectorAll("[data-key]")].find(x=>x.dataset.key===focus);next?.focus({preventScroll:true})}
   if(!retired){
    for(const node of retire.filter(Boolean)){
