@@ -120,6 +120,27 @@ assert.ok(html.includes('gust:w')===false,'Gusts not accidentally fabricated as 
  assert.equal(s.gust,85,'Entire two-hour window uses worst gust');
  assert.equal(s.canRecommend,false,'Dangerous gust blocks recommendation, not raw data');
  assert.ok(Number.isFinite(s.rawScore),'Raw quality retained for diagnostics');
+ const C=scope.FaroModelCore;
+ const near={...x,water:10,air:9},normal=C.summarizeWindow([near,near],325,0);
+ assert.equal(normal.sessionScore,normal.rawScore,'Ordinary cold water does not reduce surf quality');
+ assert.equal(C.summarizeWindow([x],325,0),null,'A partial forecast hour is never a full session');
+ assert.equal(C.summarizeWindow([x,{...x,gust:null}],325,0).sessionScore,null,'Missing risk data does not produce a recommendation');
+ assert.equal(C.summarizeWindow([x,{...x,gust:60}],325,0).sessionScore,5.9,'Same conservative caution policy as Chile');
+ assert.equal(C.circleMean([0,180]),null,'Opposite bearings have no resolvable circular mean');
+ assert.ok(Math.min(C.circleMean([359,1]),360-C.circleMean([359,1]))<1e-8,'Circular north crossing');
+ assert.equal(C.eligibleWindow('2026-11-25',10,480,960,{date:'2026-11-25',minutes:681}).upcoming,false);
+ assert.equal(C.eligibleWindow('2026-11-25',10,480,960,{date:'2026-11-25',minutes:680}).upcoming,true);
+ const times=['2026-11-25T10:00','2026-11-25T11:00'];
+ const m={time:times,wave_height:[1,1.2],wave_period:[6,8],wave_direction:[359,1],swell_wave_height:[.6,.8],swell_wave_period:[7,9],swell_wave_direction:[320,330]};
+ const w={time:times,wind_speed_10m:[8,10],wind_direction_10m:[140,150],wind_gusts_10m:[15,20],weather_code:[0,0],precipitation:[0,0]};
+ const pair=C.windowSamples(m,w,'2026-11-25',10),session=C.summarizeWindow(pair,325,0);
+ assert.ok(session&&Math.abs(session.h-1.1)<1e-8);
+ assert.equal(session.science.secondarySwell,null,'Unknown optional partition remains null');
+ assert.equal(session.science.swellPeriodS,8);
+ assert.equal(C.windowSamples(m,{...w,time:[times[0]]},'2026-11-25',10),null,'Exact hour pairing');
+ const decisionSource=fs.readFileSync(path.join(root,'chile/faro-session-decision.js'),'utf8');
+ new Function('globalThis',decisionSource)(scope);
+ assert.equal(scope.FaroSessionDecision.evaluate,C.decideSession,'Chile runtime uses same policy implementation');
 }
 assert.ok(css.includes('.faro-safety-center.danger'),'Severe alert is visible separately from score');
 assert.ok(css.includes('#forecastPage #dayStrip{\n contain:layout paint!important'),'Seven-day rail parent isolates paint and layout');
