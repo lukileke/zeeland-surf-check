@@ -67,7 +67,7 @@ test('selected session has model facts without altering the score engine',()=>{
 });
 
 test('the model and the original lighthouse brand remain intact',()=>{
- assert.ok(html.includes('faro-chile-live.js?v=12'));
+ assert.match(html,/faro-chile-live\.js\?v=\d+/);
  assert.ok(html.includes('src="../assets/faro-logo-dark.svg"'));
  assert.ok(html.includes('src="../assets/faro-logo.svg"'));
  assert.match(html,/chile-forecast\.js\?v=\d+/);
