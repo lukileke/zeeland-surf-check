@@ -39,7 +39,7 @@ test('window title is computed for the SELECTED day, not hard-coded to today',()
  assert.match(js,/d.date===now\(\).date\?tr\("Hoy","Today"\)/);
 });
 test('controls share one state machine and horizontal keyboard navigation',()=>{
- assert.match(js,/button.dataset.jump==="slots"\?"faroQuickHourRail":button.dataset.jump/);
+ assert.match(js,/button.dataset.jump==="slots"\?\(window.faroConsole\?"faroSharedConsole":"faroQuickHourRail"\):button.dataset.jump/);
  assert.match(js,/\["ArrowLeft","ArrowRight","Home","End"\]/);
  assert.match(js,/buttons\[next\]\.click\(\)/);
  assert.match(js,/state.day=i;state.hour=null;render\(\)/);
@@ -51,4 +51,17 @@ test('offline rails disappear everywhere and model score colours remain canonica
  assert.match(html,/<strong id="faroLeadScore">—<\/strong>/);
  assert.match(css,/color:var\(--brand-score-ink,var\(--faro-quiet\)\)/);
  assert.ok((css.match(/!important/g)||[]).length<=486);
+});
+
+test('shared renderer replaces duplicated visual interface without changing the model contract',()=>{
+ const nl=read('index.html'), shared=read('assets/faro-forecast-console.js');
+ for(const page of [nl,html])assert.match(page,/assets\/faro-forecast-console\.js\?v=\d+/);
+ assert.match(shared,/attachShadow\(\{mode:"open"\}\)/);
+ assert.match(shared,/container-type:inline-size/);
+ assert.match(shared,/@container faro/);
+ assert.match(shared,/repeat\(auto-fit,minmax\(min\(100%,/);
+ assert.match(nl,/getData:faroNLConsoleData/);
+ assert.match(js,/getData:faroCLConsoleData/);
+ assert.match(shared,/node\.style\.setProperty\("display","none","important"\)/);
+ assert.match(shared,/restoring legacy interface/);
 });
