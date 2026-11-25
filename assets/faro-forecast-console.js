@@ -148,7 +148,7 @@ function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails
   prev.setAttribute("aria-label",t("Días anteriores","Previous days"));next.setAttribute("aria-label",t("Días siguientes","Next days"));tools.append(prev,position,next);weekHead.append(make("span","kicker",t("Próximos 7 días","Next 7 days")),tools);week.append(weekHead,days);
   const syncRail=()=>{const max=days.scrollWidth-days.clientWidth;tools.hidden=max<=2;prev.disabled=days.scrollLeft<=2;next.disabled=days.scrollLeft>=max-2;const bounds=days.getBoundingClientRect(),visible=[...days.children].map((x,i)=>({i,r:x.getBoundingClientRect()})).filter(x=>x.r.right>bounds.left+4&&x.r.left<bounds.right-4);position.textContent=visible.length?(visible[0].i+1)+"–"+(visible.at(-1).i+1)+"/"+days.children.length:"";};
   days.addEventListener("scroll",syncRail,{passive:true});
-  const addTile=(parent,item,fn,prefix)=>{const b=control("",()=>fn(item.id),prefix+item.id);b.setAttribute("aria-pressed",String(!!item.selected));b.disabled=!!item.disabled;if(valid(item.score)){tint(b,item.score);b.dataset.scored="";b.style.setProperty("--quality",String(Math.max(0,Math.min(10,item.score))/10))}b.append(make("span","tile-label",item.label),make("strong",null,score(item.score,lang)));if(item.grade)b.append(make("span","tile-grade",item.grade));b.append(make("small",null,item.note||"—"));parent.append(b)};
+  const addTile=(parent,item,fn,prefix)=>{const b=control("",()=>fn(item.id),prefix+item.id);b.setAttribute("aria-pressed",String(!!item.selected));b.setAttribute("aria-label",[item.label,valid(item.score)?score(item.score,lang)+"/10":t("Sin score","No score"),item.grade,item.note].filter(Boolean).join(" · "));b.disabled=!!item.disabled;if(valid(item.score)){tint(b,item.score);b.dataset.scored="";b.style.setProperty("--quality",String(Math.max(0,Math.min(10,item.score))/10))}b.append(make("span","tile-label",item.label),make("strong",null,score(item.score,lang)));if(item.grade)b.append(make("span","tile-grade",item.grade));b.append(make("small",null,item.note||"—"));parent.append(b)};
   for(const item of d.days||[])addTile(days,item,onDay,"day");
   const existingHero=layout.querySelector(".hero"),hero=existingHero||make("section","hero"),grid=make("div","hero-grid"),read=make("div","read"),signal=make("div","signal");
   for(const child of [...hero.children])if(!child.classList.contains("beacon"))child.remove();
@@ -181,7 +181,7 @@ function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails
  }
  function update(){
   try{paint()}catch(e){
-   failed=true;console.error("FARO shared console failed; restoring legacy interface",e);
+   failed=true;railObserver?.disconnect();console.error("FARO shared console failed; restoring legacy interface",e);
    for(const [node,p] of prior){
     if(p.display)node.style.setProperty("display",p.display,p.priority);else node.style.removeProperty("display");
     node.removeAttribute("data-faro-ui-retired");if(!p.inert)node.removeAttribute("inert");
