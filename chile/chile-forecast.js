@@ -1166,20 +1166,21 @@ function session(){
 
 function faroCLConsoleData(){
  const lang=state.lang,es=lang==='es',t=(a,b)=>es?a:b,days=state.forecast?.days||[],d=days[state.day],s=selection(),decision=sessionDecision(s),present=now();
+ const past=!!s&&(d.date<present.date||(d.date===present.date&&s.hour+2<=present.hour));
  const read=id=>$(id)?.textContent?.trim()||'';
  const fmt=new Intl.DateTimeFormat(es?'es-CL':'en-GB',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'});
  return {lang,spots:(state.config?.pilots||[]).map(p=>({id:p.id,label:p.name})),spotId:spot()?.id,location:(spot()?.name||'Valparaíso')+(d?' · '+dateLabel(d.date):''),updated:read('updated'),
  days:days.map((v,i)=>{const b=bestRemaining(v),z=b?sessionDecision(b):null;return {id:i,label:v.date===present.date?t('Hoy','Today'):fmt.format(new Date(v.date+'T12:00:00Z')),score:z?.canRecommend?z.sessionScore:null,note:b?sessionTime(b):t('Sin ventana','No window'),selected:i===state.day}}),
  hours:(d?.slots||[]).map(v=>{const z=sessionDecision(v),past=d.date<present.date||(d.date===present.date&&v.hour+2<=present.hour),risk=Live.slotRisk(v,state.config);return {id:v.hour,label:h(v.hour)+':00',selected:s?.hour===v.hour,disabled:!v.modelComplete,score:!past&&z.canRecommend?z.sessionScore:null,note:past?t('Ya pasó','Past'):risk==='danger'?t('Riesgo','Risk'):risk==='caution'?t('Precaución','Caution'):risk==='unknown'?t('Sin evaluar','Unassessed'):!v.daylight?.eligible?t('Sin luz','No daylight'):ok(v.windKmh)?Math.round(v.windKmh)+' km/h':t('Sin datos','No data')}}),
- hourDate:d?dateLabel(d.date):'',headline:read('faroLeadHeadline'),deck:read('faroLeadDeck'),score:decision.canRecommend?decision.sessionScore:null,grade:read('faroLeadGrade'),scoreLabel:read('faroLeadSignalTitle'),windowLabel:read('faroLeadWindowLabel'),window:s?sessionTime(s):'—',wave:s&&ok(s.totalWaveHeightM)?num(s.totalWaveHeightM)+' m':'—',period:s&&ok(s.swellPeriodS)?num(s.swellPeriodS)+' s':'—',wind:s&&ok(s.windKmh)?num(s.windKmh,0)+' km/h':'—',disclaimer:read('faroLeadStatus')};
+ hourDate:d?dateLabel(d.date):'',headline:read('faroLeadHeadline'),deck:read('faroLeadDeck'),score:!past&&decision.canRecommend?decision.sessionScore:null,grade:past?t('Ya pasó','Past'):read('faroLeadGrade'),scoreLabel:read('faroLeadSignalTitle'),windowLabel:read('faroLeadWindowLabel'),window:s?sessionTime(s):'—',wave:s&&ok(s.totalWaveHeightM)?num(s.totalWaveHeightM)+' m':'—',period:s&&ok(s.swellPeriodS)?num(s.swellPeriodS)+' s':'—',wind:s&&ok(s.windKmh)?num(s.windKmh,0)+' km/h':'—',disclaimer:read('faroLeadStatus')};
 }
 function mountFaroCLConsole(){
  try{window.faroConsole=window.FaroForecastConsole?.mount({
- before:$('faroDayRail'),retire:[document.querySelector('.faro-context-dock'),$('faroDayRail'),$('faroForecastLead'),document.querySelector('#dayview>.day-outlook-section'),document.querySelector('#dayview>.hourly-section'),$('dayStrip')],
+ before:$('faroDayRail'),retire:[document.querySelector('.faro-context-dock'),$('faroDayRail'),$('faroForecastLead'),document.querySelector('#dayview>.hourly-section>.forecast-section-heading'),$('slots'),$('dayStrip')],
  getData:faroCLConsoleData,beacon:document.querySelector('#faroForecastLead .faro-beacon-symbol'),regionLinks:[{label:'Zeeland',href:'../'},{label:'Chile',href:'./',current:true}],
  onSpot:id=>{const select=$('chileSpotSelect');select.value=id;select.dispatchEvent(new Event('change',{bubbles:true}))},
  onDay:i=>{state.day=i;state.hour=null;render()},onHour:i=>{state.hour=i;renderSelectedWindow()},
- onRefresh:()=>void refresh(true),onDetails:()=>{const el=$('spotInsightExpand');el.open=true;el.scrollIntoView({block:'start',behavior:'smooth'})},onMatch:()=>tab('board')
+ onRefresh:()=>void refresh(true),onDetails:()=>{$('dailyOverview').scrollIntoView({block:'start',behavior:'smooth'})},onMatch:()=>tab('board')
  });if(window.faroConsole)document.querySelector('.faro-skip-link')?.setAttribute('href','#faroSharedConsole')}catch(e){console.error('FARO shared console unavailable',e)}
 }
 
