@@ -1215,6 +1215,7 @@ function renderSelectedWindow(){
 }
 async function refresh(force=false,onSettled=null){
  if(!state.config)return;
+ void window.faroOutlook?.sync();
  const id=spot().id,serial=++state.serial,stored=state.cache.get(id);
  // Never show conditions from an earlier selected spot during a new request.
  if(state.forecast?.spot?.id!==id){state.forecast=null;state.sharedSnapshot=false;}
@@ -1612,6 +1613,7 @@ async function initialize(){
    getLang:()=>state.lang
   })||null;
   picker();
+  window.faroOutlook=window.FaroExtendedOutlook?.mount({getSpot:()=>{const s=spot();return s?{lat:s.latitude,lon:s.longitude,zone:state.config.timezone,name:s.name}:null},getLang:()=>state.lang});
   if(window.FaroChileVideoLab)state.videoLab=window.FaroChileVideoLab.init({
    container:$("faroVideoLab"),spotId:()=>spot()?.id,
    cameraSources:()=>state.cameras?.sources||[]
