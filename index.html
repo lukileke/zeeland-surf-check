@@ -1046,7 +1046,7 @@ function faroLoadResponse(){
   .catch(()=>{faroPreviewFailed=true})
   .finally(()=>{faroPreviewLoading=null;const node=$('faroResponsePreview');if(node&&marine&&weather)node.textContent=faroResponseText(blocks(day)[slotIndex]?.s)});
 }
-$('faroTechnicalExpand').addEventListener('toggle',()=>{if($('faroTechnicalExpand').open)faroLoadResponse()});
+$('faroTechnicalExpand')?.addEventListener('toggle',()=>{if($('faroTechnicalExpand').open)faroLoadResponse()});
 function faroPhysicsMarkup(s){
  const input=faroPhysicsInput(s),p=input?window.FaroChilePhysicsLab?.evaluate(input):null;
  if(!p||p.status!=='diagnostic_only')return '<p class="muted">Swell partition data unavailable.</p>';
