@@ -107,5 +107,67 @@ function quickRead(x,locale='en'){
  return {key,headline:v[es?1:0],detail:v[es?3:2],short:v[es?5:4]};
 }
 function evaluate(x,orientation,ai){const q=qualityComponents(x.h,x.period,x.wd,x.wind,x.dir,orientation,ai);const penalty=weatherPenalty(x.precip,x.code);return {...q,penalty,v:Math.round(clamp(q.surf-penalty,0,10)*10)/10};}
+
+// FARO model contract v1. Shared by the web, ranking and Scriptable.
+// All bearings are FROM; missing observations are null, never fabricated zero.
+const finite=Number.isFinite;
+const mean=a=>{const v=a.filter(finite);return v.length?v.reduce((x,y)=>x+y,0)/v.length:null};
+const circleMean=a=>{const v=a.filter(finite);if(!v.length)return null;const x=v.reduce((n,d)=>n+Math.cos(d*Math.PI/180),0),y=v.reduce((n,d)=>n+Math.sin(d*Math.PI/180),0);return Math.hypot(x,y)<1e-6?null:((Math.atan2(y,x)*180/Math.PI)%360+360)%360};
+const round=(v,n=1)=>finite(v)?Math.round(v*10**n)/10**n:null;
+const at=(row,key,i)=>finite(row?.[key]?.[i])?row[key][i]:null;
+const marineFields="wave_height,wave_direction,wave_period,sea_surface_temperature,swell_wave_height,swell_wave_direction,swell_wave_period,secondary_swell_wave_height,secondary_swell_wave_direction,secondary_swell_wave_period,tertiary_swell_wave_height,tertiary_swell_wave_direction,tertiary_swell_wave_period,wind_wave_height,wind_wave_direction,wind_wave_period";
+const weatherFields="wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,cloud_cover,weather_code,temperature_2m,apparent_temperature";
+function readHour(m,w,i,j){
+ if(!Number.isInteger(i)||!Number.isInteger(j)||m?.time?.[i]===undefined||m.time[i]!==w?.time?.[j])return null;
+ const M=k=>at(m,k,i),W=k=>at(w,k,j);
+ const partition=prefix=>{const p={heightM:M(prefix+"_wave_height"),periodS:M(prefix+"_wave_period"),fromDeg:M(prefix+"_wave_direction")};return Object.values(p).every(finite)&&p.heightM>=0&&p.periodS>0?p:null};
+ const x={h:M("wave_height"),period:M("wave_period"),wd:M("wave_direction"),wind:W("wind_speed_10m"),dir:W("wind_direction_10m"),gust:W("wind_gusts_10m"),precip:W("precipitation"),code:W("weather_code"),cloud:W("cloud_cover"),air:W("temperature_2m"),feels:W("apparent_temperature"),water:M("sea_surface_temperature"),primarySwell:partition("swell"),secondarySwell:partition("secondary_swell"),tertiarySwell:partition("tertiary_swell"),windSea:partition("wind"),windSeaHeightM:M("wind_wave_height")};
+ if(![x.h,x.period,x.wd,x.wind,x.dir].every(finite)||x.h<0||x.period<=0||x.wind<0)return null;
+ return x;
+}
+function averagePartition(rows,key){
+ const a=rows.map(x=>x[key]);if(!a.every(Boolean))return null;
+ const p={heightM:mean(a.map(x=>x.heightM)),periodS:mean(a.map(x=>x.periodS)),fromDeg:circleMean(a.map(x=>x.fromDeg))};
+ return Object.values(p).every(finite)?p:null;
+}
+function scienceInput(rows){
+ if(!Array.isArray(rows)||rows.length!==2||!rows.every(Boolean))return null;
+ const primary=averagePartition(rows,"primarySwell"),windFromDeg=circleMean(rows.map(x=>x.dir));
+ if(!primary||!finite(windFromDeg))return null;
+ const completeMean=k=>rows.every(x=>finite(x[k]))?mean(rows.map(x=>x[k])):null;
+ return {swellHeightM:primary.heightM,swellPeriodS:primary.periodS,swellFromDeg:primary.fromDeg,swellDirection:primary.fromDeg,
+  secondarySwell:averagePartition(rows,"secondarySwell"),tertiarySwell:averagePartition(rows,"tertiarySwell"),windSea:averagePartition(rows,"windSea"),windSeaHeightM:completeMean("windSeaHeightM"),totalWaveHeightM:completeMean("h"),windFromDeg,windDirection:windFromDeg,windKmh:completeMean("wind"),gustKmh:rows.every(x=>finite(x.gust))?Math.max(...rows.map(x=>x.gust)):null};
+}
+function windowSamples(m,w,date,hour){
+ if(!Array.isArray(m?.time)||!Array.isArray(w?.time)||!Number.isInteger(hour))return null;
+ const stamps=[hour,hour+1].map(h=>date+"T"+String(h).padStart(2,"0")+":00");
+ const rows=stamps.map(t=>{const i=m.time.indexOf(t),j=w.time.indexOf(t);return readHour(m,w,i,j)});
+ return rows.every(Boolean)?rows:null;
+}
+// Operational Zeeland score is deliberately unchanged; only aggregation and
+// coverage are consolidated. No regional recalibration is implied.
+function summarizeWindow(rows,orientation,ai){
+ if(!Array.isArray(rows)||rows.length!==2||!rows.every(Boolean)||!surfProfiles[ai])return null;
+ const scored=rows.map(x=>({...x,...evaluate(x,orientation,ai)})),last=scored[1];
+ const avg=k=>mean(scored.map(x=>x[k])),optional=k=>scored.every(x=>finite(x[k]))?avg(k):null;
+ const maximum=k=>scored.every(x=>finite(x[k]))?Math.max(...scored.map(x=>x[k])):null;
+ const wd=circleMean(scored.map(x=>x.wd)),dir=circleMean(scored.map(x=>x.dir));
+ // A contradictory mean direction is unknown, not an invented 0 degrees.
+ // Retain no window if the direction cannot be represented coherently.
+ if(!finite(wd)||!finite(dir))return null;
+ return {...last,h:avg("h"),period:avg("period"),wd,wind:avg("wind"),dir,
+  gust:maximum("gust"),code:scored.some(x=>finite(x.code)&&x.code>=95&&x.code<=99)?95:maximum("code"),
+  precip:optional("precip"),air:optional("air"),feels:optional("feels"),water:optional("water"),cloud:optional("cloud"),
+  windQuality:avg("windQuality"),swellQuality:avg("swellQuality"),heightQuality:avg("heightQuality"),periodQuality:avg("periodQuality"),
+  surf:round(avg("surf")),penalty:avg("penalty"),v:round(avg("v")),modelCoverage:"complete",science:scienceInput(rows),
+  windSpeedRangeKmh:Math.abs(rows[0].wind-rows[1].wind),scoreVersion:"zeeland-operational-v1"};
+}
+function eligibleWindow(date,hour,rise,set,now){
+ if(![hour,rise,set,now?.minutes].every(finite)||typeof date!=="string"||typeof now?.date!=="string")return null;
+ const from=Math.max(hour*60,rise+15),to=Math.min((hour+2)*60,set-30),available=Math.max(0,to-from);
+ return {from,to,available,valid:available>=40,upcoming:available>=40&&(date>now.date||(date===now.date&&to-now.minutes>=40))};
+}
+root.FaroModelCore=Object.freeze({version:"1.0.0",mean,circleMean,readHour,windowSamples,summarizeWindow,scienceInput,eligibleWindow,marineFields,weatherFields});
+
 root.ZeelandEngine={surfProfiles,qualityComponents,weatherPenalty,waveCharacter,quickRead,evaluate};
 })(typeof globalThis!=='undefined'?globalThis:this);
