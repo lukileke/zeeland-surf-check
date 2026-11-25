@@ -12,6 +12,10 @@ import {strict as assert} from 'node:assert';
 import {mkdir} from 'node:fs/promises';
 import {chromium,webkit} from 'playwright';
 
+// Primary route: run the actual shared console against both entry pages.
+// Retain the old detailed layout checks below as an explicit fallback test.
+const sharedGateError=await import('./faro-shared-console-browser.mjs').then(()=>null,error=>String(error));
+
 const origin=process.env.FARO_QA_ORIGIN||'http://127.0.0.1:8765';
 const out='artifacts/faro-browser';
 await mkdir(out,{recursive:true});
@@ -51,6 +55,8 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
    const page=await ctx.newPage();
    await page.route('**/*',route=>{
     const url=new URL(route.request().url());
+    // Deliberately exercise the old interface when the new optional renderer fails to load.
+    if(url.pathname.endsWith('/assets/faro-forecast-console.js'))return route.abort();
     return url.origin===origin?route.continue():route.abort();
    });
    try{
@@ -269,5 +275,6 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
   await browser.close();
  }
 }
-assert.deepEqual(errors,[],'FARO responsive browser smoke checks failed');
+if(sharedGateError)errors.push({scope:'primary shared console',message:sharedGateError});
+assert.deepEqual(errors,[],'FARO shared-console or legacy fallback browser checks failed');
 console.log('Browser responsive QA passed for Chrome + WebKit, 5 widths, both themes.');
