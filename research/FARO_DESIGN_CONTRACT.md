@@ -13,3 +13,9 @@ The shared console is the single visual owner for both coasts. Do not redesign r
 ## Outside hero
 Seven-day rail remains above. Conditions (offshore height, period, wind), explanation, preparation, local interpretation, map and science are secondary. Avoid repeating the numeric values in prose. Retain the data and actions; do not erase information to meet a visual goal.
 Use fluid/intrinsic CSS, container queries and shared components; no additional regional overrides. Validate both light/dark, mobile/tablet/desktop, zoom, language and unavailable/caution states. Passing a geometry test alone does not demonstrate design quality. Do not claim deployment or visual validation before observing it.
+
+## Visual refinements, v10
+- The emblem is a brand anchor rather than a small icon: SVG occupies 57% of its fluid glow envelope. Maintain blur, opacity, four arcs and animation. Reserve space for it; never cover the selected time.
+- The hour rail uses a chronological, balanced four-column mobile comparison (fewer columns for narrow or enlarged text; all eligible intervals fit in a desktop row). Use the same quality pigment and proportional bar as the week rail. Do not add metrics to the hero.
+- The day rail should show complete cards wherever possible, with swipe and accessible arrow controls. Preparation may preview the suit already recommended by the model without opening the disclosure.
+- References consulted: https://support.surfline.com/hc/en-us/articles/13749782983579-Understanding-the-Spot-Forecast-Page-on-the-Surfline-Website ; https://www.surf-forecast.com/breaks/Domburg/forecasts/latest ; https://www.nngroup.com/articles/progressive-disclosure/ . Adapt the principles, not their branding or unsupported forecast claims.
