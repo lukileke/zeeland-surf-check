@@ -44,11 +44,15 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
        assert.ok(geometry.days.bottom<=geometry.hero.top+2&&geometry.hours.top>geometry.hero.top&&geometry.hours.bottom<=geometry.hero.bottom+2,"Day rail above hero; hours inside");
        assert.ok(geometry.heroOverflow<=2&&geometry.hourOverflow<=2,"Internal overflow");
        assert.equal(geometry.dayCount,7);assert.equal(geometry.visibleRetired,0);
+       const visual=await page.evaluate(()=>{const r=document.querySelector("#faroSharedConsole").shadowRoot,day=r.querySelector(".days button[data-scored]"),mark=r.querySelector(".beacon svg"),read=r.querySelector(".hero .read"),update=r.querySelector(".update");return {scoreBg:day?getComputedStyle(day.querySelector("strong")).backgroundColor:null,bar:day?getComputedStyle(day,"::after").backgroundColor:null,score:day?getComputedStyle(day.querySelector("strong")).color:null,mark:!!mark,core:!!r.querySelector(".beacon .pulse"),beam:!!r.querySelector(".beacon .beam"),dock:update.parentElement.classList.contains("context"),read:!!read,reduced:mark?getComputedStyle(mark).animationName:null}});
+       assert.ok(visual.mark&&visual.core&&visual.beam&&visual.dock&&visual.read,"Visual identity missing");assert.equal(visual.reduced,"none","Reduced motion respected");assert.equal(visual.scoreBg,"rgba(0, 0, 0, 0)","Day scores must not be detached pills");assert.equal(visual.bar,visual.score,"Day bar uses the canonical score pigment");
        if(scale===1&&[375,1366,1920].includes(width))await page.screenshot({path:out+"/"+engine+"-"+region+"-"+theme+"-"+width+"-shared.png",fullPage:true});
       }
      }
      await page.setViewportSize({width:1366,height:1000});await page.evaluate(()=>document.documentElement.style.removeProperty("font-size"));
+     await page.emulateMedia({reducedMotion:"no-preference"});await page.evaluate(()=>{window.faroBeaconBefore=document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".beacon svg")});
      await consoleHost.locator(".days button").nth(1).click();assert.equal(await consoleHost.locator(".days button").nth(1).getAttribute("aria-pressed"),"true");
+     assert.ok(await page.evaluate(()=>{const r=document.querySelector("#faroSharedConsole").shadowRoot,b=r.querySelector(".beacon"),mark=b.querySelector("svg");return mark===window.faroBeaconBefore&&[getComputedStyle(b,"::before"),getComputedStyle(b,"::after"),getComputedStyle(b.querySelector(".pulse")),getComputedStyle(b.querySelector(".beam")),getComputedStyle(mark)].every(s=>s.animationDuration==="5.4s"&&s.animationName!=="none")}),"Five animated layers survive selection without resetting the beacon");
      const next=consoleHost.locator(".hours button").filter({has:page.locator("strong", {hasNotText:"—"})}).first();
      await next.click();assert.equal(await next.getAttribute("aria-pressed"),"true");
      assert.equal(await getScore(),await next.locator("strong").textContent(),"Hero and selected window use same score");
