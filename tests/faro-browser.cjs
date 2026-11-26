@@ -29,7 +29,7 @@ function data(){
    swell_wave_period:constant(7),wind_wave_height:constant(0.4),
    wind_wave_direction:constant(295)}},
   weather:{hourly:{time:times,wind_speed_10m:constant(21),
-   wind_direction_10m:constant(145),wind_gusts_10m:times.map((v,i)=>i>=72&&i<96?87:25),
+   wind_direction_10m:constant(145),wind_gusts_10m:times.map((v,i)=>i>=24&&i<30?87:25),
    precipitation:constant(0),cloud_cover:constant(30),
    weather_code:constant(2),temperature_2m:constant(11),
    apparent_temperature:constant(9)},
@@ -213,7 +213,7 @@ async function swipe(session,x0,y0,x1,y1){
         const editorial=await page.evaluate(()=>{
          const hero=document.querySelector('#faroRead');
          const expected=window.ZeelandEngine.quickRead(blocks(day)[slotIndex].s,document.documentElement.lang);
-         const headline=hero.querySelector('#faroReadTitle')?.textContent?.trim()||hero.querySelector('#summary')?.textContent?.trim();
+         const headline=document.getElementById('faroReadTitle')?.textContent?.trim();
          const detail=hero.querySelector('#summary')?.textContent?.trim();
          const copy=hero.querySelector('.faro-read-match')?.textContent?.trim();
          const nav=document.querySelector('#navBoard')?.textContent?.trim();

@@ -583,15 +583,15 @@ function fixture(){
    const dayControl='#faroQuickDays > button';
    const slotControl='#faroQuickHours > button:not(:disabled)';
    const previousWeekChip=await page.locator(dayControl).first().elementHandle();
-   await page.locator(slotControl).first().click();
+   await page.locator(slotControl+'[data-hour="8"]').click();
    assert.equal(await previousWeekChip.evaluate(node=>node.isConnected),true,
     'Selecting an hourly window must not reconstruct the entire seven-day picker');
    assert.match(await page.locator('#chileDecisionHeadline').textContent(),/viento|wind/i,
     'A windy slot must lead with a wind-based verdict');
    assert.match(await page.locator('#chileVibeAction').textContent(),/Mejor candidata|Better option/i,
     'A poor slot must point to a grounded better upcoming forecast window');
-   await page.locator(slotControl).nth(1).click();
-   const chosen=page.locator(slotControl).nth(1);
+   await page.locator(slotControl+'[data-hour="10"]').click();
+   const chosen=page.locator(slotControl+'[data-hour="10"]');
    const scoreSelector='.faro-console-hour-score';
    const gradeSelector='.faro-console-hour-label';
    assert.equal(await page.locator('#faroLeadWindowLabel').textContent(),

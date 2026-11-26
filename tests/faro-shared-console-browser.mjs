@@ -88,7 +88,7 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
      assert.equal(await getScore(),await next.locator("strong").textContent(),"Hero and selected window use same score");
      const tide=consoleHost.locator(".tide-chart svg");await tide.waitFor({state:"visible",timeout:10000});
      assert.equal(await consoleHost.locator(".tide-picker").count(),0,"No redundant visible tide slider");
-     const box=await tide.boundingBox();assert.ok(box&&box.width>0,"Interactive tide curve visible");
+     await tide.scrollIntoViewIfNeeded();const box=await tide.boundingBox();assert.ok(box&&box.width>0,"Interactive tide curve visible");
      await page.mouse.move(box.x+box.width*.25,box.y+box.height*.45);await page.mouse.down();await page.mouse.move(box.x+box.width*.75,box.y+box.height*.45,{steps:12});
      const dragged=Number(await tide.getAttribute("aria-valuenow"));await page.mouse.up();assert.ok(dragged>=15&&dragged<=19,"Graph follows drag before release");
      await tide.focus();await page.keyboard.press("ArrowLeft");assert.equal(Number(await tide.getAttribute("aria-valuenow")),dragged-1,"Keyboard changes graph hour");
