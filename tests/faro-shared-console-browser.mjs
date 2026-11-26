@@ -62,7 +62,7 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
      const forward=consoleHost.locator('[data-key="next-day"]'),back=consoleHost.locator('[data-key="prev-day"]');
      // A previous resize or font-scale test may leave the rail at the end.
      // Test the actual enabled direction first, then verify both directions.
-     if(await forward.isDisabled()){await back.click();await page.waitForFunction(()=>!document.querySelector("#faroSharedConsole").shadowRoot.querySelector('[data-key="next-day"]').disabled)}
+     await consoleHost.locator(".days").evaluate(el=>{el.scrollLeft=0;el.dispatchEvent(new Event("scroll"))});await page.waitForFunction(()=>!document.querySelector("#faroSharedConsole").shadowRoot.querySelector('[data-key="next-day"]').disabled);
      const beforeScroll=await consoleHost.locator(".days").evaluate(el=>el.scrollLeft);
      await forward.click();
      await page.waitForFunction(before=>document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".days").scrollLeft>before+.5,beforeScroll);
@@ -83,14 +83,19 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
      await page.emulateMedia({reducedMotion:"no-preference"});await page.evaluate(()=>{window.faroBeaconBefore=document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".beacon svg")});
      await consoleHost.locator(".days button").nth(1).click();assert.equal(await consoleHost.locator(".days button").nth(1).getAttribute("aria-pressed"),"true");
      assert.ok(await page.evaluate(()=>{const r=document.querySelector("#faroSharedConsole").shadowRoot,b=r.querySelector(".beacon"),mark=b.querySelector("svg");return mark===window.faroBeaconBefore&&[getComputedStyle(b,"::before"),getComputedStyle(b,"::after"),getComputedStyle(b.querySelector(".pulse")),getComputedStyle(b.querySelector(".beam")),getComputedStyle(mark)].every(s=>s.animationDuration==="5.4s"&&s.animationName!=="none")}),"Five animated layers survive selection without resetting the beacon");
-     const next=consoleHost.locator(".hero>.hours button:not(:disabled)").first();
-     await next.click();assert.equal(await next.getAttribute("aria-pressed"),"true");
-     assert.equal(await getScore(),await next.locator("strong").textContent(),"Hero and selected window use same score");
+     await page.setViewportSize({width:390,height:844});
+     const next=consoleHost.locator(".hero>.hours button:not(:disabled):not([aria-pressed=\"true\"])").first();
+     const nextKey=await next.getAttribute("data-key"),selected=consoleHost.locator(`[data-key="${nextKey}"]`);await selected.scrollIntoViewIfNeeded();
+     const scrollBefore=await page.evaluate(()=>({y:scrollY,hero:document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".hero").getBoundingClientRect().top}));
+     await selected.click();await page.waitForTimeout(150);assert.equal(await selected.getAttribute("aria-pressed"),"true");
+     const scrollAfter=await page.evaluate(()=>({y:scrollY,hero:document.querySelector("#faroSharedConsole").shadowRoot.querySelector(".hero").getBoundingClientRect().top}));assert.ok(Math.abs(scrollAfter.hero-scrollBefore.hero)<16&&Math.abs(scrollAfter.y-scrollBefore.y)<32,"Selecting a forecast hour must not jump down the page: "+JSON.stringify({scrollBefore,scrollAfter}));
+     assert.equal(await getScore(),await selected.locator("strong").textContent(),"Hero and selected window use same score");
      const tide=consoleHost.locator(".tide-chart svg");await tide.waitFor({state:"visible",timeout:10000});
      assert.equal(await consoleHost.locator(".tide-picker").count(),0,"No redundant visible tide slider");
      await tide.scrollIntoViewIfNeeded();const box=await tide.boundingBox();assert.ok(box&&box.width>0,"Interactive tide curve visible");
-     await page.mouse.move(box.x+box.width*.25,box.y+box.height*.45);await page.mouse.down();await page.mouse.move(box.x+box.width*.75,box.y+box.height*.45,{steps:12});
-     const dragged=Number(await tide.getAttribute("aria-valuenow"));await page.mouse.up();assert.ok(dragged>=15&&dragged<=19,"Graph follows drag before release");
+     const coords=await tide.evaluate(svg=>{const at=h=>{const p=svg.createSVGPoint();p.x=34+h/24*314;p.y=58;const v=p.matrixTransform(svg.getScreenCTM());return {x:v.x,y:v.y}};return [at(6),at(17)]});
+     await page.mouse.move(coords[0].x,coords[0].y);await page.mouse.down();await page.mouse.move(coords[1].x,coords[1].y,{steps:12});
+     const dragged=Number(await tide.getAttribute("aria-valuenow"));await page.mouse.up();assert.equal(dragged,17,"Graph follows drag before release");
      await tide.focus();await page.keyboard.press("ArrowLeft");assert.equal(Number(await tide.getAttribute("aria-valuenow")),dragged-1,"Keyboard changes graph hour");
      await consoleHost.locator(".tide-event").first().click();assert.equal(await consoleHost.locator(".tide-event").first().getAttribute("aria-pressed"),"true","Turning point selects exact hour");
      const select=consoleHost.locator("select");const options=await select.locator("option").allTextContents();assert.ok(options.length>1);

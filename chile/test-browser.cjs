@@ -996,10 +996,11 @@ function fixture(){
    assert.match(await page.locator('#chileCameraSources').textContent(),/Premium/i);
    assert.equal(await page.locator('#chileCameraSources iframe, #chileCameraSources video').count(),0,
     'No embedded or scraped third-party video without licence');
-   const disclaimer=page.locator('.chile-method-disclaimer');
+   const disclaimer=page.locator('#forecastSources');
    assert.equal(await disclaimer.count(),1);
    assert.ok(await disclaimer.evaluate(el=>el.closest('#forecastPage')!==null),
-    'Uncertainty belongs at the end of forecast instead of a loud top banner');
+    'Uncertainty belongs in forecast sources instead of a loud top banner');
+   assert.match(await disclaimer.textContent(),/no est[aá] calibrado|not calibrated|lacks local sandbank calibration/i,'Forecast source disclosure retains uncertainty');
    assert.equal(await page.locator('.chile-model-provenance').count(),0);
    assert.equal(await page.locator('#faroSafetyCenter').isVisible(),false,
     'No model danger/caution: avoid showing an empty hazard alert as a banner');
