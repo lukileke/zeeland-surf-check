@@ -153,6 +153,8 @@ function tideProfile(region,id,name){
  if(region==="NL"){
   const a=String(name||"").split(" · ")[0].toLowerCase();
   if(a==="cadzand"&&/cadzand.bad/i.test(name))return {key:"high-rising",source:"Wompy · Cadzand"};
+  if(a==="domburg"&&/central beach/i.test(name))return {key:"mid",source:"Wompy · Domburg"};
+  if(a==="westkapelle"&&/central area/i.test(name))return {key:"high-rising",source:"Wompy · Westkapelle"};
   return null;
  }
  const cl={"CL-VS:renaca":"mid-low","CL-VS:ritoque":"mid-low","CL-VS:maitencillo":"mid-rising","CL-VS:la-boca-concon":"all","CL-VS:ventanas":"falling"};
@@ -170,7 +172,7 @@ function tideRead(rows,hour){
 function tideFit(read,profile){
  if(!profile||!read.full||!read.phase||!valid(read.fraction))return null;
  const f=read.fraction,p=read.phase;
- switch(profile.key){case "high-rising":return f>=.7||p==="rising";case "mid-low":return f<=.65;case "mid-rising":return (f>=.3&&f<=.7)||p==="rising";case "falling":return p==="falling";default:return null}
+ switch(profile.key){case "high-rising":return f>=.7||p==="rising";case "mid":return f>=.3&&f<=.7;case "mid-low":return f<=.65;case "mid-rising":return (f>=.3&&f<=.7)||p==="rising";case "falling":return p==="falling";default:return null}
 }
 function renderTide(d,t,lang){
  const tide=d.tide||{},r=tideRead(tide.rows,tide.hour),section=make("section","tide"),header=make("div","tide-head");
@@ -192,14 +194,14 @@ function renderTide(d,t,lang){
   const events=make("div","tide-events");for(const e of r.events)events.append(make("span",null,(e.type==="high"?"↑ ":"↓ ")+time(e.h)+" · "+fmt(e.v)+" m"));if(events.children.length)section.append(events);
   if(valid(r.level))section.append(make("p","tide-note",t("Franja seleccionada: ","Selected window: ")+fmt(r.level)+" m MSL"));
  }else section.append(make("p","tide-note",t("Sin serie de nivel del mar para este día. El pronóstico de olas permanece disponible.","No sea-level series for this day. The wave forecast remains available.")));
- const profile=tide.profile,labels={"high-rising":t("Alta o entrante","High or rising"),"mid-low":t("Media a baja","Mid to low"),"mid-rising":t("Media o entrante","Mid or rising"),all:t("Todas las fases, según bancos","All stages, depending on banks"),falling:t("Bajando","Falling")};
+ const profile=tide.profile,labels={"high-rising":t("Alta o entrante","High or rising"),mid:t("Media","Mid"),"mid-low":t("Media a baja","Mid to low"),"mid-rising":t("Media o entrante","Mid or rising"),all:t("Todas las fases, según bancos","All stages, depending on banks"),falling:t("Bajando","Falling")};
  if(profile){section.append(make("p","tide-note",t("Referencia local sin calibrar: ","Uncalibrated local guidance: ")+labels[profile.key]+" · "+profile.source));
   const fit=tideFit(r,profile);if(fit!==null){const alt=(d.hours||[]).filter(v=>!v.disabled&&valid(v.score)&&!v.selected).map(v=>({v,h:Number(String(v.label).match(/^\d{1,2}/)?.[0])})).filter(v=>valid(v.h)&&tideFit(tideRead(tide.rows,v.h),profile)===true).sort((a,b)=>b.v.score-a.v.score)[0];
    section.append(make("p","tide-note",fit?t("La franja coincide con la referencia de marea.","Window aligns with the tide guidance."):t("La franja no coincide con la referencia de marea.","Window does not align with the tide guidance.")+(alt?t(" Alternativa de marea: "," Tide alternative: ")+alt.v.label+" · "+score(alt.v.score,lang)+"/10.":"")));
   }
  }else section.append(make("p","tide-note",t("Preferencia de marea del spot aún no validada.","Spot tide preference not yet validated.")));
  section.append(make("p","tide-note",t("Open-Meteo · nivel del mar modelado (MSL, incluye marea y otros procesos). Extremos aproximados a 1 h; no son tablas oficiales ni modifican el índice.","Open-Meteo · modelled sea level (MSL, includes tide and other effects). Approximate hourly extrema; not official tide tables or a score adjustment.")));
- const link=make("a",null,tide.region==="CL"?t("Consultar SHOA ↗","Check SHOA ↗"):t("Consultar Rijkswaterstaat ↗","Check Rijkswaterstaat ↗"));link.href=tide.region==="CL"?"https://www.shoa.cl/":"https://www.rijkswaterstaat.nl/water/waterdata/getij";link.target="_blank";link.rel="noopener noreferrer";section.append(link);return section;
+ const link=make("a",null,tide.region==="CL"?t("Consultar SHOA ↗","Check SHOA ↗"):t("Consultar Rijkswaterstaat ↗","Check Rijkswaterstaat ↗"));link.href=tide.region==="CL"?"https://www.shoa.cl/":"https://waterberichtgeving.rws.nl/dynamisch/hwlwtabel/zld_long.html";link.target="_blank";link.rel="noopener noreferrer";section.append(link);return section;
 }
 
 function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails,onMatch,onExplore,onDNA,onCamera,beacon,regionLinks}){

@@ -38,5 +38,7 @@ jobs:
           node-version: '22'
       - name: Verify FARO source and timing logic
         run: node tests/faro-smoke.cjs
+      - name: Verify shared tide interpretation
+        run: node --test tests/faro-tide-shared.test.cjs
       - name: Verify Scriptable widget across families and failure modes
         run: node tests/faro-widget.cjs
