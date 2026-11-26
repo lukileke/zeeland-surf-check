@@ -253,7 +253,8 @@ function extract(config,spot,marine,weather,profileConfig,locale="es"){
   }
   const eligible=slots.filter(x=>x.daylight.eligible&&finite(x.score));
   const best=eligible.length?[...eligible].sort((a,b)=>b.score-a.score||a.hour-b.hour)[0]:null;
-  days.push({date,index:di,slots,best,
+  const tideRows=[...marineHours.values()].filter(r=>r.time.startsWith(date+'T')&&finite(r.sea_level_height_msl)).map(r=>[Number(r.time.slice(11,13)),r.sea_level_height_msl]);
+  days.push({date,index:di,slots,best,tideRows,
    sunrise:weather.daily?.sunrise?.[di]==null?null:wallClock(weather.daily.sunrise[di],config.timezone),
    sunset:weather.daily?.sunset?.[di]==null?null:wallClock(weather.daily.sunset[di],config.timezone),
    uvMax:finite(weather.daily?.uv_index_max?.[di])?weather.daily.uv_index_max[di]:null,

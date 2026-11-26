@@ -135,13 +135,77 @@ h2{font-family:Manrope,system-ui,sans-serif;font-weight:750;letter-spacing:-.025
 @media(hover:hover){.days button:not(:disabled):hover,.hours button:not(:disabled):hover{background:rgba(220,246,235,.08)}.actions button:not(:disabled):hover,.update button:hover{border-color:var(--accent)}}
 @media(prefers-reduced-motion:reduce){.beacon::before,.beacon::after,.beacon .pulse,.beacon .beam{animation:none;opacity:.75}.beacon svg{animation:none;opacity:.55}.days button,.hours button{transition:none}}
 `;
+const tideCSS="\n.tide{display:grid;gap:.6rem;border-bottom:1px solid var(--border,#42565a);padding:.7rem .1rem .85rem;min-inline-size:0}\n.tide-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.35rem}\n.tide-head strong{font-size:.9rem;color:var(--outer-ink)}\n.tide svg{display:block;width:100%;height:auto;max-height:10rem;color:var(--outer-muted);overflow:visible}\n.tide-events{display:flex;gap:.4rem .9rem;flex-wrap:wrap;font-size:.78rem;font-variant-numeric:tabular-nums;color:var(--outer-ink)}\n.tide-events span{white-space:nowrap}.tide .tide-note{font-size:.72rem;color:var(--outer-muted);margin:0;line-height:1.45}\n.tide a{font-size:.72rem;color:var(--outer-muted);text-underline-offset:.2em}\n";
 const shades=["var(--faro-score-0,#ef9b77)","var(--faro-score-1,#efbd6e)","var(--faro-score-2,#e0cc73)","var(--faro-score-3,#b1d574)","var(--faro-score-4,#8cc584)"];
 const score=(n,lang)=>valid(n)?new Intl.NumberFormat(lang==="es"?"es-CL":"en-GB",{minimumFractionDigits:1,maximumFractionDigits:1}).format(n):"—";
 const tint=(e,n)=>{if(valid(n))e.style.setProperty("--score",shades[Math.max(0,Math.min(4,Math.floor(n/2)))]);return e};
+
+/* Shared local-time coastal sea-level read. No interpolation over missing hours,
+   no extrapolated extrema, and no change to the uncalibrated surf score. */
+const tideHour=t=>{const m=String(t).match(/T(\d{2}):(\d{2})/);return m?+m[1]+(+m[2])/60:null};
+function tideSeries(times,levels,date){
+ if(!date||!Array.isArray(times)||!Array.isArray(levels))return [];
+ const byHour=new Map(),duplicate=new Set();
+ times.forEach((t,i)=>{if(typeof t!=="string"||!t.startsWith(date+"T"))return;const h=tideHour(t);if(!valid(h)||h<0||h>=24)return;if(byHour.has(h)){duplicate.add(h);return}byHour.set(h,valid(levels[i])?levels[i]:null)});
+ return [...byHour].filter(([h,v])=>!duplicate.has(h)&&valid(v)).sort((a,b)=>a[0]-b[0]);
+}
+function tideProfile(region,id,name){
+ if(region==="NL"){
+  const a=String(name||"").split(" · ")[0].toLowerCase();
+  if(a==="cadzand"&&/cadzand.bad/i.test(name))return {key:"high-rising",source:"Wompy · Cadzand"};
+  return null;
+ }
+ const cl={"CL-VS:renaca":"mid-low","CL-VS:ritoque":"mid-low","CL-VS:maitencillo":"mid-rising","CL-VS:la-boca-concon":"all","CL-VS:ventanas":"falling"};
+ return cl[id]?{key:cl[id],source:"FARO Spot DNA · published guides"}:null;
+}
+function tideRead(rows,hour){
+ const points=(Array.isArray(rows)?rows:[]).filter(x=>Array.isArray(x)&&valid(x[0])&&valid(x[1])&&x[0]>=0&&x[0]<24).sort((a,b)=>a[0]-b[0]);
+ const events=[];for(let i=1;i<points.length-1;i++){const [h,v]=points[i],a=points[i-1],b=points[i+1];if(h-a[0]!==1||b[0]-h!==1)continue;if(v>a[1]&&v>=b[1])events.push({h,v,type:"high"});else if(v<a[1]&&v<=b[1])events.push({h,v,type:"low"})}
+ const full=points.length===24&&points.every((p,i)=>p[0]===i),lo=points.length?Math.min(...points.map(p=>p[1])):null,hi=points.length?Math.max(...points.map(p=>p[1])):null;
+ const a=points.find(p=>p[0]===hour),b=points.find(p=>p[0]===hour+1);
+ const phase=a&&b?(b[1]-a[1]>.025?"rising":b[1]-a[1]<-.025?"falling":"steady"):null;
+ const fraction=full&&a&&b&&hi-lo>=.15?((a[1]+b[1])/2-lo)/(hi-lo):null;
+ return {points,events,full,lo,hi,phase,fraction,level:a&&b?(a[1]+b[1])/2:null};
+}
+function tideFit(read,profile){
+ if(!profile||!read.full||!read.phase||!valid(read.fraction))return null;
+ const f=read.fraction,p=read.phase;
+ switch(profile.key){case "high-rising":return f>=.7||p==="rising";case "mid-low":return f<=.65;case "mid-rising":return (f>=.3&&f<=.7)||p==="rising";case "falling":return p==="falling";default:return null}
+}
+function renderTide(d,t,lang){
+ const tide=d.tide||{},r=tideRead(tide.rows,tide.hour),section=make("section","tide"),header=make("div","tide-head");
+ const phases={rising:t("Subiendo","Rising"),falling:t("Bajando","Falling"),steady:t("Casi estable","Nearly steady")};
+ header.append(make("span","kicker",t("FARO · Marea","FARO · Tide")),make("strong",null,phases[r.phase]||t("Fase no disponible","Phase unavailable")));section.append(header);
+ const fmt=n=>new Intl.NumberFormat(lang==="es"?"es-CL":"en-GB",{minimumFractionDigits:1,maximumFractionDigits:1}).format(n);
+ const time=h=>String(h).padStart(2,"0")+":00";
+ if(r.points.length>=2){
+  const ns="http://www.w3.org/2000/svg",svg=document.createElementNS(ns,"svg");
+  const put=(tag,attrs,txt)=>{const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(txt!==undefined)n.textContent=txt;svg.append(n);return n};
+  svg.setAttribute("viewBox","0 0 360 116");svg.setAttribute("role","img");svg.setAttribute("aria-label",t("Nivel del mar modelado por hora, en metros sobre MSL","Hourly modelled sea level, metres relative to MSL"));
+  const x=h=>12+h/24*336,span=Math.max(.2,r.hi-r.lo),y=v=>12+(r.hi-v)/span*71;
+  if(valid(tide.hour)){put("rect",{x:x(tide.hour),y:5,width:Math.min(24-tide.hour,2)/24*336,height:83,rx:3,fill:"currentColor",opacity:.13})}
+  for(const h of [0,6,12,18,24]){put("line",{x1:x(h),x2:x(h),y1:8,y2:88,stroke:"currentColor",opacity:.16});put("text",{x:x(h),y:106,"text-anchor":h===0?"start":h===24?"end":"middle","font-size":10,fill:"currentColor"},time(h))}
+  let path="",prev=null;for(const [h,v] of r.points){path+=(prev!==null&&h-prev===1?" L":" M")+x(h)+" "+y(v);prev=h}
+  put("path",{d:path,fill:"none",stroke:"var(--selection,#8acdc8)","stroke-width":2.3,"stroke-linecap":"round","stroke-linejoin":"round"});
+  for(const e of r.events)put("circle",{cx:x(e.h),cy:y(e.v),r:3,fill:"var(--selection,#8acdc8)"});
+  section.append(svg);
+  const events=make("div","tide-events");for(const e of r.events)events.append(make("span",null,(e.type==="high"?"↑ ":"↓ ")+time(e.h)+" · "+fmt(e.v)+" m"));if(events.children.length)section.append(events);
+  if(valid(r.level))section.append(make("p","tide-note",t("Franja seleccionada: ","Selected window: ")+fmt(r.level)+" m MSL"));
+ }else section.append(make("p","tide-note",t("Sin serie de nivel del mar para este día. El pronóstico de olas permanece disponible.","No sea-level series for this day. The wave forecast remains available.")));
+ const profile=tide.profile,labels={"high-rising":t("Alta o entrante","High or rising"),"mid-low":t("Media a baja","Mid to low"),"mid-rising":t("Media o entrante","Mid or rising"),all:t("Todas las fases, según bancos","All stages, depending on banks"),falling:t("Bajando","Falling")};
+ if(profile){section.append(make("p","tide-note",t("Referencia local sin calibrar: ","Uncalibrated local guidance: ")+labels[profile.key]+" · "+profile.source));
+  const fit=tideFit(r,profile);if(fit!==null){const alt=(d.hours||[]).filter(v=>!v.disabled&&valid(v.score)&&!v.selected).map(v=>({v,h:Number(String(v.label).match(/^\d{1,2}/)?.[0])})).filter(v=>valid(v.h)&&tideFit(tideRead(tide.rows,v.h),profile)===true).sort((a,b)=>b.v.score-a.v.score)[0];
+   section.append(make("p","tide-note",fit?t("La franja coincide con la referencia de marea.","Window aligns with the tide guidance."):t("La franja no coincide con la referencia de marea.","Window does not align with the tide guidance.")+(alt?t(" Alternativa de marea: "," Tide alternative: ")+alt.v.label+" · "+score(alt.v.score,lang)+"/10.":"")));
+  }
+ }else section.append(make("p","tide-note",t("Preferencia de marea del spot aún no validada.","Spot tide preference not yet validated.")));
+ section.append(make("p","tide-note",t("Open-Meteo · nivel del mar modelado (MSL, incluye marea y otros procesos). Extremos aproximados a 1 h; no son tablas oficiales ni modifican el índice.","Open-Meteo · modelled sea level (MSL, includes tide and other effects). Approximate hourly extrema; not official tide tables or a score adjustment.")));
+ const link=make("a",null,tide.region==="CL"?t("Consultar SHOA ↗","Check SHOA ↗"):t("Consultar Rijkswaterstaat ↗","Check Rijkswaterstaat ↗"));link.href=tide.region==="CL"?"https://www.shoa.cl/":"https://www.rijkswaterstaat.nl/water/waterdata/getij";link.target="_blank";link.rel="noopener noreferrer";section.append(link);return section;
+}
+
 function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails,onMatch,onExplore,onDNA,onCamera,beacon,regionLinks}){
  if(!before?.parentNode||!HTMLElement.prototype.attachShadow)return null;
  const host=make("div","faro-shared-console");host.id="faroSharedConsole";host.style.setProperty("display","block","important");host.style.setProperty("grid-column","1/-1","important");
- const shadow=host.attachShadow({mode:"open"}),style=make("style",null,css),layout=make("section","layout");shadow.append(style,layout);
+ const shadow=host.attachShadow({mode:"open"}),style=make("style",null,css+tideCSS),layout=make("section","layout");shadow.append(style,layout);
  before.parentNode.insertBefore(host,before);
  let last="",retired=false,failed=false,railObserver=null;const prior=new Map();
  function paint(){
@@ -182,6 +246,7 @@ function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails
   const footer=make("div","hero-footer");footer.append(make("p","disclaimer",(!available||caution)&&d.disclaimer?d.disclaimer:t("Modelo experimental · no garantiza seguridad ni altura de rompiente.","Experimental model · not a safety or breaking-height guarantee.")));hero.append(footer);
   const oldLocal=layout.querySelector(".local-read"),local=make("section","local-read");
   if(available||[d.wave,d.period,d.wind].some(v=>v&&v!=="—")){const conditions=make("section","conditions");conditions.append(make("span","kicker",t("Condiciones de la franja","Window conditions")),metrics);if(d.reason&&!caution){const why=make("details","why");why.open=!!oldLocal?.querySelector(".why")?.open;why.append(make("summary",null,t("¿Por qué esta franja?","Why this window?")),make("p",null,d.reason));conditions.append(why)}local.append(conditions)}
+  if(d.tide)local.append(renderTide(d,t,lang));
   if(prep.children.length){const kit=make("details","kit"),summary=make("summary"),kitTitle=make("span",null,t("Prepara tu sesión","Prepare your session"));summary.append(kitTitle);const suit=(d.prep||[]).find(x=>/traje|suit/i.test(x.label));if(suit?.value)summary.append(make("small","kit-preview",suit.value));kit.open=!!oldLocal?.querySelector(".kit")?.open;kit.append(summary,prep);local.append(kit)}
   if(d.local?.uvAdvice)local.append(make("p","uv-advice",d.local.uvAdvice));
   local.append(actions);
@@ -211,5 +276,5 @@ function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails
  }
  update();return failed?null:{update,host};
 }
-root.FaroForecastConsole=Object.freeze({mount});
+root.FaroForecastConsole=Object.freeze({mount,tideSeries,tideRead,tideProfile,tideFit});
 })(window);
