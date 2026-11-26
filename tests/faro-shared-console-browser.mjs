@@ -14,7 +14,7 @@ function fixture(region){
  const time=Array.from({length:7*24+4},(_,i)=>cl?(Date.parse(first+"T00:00:00Z")/1000-offset*3600+i*3600):new Date(Date.parse(first+"T00:00:00Z")+i*3600000).toISOString().slice(0,16));
  const stamp=(d,h,m=0)=>cl?Date.parse(d+"T"+String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":00Z")/1000-offset*3600:d+"T"+String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
  const fixed=x=>time.map(()=>x),loc=cl?{latitude:-32.93,longitude:-71.52}:{latitude:51.56,longitude:3.49};
- return {marine:{...loc,hourly:{time,wave_height:fixed(1.3),wave_direction:fixed(cl?282:320),wave_period:fixed(9),swell_wave_height:fixed(1),swell_wave_direction:fixed(cl?295:320),swell_wave_period:fixed(11),wind_wave_height:fixed(.25),wind_wave_direction:fixed(255),sea_surface_temperature:fixed(16),secondary_swell_wave_height:fixed(.3),secondary_swell_wave_period:fixed(13),secondary_swell_wave_direction:fixed(270),tertiary_swell_wave_height:fixed(null),tertiary_swell_wave_period:fixed(null),tertiary_swell_wave_direction:fixed(null)}},
+ return {marine:{...loc,hourly:{time,wave_height:fixed(1.3),wave_direction:fixed(cl?282:320),wave_period:fixed(9),swell_wave_height:fixed(1),swell_wave_direction:fixed(cl?295:320),swell_wave_period:fixed(11),wind_wave_height:fixed(.25),wind_wave_direction:fixed(255),sea_surface_temperature:fixed(16),sea_level_height_msl:time.map((_,i)=>Math.sin(i*Math.PI/6)*1.6),secondary_swell_wave_height:fixed(.3),secondary_swell_wave_period:fixed(13),secondary_swell_wave_direction:fixed(270),tertiary_swell_wave_height:fixed(null),tertiary_swell_wave_period:fixed(null),tertiary_swell_wave_direction:fixed(null)}},
  weather:{...loc,hourly:{time,wind_speed_10m:fixed(10),wind_direction_10m:fixed(cl?125:140),wind_gusts_10m:fixed(15),precipitation:fixed(0),weather_code:fixed(1),uv_index:fixed(3),temperature_2m:fixed(21),apparent_temperature:fixed(20),cloud_cover:fixed(25),precipitation_probability:fixed(0)},daily:{time:cl?dates.map(d=>stamp(d,0)):dates,sunrise:dates.map(d=>stamp(d,7,15)),sunset:dates.map(d=>stamp(d,cl?20:17,15)),uv_index_max:dates.map(()=>7),precipitation_sum:dates.map(()=>0)}}};
 }
 const errors=[];
@@ -86,6 +86,13 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
      const next=consoleHost.locator(".hero>.hours button:not(:disabled)").first();
      await next.click();assert.equal(await next.getAttribute("aria-pressed"),"true");
      assert.equal(await getScore(),await next.locator("strong").textContent(),"Hero and selected window use same score");
+     const tide=consoleHost.locator(".tide-chart svg");await tide.waitFor({state:"visible",timeout:10000});
+     assert.equal(await consoleHost.locator(".tide-picker").count(),0,"No redundant visible tide slider");
+     const box=await tide.boundingBox();assert.ok(box&&box.width>0,"Interactive tide curve visible");
+     await page.mouse.move(box.x+box.width*.25,box.y+box.height*.45);await page.mouse.down();await page.mouse.move(box.x+box.width*.75,box.y+box.height*.45,{steps:12});
+     const dragged=Number(await tide.getAttribute("aria-valuenow"));await page.mouse.up();assert.ok(dragged>=15&&dragged<=19,"Graph follows drag before release");
+     await tide.focus();await page.keyboard.press("ArrowLeft");assert.equal(Number(await tide.getAttribute("aria-valuenow")),dragged-1,"Keyboard changes graph hour");
+     await consoleHost.locator(".tide-event").first().click();assert.equal(await consoleHost.locator(".tide-event").first().getAttribute("aria-pressed"),"true","Turning point selects exact hour");
      const select=consoleHost.locator("select");const options=await select.locator("option").allTextContents();assert.ok(options.length>1);
      await select.selectOption({index:1});await page.waitForFunction(()=>document.querySelector("#faroSharedConsole")?.shadowRoot?.querySelectorAll(".days button").length===7);
      assert.equal(await select.locator("option:checked").textContent(),options[1]);

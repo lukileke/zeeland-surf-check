@@ -256,7 +256,8 @@ for(const [engine,driver] of [['chromium',chromium],['webkit',webkit]]){
        'Session signals and daylight overlap: '+JSON.stringify(geometry));
       await page.locator('#dayview>.session-section').screenshot({path:`${out}/${engine}-${s.name}-${theme}-session-kit.png`});
       await prep.evaluate(el=>el.open=false);
-      await page.locator('.faro-hub-group.is-read').screenshot({path:`${out}/${engine}-${s.name}-${theme}-ocean-lab.png`});
+      await page.locator('#faroTechnicalExpand').evaluate(el=>el.open=true);
+      await page.locator('[data-info-group="science"]').screenshot({path:`${out}/${engine}-${s.name}-${theme}-ocean-lab.png`});
       await page.screenshot({path:`${out}/${engine}-${s.name}-${theme}.png`});
       if(s.width===390&&theme==='dark'){
        await page.locator('footer.chile-footer').scrollIntoViewIfNeeded();

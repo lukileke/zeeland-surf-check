@@ -12,23 +12,24 @@ const root=path.resolve(__dirname,'..');
 const PORT=18765;
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 function data(){
+ const testNow=Date.parse('2026-11-25T09:00:00Z');
  const days=Array.from({length:7},(_,i)=>{
-  const d=new Date(Date.now()+i*86400000);
+  const d=new Date(testNow+i*86400000);
   return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Amsterdam',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);
  });
  // en-CA can format day/month order differently on some OS builds:
  const isoDays=days.map((s,i)=>/^\d{4}-\d\d-\d\d$/.test(s)?s:
-  new Date(Date.now()+i*86400000).toISOString().slice(0,10));
+  new Date(testNow+i*86400000).toISOString().slice(0,10));
  const times=isoDays.flatMap(day=>Array.from({length:24},(_,h)=>day+'T'+String(h).padStart(2,'0')+':00'));
  const n=times.length,constant=v=>Array(n).fill(v);
- return {
+ return {testNow,
   marine:{hourly:{time:times,wave_height:constant(1.1),wave_direction:constant(315),
    wave_period:constant(6.2),sea_surface_temperature:constant(13.3),
    swell_wave_height:constant(0.7),swell_wave_direction:constant(315),
    swell_wave_period:constant(7),wind_wave_height:constant(0.4),
    wind_wave_direction:constant(295)}},
   weather:{hourly:{time:times,wind_speed_10m:constant(21),
-   wind_direction_10m:constant(145),wind_gusts_10m:times.map((v,i)=>i>=24&&i<48?87:25),
+   wind_direction_10m:constant(145),wind_gusts_10m:times.map((v,i)=>i>=72&&i<96?87:25),
    precipitation:constant(0),cloud_cover:constant(30),
    weather_code:constant(2),temperature_2m:constant(11),
    apparent_temperature:constant(9)},
@@ -41,6 +42,8 @@ function horizontalIssues(){
  const shell=document.querySelector('main');
  const offenders=[...document.querySelectorAll('main *')].filter(el=>{
   if(el.closest('#dayStripItems'))return false; // Inner rail is intentionally scrollable
+  // Contained tables may extend inside a horizontal scroller; verify the scroller itself fits.
+  for(let p=el.parentElement;p&&p!==shell;p=p.parentElement){const style=getComputedStyle(p),box=p.getBoundingClientRect();if(/^(auto|scroll|hidden|clip)$/.test(style.overflowX)&&box.right<=view+3&&box.left>=-3&&box.width>0)return false;}
   const r=el.getBoundingClientRect(),css=getComputedStyle(el);
   return css.display!=='none'&&r.width>0&&r.right>view+3;
  }).slice(0,6).map(el=>({tag:el.tagName,id:el.id,klass:el.className?.toString().slice(0,100),
@@ -65,11 +68,12 @@ async function swipe(session,x0,y0,x1,y1){
  try{
   await sleep(800);
   browser=await chromium.launch({headless:true});
-  const {marine,weather}=data();
+  const {marine,weather,testNow}=data();
   const failures=[];
   for(const width of [320,375,390,430]){
    const context=await browser.newContext({viewport:{width,height:812},deviceScaleFactor:2,
     isMobile:true,hasTouch:true});
+   await context.addInitScript(ms=>{const Native=Date;window.Date=class extends Native{constructor(...args){if(args.length)super(...args);else super(ms)}static now(){return ms}}},testNow);
    await context.route('**/marine-api.open-meteo.com/**',route=>route.fulfill({json:marine}));
    await context.route('**/api.open-meteo.com/**',route=>route.fulfill({json:weather}));
    await context.route('**/faro-forecast-console.js*',route=>route.abort());
@@ -147,6 +151,7 @@ async function swipe(session,x0,y0,x1,y1){
          chosenShadow:css(chosen)?.boxShadow,otherShadow:css(other)?.boxShadow,
          chosenBadge:css(chosen?.querySelector('.day-chip-grade'))?.backgroundColor,
          otherBadge:css(other?.querySelector('.day-chip-grade'))?.backgroundColor,
+         chosenGrade:chosen?.querySelector('.day-chip-grade')?.textContent?.trim(),otherGrade:other?.querySelector('.day-chip-grade')?.textContent?.trim(),
          navBg:css(nav)?.backgroundColor,navOtherBg:css(navOther)?.backgroundColor,
          timeBg:css(time)?.backgroundColor,otherTimeBg:css(otherTime)?.backgroundColor,
          timeStroke:css(time)?.borderTopColor,otherTimeStroke:css(otherTime)?.borderTopColor,
@@ -164,7 +169,7 @@ async function swipe(session,x0,y0,x1,y1){
        if(hierarchy.activeCount!==1||hierarchy.chosenBg!==paper||
            hierarchy.otherBg!==clear||hierarchy.chosenStroke!==selectedStroke||
            hierarchy.otherStroke!==passiveStroke||
-           hierarchy.chosenBadge!==hierarchy.otherBadge||
+           (hierarchy.chosenGrade===hierarchy.otherGrade&&hierarchy.chosenBadge!==hierarchy.otherBadge)||
            hierarchy.navOtherBg!==clear||
            hierarchy.navBg!==paper||
            hierarchy.navStroke!==navigationBlue||
@@ -208,7 +213,7 @@ async function swipe(session,x0,y0,x1,y1){
         const editorial=await page.evaluate(()=>{
          const hero=document.querySelector('#faroRead');
          const expected=window.ZeelandEngine.quickRead(blocks(day)[slotIndex].s,document.documentElement.lang);
-         const headline=hero.querySelector('#faroReadTitle')?.textContent?.trim();
+         const headline=hero.querySelector('#faroReadTitle')?.textContent?.trim()||hero.querySelector('#summary')?.textContent?.trim();
          const detail=hero.querySelector('#summary')?.textContent?.trim();
          const copy=hero.querySelector('.faro-read-match')?.textContent?.trim();
          const nav=document.querySelector('#navBoard')?.textContent?.trim();

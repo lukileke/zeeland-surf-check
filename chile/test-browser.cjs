@@ -36,8 +36,8 @@ function fixture(){
   tertiary_swell_wave_period:fixed(null),tertiary_swell_wave_direction:fixed(null)
  }};
  const weather={latitude:-32.92,longitude:-71.51,hourly:{
-  time:times,wind_speed_10m:times.map(t=>['06','07'].includes(clock(t).slice(11,13))?32:10),wind_direction_10m:fixed(125),
-  wind_gusts_10m:times.map(t=>['06','07'].includes(clock(t).slice(11,13))?40:15),
+  time:times,wind_speed_10m:times.map(t=>['08','09'].includes(clock(t).slice(11,13))?32:10),wind_direction_10m:fixed(125),
+  wind_gusts_10m:times.map(t=>['08','09'].includes(clock(t).slice(11,13))?40:15),
   precipitation:fixed(0),weather_code:fixed(1),uv_index:times.map(t=>Number(clock(t).slice(11,13))>=10?5:0),
   temperature_2m:fixed(21),cloud_cover:fixed(25),precipitation_probability:fixed(0)
  },daily:{time:dates.map(d=>fromLocal(d)),sunrise:dates.map(d=>fromLocal(d,7,15)),
@@ -578,10 +578,10 @@ function fixture(){
     await page.locator('#faroQuickDays > button').nth(1).click();
     assert.equal(await page.locator('#faroQuickDays > button').nth(1).getAttribute('aria-pressed'),'true');
    }
-   // The 06:00 window has stronger wind than 08:00: FARO must say what to
+   // The 08:00 daylight window has stronger wind than 10:00: FARO must say what to
    // do and name the better future slot instead of only mentioning sandbanks.
    const dayControl='#faroQuickDays > button';
-   const slotControl='#faroQuickHours > button';
+   const slotControl='#faroQuickHours > button:not(:disabled)';
    const previousWeekChip=await page.locator(dayControl).first().elementHandle();
    await page.locator(slotControl).first().click();
    assert.equal(await previousWeekChip.evaluate(node=>node.isConnected),true,
