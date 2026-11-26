@@ -136,6 +136,7 @@ h2{font-family:Manrope,system-ui,sans-serif;font-weight:750;letter-spacing:-.025
 @media(prefers-reduced-motion:reduce){.beacon::before,.beacon::after,.beacon .pulse,.beacon .beam{animation:none;opacity:.75}.beacon svg{animation:none;opacity:.55}.days button,.hours button{transition:none}}
 `;
 const tideCSS="\n.tide{display:grid;gap:.85rem;padding:clamp(.9rem,2.4cqi,1.5rem);border:1px solid #42666a;border-radius:clamp(.85rem,1.8cqi,1.15rem);background:radial-gradient(ellipse at 100% 0%,#28575b 0%,transparent 65%),linear-gradient(145deg,#173b42,#102d36);color:#e5f2ef;min-inline-size:0;overflow:hidden}\n.tide .kicker{color:#a9c9c5}.tide-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.7rem;flex-wrap:wrap}.tide-head>div{display:grid;gap:.3rem}.tide-head h3{margin:0;font-size:clamp(1.2rem,1rem + 1cqi,1.65rem);letter-spacing:-.035em;font-weight:750;line-height:1.2}.tide-tag{font-size:.69rem;padding:.3rem .55rem;border:1px solid #6d9896;border-radius:2rem;color:#c9e6df;white-space:nowrap}.tide .tide-note{font-size:.79rem;color:#b9d2d0;margin:0;line-height:1.45}.tide svg{display:block;width:100%;height:auto;max-height:12rem;color:#a9c9c5}.tide .tide-events{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,7.2rem),1fr));gap:.45rem;border-top:1px solid #42666a;padding-top:.75rem}.tide-event{display:grid;gap:.16rem;min-width:0;padding:.35rem .15rem}.tide-event small{font-size:.67rem;color:#a9c9c5}.tide-event strong{font-size:1.05rem;font-variant-numeric:tabular-nums;line-height:1.2}.tide-event span{font-size:.73rem;color:#b9d2d0;font-variant-numeric:tabular-nums}.tide-guide{display:grid;gap:.35rem;border-top:1px solid #42666a;padding-top:.75rem}.tide-guide strong{font-size:.9rem}.tide .tide-source{background:transparent;border:0;border-top:1px solid #42666a;border-radius:0;padding:.45rem 0 0;color:#b9d2d0}.tide .tide-source summary{font-size:.72rem;min-block-size:2rem;color:#b9d2d0}.tide .tide-source p,.tide .tide-source a{font-size:.73rem;color:#b9d2d0}.tide a{text-underline-offset:.2em}.tide .tide-alternative{border-color:#6d9896;text-align:left;font-size:.78rem;min-block-size:2.75rem;color:#d9f0e8}.tide .tide-legend{display:flex;gap:.75rem;flex-wrap:wrap;font-size:.68rem;color:#b9d2d0}.tide .tide-legend span:before{content:\"\";display:inline-block;width:.6rem;height:.6rem;border-radius:2px;background:#d9e8bd;margin-right:.35rem}.tide .tide-legend .now-key:before{background:#8cd4d1;border-radius:50%}.excluded .hours button small{color:#c7dedb}.hero[data-unavailable] .excluded{border-top:1px solid var(--line);padding-top:.35rem}\n";
+const tideInteractionCSS="\n.tide .tide-chart{display:grid;gap:.3rem;min-width:0}.tide .tide-chart svg{touch-action:pan-y;cursor:crosshair;max-height:14rem}.tide .tide-picker{display:grid;grid-template-columns:2.75rem minmax(0,1fr) 2.75rem;align-items:center;gap:.55rem}.tide .tide-picker button{min-height:2.75rem;padding:.2rem;color:#e5f2ef;border-color:#52797b;font-size:1.2rem}.tide .tide-picker input{width:100%;min-width:0;accent-color:#8cd4d1;cursor:pointer;margin:0;min-height:2.75rem}.tide .tide-picker input:focus-visible{outline:2px solid #f0dc9d;outline-offset:3px;border-radius:5px}.tide .tide-hour-read{display:grid;grid-template-columns:1fr auto;gap:.3rem .75rem;align-items:baseline;padding:.7rem .8rem;border:1px solid #52797b;border-radius:.65rem;background:#0e2932;color:#e5f2ef;min-width:0}.tide .tide-hour-read strong{font-size:1.45rem;font-variant-numeric:tabular-nums;letter-spacing:-.035em;line-height:1.1}.tide .tide-hour-read .tide-level{text-align:end;font-size:1.05rem;white-space:nowrap}.tide .tide-hour-read small{font-size:.7rem;color:#b9d2d0}.tide .tide-hour-read .tide-hour-phase{grid-column:1/-1;font-size:.77rem;color:#c8e4df;line-height:1.35}.tide .tide-hour-read .tide-hour-action{grid-column:1/-1;text-align:left;font-size:.76rem;min-height:2.75rem;border-color:#739b98;color:#e5f2ef}.tide .tide-hour-read .tide-hour-action[hidden]{display:none}.tide .tide-event{background:transparent;border:1px solid transparent;border-radius:.45rem;text-align:left;cursor:pointer;min-height:3.6rem}.tide .tide-event[aria-pressed=\"true\"]{border-color:#8cd4d1;background:#204951}.tide .tide-event:hover{background:#21434a}.tide .tide-guide .tide-fit{font-size:.75rem;color:#d8e6bb;margin:0}.tide .tide-hint{font-size:.7rem;color:#b9d2d0;margin:0}.tide .tide-legend .cursor-key:before{background:#f0dc9d;border-radius:50%}.tide .tide-cursor{pointer-events:none}.tide .tide-hour-action:disabled{opacity:.65}.tide .tide-hour-action:not(:disabled):hover{background:#204951}\n";
 const shades=["var(--faro-score-0,#ef9b77)","var(--faro-score-1,#efbd6e)","var(--faro-score-2,#e0cc73)","var(--faro-score-3,#b1d574)","var(--faro-score-4,#8cc584)"];
 const score=(n,lang)=>valid(n)?new Intl.NumberFormat(lang==="es"?"es-CL":"en-GB",{minimumFractionDigits:1,maximumFractionDigits:1}).format(n):"—";
 const tint=(e,n)=>{if(valid(n))e.style.setProperty("--score",shades[Math.max(0,Math.min(4,Math.floor(n/2)))]);return e};
@@ -178,7 +179,31 @@ function tideFit(read,profile){
 function exclusionLabel(key,lang){const es=lang==="es";const labels={dark:["Sin luz suficiente","Not enough daylight"],past:["Franja pasada","Window has passed"],missing:["Datos incompletos","Incomplete model data"],risk:["Riesgo previsto","Model risk"],unknown:["Riesgo sin evaluar","Risk data incomplete"],blocked:["Restricción del modelo","Model restriction"]};return (labels[key]||["Sin evaluar","Unassessed"])[es?0:1]}
 function windowStatus(hours,lang){const es=lang==="es",t=(a,b)=>es?a:b,active=(hours||[]).filter(h=>h.exclusion&&h.exclusion!=="dark"&&h.exclusion!=="past"),counts={};for(const h of active)counts[h.exclusion]=(counts[h.exclusion]||0)+1;const key=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];const labels={missing:[t("Pronóstico incompleto","Incomplete forecast"),t("Faltan datos","Missing data"),t("Faltan datos de olas o viento en las franjas con luz. No se inventa una puntuación.","Wave or wind data are missing during daylight windows. No score is invented.")],unknown:[t("Condiciones sin evaluar","Conditions unassessed"),t("Riesgo sin evaluar","Risk unknown"),t("Faltan variables para evaluar el riesgo de las franjas con luz.","Risk variables are missing during daylight windows.")],risk:[t("No recomendamos entrar","No recommended session"),t("Riesgo previsto","Model risk"),t("El modelo indica condiciones de riesgo en las franjas disponibles.","The model flags risk in the available windows.")],blocked:[t("Sin sesión recomendada","No recommended session"),t("Restricción","Restricted"),t("La política de sesión no permite recomendar estas franjas.","The session policy cannot recommend these windows.")]};const fallback=(hours||[]).length&&((hours||[]).every(h=>h.exclusion==="dark"||h.exclusion==="past"))?[t("Sin luz útil restante","No usable daylight left"),t("Sin luz útil","No daylight"),t("No quedan franjas con suficiente luz y tiempo para surfear.","No windows have enough remaining daylight for a session.")]:[t("Sin sesión evaluable","No assessable session"),t("Sin franja","No window"),t("Consulta las franjas y sus motivos de exclusión.","Check the windows and why they were excluded.")];const selected=labels[key]||fallback;return {headline:selected[0],short:selected[1],deck:selected[2]}}
 
-function renderTide(d,t,lang,onHour,sourceOpen){
+
+/* Shape-preserving cubic interpolation. Tangents are zero at extrema and
+   bounded on monotonic segments. Gaps are split by the caller. */
+function tideCurve(points,x=h=>h,y=v=>v){
+ if(!points.length)return "";
+ if(points.length===1)return "M"+x(points[0][0])+" "+y(points[0][1]);
+ const delta=points.slice(1).map((p,i)=>(p[1]-points[i][1])/(p[0]-points[i][0]));
+ const m=points.map((_,i)=>i===0?delta[0]:i===points.length-1?delta.at(-1):delta[i-1]*delta[i]<=0?0:2*delta[i-1]*delta[i]/(delta[i-1]+delta[i]));
+ for(let i=0;i<delta.length;i++){const d=delta[i];if(d===0){m[i]=m[i+1]=0;continue}const a=m[i]/d,b=m[i+1]/d,mag=Math.hypot(a,b);if(mag>3){const k=3/mag;m[i]=k*a*d;m[i+1]=k*b*d}}
+ let path="M"+x(points[0][0])+" "+y(points[0][1]);
+ for(let i=0;i<points.length-1;i++){const [h,v]=points[i],[h2,v2]=points[i+1],step=(h2-h)/3;path+=" C"+x(h+step)+" "+y(v+m[i]*step)+" "+x(h2-step)+" "+y(v2-m[i+1]*step)+" "+x(h2)+" "+y(v2)}
+ return path;
+}
+function tideWindow(hours,hour){
+ if(!valid(hour))return null;
+ return (hours||[]).find(v=>{const m=String(v.label||"").match(/^(\d{1,2})(?::\d{2})?\s*[–—-]\s*(\d{1,2})/);return m&&hour>=+m[1]&&hour<+m[2]})||null;
+}
+function tideCursorHour(rows,preferred,selected,now){
+ const points=tideRead(rows,null).points;
+ if(!points.length)return null;
+ const target=[preferred,selected,valid(now)?Math.floor(now):null,12].find(valid);
+ return Math.max(0,Math.min(23,Math.round(target)));
+}
+
+function renderTide(d,t,lang,onHour,sourceOpen,remember,initialHour){
 
  const tide=d.tide||{},r=tideRead(tide.rows,tide.hour),section=make("section","tide"),header=make("div","tide-head"),title=make("div");
  const now=valid(tide.nowHour)?tideRead(tide.rows,Math.floor(tide.nowHour)):null,context=r.phase?r:now,phases={rising:t("Marea entrante","Rising tide"),falling:t("Marea saliente","Falling tide"),steady:t("Marea casi estable","Nearly steady tide")};
@@ -187,7 +212,8 @@ function renderTide(d,t,lang,onHour,sourceOpen){
  header.append(title,make("span","tide-tag",r.phase?t("Franja seleccionada","Selected window"):now?.phase?t("Ahora · modelo","Now · model"):t("Vista diaria","Daily view")));section.append(header);
  const fmt=n=>new Intl.NumberFormat(lang==="es"?"es-CL":"en-GB",{minimumFractionDigits:1,maximumFractionDigits:1}).format(n);
  const time=h=>String(Math.floor(h)).padStart(2,"0")+":"+String(Math.round((h%1)*60)).padStart(2,"0");
- if(context&&valid(context.level))section.append(make("p","tide-note",(r.phase?t("Nivel medio de la franja: ","Window mean level: "):t("Nivel aproximado actual: ","Approximate current level: "))+fmt(context.level)+" m MSL"));
+ const cursorStart=tideCursorHour(tide.rows,initialHour,tide.hour,tide.nowHour);let cursorHour=cursorStart;
+ const heading=title.querySelector("h3"),tag=header.querySelector(".tide-tag");
  if(r.points.length>=2){
   const ns="http://www.w3.org/2000/svg",svg=document.createElementNS(ns,"svg");
   const put=(tag,attrs,txt,parent=svg)=>{const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(txt!==undefined)n.textContent=txt;parent.append(n);return n};
@@ -199,11 +225,46 @@ function renderTide(d,t,lang,onHour,sourceOpen){
   if(valid(tide.hour))put("rect",{x:x(tide.hour),y:5,width:Math.min(24-tide.hour,2)/24*314,height:106,rx:4,fill:"#d9e8bd",opacity:.19});
   for(const h of [0,6,12,18,24]){put("line",{x1:x(h),x2:x(h),y1:8,y2:111,stroke:"currentColor",opacity:.11});put("text",{x:x(h),y:132,"text-anchor":h===0?"start":h===24?"end":"middle","font-size":10,fill:"currentColor"},time(h))}
   const segments=[];for(const p of r.points){const last=segments.at(-1);if(last&&p[0]-last.at(-1)[0]===1)last.push(p);else segments.push([p])}
-  for(const seg of segments){if(seg.length<2)continue;const path=seg.map(([h,v],i)=>(i?"L":"M")+x(h)+" "+y(v)).join(" ");put("path",{d:path+" L"+x(seg.at(-1)[0])+" 111 L"+x(seg[0][0])+" 111 Z",fill:"url(#faro-tide-fill)"});put("path",{d:path,fill:"none",stroke:"#8cd4d1","stroke-width":2.5,"stroke-linecap":"round","stroke-linejoin":"round"})}
+  for(const seg of segments){if(seg.length<2)continue;const path=tideCurve(seg,x,y);put("path",{d:path+" L"+x(seg.at(-1)[0])+" 111 L"+x(seg[0][0])+" 111 Z",fill:"url(#faro-tide-fill)"});put("path",{d:path,fill:"none",stroke:"#8cd4d1","stroke-width":2.5,"stroke-linecap":"round","stroke-linejoin":"round"})}
   for(const e of r.events)put("circle",{cx:x(e.h),cy:y(e.v),r:3.2,fill:"#d4e8e2",stroke:"#173b42","stroke-width":1.3});
   if(valid(tide.nowHour)&&tide.nowHour>=0&&tide.nowHour<24){const n=r.points.find(p=>p[0]===Math.floor(tide.nowHour)),b=r.points.find(p=>p[0]===Math.floor(tide.nowHour)+1);if(n&&b){const v=n[1]+(b[1]-n[1])*(tide.nowHour-n[0]);put("line",{x1:x(tide.nowHour),x2:x(tide.nowHour),y1:6,y2:111,stroke:"#8cd4d1","stroke-dasharray":"3 3"});put("circle",{cx:x(tide.nowHour),cy:y(v),r:4,fill:"#8cd4d1",stroke:"#173b42","stroke-width":1.4})}}
-  section.append(svg);const legend=make("div","tide-legend");if(valid(tide.hour))legend.append(make("span",null,t("Tu franja","Your window")));if(valid(tide.nowHour))legend.append(make("span","now-key",t("Ahora","Now")));if(legend.children.length)section.append(legend);
-  const events=make("div","tide-events");for(const e of r.events){const tile=make("div","tide-event");tile.append(make("small",null,e.type==="high"?t("↑ Pleamar","↑ High tide"):t("↓ Bajamar","↓ Low tide")),make("strong",null,time(e.h)),make("span",null,fmt(e.v)+" m MSL"));events.append(tile)}if(events.children.length)section.append(events);
+  const cursor=put("g",{class:"tide-cursor","aria-hidden":"true"}),cursorLine=put("line",{y1:5,y2:111,stroke:"#f0dc9d","stroke-width":1.15,"stroke-dasharray":"3 3"},undefined,cursor),cursorDot=put("circle",{r:4.7,fill:"#f0dc9d",stroke:"#173b42","stroke-width":1.5},undefined,cursor);
+  const chart=make("div","tide-chart");chart.append(svg);section.append(chart);const legend=make("div","tide-legend");if(valid(tide.hour))legend.append(make("span",null,t("Tu franja","Your window")));if(valid(tide.nowHour))legend.append(make("span","now-key",t("Ahora","Now")));legend.append(make("span","cursor-key",t("Hora explorada","Explored hour")));section.append(legend);
+
+  const picker=make("div","tide-picker"),prev=make("button",null,"‹"),next=make("button",null,"›"),range=make("input");
+  prev.type=next.type="button";prev.dataset.key="tide-prev";next.dataset.key="tide-next";
+  prev.setAttribute("aria-label",t("Hora anterior de marea","Previous tide hour"));next.setAttribute("aria-label",t("Hora siguiente de marea","Next tide hour"));
+  range.type="range";range.min="0";range.max="23";range.step="1";range.dataset.key="tide-hour";range.setAttribute("aria-label",t("Explorar hora de marea","Explore tide hour"));picker.append(prev,range,next);section.append(picker);
+  section.append(make("p","tide-hint",t("Toca la curva, mueve el selector o elige una pleamar o bajamar.","Tap the curve, move the slider or select a high or low tide.")));
+  const readout=make("div","tide-hour-read"),readTime=make("strong"),readLevel=make("strong","tide-level"),hourLabel=make("small",null,t("Hora local","Local time")),levelLabel=make("small",null,"MSL · "+t("modelo","model")),phaseLabel=make("div","tide-hour-phase"),action=make("button","tide-hour-action");
+  levelLabel.style.textAlign="end";phaseLabel.setAttribute("aria-live","polite");action.type="button";action.dataset.key="tide-select-session";readout.append(readTime,readLevel,hourLabel,levelLabel,phaseLabel,action);section.append(readout);
+  let chosenWindow=null;
+  action.addEventListener("click",()=>{if(chosenWindow&&!chosenWindow.disabled&&valid(chosenWindow.score))onHour(chosenWindow.id)});
+  const events=make("div","tide-events");
+  for(const e of r.events){const tile=make("button","tide-event");tile.type="button";tile.dataset.key="tide-event-"+e.h;tile.dataset.hour=String(e.h);tile.append(make("small",null,e.type==="high"?t("↑ Pleamar","↑ High tide"):t("↓ Bajamar","↓ Low tide")),make("strong",null,time(e.h)),make("span",null,fmt(e.v)+" m MSL"));tile.addEventListener("click",()=>selectHour(e.h));events.append(tile)}
+  if(events.children.length)section.append(events);
+  function selectHour(hour){
+   cursorHour=Math.max(0,Math.min(23,Math.round(hour)));remember(cursorHour);
+   range.value=String(cursorHour);range.setAttribute("aria-valuetext",time(cursorHour));prev.disabled=cursorHour===0;next.disabled=cursorHour===23;
+   const point=r.points.find(p=>p[0]===cursorHour),reading=tideRead(tide.rows,cursorHour);
+   cursorLine.setAttribute("x1",x(cursorHour));cursorLine.setAttribute("x2",x(cursorHour));cursorDot.setAttribute("cx",x(cursorHour));cursorDot.setAttribute("cy",point?y(point[1]):0);cursorDot.setAttribute("visibility",point?"visible":"hidden");
+   readTime.textContent=time(cursorHour);readLevel.textContent=point?fmt(point[1])+" m":"—";
+   const event=r.events.find(e=>e.h===cursorHour);
+   const phase=event?(event.type==="high"?t("Cerca de pleamar","Near high tide"):t("Cerca de bajamar","Near low tide")):reading.phase?phases[reading.phase]:t("Fase sin datos","Phase unavailable");
+   heading.textContent=point?phase:t("Hora sin datos","Hour unavailable");tag.textContent=t("Exploración · ","Exploring · ")+time(cursorHour);
+   const match=tideFit(reading,profile);
+   phaseLabel.textContent=(point?phase:t("Sin nivel modelado a esta hora","No modelled level for this hour"))+(match===null?"":match?" · "+t("Coincide con la guía local","Matches local guidance"):" · "+t("Fuera de la guía local","Outside local guidance"));
+   chosenWindow=tideWindow(d.hours,cursorHour);action.hidden=false;action.disabled=!chosenWindow||chosenWindow.disabled||!valid(chosenWindow.score)||!!chosenWindow.selected;
+   action.textContent=!chosenWindow?t("Sin franja de surf a esta hora","No surf window at this hour"):chosenWindow.disabled?(chosenWindow.note||t("Franja no evaluable","Window unavailable")):chosenWindow.selected?t("Franja activa · ","Active window · ")+chosenWindow.label:t("Seleccionar franja · ","Select surf window · ")+chosenWindow.label+" · "+score(chosenWindow.score,lang)+"/10";
+   for(const button of events.children)button.setAttribute("aria-pressed",String(Number(button.dataset.hour)===cursorHour));
+  }
+  range.addEventListener("input",()=>selectHour(Number(range.value)));prev.addEventListener("click",()=>selectHour(cursorHour-1));next.addEventListener("click",()=>selectHour(cursorHour+1));
+  let pointerStart=null;
+  svg.addEventListener("pointerdown",ev=>{pointerStart={x:ev.clientX,y:ev.clientY};if(ev.pointerType==="mouse"&&ev.button===0){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const matrix=svg.getScreenCTM();if(matrix)selectHour((p.matrixTransform(matrix.inverse()).x-34)/314*24)}});
+  svg.addEventListener("pointerup",ev=>{if(!pointerStart)return;const dx=ev.clientX-pointerStart.x,dy=ev.clientY-pointerStart.y;pointerStart=null;if(Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx))return;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const matrix=svg.getScreenCTM();if(matrix)selectHour((p.matrixTransform(matrix.inverse()).x-34)/314*24)});
+  svg.addEventListener("pointercancel",()=>{pointerStart=null});
+  if(valid(cursorStart))selectHour(cursorStart);
+
  }else section.append(make("p","tide-note",t("Sin datos de nivel del mar. El pronóstico de olas es independiente.","Sea-level data unavailable. Wave forecast is independent.")));
  const guide=make("div","tide-guide");guide.append(make("span","kicker",t("Lectura del spot","Spot guidance")),make("strong",null,profile?labels[profile.key]:t("Preferencia aún no validada","Tide preference not yet validated")));
  const fit=tideFit(r,profile);
@@ -217,9 +278,9 @@ function renderTide(d,t,lang,onHour,sourceOpen){
 function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails,onMatch,onExplore,onDNA,onCamera,beacon,regionLinks}){
  if(!before?.parentNode||!HTMLElement.prototype.attachShadow)return null;
  const host=make("div","faro-shared-console");host.id="faroSharedConsole";host.style.setProperty("display","block","important");host.style.setProperty("grid-column","1/-1","important");
- const shadow=host.attachShadow({mode:"open"}),style=make("style",null,css+tideCSS),layout=make("section","layout");shadow.append(style,layout);
+ const shadow=host.attachShadow({mode:"open"}),style=make("style",null,css+tideCSS+tideInteractionCSS),layout=make("section","layout");shadow.append(style,layout);
  before.parentNode.insertBefore(host,before);
- let last="",retired=false,failed=false,railObserver=null;const prior=new Map();
+ let last="",retired=false,failed=false,railObserver=null,tideContext="",tideCursor=null,lastSurfHour=null;const prior=new Map();
  function paint(){
   if(failed)return;
   const d=getData();if(!d)return;const key=JSON.stringify(d);if(key===last)return;last=key;
@@ -259,7 +320,7 @@ function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails
   const footer=make("div","hero-footer");footer.append(make("p","disclaimer",(!available||caution)&&d.disclaimer?d.disclaimer:t("Modelo experimental · no garantiza seguridad ni altura de rompiente.","Experimental model · not a safety or breaking-height guarantee.")));hero.append(footer);
   const oldLocal=layout.querySelector(".local-read"),local=make("section","local-read");
   if(available||[d.wave,d.period,d.wind].some(v=>v&&v!=="—")){const conditions=make("section","conditions");conditions.append(make("span","kicker",t("Condiciones de la franja","Window conditions")),metrics);if(d.reason&&!caution){const why=make("details","why");why.open=!!oldLocal?.querySelector(".why")?.open;why.append(make("summary",null,t("¿Por qué esta franja?","Why this window?")),make("p",null,d.reason));conditions.append(why)}local.append(conditions)}
-  if(d.tide)local.append(renderTide(d,t,lang,onHour,oldLocal?.querySelector(".tide-source")?.open));
+  if(d.tide){const ctx=d.spotId+"|"+d.location;if(ctx!==tideContext||d.tide.hour!==lastSurfHour){tideCursor=null;tideContext=ctx;lastSurfHour=d.tide.hour}local.append(renderTide(d,t,lang,onHour,oldLocal?.querySelector(".tide-source")?.open,h=>{tideCursor=h},tideCursor));}
   if(prep.children.length){const kit=make("details","kit"),summary=make("summary"),kitTitle=make("span",null,t("Prepara tu sesión","Prepare your session"));summary.append(kitTitle);const suit=(d.prep||[]).find(x=>/traje|suit/i.test(x.label));if(suit?.value)summary.append(make("small","kit-preview",suit.value));kit.open=!!oldLocal?.querySelector(".kit")?.open;kit.append(summary,prep);local.append(kit)}
   if(d.local?.uvAdvice)local.append(make("p","uv-advice",d.local.uvAdvice));
   local.append(actions);
@@ -289,5 +350,5 @@ function mount({before,retire=[],getData,onSpot,onDay,onHour,onRefresh,onDetails
  }
  update();return failed?null:{update,host};
 }
-root.FaroForecastConsole=Object.freeze({mount,tideSeries,tideRead,tideProfile,tideFit,windowStatus,exclusionLabel});
+root.FaroForecastConsole=Object.freeze({mount,tideSeries,tideRead,tideProfile,tideFit,windowStatus,exclusionLabel,tideCurve,tideWindow,tideCursorHour});
 })(window);
