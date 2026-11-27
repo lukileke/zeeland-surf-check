@@ -3,7 +3,7 @@
 @layer faro-shell {
 html[data-faro-region] body>main{
  box-sizing:border-box;inline-size:100%!important;min-inline-size:0;
- max-width:100rem!important;max-inline-size:100rem!important;
+ max-width:84rem!important;max-inline-size:84rem!important;
  padding-inline:clamp(1rem,3vw,4rem)!important;
  padding-block:clamp(1rem,2.8vw,3rem) 4rem!important;margin-inline:auto!important;
 }
