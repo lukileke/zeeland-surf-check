@@ -97,7 +97,8 @@ for(const [engine,driver] of [["chromium",chromium],["webkit",webkit]]){
      await page.mouse.move(coords[0].x,coords[0].y);await page.mouse.down();await page.mouse.move(coords[1].x,coords[1].y,{steps:12});
      const dragged=Number(await tide.getAttribute("aria-valuenow"));await page.mouse.up();assert.equal(dragged,17,"Graph follows drag before release");
      await tide.focus();await page.keyboard.press("ArrowLeft");assert.equal(Number(await tide.getAttribute("aria-valuenow")),dragged-1,"Keyboard changes graph hour");
-     await consoleHost.locator(".tide-event").first().click();assert.equal(await consoleHost.locator(".tide-event").first().getAttribute("aria-pressed"),"true","Turning point selects exact hour");
+     const more=consoleHost.locator(".tide-more");assert.equal(await more.evaluate(el=>el.open),false,"Tide details collapsed by default");assert.equal(await consoleHost.locator(".tide-event").first().isVisible(),false,"Extra tide data does not occupy default view");await more.locator("summary").first().click();assert.equal(await more.evaluate(el=>el.open),true);
+     await consoleHost.locator(".tide-event").first().click();assert.equal(await consoleHost.locator(".tide-event").first().getAttribute("aria-pressed"),"true","Turning point selects exact hour");await more.locator("summary").first().click();
      const select=consoleHost.locator("select");const options=await select.locator("option").allTextContents();assert.ok(options.length>1);
      await select.selectOption({index:1});await page.waitForFunction(()=>document.querySelector("#faroSharedConsole")?.shadowRoot?.querySelectorAll(".days button").length===7);
      assert.equal(await select.locator("option:checked").textContent(),options[1]);
